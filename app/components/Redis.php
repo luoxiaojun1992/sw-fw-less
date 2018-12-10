@@ -46,7 +46,6 @@ class Redis
         $redis = array_pop($this->redisPool);
         if (!$redis && count($this->redisPool) < $this->poolSize) {
             $redis = $this->getConnect();
-            $this->redisPool[] = $redis;
         }
 
         return $redis;

@@ -2,6 +2,8 @@
 
 require_once __DIR__ . '/vendor/autoload.php';
 
+\Swoole\Runtime::enableCoroutine();
+
 //Route Config
 $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
     $r->addRoute('GET', '/foo', [App\services\DemoService::class, 'foo']);
@@ -19,6 +21,7 @@ $http->set(array(
 
 $http->on('workerStart', function($server, $id) {
     \App\components\Redis::create('127.0.0.1', 6379, 1, 5);
+    \App\components\Mysql::create('mysql:dbname=sw_test;host=127.0.0.1', 'root', '', [], 5);
 });
 
 $http->on("request", function (\Swoole\Http\Request $request, \Swoole\Http\Response $response) use ($dispatcher) {
