@@ -7,15 +7,20 @@ class Redis
     private static $instance;
 
     /** @var \Redis[] */
-    private $redisPool;
+    private $redisPool = [];
 
-    public static function create($host = '127.0.0.1', $port = 6379, $timeout = 1, $count = 100)
+    private $host;
+    private $port;
+    private $timeout;
+    private $poolSize;
+
+    public static function create($host = '127.0.0.1', $port = 6379, $timeout = 1, $poolSize = 100)
     {
         if (self::$instance instanceof self) {
             return self::$instance;
         }
 
-        return self::$instance = new self($host, $port, $timeout, $count);
+        return self::$instance = new self($host, $port, $timeout, $poolSize);
     }
 
     /**
@@ -23,15 +28,14 @@ class Redis
      * @param $host
      * @param $port
      * @param $timeout
-     * @param $count
+     * @param $poolSize
      */
-    public function __construct($host, $port, $timeout, $count)
+    public function __construct($host, $port, $timeout, $poolSize)
     {
-        for ($i = 0; $i < $count; ++$i) {
-            $redis = new \Redis();
-            $redis->connect($host, $port, $timeout);
-            $this->redisPool[] = $redis;
-        }
+        $this->host = $host;
+        $this->port = $port;
+        $this->timeout = $timeout;
+        $this->poolSize = $poolSize;
     }
 
     /**
@@ -39,7 +43,13 @@ class Redis
      */
     public function pick()
     {
-        return array_pop($this->redisPool);
+        $redis = array_pop($this->redisPool);
+        if (!$redis && count($this->redisPool) < $this->poolSize) {
+            $redis = $this->getConnect();
+            $this->redisPool[] = $redis;
+        }
+
+        return $redis;
     }
 
     /**
@@ -55,5 +65,15 @@ class Redis
         foreach ($this->redisPool as $redis) {
             $redis->close();
         }
+    }
+
+    /**
+     * @return \Redis
+     */
+    private function getConnect()
+    {
+        $redis = new \Redis();
+        $redis->connect($this->host, $this->port, $this->timeout);
+        return $redis;
     }
 }

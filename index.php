@@ -45,8 +45,27 @@ $http->on("request", function (\Swoole\Http\Request $request, \Swoole\Http\Respo
             $handler = $routeInfo[1];
             $handler[0] = new $handler[0];
             $vars = $routeInfo[2];
-            // ... call $handler with $vars
-            $response->end(call_user_func_array($handler, $vars));
+
+            ob_start();
+            /**
+             * @var \App\components\Response $res
+             */
+            $res = call_user_func_array($handler, $vars);
+            $obContent = ob_get_contents();
+            $content = $res->getContent();
+            if (!$content && ob_get_length() > 0) {
+                $content = $obContent;
+            }
+            ob_end_clean();
+
+            $response->status($res->getStatus());
+            if ($headers = $res->getHeaders()) {
+                foreach ($headers as $key => $value) {
+                    $response->header($key, $value);
+                }
+            }
+
+            $response->end($content);
             break;
         default:
             $response->end();
