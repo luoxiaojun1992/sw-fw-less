@@ -13,14 +13,16 @@ class Redis
     private $port;
     private $timeout;
     private $poolSize;
+    private $passwd;
+    private $db = 0;
 
-    public static function create($host = '127.0.0.1', $port = 6379, $timeout = 1, $poolSize = 100)
+    public static function create($host = '127.0.0.1', $port = 6379, $timeout = 1, $poolSize = 100, $passwd = null, $db = 0)
     {
         if (self::$instance instanceof self) {
             return self::$instance;
         }
 
-        return self::$instance = new self($host, $port, $timeout, $poolSize);
+        return self::$instance = new self($host, $port, $timeout, $poolSize, $passwd, $db);
     }
 
     /**
@@ -29,13 +31,17 @@ class Redis
      * @param $port
      * @param $timeout
      * @param $poolSize
+     * @param $passwd
+     * @param $db
      */
-    public function __construct($host, $port, $timeout, $poolSize)
+    public function __construct($host, $port, $timeout, $poolSize, $passwd, $db)
     {
         $this->host = $host;
         $this->port = $port;
         $this->timeout = $timeout;
         $this->poolSize = $poolSize;
+        $this->passwd = $passwd;
+        $this->db = $db;
     }
 
     /**
@@ -73,6 +79,10 @@ class Redis
     {
         $redis = new \Redis();
         $redis->connect($this->host, $this->port, $this->timeout);
+        if ($this->passwd) {
+            $redis->auth($this->passwd);
+        }
+        $redis->select($this->db);
         return $redis;
     }
 }
