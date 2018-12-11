@@ -2,66 +2,52 @@
 
 namespace App\models;
 
-use App\components\Query;
+use App\components\ModelQuery;
 use Aura\SqlQuery\QueryInterface;
 
-class AbstractModel
+abstract class AbstractModel
 {
     protected static $table = '';
-
-    /** @var QueryInterface|Query */
-    protected $query;
 
     private $attributes = [];
 
     /**
-     * @return AbstractModel
+     * @return ModelQuery|QueryInterface
      */
     public static function select()
     {
-        return new static(Query::select()->from(static::$table));
+        return ModelQuery::select()->from(static::$table)->setModelClass(static::class);
     }
 
     /**
-     * @return AbstractModel
+     * @return ModelQuery|QueryInterface
      */
     public static function update()
     {
-        return new static(Query::update()->table(static::$table));
+        return ModelQuery::update()->table(static::$table)->setModelClass(static::class);
     }
 
     /**
-     * @return AbstractModel
+     * @return ModelQuery|QueryInterface
      */
     public static function insert()
     {
-        return new static(Query::insert()->into(static::$table));
+        return ModelQuery::insert()->into(static::$table)->setModelClass(static::class);
     }
 
     /**
-     * @return AbstractModel
+     * @return ModelQuery|QueryInterface
      */
     public static function delete()
     {
-        return new static(Query::delete()->from(static::$table));
-    }
-
-    /**
-     * AbstractModel constructor.
-     * @param QueryInterface|Query $query
-     */
-    public function __construct($query = null)
-    {
-        if ($query) {
-            $this->query = $query;
-        }
+        return ModelQuery::delete()->from(static::$table)->setModelClass(static::class);
     }
 
     /**
      * @param $attributes
      * @return $this
      */
-    private function setAttributes($attributes)
+    public function setAttributes($attributes)
     {
         foreach ($attributes as $name => $value) {
             $setter = 'set' . str_replace('_', '', ucwords($name));
@@ -78,42 +64,8 @@ class AbstractModel
     /**
      * @return array
      */
-    public function getAttributes()
+    public function toArray()
     {
         return $this->attributes;
-    }
-
-    /**
-     * @return AbstractModel
-     */
-    public function first()
-    {
-        $result = $this->query->first();
-        return (new static())->setAttributes($result);
-    }
-
-    /**
-     * @return array
-     */
-    public function get()
-    {
-        $models = [];
-        $results = $this->query->get();
-        foreach ($results as $result) {
-            $models[] = (new static())->setAttributes($result);
-        }
-
-        return $models;
-    }
-
-    /**
-     * @param $name
-     * @param $arguments
-     * @return mixed|null
-     */
-    public function __call($name, $arguments)
-    {
-        call_user_func_array([$this->query, $name], $arguments);
-        return $this;
     }
 }

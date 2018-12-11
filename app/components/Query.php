@@ -20,7 +20,7 @@ class Query
      */
     public static function create($db = 'mysql')
     {
-        return new self($db);
+        return new static($db);
     }
 
     /**
@@ -29,7 +29,7 @@ class Query
      */
     public static function select($db = 'mysql')
     {
-        return self::create($db)->newSelect();
+        return static::create($db)->newSelect();
     }
 
     /**
@@ -38,7 +38,7 @@ class Query
      */
     public static function update($db = 'mysql')
     {
-        return self::create($db)->newUpdate();
+        return static::create($db)->newUpdate();
     }
 
     /**
@@ -47,7 +47,7 @@ class Query
      */
     public static function insert($db = 'mysql')
     {
-        return self::create($db)->newInsert();
+        return static::create($db)->newInsert();
     }
 
     /**
@@ -56,7 +56,7 @@ class Query
      */
     public static function delete($db = 'mysql')
     {
-        return self::create($db)->newDelete();
+        return static::create($db)->newDelete();
     }
 
     public function __construct($db)

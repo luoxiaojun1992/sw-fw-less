@@ -26,7 +26,7 @@ class DemoService extends BaseService
             ->where('id in (111426517, 111426518)')
             ->limit(2)
             ->first()
-            ->getAttributes();
+            ->toArray();
 
         return Response::json($queryResult);
     }
