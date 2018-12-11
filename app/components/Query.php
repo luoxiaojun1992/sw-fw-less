@@ -10,6 +10,8 @@ class Query
     /** @var QueryInterface|QueryFactory */
     private $auraQuery;
 
+    private $db;
+
     /**
      * @param $db
      * @return QueryFactory|Query
@@ -29,6 +31,7 @@ class Query
 
     public function __construct($db)
     {
+        $this->db = $db;
         $this->auraQuery = new QueryFactory($db);
     }
 
@@ -50,7 +53,7 @@ class Query
      * @param \PDO $pdo
      * @return array
      */
-    private function doExecute($pdo)
+    private function doMysqlExecute($pdo)
     {
         $pdoStatement = $pdo->prepare($this->auraQuery->getStatement());
         if ($pdoStatement) {
@@ -65,19 +68,22 @@ class Query
 
     /**
      * @param null $pdo
-     * @return array
+     * @return mixed
      */
-    public function execute($pdo = null)
+    private function mysqlExecute($pdo = null)
     {
+        $doMethod = 'doMysqlExecute';
+        if (!method_exists($this, $doMethod)) {
+            return [];
+        }
+
         try {
             $pdo = $pdo ?: Mysql::create()->pick();
-            $result = $this->doExecute($pdo);
-            return $result;
+            return call_user_func_array([$this, $doMethod], [$pdo]);
         } catch (\PDOException $e) {
             if ($pdo && !$pdo->inTransaction() && Helper::causedByLostConnection($e)) {
-                $pdo = $this->handleExecuteException($pdo, $e);
-                $result = $this->doExecute($pdo);
-                return $result;
+                $pdo = $this->handleMysqlExecuteException($pdo, $e);
+                return call_user_func_array([$this, $doMethod], [$pdo]);
             }
 
             throw $e;
@@ -85,11 +91,25 @@ class Query
     }
 
     /**
+     * @param null $pdo
+     * @return array
+     */
+    public function execute($pdo = null)
+    {
+        $method = $this->db . 'Execute';
+        if (method_exists($this, $method)) {
+            return call_user_func_array([$this, $method], [$pdo]);
+        }
+
+        return [];
+    }
+
+    /**
      * @param \PDO $pdo
      * @param \PDOException $e
      * @return \PDO
      */
-    private function handleExecuteException($pdo, \PDOException $e)
+    private function handleMysqlExecuteException($pdo, \PDOException $e)
     {
         if (!$pdo->inTransaction() && Helper::causedByLostConnection($e)) {
             $pdo = Mysql::create()->getConnect();
