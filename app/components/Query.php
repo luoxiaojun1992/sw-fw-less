@@ -90,15 +90,14 @@ class Query
     {
         $pdoStatement = $pdo->prepare($this->auraQuery->getStatement());
         if ($pdoStatement) {
-            if ($result = $pdoStatement->execute($this->auraQuery->getBindValues())) {
-                switch ($mode) {
-                    case 0:
-                        return $pdoStatement->fetch(\PDO::FETCH_ASSOC);
-                    case 1:
-                        return $pdoStatement->fetchAll(\PDO::FETCH_ASSOC);
-                    case 2:
-                        return $result;
-                }
+            $result = $pdoStatement->execute($this->auraQuery->getBindValues());
+            switch ($mode) {
+                case 0:
+                    return $result ? $pdoStatement->fetch(\PDO::FETCH_ASSOC) : [];
+                case 1:
+                    return $result ? $pdoStatement->fetchAll(\PDO::FETCH_ASSOC) : [];
+                case 2:
+                    return $result ? $pdoStatement->rowCount() : 0;
             }
         }
 
