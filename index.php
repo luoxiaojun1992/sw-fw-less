@@ -4,11 +4,18 @@ require_once __DIR__ . '/vendor/autoload.php';
 
 \Swoole\Runtime::enableCoroutine();
 
+//Dot Env
+(new Dotenv\Dotenv(__DIR__))->load();
+
+//Init Config
+\App\components\Config::init(require_once __DIR__ . '/config/app.php');
+
 //Route Config
 $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
-    $r->addRoute('GET', '/redis', [App\services\DemoService::class, 'redis']);
-    $r->addRoute('GET', '/mysql', [App\services\DemoService::class, 'mysql']);
-    $r->addRoute('GET', '/http', [App\services\DemoService::class, 'http']);
+    $routerConfig = \App\components\Config::get('router');
+    foreach ($routerConfig as $router) {
+        $r->addRoute($router[0], $router[1], $router[2]);
+    }
 });
 
 $http = new \Swoole\Http\Server(\App\components\Config::get('server.host'), \App\components\Config::get('server.port'));

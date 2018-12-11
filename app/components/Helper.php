@@ -53,4 +53,15 @@ class Helper
 
         return false;
     }
+
+    /**
+     * @param $name
+     * @param null $default
+     * @return array|false|null|string
+     */
+    public static function env($name, $default = null)
+    {
+        $env = getenv($name);
+        return $env !== false ? $env : $default;
+    }
 }
