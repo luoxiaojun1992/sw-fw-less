@@ -46,7 +46,10 @@ $http->on("request", function (\Swoole\Http\Request $request, \Swoole\Http\Respo
             break;
         case FastRoute\Dispatcher::FOUND:
             $handler = $routeInfo[1];
-            $handler[0] = (new $handler[0])->setRequest((new \App\components\Request())->setSwRequest($request));
+            $handler[0] = new $handler[0];
+            if ($handler[0] instanceof \App\services\BaseService) {
+                $handler[0]->setRequest((new \App\components\Request())->setSwRequest($request));
+            }
             $vars = $routeInfo[2];
 
             ob_start();
