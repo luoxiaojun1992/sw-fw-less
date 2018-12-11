@@ -6,7 +6,7 @@ class Redis
 {
     private static $instance;
 
-    /** @var \Redis[] */
+    /** @var RedisWrapper[] */
     private $redisPool = [];
 
     private $host;
@@ -45,7 +45,7 @@ class Redis
     }
 
     /**
-     * @return \Redis mixed
+     * @return RedisWrapper mixed
      */
     public function pick()
     {
@@ -58,11 +58,13 @@ class Redis
     }
 
     /**
-     * @param $redis
+     * @param RedisWrapper $redis
      */
     public function release($redis)
     {
-        $redis->discard();
+        if ($redis->inTransaction()) {
+            $redis->discard();
+        }
         $this->redisPool[] = $redis;
     }
 
@@ -74,7 +76,7 @@ class Redis
     }
 
     /**
-     * @return \Redis
+     * @return RedisWrapper
      */
     private function getConnect()
     {
@@ -84,6 +86,6 @@ class Redis
             $redis->auth($this->passwd);
         }
         $redis->select($this->db);
-        return $redis;
+        return (new RedisWrapper())->setRedis($redis);
     }
 }
