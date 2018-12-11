@@ -6,7 +6,9 @@ require_once __DIR__ . '/vendor/autoload.php';
 
 //Route Config
 $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
-    $r->addRoute('GET', '/foo', [App\services\DemoService::class, 'foo']);
+    $r->addRoute('GET', '/redis', [App\services\DemoService::class, 'redis']);
+    $r->addRoute('GET', '/mysql', [App\services\DemoService::class, 'mysql']);
+    $r->addRoute('GET', '/http', [App\services\DemoService::class, 'http']);
 });
 
 $http = new \Swoole\Http\Server("127.0.0.1", 9501);

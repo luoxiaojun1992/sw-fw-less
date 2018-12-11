@@ -81,6 +81,7 @@ class Response
      */
     public static function json($arr, $status = 200, $headers = [])
     {
+        $headers['Content-Type'] = 'application/json';
         $content = is_array($arr) ? json_encode($arr, JSON_UNESCAPED_UNICODE) : $arr;
         return self::output($content, $status, $headers);
     }

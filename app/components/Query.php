@@ -12,6 +12,8 @@ class Query
 
     private $db;
 
+    private $needRelease = true;
+
     /**
      * @param $db
      * @return QueryFactory|Query
@@ -72,21 +74,42 @@ class Query
      */
     private function mysqlExecute($pdo = null)
     {
+        if ($pdo) {
+            $this->needRelease = false;
+        }
+
         $doMethod = 'doMysqlExecute';
         if (!method_exists($this, $doMethod)) {
+            $this->releasePDO($pdo);
             return [];
         }
 
         try {
             $pdo = $pdo ?: Mysql::create()->pick();
-            return call_user_func_array([$this, $doMethod], [$pdo]);
+            $result = call_user_func_array([$this, $doMethod], [$pdo]);
+            $this->releasePDO($pdo);
+            return $result;
         } catch (\PDOException $e) {
             if ($pdo && !$pdo->inTransaction() && Helper::causedByLostConnection($e)) {
                 $pdo = $this->handleMysqlExecuteException($pdo, $e);
-                return call_user_func_array([$this, $doMethod], [$pdo]);
+                $result = call_user_func_array([$this, $doMethod], [$pdo]);
+                $this->releasePDO($pdo);
+                return $result;
             }
 
+            $this->releasePDO($pdo);
+
             throw $e;
+        }
+    }
+
+    /**
+     * @param \PDO $pdo
+     */
+    private function releasePDO($pdo)
+    {
+        if ($this->needRelease) {
+            Mysql::create()->release($pdo);
         }
     }
 
