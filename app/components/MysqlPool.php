@@ -2,7 +2,7 @@
 
 namespace App\components;
 
-class Mysql
+class MysqlPool
 {
     private static $instance;
 

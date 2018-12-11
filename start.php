@@ -34,7 +34,7 @@ $http->set(array(
 ));
 
 $http->on('workerStart', function($server, $id) {
-    \App\components\Redis::create(
+    \App\components\RedisPool::create(
         \App\components\Config::get('redis.host'),
         \App\components\Config::get('redis.port'),
         \App\components\Config::get('redis.timeout'),
@@ -42,7 +42,7 @@ $http->on('workerStart', function($server, $id) {
         \App\components\Config::get('redis.passwd'),
         \App\components\Config::get('redis.db')
     );
-    \App\components\Mysql::create(
+    \App\components\MysqlPool::create(
         \App\components\Config::get('mysql.dsn'),
         \App\components\Config::get('mysql.username'),
         \App\components\Config::get('mysql.passwd'),

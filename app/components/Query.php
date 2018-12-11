@@ -85,7 +85,7 @@ class Query
         }
 
         try {
-            $pdo = $pdo ?: Mysql::create()->pick();
+            $pdo = $pdo ?: MysqlPool::create()->pick();
             $result = call_user_func_array([$this, $doMethod], [$pdo]);
             $this->releasePDO($pdo);
             return $result;
@@ -109,7 +109,7 @@ class Query
     private function releasePDO($pdo)
     {
         if ($this->needRelease) {
-            Mysql::create()->release($pdo);
+            MysqlPool::create()->release($pdo);
         }
     }
 
@@ -135,7 +135,7 @@ class Query
     private function handleMysqlExecuteException($pdo, \PDOException $e)
     {
         if (!$pdo->inTransaction() && Helper::causedByLostConnection($e)) {
-            $pdo = Mysql::create()->getConnect();
+            $pdo = MysqlPool::create()->getConnect();
         }
 
         return $pdo;

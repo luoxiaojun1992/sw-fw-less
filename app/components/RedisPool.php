@@ -2,7 +2,7 @@
 
 namespace App\components;
 
-class Redis
+class RedisPool
 {
     private static $instance;
 

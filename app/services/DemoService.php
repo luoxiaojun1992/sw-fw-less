@@ -3,7 +3,7 @@
 namespace App\services;
 
 use App\components\Query;
-use App\components\Redis;
+use App\components\RedisPool;
 use App\components\Response;
 use Swlib\SaberGM;
 
@@ -11,7 +11,7 @@ class DemoService extends BaseService
 {
     public function redis()
     {
-        $redisPool = Redis::create();
+        $redisPool = RedisPool::create();
         $redis = $redisPool->pick();
         $result = $redis->get($this->getRequest()->param('key', 'key'));
         $redisPool->release($redis);
