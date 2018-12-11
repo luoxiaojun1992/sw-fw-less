@@ -24,10 +24,9 @@ class DemoService extends BaseService
         $queryResult = Query::createMysql()->newSelect()
             ->from('member')
             ->cols(['*'])
-            ->where('id = :id')
-            ->bindValue(':id', 111426517)
-            ->limit(1)
-            ->execute();
+            ->where('id in (111426517, 111426518)')
+            ->limit(2)
+            ->first();
 
         return Response::json($queryResult);
     }

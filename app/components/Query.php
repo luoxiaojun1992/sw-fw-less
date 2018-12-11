@@ -53,26 +53,34 @@ class Query
 
     /**
      * @param \PDO $pdo
-     * @return array
+     * @param int $mode
+     * @return mixed
      */
-    private function doMysqlExecute($pdo)
+    private function doMysqlExecute($pdo, $mode = 0)
     {
         $pdoStatement = $pdo->prepare($this->auraQuery->getStatement());
         if ($pdoStatement) {
-            if ($pdoStatement->execute($this->auraQuery->getBindValues())) {
-                $result = $pdoStatement->fetch(\PDO::FETCH_ASSOC);
-                return $result;
+            if ($result = $pdoStatement->execute($this->auraQuery->getBindValues())) {
+                switch ($mode) {
+                    case 0:
+                        return $pdoStatement->fetch(\PDO::FETCH_ASSOC);
+                    case 1:
+                        return $pdoStatement->fetchAll(\PDO::FETCH_ASSOC);
+                    case 2:
+                        return $result;
+                }
             }
         }
 
-        return [];
+        return null;
     }
 
     /**
      * @param null $pdo
+     * @param $mode
      * @return mixed
      */
-    private function mysqlExecute($pdo = null)
+    private function mysqlExecute($pdo = null, $mode = 0)
     {
         if ($pdo) {
             $this->needRelease = false;
@@ -81,18 +89,18 @@ class Query
         $doMethod = 'doMysqlExecute';
         if (!method_exists($this, $doMethod)) {
             $this->releasePDO($pdo);
-            return [];
+            return null;
         }
 
         try {
             $pdo = $pdo ?: MysqlPool::create()->pick();
-            $result = call_user_func_array([$this, $doMethod], [$pdo]);
+            $result = call_user_func_array([$this, $doMethod], [$pdo, $mode]);
             $this->releasePDO($pdo);
             return $result;
         } catch (\PDOException $e) {
             if ($pdo && !$pdo->inTransaction() && Helper::causedByLostConnection($e)) {
                 $pdo = $this->handleMysqlExecuteException($pdo, $e);
-                $result = call_user_func_array([$this, $doMethod], [$pdo]);
+                $result = call_user_func_array([$this, $doMethod], [$pdo, $mode]);
                 $this->releasePDO($pdo);
                 return $result;
             }
@@ -115,16 +123,45 @@ class Query
 
     /**
      * @param null $pdo
-     * @return array
+     * @param $mode
+     * @return mixed
      */
-    public function execute($pdo = null)
+    public function execute($pdo = null, $mode = 0)
     {
         $method = $this->db . 'Execute';
         if (method_exists($this, $method)) {
-            return call_user_func_array([$this, $method], [$pdo]);
+            return call_user_func_array([$this, $method], [$pdo, $mode]);
         }
 
-        return [];
+        return null;
+    }
+
+    /**
+     * @param null $pdo
+     * @return mixed
+     */
+    public function first($pdo = null)
+    {
+        $this->limit(1);
+        return $this->execute($pdo, 0);
+    }
+
+    /**
+     * @param null $pdo
+     * @return mixed
+     */
+    public function get($pdo = null)
+    {
+        return $this->execute($pdo, 1);
+    }
+
+    /**
+     * @param null $pdo
+     * @return mixed
+     */
+    public function write($pdo = null)
+    {
+        return $this->execute($pdo, 2);
     }
 
     /**
