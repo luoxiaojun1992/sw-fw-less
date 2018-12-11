@@ -77,7 +77,7 @@ class RedisPool
     /**
      * @return RedisWrapper
      */
-    private function getConnect()
+    public function getConnect()
     {
         $redis = new \Redis();
         $redis->connect($this->host, $this->port, $this->timeout);
