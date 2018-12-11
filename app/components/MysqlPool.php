@@ -39,6 +39,10 @@ class MysqlPool
         $this->passwd = $passwd;
         $this->options = $options;
         $this->poolSize = $poolSize;
+
+        for ($i = 0; $i < $poolSize; ++$i) {
+            $this->pdoPool[] = $this->getConnect();
+        }
     }
 
     /**
@@ -46,12 +50,7 @@ class MysqlPool
      */
     public function pick()
     {
-        $pdo = array_pop($this->pdoPool);
-        if (!$pdo && count($this->pdoPool) < $this->poolSize) {
-            $pdo = $this->getConnect();
-        }
-
-        return $pdo;
+        return array_pop($this->pdoPool);
     }
 
     /**

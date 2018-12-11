@@ -42,6 +42,10 @@ class RedisPool
         $this->poolSize = $poolSize;
         $this->passwd = $passwd;
         $this->db = $db;
+
+        for ($i = 0; $i < $poolSize; ++$i) {
+            $this->redisPool[] = $this->getConnect();
+        }
     }
 
     /**
@@ -49,12 +53,7 @@ class RedisPool
      */
     public function pick()
     {
-        $redis = array_pop($this->redisPool);
-        if (!$redis && count($this->redisPool) < $this->poolSize) {
-            $redis = $this->getConnect();
-        }
-
-        return $redis;
+        return array_pop($this->redisPool);
     }
 
     /**
