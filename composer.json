@@ -4,7 +4,8 @@
     "type": "project",
     "require": {
         "nikic/fast-route": "^1",
-        "aura/sqlquery": "^2"
+        "aura/sqlquery": "^2",
+        "swlib/saber": "^1"
     },
     "license": "apache-2.0",
     "authors": [
