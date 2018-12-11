@@ -22,8 +22,10 @@ class DemoService extends BaseService
     public function mysql()
     {
         $queryResult = Query::createMysql()->newSelect()
-            ->from('test')
-            ->cols(['id'])
+            ->from('member')
+            ->cols(['*'])
+            ->where('id = :id')
+            ->bindValue(':id', 111426517)
             ->limit(1)
             ->execute();
 
