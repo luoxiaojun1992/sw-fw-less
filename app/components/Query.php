@@ -80,7 +80,7 @@ class Query
     }
 
     /**
-     * @param \PDO $pdo
+     * @param MysqlWrapper $pdo
      * @param int $mode
      * @return mixed
      */
@@ -140,7 +140,7 @@ class Query
     }
 
     /**
-     * @param \PDO $pdo
+     * @param MysqlWrapper $pdo
      */
     private function releasePDO($pdo)
     {
@@ -193,9 +193,9 @@ class Query
     }
 
     /**
-     * @param \PDO $pdo
+     * @param MysqlWrapper $pdo
      * @param \PDOException $e
-     * @return \PDO
+     * @return MysqlWrapper
      */
     private function handleMysqlExecuteException($pdo, \PDOException $e)
     {
