@@ -73,8 +73,15 @@ class Response
         return (new self)->setContent($content)->setStatus($status)->setHeaders($headers);
     }
 
-    public static function json($arr)
+    /**
+     * @param $arr
+     * @param int $status
+     * @param array $headers
+     * @return Response
+     */
+    public static function json($arr, $status = 200, $headers = [])
     {
-        //todo
+        $content = is_array($arr) ? json_encode($arr, JSON_UNESCAPED_UNICODE) : $arr;
+        return self::output($content, $status, $headers);
     }
 }

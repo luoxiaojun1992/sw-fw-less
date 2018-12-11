@@ -13,20 +13,20 @@ class DemoService extends BaseService
     {
         $redisPool = Redis::create();
         $redis = $redisPool->pick();
-        $result = $redis->get('key');
+        $result = $redis->get($this->getRequest()->param('key', 'key'));
         $redisPool->release($redis);
 
         if (!$result) {
-            $mysqlPool = Mysql::create();
-            $pdo = $mysqlPool->pick();
-
-            $query = (new QueryFactory('mysql'))->newSelect()->from('test')->cols(['id'])->limit(1);
-            $pdoStatement = $pdo->prepare($query->getStatement());
-            if ($pdoStatement) {
-                if ($pdoStatement->execute($query->getBindValues())) {
-                    $queryResult = $pdoStatement->fetch(\PDO::FETCH_ASSOC);
-                }
-            }
+//            $mysqlPool = Mysql::create();
+//            $pdo = $mysqlPool->pick();
+//
+//            $query = (new QueryFactory('mysql'))->newSelect()->from('test')->cols(['id'])->limit(1);
+//            $pdoStatement = $pdo->prepare($query->getStatement());
+//            if ($pdoStatement) {
+//                if ($pdoStatement->execute($query->getBindValues())) {
+//                    $queryResult = $pdoStatement->fetch(\PDO::FETCH_ASSOC);
+//                }
+//            }
         }
 
         return Response::output($result);
