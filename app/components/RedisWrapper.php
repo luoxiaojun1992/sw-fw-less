@@ -42,10 +42,11 @@ class RedisWrapper
     public function __call($name, $arguments)
     {
         $result = call_user_func_array([$this->redis, $name], $arguments);
-        if (strtolower($name) == 'multi') {
+        $lowerName = strtolower($name);
+        if ($lowerName == 'multi') {
             $this->inTransaction = true;
         }
-        if (in_array(strtolower($name), ['exec', 'discard'])) {
+        if (in_array($lowerName, ['exec', 'discard'])) {
             $this->inTransaction = false;
         }
         return $result;
