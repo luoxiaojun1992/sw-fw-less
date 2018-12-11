@@ -21,7 +21,7 @@ class DemoService extends BaseService
 
     public function mysql()
     {
-        $queryResult = Query::createMysql()->newSelect()
+        $queryResult = Query::select()
             ->from('member')
             ->cols(['*'])
             ->where('id in (111426517, 111426518)')

@@ -18,17 +18,45 @@ class Query
      * @param $db
      * @return QueryFactory|Query
      */
-    public static function create($db)
+    public static function create($db = 'mysql')
     {
         return new self($db);
     }
 
     /**
-     * @return QueryFactory|Query
+     * @param string $db
+     * @return \Aura\SqlQuery\Common\SelectInterface
      */
-    public static function createMysql()
+    public static function select($db = 'mysql')
     {
-        return self::create('mysql');
+        return self::create($db)->newSelect();
+    }
+
+    /**
+     * @param string $db
+     * @return \Aura\SqlQuery\Common\UpdateInterface
+     */
+    public static function update($db = 'mysql')
+    {
+        return self::create($db)->newUpdate();
+    }
+
+    /**
+     * @param string $db
+     * @return \Aura\SqlQuery\Common\InsertInterface
+     */
+    public static function insert($db = 'mysql')
+    {
+        return self::create($db)->newInsert();
+    }
+
+    /**
+     * @param string $db
+     * @return \Aura\SqlQuery\Common\DeleteInterface
+     */
+    public static function delete($db = 'mysql')
+    {
+        return self::create($db)->newDelete();
     }
 
     public function __construct($db)
