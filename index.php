@@ -20,6 +20,11 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
 
 $http = new \Swoole\Http\Server(\App\components\Config::get('server.host'), \App\components\Config::get('server.port'));
 
+$http->on('start', function ($server){
+    echo 'Server started.', PHP_EOL;
+    echo 'Listening ' . $server->ports[0]->host . ':' . $server->ports[0]->port, PHP_EOL;
+});
+
 $http->set(array(
     'reactor_num' => \App\components\Config::get('server.reactor_num'),
     'worker_num' => \App\components\Config::get('server.worker_num'),
