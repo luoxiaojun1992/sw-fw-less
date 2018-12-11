@@ -11,19 +11,32 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
     $r->addRoute('GET', '/http', [App\services\DemoService::class, 'http']);
 });
 
-$http = new \Swoole\Http\Server("127.0.0.1", 9501);
+$http = new \Swoole\Http\Server(\App\components\Config::get('server.host'), \App\components\Config::get('server.port'));
 
 $http->set(array(
-    'reactor_num' => 8,
-    'worker_num' => 32,
-    'daemonize' => false,
-    'backlog' => 128,
-    'max_request' => 0,
+    'reactor_num' => \App\components\Config::get('server.reactor_num'),
+    'worker_num' => \App\components\Config::get('server.worker_num'),
+    'daemonize' => \App\components\Config::get('server.daemonize'),
+    'backlog' => \App\components\Config::get('server.backlog'),
+    'max_request' => \App\components\Config::get('server.max_request'),
 ));
 
 $http->on('workerStart', function($server, $id) {
-    \App\components\Redis::create('127.0.0.1', 6379, 1, 5);
-    \App\components\Mysql::create('mysql:dbname=sw_test;host=127.0.0.1', 'root', '', [], 5);
+    \App\components\Redis::create(
+        \App\components\Config::get('redis.host'),
+        \App\components\Config::get('redis.port'),
+        \App\components\Config::get('redis.timeout'),
+        \App\components\Config::get('redis.pool_size'),
+        \App\components\Config::get('redis.passwd'),
+        \App\components\Config::get('redis.db')
+    );
+    \App\components\Mysql::create(
+        \App\components\Config::get('mysql.dsn'),
+        \App\components\Config::get('mysql.username'),
+        \App\components\Config::get('mysql.passwd'),
+        \App\components\Config::get('mysql.options'),
+        \App\components\Config::get('mysql.pool_size')
+    );
 });
 
 $http->on("request", function (\Swoole\Http\Request $request, \Swoole\Http\Response $response) use ($dispatcher) {
