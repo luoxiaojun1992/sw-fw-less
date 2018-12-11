@@ -47,23 +47,54 @@ class Query
     }
 
     /**
-     * @return array|mixed
+     * @param \PDO $pdo
+     * @return array
      */
-    public function execute()
+    private function doExecute($pdo)
     {
-        try {
-            $pdo = Mysql::create()->pick();
-
-            $pdoStatement = $pdo->prepare($this->auraQuery->getStatement());
-            if ($pdoStatement) {
-                if ($pdoStatement->execute($this->auraQuery->getBindValues())) {
-                    return $pdoStatement->fetch(\PDO::FETCH_ASSOC);
-                }
+        $pdoStatement = $pdo->prepare($this->auraQuery->getStatement());
+        if ($pdoStatement) {
+            if ($pdoStatement->execute($this->auraQuery->getBindValues())) {
+                $result = $pdoStatement->fetch(\PDO::FETCH_ASSOC);
+                return $result;
             }
-        } catch (\PDOException $e) {
-            //todo handle exception
         }
 
         return [];
+    }
+
+    /**
+     * @param null $pdo
+     * @return array
+     */
+    public function execute($pdo = null)
+    {
+        try {
+            $pdo = $pdo ?: Mysql::create()->pick();
+            $result = $this->doExecute($pdo);
+            return $result;
+        } catch (\PDOException $e) {
+            if ($pdo && !$pdo->inTransaction() && Helper::causedByLostConnection($e)) {
+                $pdo = $this->handleExecuteException($pdo, $e);
+                $result = $this->doExecute($pdo);
+                return $result;
+            }
+
+            throw $e;
+        }
+    }
+
+    /**
+     * @param \PDO $pdo
+     * @param \PDOException $e
+     * @return \PDO
+     */
+    private function handleExecuteException($pdo, \PDOException $e)
+    {
+        if (!$pdo->inTransaction() && Helper::causedByLostConnection($e)) {
+            $pdo = Mysql::create()->getConnect();
+        }
+
+        return $pdo;
     }
 }

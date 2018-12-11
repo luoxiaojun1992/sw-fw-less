@@ -62,6 +62,7 @@ class Redis
      */
     public function release($redis)
     {
+        $redis->discard();
         $this->redisPool[] = $redis;
     }
 
