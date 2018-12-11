@@ -90,7 +90,7 @@ class MysqlPool
      * @param \PDOException $e
      * @return \PDO
      */
-    private function handleRollbackException($pdo, \PDOException $e)
+    public function handleRollbackException($pdo, \PDOException $e)
     {
         if (Helper::causedByLostConnection($e)) {
             $pdo = $this->getConnect();

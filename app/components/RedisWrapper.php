@@ -39,7 +39,7 @@ class RedisWrapper
      * @param $arguments
      * @return mixed
      */
-    public function __call($name, $arguments)
+    private function callRedis($name, $arguments)
     {
         $result = call_user_func_array([$this->redis, $name], $arguments);
         $lowerName = strtolower($name);
@@ -50,5 +50,35 @@ class RedisWrapper
             $this->inTransaction = false;
         }
         return $result;
+    }
+
+    /**
+     * @param $name
+     * @param $arguments
+     * @return mixed
+     * @throws \RedisException
+     */
+    public function __call($name, $arguments)
+    {
+        try {
+            return $this->callRedis($name, $arguments);
+        } catch (\RedisException $e) {
+            if (!$this->inTransaction() && Helper::causedByLostConnection($e)) {
+                $this->handleCommandException($e);
+                return $this->callRedis($name, $arguments);
+            }
+
+            throw $e;
+        }
+    }
+
+    /**
+     * @param \RedisException $e
+     */
+    private function handleCommandException(\RedisException $e)
+    {
+        if (!$this->inTransaction() && Helper::causedByLostConnection($e)) {
+            $this->redis = RedisPool::create()->getConnect()->getRedis();
+        }
     }
 }

@@ -18,10 +18,10 @@ class Helper
     /**
      * Determine if the given exception was caused by a lost connection.
      *
-     * @param  \PDOException $e
+     * @param  \Exception $e
      * @return bool
      */
-    public static function causedByLostConnection(\PDOException $e)
+    public static function causedByLostConnection(\Exception $e)
     {
         $message = $e->getMessage();
         $lostConnectionMessages = [

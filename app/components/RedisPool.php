@@ -62,7 +62,11 @@ class RedisPool
     public function release($redis)
     {
         if ($redis->inTransaction()) {
-            $redis->discard();
+            try {
+                $redis->discard();
+            } catch (\RedisException $e) {
+                $redis = $this->handleRollbackException($redis, $e);
+            }
         }
         $this->redisPool[] = $redis;
     }
@@ -86,5 +90,19 @@ class RedisPool
         }
         $redis->select($this->db);
         return (new RedisWrapper())->setRedis($redis);
+    }
+
+    /**
+     * @param RedisWrapper $redis
+     * @param \RedisException $e
+     * @return RedisWrapper
+     */
+    public function handleRollbackException($redis, \RedisException $e)
+    {
+        if (Helper::causedByLostConnection($e)) {
+            $redis = $this->getConnect();
+        }
+
+        return $redis;
     }
 }
