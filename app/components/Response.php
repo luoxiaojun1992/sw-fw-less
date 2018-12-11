@@ -61,4 +61,20 @@ class Response
     {
         return $this->headers;
     }
+
+    /**
+     * @param $content
+     * @param int $status
+     * @param array $headers
+     * @return Response
+     */
+    public static function output($content, $status = 200, $headers = [])
+    {
+        return (new self)->setContent($content)->setStatus($status)->setHeaders($headers);
+    }
+
+    public static function json($arr)
+    {
+        //todo
+    }
 }

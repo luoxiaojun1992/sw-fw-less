@@ -3,7 +3,8 @@
     "description": "Swoole Http Server without framework",
     "type": "project",
     "require": {
-        "nikic/fast-route": "^1"
+        "nikic/fast-route": "^1",
+        "aura/sqlquery": "^2"
     },
     "license": "apache-2.0",
     "authors": [

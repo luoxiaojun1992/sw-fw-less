@@ -6,7 +6,7 @@ use App\components\Mysql;
 use App\components\Redis;
 use App\components\Response;
 
-class DemoService
+class DemoService extends BaseService
 {
     public function foo()
     {
@@ -25,6 +25,6 @@ class DemoService
             }
         }
 
-        return (new Response())->setContent($result);
+        return Response::output($result);
     }
 }
