@@ -61,14 +61,16 @@ class RedisPool
      */
     public function release($redis)
     {
-        if ($redis->inTransaction()) {
-            try {
-                $redis->discard();
-            } catch (\RedisException $e) {
-                $redis = $this->handleRollbackException($redis, $e);
+        if ($redis) {
+            if ($redis->inTransaction()) {
+                try {
+                    $redis->discard();
+                } catch (\RedisException $e) {
+                    $redis = $this->handleRollbackException($redis, $e);
+                }
             }
+            $this->redisPool[] = $redis;
         }
-        $this->redisPool[] = $redis;
     }
 
     public function __destruct()
