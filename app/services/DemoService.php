@@ -2,10 +2,9 @@
 
 namespace App\services;
 
-use App\components\Mysql;
+use App\components\Query;
 use App\components\Redis;
 use App\components\Response;
-use Aura\SqlQuery\QueryFactory;
 
 class DemoService extends BaseService
 {
@@ -17,16 +16,11 @@ class DemoService extends BaseService
         $redisPool->release($redis);
 
         if (!$result) {
-//            $mysqlPool = Mysql::create();
-//            $pdo = $mysqlPool->pick();
-//
-//            $query = (new QueryFactory('mysql'))->newSelect()->from('test')->cols(['id'])->limit(1);
-//            $pdoStatement = $pdo->prepare($query->getStatement());
-//            if ($pdoStatement) {
-//                if ($pdoStatement->execute($query->getBindValues())) {
-//                    $queryResult = $pdoStatement->fetch(\PDO::FETCH_ASSOC);
-//                }
-//            }
+            $queryResult = Query::createMysql()->newSelect()
+                ->from('test')
+                ->cols(['id'])
+                ->limit(1)
+                ->execute();
         }
 
         return Response::output($result);
