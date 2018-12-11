@@ -72,9 +72,11 @@ class Query
      */
     public function __call($name, $arguments)
     {
-        $result = call_user_func_array([$this->auraQuery, $name], $arguments);
-        if (is_object($result)) {
-            $this->auraQuery = $result;
+        if (method_exists($this->auraQuery, $name)) {
+            $result = call_user_func_array([$this->auraQuery, $name], $arguments);
+            if (is_object($result)) {
+                $this->auraQuery = $result;
+            }
         }
         return $this;
     }

@@ -79,16 +79,20 @@ class RedisWrapper
      */
     public function __call($name, $arguments)
     {
-        try {
-            return $this->callRedis($name, $arguments);
-        } catch (\RedisException $e) {
-            if (!$this->inTransaction() && Helper::causedByLostConnection($e)) {
-                $this->handleCommandException($e);
+        if (method_exists($this->redis, $name)) {
+            try {
                 return $this->callRedis($name, $arguments);
-            }
+            } catch (\RedisException $e) {
+                if (!$this->inTransaction() && Helper::causedByLostConnection($e)) {
+                    $this->handleCommandException($e);
+                    return $this->callRedis($name, $arguments);
+                }
 
-            throw $e;
+                throw $e;
+            }
         }
+
+        return null;
     }
 
     /**

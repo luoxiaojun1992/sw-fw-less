@@ -2,9 +2,9 @@
 
 namespace App\services;
 
-use App\components\Query;
 use App\components\RedisPool;
 use App\components\Response;
+use App\models\Member;
 use Swlib\SaberGM;
 
 class DemoService extends BaseService
@@ -21,12 +21,12 @@ class DemoService extends BaseService
 
     public function mysql()
     {
-        $queryResult = Query::select()
-            ->from('member')
+        $queryResult = Member::select()
             ->cols(['*'])
             ->where('id in (111426517, 111426518)')
             ->limit(2)
-            ->first();
+            ->first()
+            ->getAttributes();
 
         return Response::json($queryResult);
     }

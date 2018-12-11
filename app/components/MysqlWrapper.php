@@ -51,6 +51,10 @@ class MysqlWrapper
      */
     public function __call($name, $arguments)
     {
-        return call_user_func_array([$this->pdo, $name], $arguments);
+        if (method_exists($this->pdo, $name)) {
+            return call_user_func_array([$this->pdo, $name], $arguments);
+        }
+
+        return null;
     }
 }
