@@ -53,7 +53,12 @@ class RedisPool
      */
     public function pick()
     {
-        return array_pop($this->redisPool);
+        $redis = array_pop($this->redisPool);
+        if (!$redis) {
+            $redis = $this->getConnect(false);
+        }
+
+        return $redis;
     }
 
     /**
@@ -69,7 +74,9 @@ class RedisPool
                     $redis = $this->handleRollbackException($redis, $e);
                 }
             }
-            $this->redisPool[] = $redis;
+            if ($redis->isNeedRelease()) {
+                $this->redisPool[] = $redis;
+            }
         }
     }
 
@@ -81,9 +88,10 @@ class RedisPool
     }
 
     /**
+     * @param bool $needRelease
      * @return RedisWrapper
      */
-    public function getConnect()
+    public function getConnect($needRelease = true)
     {
         $redis = new \Redis();
         $redis->connect($this->host, $this->port, $this->timeout);
@@ -91,7 +99,7 @@ class RedisPool
             $redis->auth($this->passwd);
         }
         $redis->select($this->db);
-        return (new RedisWrapper())->setRedis($redis);
+        return (new RedisWrapper())->setRedis($redis)->setNeedRelease($needRelease);
     }
 
     /**

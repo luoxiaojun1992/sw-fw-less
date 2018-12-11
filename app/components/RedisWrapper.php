@@ -7,6 +7,7 @@ class RedisWrapper
     /** @var \Redis */
     private $redis;
     private $inTransaction = false;
+    private $needRelease = true;
 
     /**
      * @return \Redis
@@ -23,6 +24,24 @@ class RedisWrapper
     public function setRedis($redis)
     {
         $this->redis = $redis;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isNeedRelease()
+    {
+        return $this->needRelease;
+    }
+
+    /**
+     * @param bool $needRelease
+     * @return $this
+     */
+    public function setNeedRelease($needRelease)
+    {
+        $this->needRelease = $needRelease;
         return $this;
     }
 
