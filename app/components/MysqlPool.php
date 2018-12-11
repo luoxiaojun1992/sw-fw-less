@@ -6,7 +6,7 @@ class MysqlPool
 {
     private static $instance;
 
-    /** @var \PDO[] */
+    /** @var MysqlWrapper[] */
     private $pdoPool = [];
 
     private $dsn;
@@ -46,15 +46,20 @@ class MysqlPool
     }
 
     /**
-     * @return \PDO mixed
+     * @return MysqlWrapper mixed
      */
     public function pick()
     {
-        return array_pop($this->pdoPool);
+        $pdo = array_pop($this->pdoPool);
+        if (!$pdo) {
+            $pdo = $this->getConnect(false);
+        }
+
+        return $pdo;
     }
 
     /**
-     * @param \PDO $pdo
+     * @param MysqlWrapper $pdo
      */
     public function release($pdo)
     {
@@ -63,10 +68,14 @@ class MysqlPool
                 try {
                     $pdo->rollBack();
                 } catch (\PDOException $rollbackException) {
-                    $pdo = $this->handleRollbackException($pdo, $rollbackException);
+                    if ($pdo->isNeedRelease()) {
+                        $pdo = $this->handleRollbackException($pdo, $rollbackException);
+                    }
                 }
             }
-            $this->pdoPool[] = $pdo;
+            if ($pdo->isNeedRelease()) {
+                $this->pdoPool[] = $pdo;
+            }
         }
     }
 
@@ -78,17 +87,19 @@ class MysqlPool
     }
 
     /**
-     * @return \PDO
+     * @param bool $needRelease
+     * @return MysqlWrapper
      */
-    public function getConnect()
+    public function getConnect($needRelease = true)
     {
-        return new \PDO($this->dsn, $this->username, $this->passwd, $this->options);
+        $pdo = new \PDO($this->dsn, $this->username, $this->passwd, $this->options);
+        return (new MysqlWrapper())->setPDO($pdo)->setNeedRelease($needRelease);
     }
 
     /**
-     * @param \PDO $pdo
+     * @param MysqlWrapper $pdo
      * @param \PDOException $e
-     * @return \PDO
+     * @return MysqlWrapper
      */
     public function handleRollbackException($pdo, \PDOException $e)
     {

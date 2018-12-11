@@ -71,7 +71,9 @@ class RedisPool
                 try {
                     $redis->discard();
                 } catch (\RedisException $e) {
-                    $redis = $this->handleRollbackException($redis, $e);
+                    if ($redis->isNeedRelease()) {
+                        $redis = $this->handleRollbackException($redis, $e);
+                    }
                 }
             }
             if ($redis->isNeedRelease()) {
