@@ -64,4 +64,13 @@ class Helper
         $env = getenv($name);
         return $env !== false ? $env : $default;
     }
+
+    /**
+     * @param $string
+     * @return mixed
+     */
+    public static function snake2Camel($string)
+    {
+        return str_replace(' ', '', ucwords(str_replace('_', ' ', $string)));
+    }
 }

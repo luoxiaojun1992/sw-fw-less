@@ -2,6 +2,7 @@
 
 namespace App\models;
 
+use App\components\Helper;
 use App\components\ModelQuery;
 use Aura\SqlQuery\QueryInterface;
 
@@ -50,7 +51,7 @@ abstract class AbstractModel
     public function setAttributes($attributes)
     {
         foreach ($attributes as $name => $value) {
-            $setter = 'set' . str_replace('_', '', ucwords($name));
+            $setter = 'set' . Helper::snake2Camel($name);
             if (method_exists($this, $setter)) {
                 call_user_func_array([$this, $setter], [$value]);
             } else {
