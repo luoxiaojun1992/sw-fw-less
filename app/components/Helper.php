@@ -92,6 +92,36 @@ class Helper
     }
 
     /**
+     * @param $name
+     * @param null $default
+     * @return int
+     */
+    public static function envInt($name, $default = null)
+    {
+        return intval(self::env($name, $default));
+    }
+
+    /**
+     * @param $name
+     * @param null $default
+     * @return bool
+     */
+    public static function envBool($name, $default = null)
+    {
+        return boolval(self::env($name, $default));
+    }
+
+    /**
+     * @param $name
+     * @param null $default
+     * @return float
+     */
+    public static function envDouble($name, $default = null)
+    {
+        return doubleval(self::env($name, $default));
+    }
+
+    /**
      * @param $string
      * @return mixed
      */

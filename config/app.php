@@ -11,23 +11,23 @@ return [
     //Server
     'server' => [
         'host' => \App\components\Helper::env('SERVER_HOST', '127.0.0.1'),
-        'port' => \App\components\Helper::env('SERVER_PORT', 9501),
-        'reactor_num' => \App\components\Helper::env('SERVER_REACTOR_NUM', 8),
-        'worker_num' => \App\components\Helper::env('SERVER_WORKER_NUM', 32),
-        'daemonize' => \App\components\Helper::env('SERVER_DAEMONIZE', false),
-        'backlog' => \App\components\Helper::env('SERVER_BACKLOG', 128),
-        'max_request' => \App\components\Helper::env('SERVER_MAX_REQUEST', 0),
+        'port' => \App\components\Helper::envInt('SERVER_PORT', 9501),
+        'reactor_num' => \App\components\Helper::envInt('SERVER_REACTOR_NUM', 8),
+        'worker_num' => \App\components\Helper::envInt('SERVER_WORKER_NUM', 32),
+        'daemonize' => \App\components\Helper::envBool('SERVER_DAEMONIZE', false),
+        'backlog' => \App\components\Helper::envInt('SERVER_BACKLOG', 128),
+        'max_request' => \App\components\Helper::envInt('SERVER_MAX_REQUEST', 0),
     ],
 
     //Redis
     'redis' => [
         'host' => \App\components\Helper::env('REDIS_HOST', '127.0.0.1'),
-        'port' => \App\components\Helper::env('REDIS_PORT', 6379),
-        'timeout' => \App\components\Helper::env('REDIS_TIMEOUT', 1),
-        'pool_size' => \App\components\Helper::env('REDIS_POOL_SIZE', 5),
+        'port' => \App\components\Helper::envInt('REDIS_PORT', 6379),
+        'timeout' => \App\components\Helper::envDouble('REDIS_TIMEOUT', 1),
+        'pool_size' => \App\components\Helper::envInt('REDIS_POOL_SIZE', 5),
         'passwd' => \App\components\Helper::env('REDIS_PASSWD', null),
-        'db' => \App\components\Helper::env('REDIS_DB', 0),
-        'switch' => \App\components\Helper::env('REDIS_SWITCH', 1),
+        'db' => \App\components\Helper::envInt('REDIS_DB', 0),
+        'switch' => \App\components\Helper::envInt('REDIS_SWITCH', 1),
     ],
 
     //MySQL
@@ -42,18 +42,18 @@ return [
             \PDO::ATTR_STRINGIFY_FETCHES => false,
             \PDO::ATTR_EMULATE_PREPARES => false,
         ],
-        'pool_size' => \App\components\Helper::env('MYSQL_POOL_SIZE', 5),
-        'switch' => \App\components\Helper::env('MYSQL_SWITCH', 1),
+        'pool_size' => \App\components\Helper::envInt('MYSQL_POOL_SIZE', 5),
+        'switch' => \App\components\Helper::envInt('MYSQL_SWITCH', 1),
     ],
 
     //Log
     'log' => [
         'path' => \App\components\Helper::env('LOG_PATH', __DIR__ . '/../runtime/logs/app-{date}.log'),
-        'level' => \App\components\Helper::env('LOG_LEVEL', \Monolog\Logger::DEBUG),
-        'pool_size' => \App\components\Helper::env('LOG_POOL_SIZE', 100),
-        'buffer_max_size' => \App\components\Helper::env('LOG_BUFFER_MAX_SIZE', 10),
+        'level' => \App\components\Helper::envInt('LOG_LEVEL', \Monolog\Logger::DEBUG),
+        'pool_size' => \App\components\Helper::envInt('LOG_POOL_SIZE', 100),
+        'buffer_max_size' => \App\components\Helper::envInt('LOG_BUFFER_MAX_SIZE', 10),
         'name' => \App\components\Helper::env('LOG_NAME', 'sw-fw-less'),
-        'reserve_days' => \App\components\Helper::env('LOG_RESERVE_DAYS', 3),
-        'switch' => \App\components\Helper::env('LOG_SWITCH', 1),
+        'reserve_days' => \App\components\Helper::envInt('LOG_RESERVE_DAYS', 3),
+        'switch' => \App\components\Helper::envInt('LOG_SWITCH', 1),
     ],
 ];
