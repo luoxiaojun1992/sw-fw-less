@@ -26,13 +26,13 @@ $http->on('workerStart', function($server, $id) {
         \App\components\Config::get('redis.passwd'),
         \App\components\Config::get('redis.db')
     );
-    \App\components\MysqlPool::create(
-        \App\components\Config::get('mysql.dsn'),
-        \App\components\Config::get('mysql.username'),
-        \App\components\Config::get('mysql.passwd'),
-        \App\components\Config::get('mysql.options'),
-        \App\components\Config::get('mysql.pool_size')
-    );
+//    \App\components\MysqlPool::create(
+//        \App\components\Config::get('mysql.dsn'),
+//        \App\components\Config::get('mysql.username'),
+//        \App\components\Config::get('mysql.passwd'),
+//        \App\components\Config::get('mysql.options'),
+//        \App\components\Config::get('mysql.pool_size')
+//    );
 });
 
 $http->on("request", function (\Swoole\Http\Request $request, \Swoole\Http\Response $response) use ($dispatcher) {

@@ -2,6 +2,7 @@
 
 namespace App\services;
 
+use App\components\Log;
 use App\components\RedisPool;
 use App\components\Response;
 use App\models\Member;
@@ -12,9 +13,12 @@ class DemoService extends BaseService
     public function redis()
     {
         $redisPool = RedisPool::create();
+        /** @var \Redis $redis */
         $redis = $redisPool->pick();
         $result = $redis->get($this->getRequest()->param('key', 'key'));
         $redisPool->release($redis);
+
+        Log::create()->info('test');
 
         return Response::output($result);
     }
