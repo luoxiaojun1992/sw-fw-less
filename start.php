@@ -18,6 +18,19 @@ $http->set(array(
 ));
 
 $http->on('workerStart', function($server, $id) {
+    //Log
+    if (\App\components\Config::get('log.switch')) {
+        \App\components\Log::create(
+            \App\components\Config::get('log.path'),
+            \App\components\Config::get('log.level'),
+            \App\components\Config::get('log.pool_size'),
+            \App\components\Config::get('log.buffer_max_size'),
+            \App\components\Config::get('log.name'),
+            \App\components\Config::get('log.reserve_days')
+        );
+    }
+
+    //Redis
     if (\App\components\Config::get('redis.switch')) {
         \App\components\RedisPool::create(
             \App\components\Config::get('redis.host'),
@@ -28,6 +41,8 @@ $http->on('workerStart', function($server, $id) {
             \App\components\Config::get('redis.db')
         );
     }
+
+    //MySQL
     if (\App\components\Config::get('mysql.switch')) {
         \App\components\MysqlPool::create(
             \App\components\Config::get('mysql.dsn'),

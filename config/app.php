@@ -52,7 +52,8 @@ return [
         'level' => \App\components\Helper::env('LOG_LEVEL', \Monolog\Logger::DEBUG),
         'pool_size' => \App\components\Helper::env('LOG_POOL_SIZE', 100),
         'buffer_max_size' => \App\components\Helper::env('LOG_BUFFER_MAX_SIZE', 10),
-        //todo name
-        //todo reserve days
+        'name' => \App\components\Helper::env('LOG_NAME', 'sw-fw-less'),
+        'reserve_days' => \App\components\Helper::env('LOG_RESERVE_DAYS', 3),
+        'switch' => \App\components\Helper::env('LOG_SWITCH', 1),
     ],
 ];

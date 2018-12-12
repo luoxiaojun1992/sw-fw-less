@@ -10,14 +10,6 @@ require_once __DIR__ . '/vendor/autoload.php';
 //Init Config
 \App\components\Config::init(require_once __DIR__ . '/config/app.php');
 
-//Log
-\App\components\Log::create(
-    \App\components\Config::get('log.path'),
-    \App\components\Config::get('log.level'),
-    \App\components\Config::get('log.pool_size'),
-    \App\components\Config::get('log.buffer_max_size')
-);
-
 //Route Config
 $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
     $routerConfig = \App\components\Config::get('router');
