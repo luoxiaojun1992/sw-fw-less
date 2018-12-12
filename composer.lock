@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "56f87c36d296043c64f39bad0b3a6b5d",
+    "content-hash": "6349e427c3b60623d461b96e79d347e8",
     "packages": [
         {
             "name": "aura/sqlquery",
@@ -126,16 +126,16 @@
         },
         {
             "name": "luoxiaojun1992/monolog-co-stream-handler",
-            "version": "v1.0.3",
+            "version": "v1.0.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/luoxiaojun1992/monolog-co-stream-handler.git",
-                "reference": "acf235e4a8457016095211f981baa81f3cc8de42"
+                "reference": "7e0f237d3db609a79a4b25b84f232db240ff35f1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/luoxiaojun1992/monolog-co-stream-handler/zipball/acf235e4a8457016095211f981baa81f3cc8de42",
-                "reference": "acf235e4a8457016095211f981baa81f3cc8de42",
+                "url": "https://api.github.com/repos/luoxiaojun1992/monolog-co-stream-handler/zipball/7e0f237d3db609a79a4b25b84f232db240ff35f1",
+                "reference": "7e0f237d3db609a79a4b25b84f232db240ff35f1",
                 "shasum": ""
             },
             "require": {
@@ -159,7 +159,7 @@
                 }
             ],
             "description": "Monolog Coroutine Stream Handler",
-            "time": "2018-12-12T06:16:33+00:00"
+            "time": "2018-12-12T09:50:49+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -904,16 +904,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "7.5.0",
+            "version": "7.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "520723129e2b3fc1dc4c0953e43c9d40e1ecb352"
+                "reference": "c23d78776ad415d5506e0679723cb461d71f488f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/520723129e2b3fc1dc4c0953e43c9d40e1ecb352",
-                "reference": "520723129e2b3fc1dc4c0953e43c9d40e1ecb352",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/c23d78776ad415d5506e0679723cb461d71f488f",
+                "reference": "c23d78776ad415d5506e0679723cb461d71f488f",
                 "shasum": ""
             },
             "require": {
@@ -984,7 +984,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2018-12-07T07:08:12+00:00"
+            "time": "2018-12-12T07:20:32+00:00"
         },
         {
             "name": "psr/http-message",

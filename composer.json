@@ -8,7 +8,7 @@
         "swlib/saber": "^1",
         "vlucas/phpdotenv": "~2.2",
         "monolog/monolog": "^1",
-        "luoxiaojun1992/monolog-co-stream-handler": "1.0.3"
+        "luoxiaojun1992/monolog-co-stream-handler": "1.0.5"
     },
     "license": "apache-2.0",
     "authors": [
