@@ -18,25 +18,31 @@ $http->set(array(
 ));
 
 $http->on('workerStart', function($server, $id) {
-    \App\components\RedisPool::create(
-        \App\components\Config::get('redis.host'),
-        \App\components\Config::get('redis.port'),
-        \App\components\Config::get('redis.timeout'),
-        \App\components\Config::get('redis.pool_size'),
-        \App\components\Config::get('redis.passwd'),
-        \App\components\Config::get('redis.db')
-    );
-//    \App\components\MysqlPool::create(
-//        \App\components\Config::get('mysql.dsn'),
-//        \App\components\Config::get('mysql.username'),
-//        \App\components\Config::get('mysql.passwd'),
-//        \App\components\Config::get('mysql.options'),
-//        \App\components\Config::get('mysql.pool_size')
-//    );
+    if (\App\components\Config::get('redis.switch')) {
+        \App\components\RedisPool::create(
+            \App\components\Config::get('redis.host'),
+            \App\components\Config::get('redis.port'),
+            \App\components\Config::get('redis.timeout'),
+            \App\components\Config::get('redis.pool_size'),
+            \App\components\Config::get('redis.passwd'),
+            \App\components\Config::get('redis.db')
+        );
+    }
+    if (\App\components\Config::get('mysql.switch')) {
+        \App\components\MysqlPool::create(
+            \App\components\Config::get('mysql.dsn'),
+            \App\components\Config::get('mysql.username'),
+            \App\components\Config::get('mysql.passwd'),
+            \App\components\Config::get('mysql.options'),
+            \App\components\Config::get('mysql.pool_size')
+        );
+    }
 });
 
 $http->on("request", function (\Swoole\Http\Request $request, \Swoole\Http\Response $response) use ($dispatcher) {
     try {
+        clearstatcache();
+
         $requestUri = $request->server['request_uri'];
         if (false !== $pos = strpos($requestUri, '?')) {
             $requestUri = substr($requestUri, 0, $pos);

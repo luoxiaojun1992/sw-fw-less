@@ -27,6 +27,7 @@ return [
         'pool_size' => \App\components\Helper::env('REDIS_POOL_SIZE', 5),
         'passwd' => \App\components\Helper::env('REDIS_PASSWD', null),
         'db' => \App\components\Helper::env('REDIS_DB', 0),
+        'switch' => \App\components\Helper::env('REDIS_SWITCH', 1),
     ],
 
     //MySQL
@@ -42,6 +43,7 @@ return [
             \PDO::ATTR_EMULATE_PREPARES => false,
         ],
         'pool_size' => \App\components\Helper::env('MYSQL_POOL_SIZE', 5),
+        'switch' => \App\components\Helper::env('MYSQL_SWITCH', 1),
     ],
 
     //Log
