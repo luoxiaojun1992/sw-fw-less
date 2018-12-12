@@ -2,6 +2,8 @@
 
 namespace App\components;
 
+use App\facades\RedisPool;
+
 class RedisWrapper
 {
     /** @var \Redis */
@@ -101,7 +103,7 @@ class RedisWrapper
     private function handleCommandException(\RedisException $e)
     {
         if (!$this->inTransaction() && Helper::causedByLostConnection($e)) {
-            $this->redis = RedisPool::create()->getConnect()->getRedis();
+            $this->redis = RedisPool::getConnect()->getRedis();
         }
     }
 }

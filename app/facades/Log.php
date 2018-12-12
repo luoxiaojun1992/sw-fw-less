@@ -2,8 +2,6 @@
 
 namespace App\facades;
 
-use phpDocumentor\Reflection\Types\Static_;
-
 /**
  * Class Log
  *

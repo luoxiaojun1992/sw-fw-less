@@ -2,6 +2,7 @@
 
 namespace App\components;
 
+use App\facades\MysqlPool;
 use Aura\SqlQuery\QueryFactory;
 use Aura\SqlQuery\QueryInterface;
 
@@ -122,7 +123,7 @@ class Query
         }
 
         try {
-            $pdo = $pdo ?: MysqlPool::create()->pick();
+            $pdo = $pdo ?: MysqlPool::pick();
             $result = call_user_func_array([$this, $doMethod], [$pdo, $mode]);
             $this->releasePDO($pdo);
             return $result;
@@ -146,7 +147,7 @@ class Query
     private function releasePDO($pdo)
     {
         if ($this->needRelease) {
-            MysqlPool::create()->release($pdo);
+            MysqlPool::release($pdo);
         }
     }
 
@@ -201,7 +202,7 @@ class Query
     private function handleMysqlExecuteException($pdo, \PDOException $e)
     {
         if (!$pdo->inTransaction() && Helper::causedByLostConnection($e)) {
-            $pdo = MysqlPool::create()->getConnect();
+            $pdo = MysqlPool::getConnect();
         }
 
         return $pdo;
