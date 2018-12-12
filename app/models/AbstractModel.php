@@ -4,6 +4,10 @@ namespace App\models;
 
 use App\components\Helper;
 use App\components\ModelQuery;
+use Aura\SqlQuery\Common\DeleteInterface;
+use Aura\SqlQuery\Common\InsertInterface;
+use Aura\SqlQuery\Common\SelectInterface;
+use Aura\SqlQuery\Common\UpdateInterface;
 use Aura\SqlQuery\QueryInterface;
 
 abstract class AbstractModel
@@ -13,7 +17,7 @@ abstract class AbstractModel
     private $attributes = [];
 
     /**
-     * @return ModelQuery|QueryInterface
+     * @return ModelQuery|QueryInterface|SelectInterface|InsertInterface|DeleteInterface|UpdateInterface
      */
     public static function select()
     {
@@ -21,7 +25,7 @@ abstract class AbstractModel
     }
 
     /**
-     * @return ModelQuery|QueryInterface
+     * @return ModelQuery|QueryInterface|SelectInterface|InsertInterface|DeleteInterface|UpdateInterface
      */
     public static function update()
     {
@@ -29,7 +33,7 @@ abstract class AbstractModel
     }
 
     /**
-     * @return ModelQuery|QueryInterface
+     * @return ModelQuery|QueryInterface|SelectInterface|InsertInterface|DeleteInterface|UpdateInterface
      */
     public static function insert()
     {
@@ -37,7 +41,7 @@ abstract class AbstractModel
     }
 
     /**
-     * @return ModelQuery|QueryInterface
+     * @return ModelQuery|QueryInterface|SelectInterface|InsertInterface|DeleteInterface|UpdateInterface
      */
     public static function delete()
     {

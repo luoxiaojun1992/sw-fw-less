@@ -21,7 +21,7 @@ class ModelQuery extends Query
 
     /**
      * @param null $pdo
-     * @return mixed
+     * @return AbstractModel
      */
     public function first($pdo = null)
     {
@@ -32,7 +32,7 @@ class ModelQuery extends Query
 
     /**
      * @param null $pdo
-     * @return array|mixed
+     * @return AbstractModel[]
      */
     public function get($pdo = null)
     {
