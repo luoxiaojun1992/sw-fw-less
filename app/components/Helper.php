@@ -16,6 +16,32 @@ class Helper
     }
 
     /**
+     * @param $arr
+     * @param $keys
+     * @return null
+     */
+    public static function nestedArrGet($arr, $keys)
+    {
+        if (is_string($keys)) {
+            $keys = explode('.', $keys);
+        } else {
+            if (!is_array($keys)) {
+                return null;
+            }
+        }
+
+        foreach ($keys as $key) {
+            if (isset($arr[$key])) {
+                $arr = $arr[$key];
+            } else {
+                $arr = null;
+            }
+        }
+
+        return $arr;
+    }
+
+    /**
      * Determine if the given exception was caused by a lost connection.
      *
      * @param  \Exception $e

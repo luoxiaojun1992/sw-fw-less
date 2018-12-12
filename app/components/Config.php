@@ -20,23 +20,13 @@ class Config
      */
     public static function get($key)
     {
-        if (!is_string($key)) {
-            return null;
-        }
         if (!$key) {
             return null;
         }
-
-        $arr = self::$config;
-        $keys = explode('.', $key);
-        foreach ($keys as $key) {
-            if (isset($arr[$key])) {
-                $arr = $arr[$key];
-            } else {
-                $arr = null;
-            }
+        if (!is_string($key) && !is_array($key)) {
+            return null;
         }
 
-        return $arr;
+        return Helper::nestedArrGet(self::$config, $key);
     }
 }
