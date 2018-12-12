@@ -1,3 +1,6 @@
 /vendor/
-.idea
-.env
+/.idea
+/.idea/
+/.env
+/runtime
+/runtime/
