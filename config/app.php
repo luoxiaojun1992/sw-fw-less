@@ -48,9 +48,11 @@ return [
 
     //Log
     'log' => [
-        'path' => \App\components\Helper::env('LOG_PATH', __DIR__ . '/../runtime/logs/app.log'),
+        'path' => \App\components\Helper::env('LOG_PATH', __DIR__ . '/../runtime/logs/app-{date}.log'),
         'level' => \App\components\Helper::env('LOG_LEVEL', \Monolog\Logger::DEBUG),
         'pool_size' => \App\components\Helper::env('LOG_POOL_SIZE', 100),
         'buffer_max_size' => \App\components\Helper::env('LOG_BUFFER_MAX_SIZE', 10),
+        //todo name
+        //todo reserve days
     ],
 ];
