@@ -34,7 +34,11 @@ class Manager
             return self::$instance;
         }
 
-        return self::$instance = new self();
+        if (Config::get('elasticsearch.switch')) {
+            return self::$instance = new self();
+        } else {
+            return null;
+        }
     }
 
     /**

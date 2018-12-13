@@ -48,7 +48,11 @@ class Log
             return self::$instance;
         }
 
-        return self::$instance = new self($log_path, $level, $pool_size, $buffer_max_size, $name, $reserve_days);
+        if (Config::get('log.switch')) {
+            return self::$instance = new self($log_path, $level, $pool_size, $buffer_max_size, $name, $reserve_days);
+        } else {
+            return null;
+        }
     }
 
     /**

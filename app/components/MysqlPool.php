@@ -21,7 +21,11 @@ class MysqlPool
             return self::$instance;
         }
 
-        return self::$instance = new self($dsn, $username, $passwd, $options, $poolSize);
+        if (Config::get('mysql.switch')) {
+            return self::$instance = new self($dsn, $username, $passwd, $options, $poolSize);
+        } else {
+            return null;
+        }
     }
 
     /**

@@ -22,7 +22,11 @@ class RedisPool
             return self::$instance;
         }
 
-        return self::$instance = new self($host, $port, $timeout, $poolSize, $passwd, $db);
+        if (Config::get('redis.switch')) {
+            return self::$instance = new self($host, $port, $timeout, $poolSize, $passwd, $db);
+        } else {
+            return null;
+        }
     }
 
     /**
