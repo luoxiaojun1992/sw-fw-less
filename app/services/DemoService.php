@@ -14,9 +14,9 @@ class DemoService extends BaseService
 {
     public function redis()
     {
-        //Param Validation
         $params = $this->getRequest()->all();
 
+        //Param Validation
         $errors = (new Validator())->requirePresence('key')
             ->lengthBetween('key', [1, 10])
             ->add('key', 'string', [
@@ -26,8 +26,6 @@ class DemoService extends BaseService
         if (count($errors) > 0) {
             return Response::json(['code' => 1, 'msg' => json_encode($errors, JSON_UNESCAPED_UNICODE), 'data' => []]);
         }
-
-        //todo choose another validator or custom
 
         /** @var \Redis $redis */
         $redis = RedisPool::pick();
