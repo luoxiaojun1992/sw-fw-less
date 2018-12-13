@@ -80,6 +80,14 @@ class Request
     }
 
     /**
+     * @return array
+     */
+    public function all()
+    {
+        return array_merge((array)$this->getSwRequest()->get, (array)$this->getSwRequest()->post, (array)$this->getSwRequest()->files);
+    }
+
+    /**
      * @param $name
      * @param null $default
      * @return null

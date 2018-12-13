@@ -7,20 +7,36 @@ use App\facades\Log;
 use App\facades\RedisPool;
 use App\models\Member;
 use App\models\Test;
+use Cake\Validation\Validator;
 use Swlib\SaberGM;
 
 class DemoService extends BaseService
 {
     public function redis()
     {
+        //Param Validation
+        $params = $this->getRequest()->all();
+
+        $errors = (new Validator())->requirePresence('key')
+            ->lengthBetween('key', [1, 10])
+            ->add('key', 'string', [
+                'rule' => [\App\components\Validator::class, 'string'],
+                'message' => 'key is not a string'
+            ])->errors($params);
+        if (count($errors) > 0) {
+            return Response::json(['code' => 1, 'msg' => json_encode($errors, JSON_UNESCAPED_UNICODE), 'data' => []]);
+        }
+
+        //todo choose another validator or custom
+
         /** @var \Redis $redis */
         $redis = RedisPool::pick();
-        $result = $redis->get($this->getRequest()->param('key', 'key'));
+        $result = $redis->get($params['key']);
         RedisPool::release($redis);
 
         Log::info('test');
 
-        return Response::output($result);
+        return Response::json(['code' => 0, 'msg' => 'ok', 'data' => $result]);
     }
 
     public function mysql()
