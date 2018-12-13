@@ -65,6 +65,7 @@ return [
                 'hosts' => [
                     \App\components\Helper::env('ES_DEFAULT_HOST', '127.0.0.1:9200'),
                 ],
+                'timeout' => \App\components\Helper::envDouble('ES_TIMEOUT', 1),
             ],
         ],
         'switch' => \App\components\Helper::envInt('ES_SWITCH', 0),
