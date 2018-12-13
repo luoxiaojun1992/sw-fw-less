@@ -2,11 +2,11 @@
 
 namespace App\components;
 
-use App\models\AbstractModel;
+use App\models\AbstractMysqlModel;
 
 class ModelQuery extends Query
 {
-    /** @var AbstractModel */
+    /** @var AbstractMysqlModel */
     public $modelClass;
 
     /**
@@ -21,7 +21,7 @@ class ModelQuery extends Query
 
     /**
      * @param null $pdo
-     * @return AbstractModel
+     * @return AbstractMysqlModel
      */
     public function first($pdo = null)
     {
@@ -32,7 +32,7 @@ class ModelQuery extends Query
 
     /**
      * @param null $pdo
-     * @return AbstractModel[]
+     * @return AbstractMysqlModel[]|array
      */
     public function get($pdo = null)
     {

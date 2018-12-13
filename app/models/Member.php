@@ -2,7 +2,7 @@
 
 namespace App\models;
 
-class Member extends AbstractModel
+class Member extends AbstractMysqlModel
 {
     protected static $table = 'member';
 }

@@ -8,26 +8,54 @@ use Lxj\Laravel\Elasticsearch\Builder\QueryBuilder;
 
 class BuilderFactory
 {
-    public static function createQueryBuilder()
+    /**
+     * @param null $builderClass
+     * @return QueryBuilder|ModelQuery
+     */
+    public static function createQueryBuilder($builderClass = null)
     {
-        return self::createQueryBuilderFromConnection();
+        return self::createQueryBuilderFromConnection($builderClass);
     }
 
-    public static function createIndexBuilder()
+    /**
+     * @param null $builderClass
+     * @return IndexBuilder|ModelIndex
+     */
+    public static function createIndexBuilder($builderClass = null)
     {
-        return self::createIndexBuilderFromConnection();
+        return self::createIndexBuilderFromConnection($builderClass);
     }
 
-    public static function createQueryBuilderFromConnection($connection = 'default')
+    /**
+     * @param null $builderClass
+     * @param string $connection
+     * @return QueryBuilder|ModelQuery
+     */
+    public static function createQueryBuilderFromConnection($builderClass = null, $connection = 'default')
     {
-        return new QueryBuilder(self::createConnection($connection));
+        if (!$builderClass) {
+            $builderClass = QueryBuilder::class;
+        }
+        return new $builderClass(self::createConnection($connection));
     }
 
-    public static function createIndexBuilderFromConnection($connection = 'default')
+    /**
+     * @param null $builderClass
+     * @param string $connection
+     * @return IndexBuilder|ModelIndex
+     */
+    public static function createIndexBuilderFromConnection($builderClass = null, $connection = 'default')
     {
-        return new IndexBuilder(self::createConnection($connection));
+        if (!$builderClass) {
+            $builderClass = IndexBuilder::class;
+        }
+        return new $builderClass(self::createConnection($connection));
     }
 
+    /**
+     * @param string $connection
+     * @return \Elasticsearch\Client|null
+     */
     public static function createConnection($connection = 'default')
     {
         return Es::connection($connection);

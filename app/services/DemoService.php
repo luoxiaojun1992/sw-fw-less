@@ -2,11 +2,11 @@
 
 namespace App\services;
 
-use App\components\es\BuilderFactory;
 use App\components\Response;
 use App\facades\Log;
 use App\facades\RedisPool;
 use App\models\Member;
+use App\models\Test;
 use Swlib\SaberGM;
 
 class DemoService extends BaseService
@@ -44,8 +44,12 @@ class DemoService extends BaseService
 
     public function es()
     {
-        $query = BuilderFactory::createQueryBuilder();
-        $result = $query->index('test')->type('test')->filterTerm('foo', 'bar')->search();
+        $models = Test::query()->filterTerm('foo', 'bar')->search();
+
+        $result = [];
+        foreach ($models as $model) {
+            $result[] = $model->toArray();
+        }
 
         return Response::json($result);
     }
