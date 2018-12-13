@@ -2,6 +2,7 @@
 
 namespace App\components\es;
 
+use App\facades\Es;
 use Lxj\Laravel\Elasticsearch\Builder\IndexBuilder;
 use Lxj\Laravel\Elasticsearch\Builder\QueryBuilder;
 
@@ -29,7 +30,6 @@ class BuilderFactory
 
     public static function createConnection($connection = 'default')
     {
-        //todo replace with facade
-        return Manager::create()->connection($connection);
+        return Es::connection($connection);
     }
 }
