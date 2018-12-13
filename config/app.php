@@ -28,7 +28,7 @@ return [
         'pool_size' => \App\components\Helper::envInt('REDIS_POOL_SIZE', 5),
         'passwd' => \App\components\Helper::env('REDIS_PASSWD', null),
         'db' => \App\components\Helper::envInt('REDIS_DB', 0),
-        'switch' => \App\components\Helper::envInt('REDIS_SWITCH', 1),
+        'switch' => \App\components\Helper::envInt('REDIS_SWITCH', 0),
     ],
 
     //MySQL
@@ -44,7 +44,7 @@ return [
             \PDO::ATTR_EMULATE_PREPARES => false,
         ],
         'pool_size' => \App\components\Helper::envInt('MYSQL_POOL_SIZE', 5),
-        'switch' => \App\components\Helper::envInt('MYSQL_SWITCH', 1),
+        'switch' => \App\components\Helper::envInt('MYSQL_SWITCH', 0),
     ],
 
     //Log
@@ -55,7 +55,7 @@ return [
         'buffer_max_size' => \App\components\Helper::envInt('LOG_BUFFER_MAX_SIZE', 10),
         'name' => \App\components\Helper::env('LOG_NAME', 'sw-fw-less'),
         'reserve_days' => \App\components\Helper::envInt('LOG_RESERVE_DAYS', 3),
-        'switch' => \App\components\Helper::envInt('LOG_SWITCH', 1),
+        'switch' => \App\components\Helper::envInt('LOG_SWITCH', 0),
     ],
 
     //elasticsearch
@@ -63,10 +63,10 @@ return [
         'connections' => [
             'default' => [
                 'hosts' => [
-                    'elastic:0600120597Abc@127.0.0.1:9200',
+                    \App\components\Helper::env('ES_DEFAULT_HOST', '127.0.0.1:9200'),
                 ],
             ],
         ],
-        'switch' => 1,
+        'switch' => \App\components\Helper::envInt('ES_SWITCH', 0),
     ],
 ];
