@@ -2,6 +2,8 @@
 
 namespace App\facades;
 
+use Monolog\Logger;
+
 /**
  * Class Log
  *
@@ -18,6 +20,7 @@ namespace App\facades;
  * @method static bool alert($message, array $context = array())
  * @method static bool emerg($message, array $context = array())
  * @method static bool emergency($message, array $context = array())
+ * @method static Logger getLogger()
  * @package App\facades
  */
 class Log extends AbstractFacade

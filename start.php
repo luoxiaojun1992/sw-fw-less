@@ -52,6 +52,11 @@ $http->on('workerStart', function($server, $id) {
             \App\components\Config::get('mysql.pool_size')
         );
     }
+
+    //Elasticsearch
+    if (\App\components\Config::get('elasticsearch.switch')) {
+        \App\components\es\Manager::create();
+    }
 });
 
 $http->on("request", function (\Swoole\Http\Request $request, \Swoole\Http\Response $response) use ($dispatcher) {

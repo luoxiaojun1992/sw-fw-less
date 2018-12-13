@@ -2,6 +2,7 @@
 
 namespace App\services;
 
+use App\components\es\BuilderFactory;
 use App\components\Response;
 use App\facades\Log;
 use App\facades\RedisPool;
@@ -39,5 +40,13 @@ class DemoService extends BaseService
         $res = SaberGM::get('http://news.baidu.com/widget?ajax=json&id=ad');
 
         return Response::json($res->getBody());
+    }
+
+    public function es()
+    {
+        $query = BuilderFactory::createQueryBuilder();
+        $result = $query->index('test')->type('test')->filterTerm('foo', 'bar')->search();
+
+        return Response::json($result);
     }
 }

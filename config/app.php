@@ -6,6 +6,7 @@ return [
         ['GET', '/redis', [\App\services\DemoService::class, 'redis']],
         ['GET', '/mysql', [\App\services\DemoService::class, 'mysql']],
         ['GET', '/http', [\App\services\DemoService::class, 'http']],
+        ['GET', '/es', [\App\services\DemoService::class, 'es']],
     ],
 
     //Server
@@ -55,5 +56,17 @@ return [
         'name' => \App\components\Helper::env('LOG_NAME', 'sw-fw-less'),
         'reserve_days' => \App\components\Helper::envInt('LOG_RESERVE_DAYS', 3),
         'switch' => \App\components\Helper::envInt('LOG_SWITCH', 1),
+    ],
+
+    //elasticsearch
+    'elasticsearch' => [
+        'connections' => [
+            'default' => [
+                'hosts' => [
+                    'elastic:0600120597Abc@127.0.0.1:9200',
+                ],
+            ],
+        ],
+        'switch' => 1,
     ],
 ];

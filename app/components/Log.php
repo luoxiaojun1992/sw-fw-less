@@ -130,6 +130,14 @@ class Log
     }
 
     /**
+     * @return Logger
+     */
+    public function getLogger()
+    {
+        return $this->logger;
+    }
+
+    /**
      * @param $name
      * @param $arguments
      * @return mixed|null
