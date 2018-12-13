@@ -21,7 +21,6 @@ class Manager
 {
     private static $instance;
 
-    protected $connections;
     protected $config;
 
     public function __construct()
@@ -46,32 +45,10 @@ class Manager
      */
     public function connection($connection_name = 'default')
     {
-        return isset($this->connections[$connection_name]) ?
-            $this->connections[$connection_name] :
-            $this->addConnection($connection_name);
-    }
-
-    /**
-     * 添加ES连接
-     *
-     * @param  $connection_name
-     * @return Client|null
-     */
-    protected function addConnection($connection_name = 'default')
-    {
-        if (isset($this->connections[$connection_name])) {
-            return $this->connections[$connection_name];
-        }
-
-        $connections_config = $this->config['connections'];
-        if (isset($connections_config[$connection_name])) {
-            $clientBuilder = ClientBuilder::create();
-            $clientBuilder->setHosts($connections_config[$connection_name]['hosts']);
-            $clientBuilder->setLogger(Log::getLogger());
-            $clientBuilder->setHandler(new GuzzleCoHandler());
-            return $this->connections[$connection_name] = $clientBuilder->build();
-        }
-
-        return null;
+        $clientBuilder = ClientBuilder::create();
+        $clientBuilder->setHosts($this->config['connections'][$connection_name]['hosts']);
+        $clientBuilder->setLogger(Log::getLogger());
+        $clientBuilder->setHandler(new GuzzleCoHandler(['timeout' => 1]));
+        return $clientBuilder->build();
     }
 }

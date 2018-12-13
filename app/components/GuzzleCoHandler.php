@@ -43,7 +43,7 @@ class GuzzleCoHandler
 
     public function __construct($options = [])
     {
-        $this->options;
+        $this->options = $options;
     }
 
     public function __invoke($request)
