@@ -77,16 +77,6 @@ class GuzzleCoHandler
         $this->btime = microtime(true);
         $this->client->execute($path);
 
-        $ex = $this->checkStatusCode($request);
-        if ($ex !== true) {
-            return [
-                'status' => null,
-                'reason' => null,
-                'headers' => [],
-                'error' => $ex
-            ];
-        }
-
         return $this->getResponse();
     }
 
@@ -120,26 +110,56 @@ class GuzzleCoHandler
 
     protected function getResponse()
     {
-        return new CompletedFutureArray([
-            'transfer_stats' => [
-                'total_time' => microtime(true) - $this->btime,
-            ],
-            'effective_url' => $this->effectiveUrl,
-            'headers' => isset($this->client->headers) ? $this->client->headers : [],
-            'status' => $this->client->statusCode,
-            'body' => fopen('data://text/plain,' . $this->client->body,'r')
-        ]);
+        $ex = $this->checkStatusCode();
+        if ($ex !== true) {
+            return new CompletedFutureArray([
+                'reason' => null,
+                'error' => $ex,
+                'transfer_stats' => [
+                    'total_time' => microtime(true) - $this->btime,
+                ],
+                'effective_url' => $this->effectiveUrl,
+                'headers' => isset($this->client->headers) ? $this->client->headers : [],
+                'status' => $this->client->statusCode,
+                'body' => fopen('data://text/plain,' . $this->client->body, 'r'),
+                'curl' => [
+                    'errno' => $this->client->errCode,
+                ]
+            ]);
+        } else {
+            return new CompletedFutureArray([
+                'transfer_stats' => [
+                    'total_time' => microtime(true) - $this->btime,
+                ],
+                'effective_url' => $this->effectiveUrl,
+                'headers' => isset($this->client->headers) ? $this->client->headers : [],
+                'status' => $this->client->statusCode,
+                'body' => fopen('data://text/plain,' . $this->client->body, 'r')
+            ]);
+        }
     }
 
-    protected function checkStatusCode($request)
+    protected function checkStatusCode()
     {
         $statusCode = $this->client->statusCode;
         $errCode = $this->client->errCode;
+
+        if ($errCode === 110) {
+            $this->client->errCode = 28;
+        } elseif ($errCode === 111) {
+            $this->client->errCode = 7;
+        } elseif ($errCode === 113) {
+            $this->client->errCode = 6;
+        } else {
+            $this->client->errCode = -1;
+        }
 
         if ($statusCode === -1) {
             return new RingException(sprintf('Connection timed out errCode=%s', $errCode));
         } elseif ($statusCode === -2) {
             return new RingException('Request timed out');
+        } elseif ($statusCode === -3) {
+            return new RingException('Connection refused');
         }
 
         return true;
