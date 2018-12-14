@@ -58,6 +58,11 @@ $http->on('workerStart', function($server, $id) {
     if (\App\components\Config::get('elasticsearch.switch')) {
         \App\components\es\Manager::create();
     }
+
+    //Storage
+    if (\App\components\Config::get('storage.switch')) {
+        \App\components\storage\File::create();
+    }
 });
 
 $http->on("request", function (\Swoole\Http\Request $request, \Swoole\Http\Response $response) use ($dispatcher) {

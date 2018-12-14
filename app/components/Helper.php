@@ -135,7 +135,7 @@ class Helper
      */
     public static function basePath()
     {
-        return Config::get('base_path');
+        return Config::get('storage.base_path');
     }
 
     /**
@@ -143,7 +143,7 @@ class Helper
      */
     public static function appPath()
     {
-        return Config::get('base_path') . 'app/';
+        return Config::get('storage.base_path') . 'app/';
     }
 
     /**

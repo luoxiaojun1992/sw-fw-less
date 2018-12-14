@@ -11,7 +11,8 @@
         "luoxiaojun1992/monolog-co-stream-handler": "1.0.8",
         "elasticsearch/elasticsearch": "~6",
         "luoxiaojun1992/laravel-elasticsearch": "1.0.2",
-        "cakephp/validation": "~3"
+        "cakephp/validation": "~3",
+        "league/flysystem": "~1"
     },
     "license": "apache-2.0",
     "authors": [

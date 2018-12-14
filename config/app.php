@@ -1,14 +1,13 @@
 <?php
 
 return [
-    'base_path' => __DIR__ . '/../',
-
     //Router
     'router' => [
         ['GET', '/redis', [\App\services\DemoService::class, 'redis', [\App\middlewares\Cors::class]]],
         ['GET', '/mysql', [\App\services\DemoService::class, 'mysql']],
         ['GET', '/http', [\App\services\DemoService::class, 'http']],
         ['GET', '/es', [\App\services\DemoService::class, 'es']],
+        ['GET', '/file', [\App\services\DemoService::class, 'file']],
     ],
 
     //Server
@@ -83,5 +82,13 @@ return [
     'cors' => [
         'origin' => \App\components\Helper::env('CORS_ORIGIN', ''),
         'switch' => \App\components\Helper::envInt('CORS_SWITCH', 0),
+    ],
+
+    //Storage
+    'storage' => [
+        'base_path' => \App\components\Helper::env('APP_BASE_PATH', __DIR__ . '/../'),
+        'switch' => \App\components\Helper::envInt('STORAGE_SWITCH', 0),
+        'storage_path' => \App\components\Helper::env('STORAGE_PATH', __DIR__ . '/../runtime/storage/'),
+        'types' => ['file'],
     ],
 ];
