@@ -93,6 +93,6 @@ return [
         'ext' => [
             'qiniu' => [],
             'alioss' => [],
-        ]
+        ],
     ],
 ];
