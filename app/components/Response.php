@@ -39,6 +39,17 @@ class Response
     }
 
     /**
+     * @param $key
+     * @param $value
+     * @return $this
+     */
+    public function header($key, $value)
+    {
+        $this->headers[$key] = $value;
+        return $this;
+    }
+
+    /**
      * @return mixed
      */
     public function getContent()

@@ -75,4 +75,10 @@ return [
     'middleware' => [
         //\App\middlewares\Cors::class,
     ],
+
+    //Cors
+    'cors' => [
+        'origin' => \App\components\Helper::env('CORS_ORIGIN', ''),
+        'switch' => \App\components\Helper::envInt('CORS_SWITCH', 0),
+    ],
 ];
