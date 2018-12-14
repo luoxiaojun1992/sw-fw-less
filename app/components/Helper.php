@@ -131,27 +131,22 @@ class Helper
     }
 
     /**
-     * @return array|mixed|null
+     * @param $data
+     * @param int $options
+     * @return false|string
      */
-    public static function basePath()
+    public static function jsonEncode($data, $options = JSON_UNESCAPED_UNICODE)
     {
-        return Config::get('storage.base_path');
+        return json_encode($data, $options);
     }
 
     /**
-     * @return string
+     * @param $data
+     * @param bool $assoc
+     * @return mixed
      */
-    public static function appPath()
+    public static function jsonDecode($data, $assoc = true)
     {
-        return Config::get('storage.base_path') . 'app/';
-    }
-
-    /**
-     * @param $relativePath
-     * @return string
-     */
-    public static function path($relativePath)
-    {
-        return self::basePath() . $relativePath;
+        return json_decode($data, $assoc);
     }
 }

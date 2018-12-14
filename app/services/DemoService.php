@@ -2,6 +2,7 @@
 
 namespace App\services;
 
+use App\components\Helper;
 use App\components\Response;
 use App\facades\File;
 use App\facades\Log;
@@ -25,7 +26,7 @@ class DemoService extends BaseService
                 'message' => 'key is not a string'
             ])->errors($params);
         if (count($errors) > 0) {
-            return Response::json(['code' => 1, 'msg' => json_encode($errors, JSON_UNESCAPED_UNICODE), 'data' => []]);
+            return Response::json(['code' => 1, 'msg' => Helper::jsonEncode($errors), 'data' => []]);
         }
 
         /** @var \Redis $redis */
