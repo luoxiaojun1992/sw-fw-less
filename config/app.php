@@ -58,7 +58,7 @@ return [
         'switch' => \App\components\Helper::envInt('LOG_SWITCH', 0),
     ],
 
-    //elasticsearch
+    //Elasticsearch
     'elasticsearch' => [
         'connections' => [
             'default' => [
