@@ -25,6 +25,8 @@ class Log
 
     private $reserveDays = 3;
 
+    private $rotateLock = [true];
+
     /**
      * @param string $log_path
      * @param int $level
@@ -121,7 +123,17 @@ class Log
     private function rotate()
     {
         if (date('Ymd') != $this->loggerDate) {
-            $this->logger = $this->createLogger();
+            if (array_pop($this->rotateLock)) {
+                try {
+                    if (date('Ymd') != $this->loggerDate) {
+                        $this->logger = $this->createLogger();
+                    }
+                    array_push($this->rotateLock, true);
+                } catch (\Exception $e) {
+                    array_push($this->rotateLock, true);
+                    throw $e;
+                }
+            }
         }
     }
 

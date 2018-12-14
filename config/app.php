@@ -91,8 +91,20 @@ return [
         'storage_path' => \App\components\Helper::env('STORAGE_PATH', __DIR__ . '/../runtime/storage/'),
         'types' => ['file', 'qiniu', 'alioss'],
         'ext' => [
-            'qiniu' => [],
+            'qiniu' => [
+                'default_bucket' => \App\components\Helper::env('QINIU_DEFAULT_BUCKET', 'default'),
+                'buckets' => [
+                    \App\components\Helper::env('QINIU_DEFAULT_BUCKET', 'default') => [
+                        'access_key' => \App\components\Helper::env('QINIU_DEFAULT_ACCESS_KEY', ''),
+                        'secret_key' => \App\components\Helper::env('QINIU_DEFAULT_SECRET_KEY', ''),
+                        'domain' => \App\components\Helper::env('QINIU_DEFAULT_DOMAIN', ''),
+                    ],
+                ],
+            ],
             'alioss' => [],
         ],
     ],
+
+    //Timezone
+    'timezone' => 'PRC',
 ];

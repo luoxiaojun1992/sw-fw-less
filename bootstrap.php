@@ -10,6 +10,9 @@ require_once __DIR__ . '/vendor/autoload.php';
 //Init Config
 \App\components\Config::init(require_once __DIR__ . '/config/app.php');
 
+//Timezone
+date_default_timezone_set(\App\components\Config::get('timezone'));
+
 //Route Config
 $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
     $routerConfig = \App\components\Config::get('router');
