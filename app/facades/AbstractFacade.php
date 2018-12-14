@@ -2,7 +2,7 @@
 
 namespace App\facades;
 
-class AbstractFacade
+abstract class AbstractFacade
 {
     protected static function getAccessor()
     {

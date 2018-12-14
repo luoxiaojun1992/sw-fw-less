@@ -102,6 +102,7 @@ class Log
         );
         $logger = new Logger($this->name);
         $logger->pushHandler($handler);
+        $this->removeLogs();
         return $logger;
     }
 
@@ -121,7 +122,6 @@ class Log
     {
         if (date('Ymd') != $this->loggerDate) {
             $this->logger = $this->createLogger();
-            $this->removeLogs();
         }
     }
 

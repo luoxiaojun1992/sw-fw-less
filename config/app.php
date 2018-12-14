@@ -3,7 +3,7 @@
 return [
     //Router
     'router' => [
-        ['GET', '/redis', [\App\services\DemoService::class, 'redis']],
+        ['GET', '/redis', [\App\services\DemoService::class, 'redis', [\App\middlewares\Cors::class]]],
         ['GET', '/mysql', [\App\services\DemoService::class, 'mysql']],
         ['GET', '/http', [\App\services\DemoService::class, 'http']],
         ['GET', '/es', [\App\services\DemoService::class, 'es']],
@@ -69,5 +69,10 @@ return [
             ],
         ],
         'switch' => \App\components\Helper::envInt('ES_SWITCH', 0),
+    ],
+
+    //Middleware
+    'middleware' => [
+        //\App\middlewares\Cors::class,
     ],
 ];

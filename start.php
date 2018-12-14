@@ -85,16 +85,46 @@ $http->on("request", function (\Swoole\Http\Request $request, \Swoole\Http\Respo
             case FastRoute\Dispatcher::FOUND:
                 $handler = $routeInfo[1];
                 $handler[0] = new $handler[0];
+                $appRequest = (new \App\components\Request())->setSwRequest($request);
                 if ($handler[0] instanceof \App\services\BaseService) {
-                    $handler[0]->setRequest((new \App\components\Request())->setSwRequest($request));
+                    $handler[0]->setRequest($appRequest);
                 }
+
+                $callBack = [$handler[0], $handler[1]];
                 $vars = $routeInfo[2];
+
+                //Middleware
+                if (isset($handler[2])) {
+                    $handler[2] = array_merge(\App\components\Config::get('middleware'), $handler[2]);
+                    $middlewareCount = count($handler[2]);
+                    foreach ($handler[2] as $i => $middlewareClass) {
+                        if ($middlewareCount > 1) {
+                            if ($i > 0) {
+                                $previousMiddleware = new $handler[2][$i - 1];
+                                $currentMiddleware = new $middlewareClass;
+                                $previousMiddleware->setNext($currentMiddleware);
+                                if ($i == ($middlewareCount - 1)) {
+                                    $currentMiddleware->terminal([$handler[0], $handler[1]], $routeInfo[2]);
+                                }
+                                if ($i == 1) {
+                                    $callBack = [$previousMiddleware, 'handle'];
+                                    $vars = [$appRequest];
+                                }
+                            }
+                        } else {
+                            $currentMiddleware = new $middlewareClass;
+                            $currentMiddleware->terminal([$handler[0], $handler[1]], $routeInfo[2]);
+                            $callBack = [$currentMiddleware, 'handle'];
+                            $vars = [$appRequest];
+                        }
+                    }
+                }
 
                 ob_start();
                 /**
                  * @var \App\components\Response $res
                  */
-                $res = call_user_func_array($handler, $vars);
+                $res = call_user_func_array($callBack, $vars);
                 $obContent = ob_get_contents();
                 $content = $res->getContent();
                 if (!$content && ob_get_length() > 0) {
