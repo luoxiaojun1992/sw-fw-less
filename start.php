@@ -61,7 +61,7 @@ $http->on('workerStart', function($server, $id) {
 
     //Storage
     if (\App\components\Config::get('storage.switch')) {
-        \App\components\storage\File::create();
+        \App\components\storage\Storage::init();
     }
 });
 

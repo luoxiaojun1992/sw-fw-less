@@ -71,7 +71,11 @@ class DemoService extends BaseService
 
     public function file()
     {
-        File::prepare()->write('test.txt', 'test');
+        $filesystem = File::prepare();
+        if ($filesystem->has('test.txt')) {
+            $filesystem->delete('test.txt');
+        }
+        $filesystem->write('test.txt', 'test');
         return Response::output('ok');
     }
 }
