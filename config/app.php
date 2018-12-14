@@ -18,6 +18,7 @@ return [
         'daemonize' => \App\components\Helper::envBool('SERVER_DAEMONIZE', false),
         'backlog' => \App\components\Helper::envInt('SERVER_BACKLOG', 128),
         'max_request' => \App\components\Helper::envInt('SERVER_MAX_REQUEST', 0),
+        'dispatch_mode' => \App\components\Helper::envInt('SERVER_DISPATCH_MODE', 2),
     ],
 
     //Redis

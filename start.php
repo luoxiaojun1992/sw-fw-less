@@ -9,13 +9,14 @@ $http->on('start', function ($server){
     echo 'Listening ' . $server->ports[0]->host . ':' . $server->ports[0]->port, PHP_EOL;
 });
 
-$http->set(array(
+$http->set([
     'reactor_num' => \App\components\Config::get('server.reactor_num'),
     'worker_num' => \App\components\Config::get('server.worker_num'),
     'daemonize' => \App\components\Config::get('server.daemonize'),
     'backlog' => \App\components\Config::get('server.backlog'),
     'max_request' => \App\components\Config::get('server.max_request'),
-));
+    'dispatch_mode' => \App\components\Config::get('server.dispatch_mode'),
+]);
 
 $http->on('workerStart', function($server, $id) {
     //Log
