@@ -129,4 +129,29 @@ class Helper
     {
         return str_replace(' ', '', ucwords(str_replace('_', ' ', $string)));
     }
+
+    /**
+     * @return array|mixed|null
+     */
+    public static function basePath()
+    {
+        return Config::get('base_path');
+    }
+
+    /**
+     * @return string
+     */
+    public static function appPath()
+    {
+        return Config::get('base_path') . 'app/';
+    }
+
+    /**
+     * @param $relativePath
+     * @return string
+     */
+    public static function path($relativePath)
+    {
+        return self::basePath() . $relativePath;
+    }
 }

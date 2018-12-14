@@ -109,6 +109,30 @@ class Request
     }
 
     /**
+     * @return string
+     */
+    public function method()
+    {
+        return strtoupper($this->server('request_method'));
+    }
+
+    /**
+     * @return null
+     */
+    public function uri()
+    {
+        return $this->server('request_uri');
+    }
+
+    /**
+     * @return null
+     */
+    public function queryString()
+    {
+        return $this->server('query_string');
+    }
+
+    /**
      * @return mixed
      */
     public function body()

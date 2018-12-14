@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'base_path' => __DIR__ . '/../',
+
     //Router
     'router' => [
         ['GET', '/redis', [\App\services\DemoService::class, 'redis', [\App\middlewares\Cors::class]]],
