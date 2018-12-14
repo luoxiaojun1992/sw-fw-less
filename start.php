@@ -131,10 +131,9 @@ $http->on("request", function (\Swoole\Http\Request $request, \Swoole\Http\Respo
                  * @var \App\components\Response $res
                  */
                 $res = call_user_func_array($callBack, $vars);
-                $obContent = ob_get_contents();
                 $content = $res->getContent();
                 if (!$content && ob_get_length() > 0) {
-                    $content = $obContent;
+                    $content = ob_get_contents();
                 }
                 ob_end_clean();
 
