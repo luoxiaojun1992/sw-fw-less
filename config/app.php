@@ -90,5 +90,9 @@ return [
         'switch' => \App\components\Helper::envInt('STORAGE_SWITCH', 0),
         'storage_path' => \App\components\Helper::env('STORAGE_PATH', __DIR__ . '/../runtime/storage/'),
         'types' => ['file', 'qiniu', 'alioss'],
+        'ext' => [
+            'qiniu' => [],
+            'alioss' => [],
+        ]
     ],
 ];
