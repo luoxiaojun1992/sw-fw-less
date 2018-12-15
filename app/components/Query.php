@@ -124,20 +124,16 @@ class Query
 
         try {
             $pdo = $pdo ?: MysqlPool::pick();
-            $result = call_user_func_array([$this, $doMethod], [$pdo, $mode]);
-            $this->releasePDO($pdo);
-            return $result;
+            return call_user_func_array([$this, $doMethod], [$pdo, $mode]);
         } catch (\PDOException $e) {
             if ($pdo && !$pdo->inTransaction() && Helper::causedByLostConnection($e)) {
                 $pdo = $this->handleMysqlExecuteException($pdo, $e);
-                $result = call_user_func_array([$this, $doMethod], [$pdo, $mode]);
-                $this->releasePDO($pdo);
-                return $result;
+                return call_user_func_array([$this, $doMethod], [$pdo, $mode]);
             }
 
-            $this->releasePDO($pdo);
-
             throw $e;
+        } finally {
+            $this->releasePDO($pdo);
         }
     }
 

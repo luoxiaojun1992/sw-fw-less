@@ -128,10 +128,10 @@ class Log
                     if (date('Ymd') != $this->loggerDate) {
                         $this->logger = $this->createLogger();
                     }
-                    array_push($this->rotateLock, true);
                 } catch (\Exception $e) {
-                    array_push($this->rotateLock, true);
                     throw $e;
+                } finally {
+                    array_push($this->rotateLock, true);
                 }
             }
         }

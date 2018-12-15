@@ -39,7 +39,13 @@ $http->on('workerStart', function($server, $id) {
             \App\components\Config::get('redis.timeout'),
             \App\components\Config::get('redis.pool_size'),
             \App\components\Config::get('redis.passwd'),
-            \App\components\Config::get('redis.db')
+            \App\components\Config::get('redis.db'),
+            \App\components\Config::get('redis.prefix')
+        );
+
+        //RedLock
+        \App\components\RedLock::create(
+            \App\components\RedisPool::create()
         );
     }
 

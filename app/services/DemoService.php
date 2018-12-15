@@ -29,10 +29,16 @@ class DemoService extends BaseService
             return Response::json(['code' => 1, 'msg' => Helper::jsonEncode($errors), 'data' => []]);
         }
 
+        $result = false;
         /** @var \Redis $redis */
         $redis = RedisPool::pick();
-        $result = $redis->get($params['key']);
-        RedisPool::release($redis);
+        try {
+            $result = $redis->get(RedisPool::getKey($params['key']));
+        } catch (\Exception $e) {
+            throw $e;
+        } finally {
+            RedisPool::release($redis);
+        }
 
         Log::info('test');
 
