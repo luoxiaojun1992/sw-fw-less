@@ -5,7 +5,6 @@ namespace App\services;
 use App\components\Helper;
 use App\components\Response;
 use App\facades\File;
-use App\facades\Log;
 use App\facades\RedisPool;
 use App\models\Member;
 use App\models\Test;
