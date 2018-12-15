@@ -2,6 +2,12 @@
 
 namespace App\components;
 
+use App\facades\Log;
+
+/**
+ * Class LogStreamWrapper
+ * @package App\components
+ */
 class LogStreamWrapper
 {
     private $host;
@@ -11,6 +17,13 @@ class LogStreamWrapper
         stream_wrapper_register('log', __CLASS__);
     }
 
+    /**
+     * @param $path
+     * @param $mode
+     * @param $options
+     * @param $opened_path
+     * @return bool
+     */
     function stream_open($path, $mode, $options, &$opened_path)
     {
         $url = parse_url($path);
@@ -19,10 +32,14 @@ class LogStreamWrapper
         return true;
     }
 
+    /**
+     * @param $data
+     * @return int
+     */
     function stream_write($data)
     {
         $method = $this->host;
-        \App\facades\Log::$method($data);
+        Log::$method($data);
         $dataLen = strlen($data);
         return $dataLen;
     }
