@@ -40,7 +40,6 @@ class LogStreamWrapper
     {
         $method = $this->host;
         Log::$method($data);
-        $dataLen = strlen($data);
-        return $dataLen;
+        return strlen($data);
     }
 }

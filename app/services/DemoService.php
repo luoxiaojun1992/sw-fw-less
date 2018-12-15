@@ -28,18 +28,9 @@ class DemoService extends BaseService
             return Response::json(['code' => 1, 'msg' => Helper::jsonEncode($errors), 'data' => []]);
         }
 
-        $result = false;
-        /** @var \Redis $redis */
-        $redis = RedisPool::pick();
-        try {
-            $result = $redis->get(RedisPool::getKey($params['key']));
-        } catch (\Exception $e) {
-            throw $e;
-        } finally {
-            RedisPool::release($redis);
-        }
+        $result = file_get_contents('redis://' . $params['key']);
 
-        file_put_contents('log://warning', 'test error');
+        file_put_contents('log://info', 'test error');
 
         return Response::json(['code' => 0, 'msg' => 'ok', 'data' => $result]);
     }

@@ -71,6 +71,8 @@ class RedisPool
         for ($i = 0; $i < $poolSize; ++$i) {
             $this->redisPool[] = $this->getConnect();
         }
+
+        RedisStreamWrapper::register();
     }
 
     /**
