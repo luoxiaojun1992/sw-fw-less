@@ -125,6 +125,8 @@ class RedisStreamWrapper
             RedisPool::release($redis);
         }
 
+        $this->data = $data;
+
         return strlen($data);
     }
 }
