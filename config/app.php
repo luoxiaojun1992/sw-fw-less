@@ -31,7 +31,7 @@ return [
         'passwd' => \App\components\Helper::env('REDIS_PASSWD', null),
         'db' => \App\components\Helper::envInt('REDIS_DB', 0),
         'switch' => \App\components\Helper::envInt('REDIS_SWITCH', 0),
-        'prefix' => '', //todo env
+        'prefix' => \App\components\Helper::env('REDIS_PREFIX', 'sw-fw-less:'),
     ],
 
     //MySQL
