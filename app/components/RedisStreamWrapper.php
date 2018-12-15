@@ -37,6 +37,11 @@ class RedisStreamWrapper
         return true;
     }
 
+    /**
+     * @param $count
+     * @return bool|string
+     * @throws \Exception
+     */
     function stream_read($count)
     {
         if (is_null($this->data)) {
@@ -58,16 +63,25 @@ class RedisStreamWrapper
         return $this->data !== false ? $ret : false;
     }
 
+    /**
+     * @return mixed
+     */
     function stream_tell()
     {
         return $this->position;
     }
 
+    /**
+     * @return bool
+     */
     function stream_eof()
     {
         return $this->position >= strlen($this->data);
     }
 
+    /**
+     * @return array
+     */
     public function stream_stat()
     {
         static $modeMap = [
