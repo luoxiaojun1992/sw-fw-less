@@ -84,6 +84,8 @@ class Log
         $this->reserveDays = $reserve_days;
 
         $this->logger = $this->createLogger();
+
+        LogStreamWrapper::register();
     }
 
     /**

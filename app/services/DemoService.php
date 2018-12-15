@@ -40,7 +40,7 @@ class DemoService extends BaseService
             RedisPool::release($redis);
         }
 
-        Log::info('test');
+        file_put_contents('log://warning', 'test error');
 
         return Response::json(['code' => 0, 'msg' => 'ok', 'data' => $result]);
     }

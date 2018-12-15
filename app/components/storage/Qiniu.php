@@ -64,7 +64,7 @@ class Qiniu
         $qiniuConfig = $this->config['ext']['qiniu'];
         $bucket = $bucket ? : $qiniuConfig['default_bucket'];
         $bucketConfig = $qiniuConfig['buckets'][$bucket];
-        //todo support coroutine
+        //todo support coroutine class alias Client
         $local = new QiniuAdapter(
             $bucketConfig['access_key'],
             $bucketConfig['secret_key'],
