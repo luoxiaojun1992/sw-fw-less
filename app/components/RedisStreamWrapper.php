@@ -76,7 +76,7 @@ class RedisStreamWrapper
      */
     function stream_eof()
     {
-        return $this->position >= strlen($this->data);
+        return is_null($this->data) ? false : ($this->position >= strlen($this->data));
     }
 
     /**
