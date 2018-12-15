@@ -5,7 +5,9 @@ namespace App\facades;
 /**
  * Class RedisLock
  *
- * //todo @method
+ * @method static bool lock($key, $ttl = 0, $guard = false)
+ * @method static bool unlock($key)
+ * @method static flushAll()
  * @package App\facades
  */
 class RedLock extends AbstractFacade
