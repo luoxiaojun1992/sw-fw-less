@@ -3,8 +3,10 @@
 namespace App\components\storage;
 
 use App\components\Config;
+use App\components\QiniuCoHttpClient;
 use League\Flysystem\Filesystem;
 use Overtrue\Flysystem\Qiniu\QiniuAdapter;
+use Qiniu\Http\Client;
 
 class Qiniu
 {
@@ -18,6 +20,8 @@ class Qiniu
     public function __construct()
     {
         $this->config = Config::get('storage');
+
+        class_alias(QiniuCoHttpClient::class, Client::class);
     }
 
     /**

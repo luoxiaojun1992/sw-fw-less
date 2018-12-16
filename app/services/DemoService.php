@@ -5,6 +5,7 @@ namespace App\services;
 use App\components\Helper;
 use App\components\Response;
 use App\facades\File;
+use App\facades\Qiniu;
 use App\models\Member;
 use App\models\Test;
 use Cake\Validation\Validator;
@@ -74,6 +75,13 @@ class DemoService extends BaseService
         if ($filesystem->has('test.txt')) {
             $filesystem->delete('test.txt');
         }
+        $filesystem->write('test.txt', 'test');
+        return Response::output('ok');
+    }
+
+    public function qiniu()
+    {
+        $filesystem = Qiniu::prepare();
         $filesystem->write('test.txt', 'test');
         return Response::output('ok');
     }
