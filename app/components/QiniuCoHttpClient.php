@@ -87,24 +87,23 @@ final class QiniuCoHttpClient
         $ssl = 'https' === $scheme;
         $host = $urlInfo['host'];
         if (!isset($urlInfo['port'])) {
-            $port = $ssl ? '443' : '80';
+            $port = $ssl ? 80 : 80;
         } else {
             $port = $urlInfo['port'];
         }
-        $path = isset($urlInfo['path']) ? $urlInfo['path'] : '/';
         $headers = [];
         if (!empty($request->headers)) {
             $headers = $request->headers;
         }
         $headers['User-Agent'] = self::userAgent();
         $method = $request->method;
-        $client = new Client($host, $port, $ssl);
+        $client = new Client($host, $port, false);
         $client->setMethod($method);
         $client->setHeaders($headers);
         if (!empty($request->body)) {
             $client->setData($request->body);
         }
-        $client->execute($path);
+        $client->execute($request->url);
 
         $t2 = microtime(true);
         $duration = round($t2 - $t1, 3);

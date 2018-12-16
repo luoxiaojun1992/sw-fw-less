@@ -22,6 +22,8 @@ class Qiniu
         $this->config = Config::get('storage');
 
         class_alias(QiniuCoHttpClient::class, Client::class);
+
+        QiniuStreamWrapper::register();
     }
 
     /**
@@ -68,7 +70,6 @@ class Qiniu
         $qiniuConfig = $this->config['ext']['qiniu'];
         $bucket = $bucket ? : $qiniuConfig['default_bucket'];
         $bucketConfig = $qiniuConfig['buckets'][$bucket];
-        //todo support coroutine class alias Client
         $local = new QiniuAdapter(
             $bucketConfig['access_key'],
             $bucketConfig['secret_key'],

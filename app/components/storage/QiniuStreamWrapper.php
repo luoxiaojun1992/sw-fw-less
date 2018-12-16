@@ -1,23 +1,18 @@
 <?php
 
-namespace App\components;
+namespace App\components\storage;
 
-use App\facades\RedisPool;
-
-/**
- * Class RedisStreamWrapper
- * @package App\components
- */
-class RedisStreamWrapper
+class QiniuStreamWrapper
 {
     private $host;
+    private $path;
     private $mode;
     private $data;
     private $position;
 
     public static function register()
     {
-        stream_wrapper_register('redis', __CLASS__);
+        stream_wrapper_register('qiniu', __CLASS__);
     }
 
     /**
@@ -31,6 +26,7 @@ class RedisStreamWrapper
     {
         $url = parse_url($path);
         $this->host = $url['host'];
+        $this->path = $url['path'];
         $this->mode = $mode;
         $this->position = 0;
 
@@ -45,22 +41,12 @@ class RedisStreamWrapper
     function stream_read($count)
     {
         if (is_null($this->data)) {
-            $result = false;
-            /** @var \Redis $redis */
-            $redis = RedisPool::pick();
-            try {
-                $result = $redis->get(RedisPool::getKey($this->host));
-            } catch (\Exception $e) {
-                throw $e;
-            } finally {
-                RedisPool::release($redis);
-            }
-            $this->data = $result;
+            $this->data = \App\facades\Qiniu::prepare($this->host)->read($this->path);
         }
 
         $ret = substr($this->data, $this->position, $count);
         $this->position += strlen($ret);
-        return $this->data !== false ? $ret : false;
+        return $ret;
     }
 
     /**
@@ -80,8 +66,42 @@ class RedisStreamWrapper
     }
 
     /**
+     * @param $path
+     * @param $flags
      * @return array|int
-     * @throws \Exception
+     * @throws \League\Flysystem\FileNotFoundException
+     */
+    function url_stat($path, $flags)
+    {
+        $url = parse_url($path);
+        $this->host = $url['host'];
+        $this->path = $url['path'];
+
+        $qiniu = \App\facades\Qiniu::prepare($this->host);
+        if ($qiniu->has($this->path)) {
+            return [
+                'dev'     => 0,
+                'ino'     => 0,
+                'mode'    => 33060,
+                'nlink'   => 0,
+                'uid'     => 0,
+                'gid'     => 0,
+                'rdev'    => 0,
+                'size'    => $qiniu->getSize($this->path),
+                'atime'   => 0,
+                'mtime'   => 0,
+                'ctime'   => 0,
+                'blksize' => 0,
+                'blocks'  => 0
+            ];
+        }
+
+        return 0;
+    }
+
+    /**
+     * @return array|int
+     * @throws \League\Flysystem\FileNotFoundException
      */
     public function stream_stat()
     {
@@ -91,18 +111,10 @@ class RedisStreamWrapper
             $exists = true;
             $size = strlen($this->data);
         } else {
-            /** @var \Redis $redis */
-            $redis = RedisPool::pick();
-            try {
-                $key = RedisPool::getKey($this->host);
-                if ($redis->exists($key)) {
-                    $exists = true;
-                    $size = $redis->strlen($key);
-                }
-            } catch (\Exception $e) {
-                throw $e;
-            } finally {
-                RedisPool::release($redis);
+            $qiniu = \App\facades\Qiniu::prepare($this->host);
+            if ($qiniu->has($this->path)) {
+                $exists = true;
+                $size = $qiniu->getSize($this->path);
             }
         }
 
@@ -141,15 +153,7 @@ class RedisStreamWrapper
      */
     function stream_write($data)
     {
-        /** @var \Redis $redis */
-        $redis = RedisPool::pick();
-        try {
-            $redis->set(RedisPool::getKey($this->host), $data);
-        } catch (\Exception $e) {
-            throw $e;
-        } finally {
-            RedisPool::release($redis);
-        }
+        \App\facades\Qiniu::prepare($this->host)->write($this->path, $data);
 
         $this->data = $data;
 
@@ -165,16 +169,9 @@ class RedisStreamWrapper
     {
         $url = parse_url($path);
         $this->host = $url['host'];
+        $this->path = $url['path'];
 
-        /** @var \Redis $redis */
-        $redis = RedisPool::pick();
-        try {
-            $redis->del(RedisPool::getKey($this->host));
-        } catch (\Exception $e) {
-            throw $e;
-        } finally {
-            RedisPool::release($redis);
-        }
+        \App\facades\Qiniu::prepare($this->host)->delete($this->path);
 
         return true;
     }
