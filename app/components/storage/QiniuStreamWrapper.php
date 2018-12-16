@@ -2,6 +2,8 @@
 
 namespace App\components\storage;
 
+use function Swlib\Http\str;
+
 class QiniuStreamWrapper
 {
     private $host;
@@ -105,45 +107,68 @@ class QiniuStreamWrapper
      */
     public function stream_stat()
     {
-        $exists = false;
-        $size = 0;
-        if (!is_null($this->data)) {
-            $exists = true;
-            $size = strlen($this->data);
-        } else {
-            $qiniu = \App\facades\Qiniu::prepare($this->host);
-            if ($qiniu->has($this->path)) {
-                $exists = true;
-                $size = $qiniu->getSize($this->path);
-            }
-        }
+        static $modeMap = [
+            'r' => 33060,
+            'r+' => 33206,
+            'w' => 33188,
+            'rb' => 33060,
+        ];
 
-        if ($exists) {
-            static $modeMap = [
-                'r' => 33060,
-                'r+' => 33206,
-                'w' => 33188,
-                'rb' => 33060,
-            ];
+        return [
+            'dev' => 0,
+            'ino' => 0,
+            'mode' => $modeMap[$this->mode],
+            'nlink' => 0,
+            'uid' => 0,
+            'gid' => 0,
+            'rdev' => 0,
+            'size' => strlen($this->data),
+            'atime' => 0,
+            'mtime' => 0,
+            'ctime' => 0,
+            'blksize' => 0,
+            'blocks' => 0
+        ];
 
-            return [
-                'dev' => 0,
-                'ino' => 0,
-                'mode' => $modeMap[$this->mode],
-                'nlink' => 0,
-                'uid' => 0,
-                'gid' => 0,
-                'rdev' => 0,
-                'size' => $size,
-                'atime' => 0,
-                'mtime' => 0,
-                'ctime' => 0,
-                'blksize' => 0,
-                'blocks' => 0
-            ];
-        }
-
-        return 0;
+//        $exists = false;
+//        $size = 0;
+//        if (!is_null($this->data)) {
+//            $exists = true;
+//            $size = strlen($this->data);
+//        } else {
+//            $qiniu = \App\facades\Qiniu::prepare($this->host);
+//            if ($qiniu->has($this->path)) {
+//                $exists = true;
+//                $size = $qiniu->getSize($this->path);
+//            }
+//        }
+//
+//        if ($exists) {
+//            static $modeMap = [
+//                'r' => 33060,
+//                'r+' => 33206,
+//                'w' => 33188,
+//                'rb' => 33060,
+//            ];
+//
+//            return [
+//                'dev' => 0,
+//                'ino' => 0,
+//                'mode' => $modeMap[$this->mode],
+//                'nlink' => 0,
+//                'uid' => 0,
+//                'gid' => 0,
+//                'rdev' => 0,
+//                'size' => $size,
+//                'atime' => 0,
+//                'mtime' => 0,
+//                'ctime' => 0,
+//                'blksize' => 0,
+//                'blocks' => 0
+//            ];
+//        }
+//
+//        return 0;
     }
 
     /**

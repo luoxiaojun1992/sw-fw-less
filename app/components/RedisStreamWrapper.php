@@ -85,53 +85,80 @@ class RedisStreamWrapper
      */
     public function stream_stat()
     {
-        $exists = false;
-        $size = 0;
-        if (!is_null($this->data)) {
-            $exists = true;
-            $size = strlen($this->data);
-        } else {
-            /** @var \Redis $redis */
-            $redis = RedisPool::pick();
-            try {
-                $key = RedisPool::getKey($this->host);
-                if ($redis->exists($key)) {
-                    $exists = true;
-                    $size = $redis->strlen($key);
-                }
-            } catch (\Exception $e) {
-                throw $e;
-            } finally {
-                RedisPool::release($redis);
-            }
-        }
+        static $modeMap = [
+            'r' => 33060,
+            'r+' => 33206,
+            'w' => 33188,
+            'rb' => 33060,
+        ];
 
-        if ($exists) {
-            static $modeMap = [
-                'r' => 33060,
-                'r+' => 33206,
-                'w' => 33188,
-                'rb' => 33060,
-            ];
+        return [
+            'dev' => 0,
+            'ino' => 0,
+            'mode' => $modeMap[$this->mode],
+            'nlink' => 0,
+            'uid' => 0,
+            'gid' => 0,
+            'rdev' => 0,
+            'size' => strlen($this->data),
+            'atime' => 0,
+            'mtime' => 0,
+            'ctime' => 0,
+            'blksize' => 0,
+            'blocks' => 0
+        ];
 
-            return [
-                'dev' => 0,
-                'ino' => 0,
-                'mode' => $modeMap[$this->mode],
-                'nlink' => 0,
-                'uid' => 0,
-                'gid' => 0,
-                'rdev' => 0,
-                'size' => $size,
-                'atime' => 0,
-                'mtime' => 0,
-                'ctime' => 0,
-                'blksize' => 0,
-                'blocks' => 0
-            ];
-        }
-
-        return 0;
+//        $exists = false;
+//        $size = 0;
+//        if (!is_null($this->data)) {
+//            $exists = true;
+//            $size = strlen($this->data);
+//        } else {
+//            /** @var \Redis $redis */
+//            $redis = RedisPool::pick();
+//            try {
+//                $redis->multi(\Redis::PIPELINE);
+//                $key = RedisPool::getKey($this->host);
+//                $redis->exists($key);
+//                $redis->strlen($key);
+//                $res = $redis->exec();
+//                if ($res[0]) {
+//                    $exists = true;
+//                    $size = $res[1];
+//                }
+//            } catch (\Exception $e) {
+//                throw $e;
+//            } finally {
+//                RedisPool::release($redis);
+//            }
+//        }
+//
+//        if ($exists) {
+//            static $modeMap = [
+//                'r' => 33060,
+//                'r+' => 33206,
+//                'w' => 33188,
+//                'rb' => 33060,
+//            ];
+//
+//            return [
+//                'dev' => 0,
+//                'ino' => 0,
+//                'mode' => $modeMap[$this->mode],
+//                'nlink' => 0,
+//                'uid' => 0,
+//                'gid' => 0,
+//                'rdev' => 0,
+//                'size' => $size,
+//                'atime' => 0,
+//                'mtime' => 0,
+//                'ctime' => 0,
+//                'blksize' => 0,
+//                'blocks' => 0
+//            ];
+//        }
+//
+//        return 0;
     }
 
     /**
