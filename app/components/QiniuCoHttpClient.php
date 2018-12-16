@@ -5,6 +5,7 @@ namespace App\components;
 use Qiniu\Config;
 use Qiniu\Http\Request;
 use Qiniu\Http\Response;
+use Swoole\Coroutine\Http\Client;
 
 final class QiniuCoHttpClient
 {
@@ -81,66 +82,53 @@ final class QiniuCoHttpClient
     public static function sendRequest($request)
     {
         $t1 = microtime(true);
-        $ch = curl_init();
-        $options = array(
-            CURLOPT_USERAGENT => self::userAgent(),
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_SSL_VERIFYPEER => false,
-            CURLOPT_SSL_VERIFYHOST => false,
-            CURLOPT_HEADER => true,
-            CURLOPT_NOBODY => false,
-            CURLOPT_CUSTOMREQUEST => $request->method,
-            CURLOPT_URL => $request->url,
-        );
-
-        // Handle open_basedir & safe mode
-        if (!ini_get('safe_mode') && !ini_get('open_basedir')) {
-            $options[CURLOPT_FOLLOWLOCATION] = true;
+        $urlInfo = parse_url($request->url);
+        $scheme = isset($urlInfo['scheme']) ? $urlInfo['scheme'] : 'http';
+        $ssl = 'https' === $scheme;
+        $host = $urlInfo['host'];
+        if (!isset($urlInfo['port'])) {
+            $port = $ssl ? '443' : '80';
+        } else {
+            $port = $urlInfo['port'];
         }
-
+        $path = isset($urlInfo['path']) ? $urlInfo['path'] : '/';
+        $headers = [];
         if (!empty($request->headers)) {
-            $headers = array();
-            foreach ($request->headers as $key => $val) {
-                array_push($headers, "$key: $val");
-            }
-            $options[CURLOPT_HTTPHEADER] = $headers;
+            $headers = $request->headers;
         }
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Expect:'));
-
+        $headers['User-Agent'] = self::userAgent();
+        $method = $request->method;
+        $client = new Client($host, $port, $ssl);
+        $client->setMethod($method);
+        $client->setHeaders($headers);
         if (!empty($request->body)) {
-            $options[CURLOPT_POSTFIELDS] = $request->body;
+            $client->setData($request->body);
         }
-        curl_setopt_array($ch, $options);
-        $result = curl_exec($ch);
+        $client->execute($path);
+
         $t2 = microtime(true);
         $duration = round($t2 - $t1, 3);
-        $ret = curl_errno($ch);
-        if ($ret !== 0) {
-            $r = new Response(-1, $duration, array(), null, curl_error($ch));
-            curl_close($ch);
+
+        $statusCode = $client->statusCode;
+        if ($statusCode < 0) {
+            $error = sprintf('Request error errCode=%s', $client->errCode);
+            if ($statusCode === -1) {
+                $error = sprintf('Connection timed out errCode=%s', $client->errCode);
+            } elseif ($statusCode === -2) {
+                $error = 'Request timed out';
+            } elseif ($statusCode === -3) {
+                $error = 'Connection refused';
+            }
+            $r = new Response(-1, $duration, [], null, $error);
             return $r;
         }
-        $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
-        $headers = self::parseHeaders(substr($result, 0, $header_size));
-        $body = substr($result, $header_size);
-        curl_close($ch);
-        return new Response($code, $duration, $headers, $body, null);
-    }
 
-    private static function parseHeaders($raw)
-    {
-        $headers = array();
-        $headerLines = explode("\r\n", $raw);
-        foreach ($headerLines as $line) {
-            $headerLine = trim($line);
-            $kv = explode(':', $headerLine);
-            if (count($kv) > 1) {
-                $kv[0] =self::ucwordsHyphen($kv[0]);
-                $headers[$kv[0]] = trim($kv[1]);
-            }
+        $headers = [];
+        foreach ($client->headers as $k => $v) {
+            $headers[self::ucwordsHyphen($k)] = $v;
         }
-        return $headers;
+        $client->close();
+        return new Response($statusCode, $duration, $headers, $client->body, null);
     }
 
     private static function escapeQuotes($str)
