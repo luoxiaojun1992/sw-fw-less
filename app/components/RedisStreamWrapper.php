@@ -129,4 +129,27 @@ class RedisStreamWrapper
 
         return strlen($data);
     }
+
+    /**
+     * @param $path
+     * @return bool
+     * @throws \Exception
+     */
+    function unlink($path)
+    {
+        $url = parse_url($path);
+        $this->host = $url['host'];
+
+        /** @var \Redis $redis */
+        $redis = RedisPool::pick();
+        try {
+            $redis->del(RedisPool::getKey($this->host));
+        } catch (\Exception $e) {
+            throw $e;
+        } finally {
+            RedisPool::release($redis);
+        }
+
+        return true;
+    }
 }

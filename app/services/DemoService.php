@@ -27,6 +27,9 @@ class DemoService extends BaseService
             return Response::json(['code' => 1, 'msg' => Helper::jsonEncode($errors), 'data' => []]);
         }
 
+//        unlink('redis://' . $params['key']);
+//        file_put_contents('redis://' . $params['key'], 'value2');
+
         $result = file_get_contents('redis://' . $params['key']);
 
         file_put_contents('log://info', 'test error');
