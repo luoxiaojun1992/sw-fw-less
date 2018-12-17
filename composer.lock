@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a60ff2b392da4863582183a13be8a403",
+    "content-hash": "b8b1b9c55464c1003183e450a8d12449",
     "packages": [
         {
             "name": "aura/sqlquery",
@@ -730,16 +730,16 @@
         },
         {
             "name": "luoxiaojun1992/monolog-co-stream-handler",
-            "version": "v1.0.10",
+            "version": "v1.0.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/luoxiaojun1992/monolog-co-stream-handler.git",
-                "reference": "9ec04cf79e8ff5d0fddce00a602e80cd89cdb2be"
+                "reference": "34c96ab6ad0244ebb3e3ceb66847fcc95a7a161d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/luoxiaojun1992/monolog-co-stream-handler/zipball/9ec04cf79e8ff5d0fddce00a602e80cd89cdb2be",
-                "reference": "9ec04cf79e8ff5d0fddce00a602e80cd89cdb2be",
+                "url": "https://api.github.com/repos/luoxiaojun1992/monolog-co-stream-handler/zipball/34c96ab6ad0244ebb3e3ceb66847fcc95a7a161d",
+                "reference": "34c96ab6ad0244ebb3e3ceb66847fcc95a7a161d",
                 "shasum": ""
             },
             "require": {
@@ -763,7 +763,7 @@
                 }
             ],
             "description": "Monolog Coroutine Stream Handler",
-            "time": "2018-12-14T15:29:56+00:00"
+            "time": "2018-12-17T05:28:51+00:00"
         },
         {
             "name": "monolog/monolog",

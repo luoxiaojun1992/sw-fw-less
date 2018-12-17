@@ -2,6 +2,7 @@
 
 namespace App\components;
 
+use Lxj\Monolog\Co\Stream\Handler;
 use Monolog\Logger;
 
 class Log
@@ -169,6 +170,36 @@ class Log
 
         if (method_exists($logger, $name)) {
             return call_user_func_array([$logger, $name], $arguments);
+        }
+
+        return null;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function countRecordBuffer()
+    {
+        $handlers = $this->logger->getHandlers();
+        if (count($handlers) > 0) {
+            if ($handlers[0] instanceof Handler) {
+                return $handlers[0]->countRecordBuffer();
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function countPool()
+    {
+        $handlers = $this->logger->getHandlers();
+        if (count($handlers) > 0) {
+            if ($handlers[0] instanceof Handler) {
+                return $handlers[0]->getStreamPool()->countPool();
+            }
         }
 
         return null;

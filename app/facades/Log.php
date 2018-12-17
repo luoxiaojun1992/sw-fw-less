@@ -21,6 +21,8 @@ use Monolog\Logger;
  * @method static bool emerg($message, array $context = array())
  * @method static bool emergency($message, array $context = array())
  * @method static Logger getLogger()
+ * @method static int countRecordBuffer()
+ * @method static int countPool()
  * @package App\facades
  */
 class Log extends AbstractFacade

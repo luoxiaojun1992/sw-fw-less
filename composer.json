@@ -8,7 +8,7 @@
         "swlib/saber": "^1",
         "vlucas/phpdotenv": "~2.2",
         "monolog/monolog": "^1",
-        "luoxiaojun1992/monolog-co-stream-handler": "1.0.10",
+        "luoxiaojun1992/monolog-co-stream-handler": "1.0.11",
         "elasticsearch/elasticsearch": "~6",
         "luoxiaojun1992/laravel-elasticsearch": "1.0.2",
         "cakephp/validation": "~3",
