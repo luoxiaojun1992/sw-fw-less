@@ -42,7 +42,7 @@ curl -i 'http://127.0.0.1:9501/ping'
 
 ## Performance
 * OS: MacOS 10.14.1
-* CPU: 2.3 GHz Intel Core i5 2 Core
+* CPU: 2.3 GHz Intel Core i5 Dual Core
 * Memory: 16 GB 2133 MHz LPDDR3
 * Swoole: 4.2.9
 * PHP: 7.2.8
