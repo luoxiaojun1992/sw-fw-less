@@ -19,4 +19,7 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
     foreach ($routerConfig as $router) {
         $r->addRoute($router[0], $router[1], $router[2]);
     }
+    if (\App\components\Config::get('monitor.switch')) {
+        $r->addRoute('GET', '/monitor/pool', [\App\services\internals\MonitorService::class, 'pool']);
+    }
 });

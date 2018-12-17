@@ -9,7 +9,6 @@ return [
         ['GET', '/es', [\App\services\DemoService::class, 'es']],
         ['GET', '/file', [\App\services\DemoService::class, 'file']],
         ['GET', '/qiniu', [\App\services\DemoService::class, 'qiniu']],
-        ['GET', '/monitor/pool', [\App\services\internals\MonitorService::class, 'pool']],
     ],
 
     //Server
@@ -109,5 +108,10 @@ return [
     ],
 
     //Timezone
-    'timezone' => 'PRC',
+    'timezone' => \App\components\Helper::env('TIMEZONE', 'PRC'),
+
+    //Monitor
+    'monitor' => [
+        'switch' => \App\components\Helper::envInt('MONITOR_SWITCH', 0),
+    ],
 ];
