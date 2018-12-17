@@ -11,8 +11,6 @@ use phpDocumentor\Reflection\DocBlockFactory;
  *
  * Redis实现分布式独占锁
  *
- * @method  bool lock(string $key, int $ttl = 0, bool $guard = false) 加独占锁
- * @method  bool unlock(string $key) 释放独占锁
  * @package Lxj\RedLock
  */
 class RedLock
@@ -65,27 +63,29 @@ class RedLock
      * @return    bool
      * @throws \Exception
      */
-    private function __lock($key, $ttl = 0, $guard = false)
+    public function lock($originKey, $ttl = 0, $guard = false)
     {
+        $key = $this->redisPool->getKey($originKey);
         /** @var \Redis $redis */
         $redis = $this->redisPool->pick();
         try {
-            $redis = $redis->multi(\Redis::PIPELINE);
+            $redis->multi(\Redis::PIPELINE);
             //因为redis整数对象有缓存，此处value使用1
             $redis->setnx($key, 1);
             if ($ttl > 0) {
                 $redis->expire($key, $ttl);
             }
             $result = $redis->exec();
+            if ($result[0] > 0) {
+                $this->addLockedKey($originKey, $guard);
+                return true;
+            }
         } catch (\Exception $e) {
             throw $e;
         } finally {
             $this->redisPool->release($redis);
         }
-        if ($result[0] > 0) {
-            $this->addLockedKey($key, $guard);
-            return true;
-        }
+
         return false;
     }
 
@@ -101,14 +101,15 @@ class RedLock
      * @return    bool
      * @throws \Exception
      */
-    private function __unlock($key)
+    public function unlock($originKey)
     {
+        $key = $this->redisPool->getKey($originKey);
         /** @var \Redis $redis */
         $redis = $this->redisPool->pick();
         try {
             $result = $redis->del($key);
             if ($result > 0) {
-                unset($this->locked_keys[$key]);
+                unset($this->locked_keys[$originKey]);
                 return true;
             }
             return false;
@@ -134,41 +135,9 @@ class RedLock
     {
         foreach ($this->locked_keys as $locked_key) {
             if (!$locked_key['guard']) {
-                $this->__unlock($locked_key['key']);
+                $this->unlock($locked_key['key']);
             }
         }
-    }
-
-    /**
-     * @param $name
-     * @param $arguments
-     * @return mixed|null
-     * @throws \ReflectionException
-     */
-    public function __call($name, $arguments)
-    {
-        $method = '__' . $name;
-        if (method_exists($this, $method)) {
-            $reflection_method = new \ReflectionMethod($this, $method);
-            if (!in_array($name, $this->methods_with_keys)) {
-                $doc_block = $reflection_method->getDocComment();
-                $doc_params = DocBlockFactory::createInstance()->create($doc_block)->getTagsByName('redis_key');
-                if (count($doc_params) > 0) {
-                    $this->methods_with_keys[$name] = $name;
-                }
-            }
-            if (in_array($name, $this->methods_with_keys)) {
-                foreach ($reflection_method->getParameters() as $i => $parameter) {
-                    if ($parameter->getName() == 'key') {
-                        if (isset($arguments[$i])) {
-                            $arguments[$i] = $this->redisPool->getKey($arguments[$i]);
-                        }
-                    }
-                }
-            }
-            return call_user_func_array([$this, $method], $arguments);
-        }
-        return null;
     }
 
     public function __destruct()
