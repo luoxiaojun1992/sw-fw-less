@@ -63,12 +63,7 @@ class DemoService extends BaseService
     {
         $models = Test::query()->filterTerm('foo', 'bar')->search();
 
-        $result = [];
-        foreach ($models as $model) {
-            $result[] = $model->toArray();
-        }
-
-        return Response::json($result);
+        return Response::json($models);
     }
 
     public function file()
@@ -87,6 +82,7 @@ class DemoService extends BaseService
             unlink('qiniu://musics/test2.txt');
         }
         file_put_contents('qiniu://musics/test2.txt', 'test111111111111111111111111111');
+
         return Response::output(file_get_contents('qiniu://musics/test2.txt'));
     }
 }
