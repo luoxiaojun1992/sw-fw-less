@@ -47,8 +47,7 @@ class DemoService extends BaseService
             ->cols(['*'])
             ->where('id in (111426517, 111426518)')
             ->limit(2)
-            ->first()
-            ->toArray();
+            ->first();
 
         return Response::json($queryResult);
     }

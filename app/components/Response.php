@@ -93,7 +93,7 @@ class Response
     public static function json($arr, $status = 200, $headers = [])
     {
         $headers['Content-Type'] = 'application/json';
-        $content = is_array($arr) ? Helper::jsonEncode($arr) : $arr;
+        $content = is_string($arr) ? $arr : Helper::jsonEncode($arr);
         return self::output($content, $status, $headers);
     }
 }
