@@ -11,6 +11,11 @@ use Swlib\SaberGM;
 
 class DemoService extends BaseService
 {
+    public function ping()
+    {
+        return Response::output('pong');
+    }
+
     public function redis()
     {
         $params = $this->getRequest()->all();

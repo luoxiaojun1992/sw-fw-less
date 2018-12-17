@@ -3,6 +3,7 @@
 return [
     //Router
     'router' => [
+        ['GET', '/ping', [\App\services\DemoService::class, 'ping']],
         ['GET', '/redis', [\App\services\DemoService::class, 'redis', [\App\middlewares\Cors::class]]],
         ['GET', '/mysql', [\App\services\DemoService::class, 'mysql']],
         ['GET', '/http', [\App\services\DemoService::class, 'http']],
