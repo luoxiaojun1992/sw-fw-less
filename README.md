@@ -22,7 +22,7 @@ Swoole http server without framework
 
 >## Installation
 ```shell
-composer install -vvv
+cp .env.example .env && composer install -vvv
 ```
 
 >## Deployment
