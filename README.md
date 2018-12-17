@@ -21,9 +21,12 @@ Nginx Config Demo
 ```shell
 server {
     listen 80;
+    
+    ## Modify according to your requirements
     server_name www.sw-fw-less.dev;
 
     location / {
+        ## Modify according to your requirements
         proxy_pass http://127.0.0.1:9501;
     }
 }
