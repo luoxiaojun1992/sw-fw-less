@@ -2,8 +2,6 @@
 
 namespace App\components;
 
-use phpDocumentor\Reflection\DocBlockFactory;
-
 /**
  * Class RedLock
  *
@@ -18,9 +16,6 @@ class RedLock
     private static $instance;
 
     private $locked_keys = [];
-
-    //方法参数包含以"key"命名的参数，自动为参数添加前缀，详见getKey方法
-    private $methods_with_keys = [];
 
     /**
      * @var RedisPool
