@@ -16,6 +16,15 @@ Swoole http server without framework
 10. Parameter Validator
 11. Monitor
 
+>## Requirements
+* PHP 7.1+
+* Swoole 4.2.*
+
+>## Installation
+```shell
+composer install -vvv
+```
+
 >## Deployment
 Nginx Config Demo(Modify according to your requirements)
 ```shell
