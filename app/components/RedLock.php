@@ -9,7 +9,7 @@ namespace App\components;
  *
  * Redis实现分布式独占锁
  *
- * @package Lxj\RedLock
+ * @package App\components
  */
 class RedLock
 {
