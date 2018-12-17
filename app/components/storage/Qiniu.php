@@ -3,7 +3,6 @@
 namespace App\components\storage;
 
 use App\components\Config;
-use App\components\QiniuCoHttpClient;
 use League\Flysystem\Filesystem;
 use Overtrue\Flysystem\Qiniu\QiniuAdapter;
 use Qiniu\Http\Client;
@@ -21,7 +20,9 @@ class Qiniu
     {
         $this->config = Config::get('storage');
 
-        class_alias(QiniuCoHttpClient::class, Client::class);
+        if (extension_loaded('swoole')) {
+            class_alias(QiniuCoHttpClient::class, Client::class);
+        }
 
         QiniuStreamWrapper::register();
     }
