@@ -46,6 +46,7 @@ curl -i 'http://127.0.0.1:9501/ping'
 * Memory: 16 GB 2133 MHz LPDDR3
 * Swoole: 4.2.9
 * PHP: 7.2.8
+* Redis: 4.0.11
 * API: http://127.0.0.1:9501/redis?key=key
 * Concurrent: 300
 * Tool: JMeter 4.0 r1823414
