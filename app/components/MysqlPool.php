@@ -113,4 +113,12 @@ class MysqlPool
 
         return $pdo;
     }
+
+    /**
+     * @return int
+     */
+    public function countPool()
+    {
+        return count($this->pdoPool);
+    }
 }

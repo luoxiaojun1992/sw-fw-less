@@ -12,6 +12,7 @@ use App\components\RedisWrapper;
  * @method static release($redis)
  * @method static RedisWrapper getConnect($needRelease = true)
  * @method static RedisWrapper handleRollbackException($redis, \RedisException $e)
+ * @method static int countPool()
  * @package App\facades
  */
 class RedisPool extends AbstractFacade

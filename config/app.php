@@ -9,6 +9,7 @@ return [
         ['GET', '/es', [\App\services\DemoService::class, 'es']],
         ['GET', '/file', [\App\services\DemoService::class, 'file']],
         ['GET', '/qiniu', [\App\services\DemoService::class, 'qiniu']],
+        ['GET', '/monitor/pool', [\App\services\internals\MonitorService::class, 'pool']],
     ],
 
     //Server

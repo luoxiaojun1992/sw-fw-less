@@ -153,4 +153,12 @@ class RedisPool
 
         return $redis;
     }
+
+    /**
+     * @return int
+     */
+    public function countPool()
+    {
+        return count($this->redisPool);
+    }
 }
