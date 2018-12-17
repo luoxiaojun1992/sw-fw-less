@@ -17,7 +17,7 @@ Swoole http server without framework
 11. Monitor
 
 ## Deployment
-Nginx Config Demo
+Nginx Config Demo(Modify according to your requirements)
 ```shell
 server {
     listen 80;
