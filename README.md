@@ -17,8 +17,16 @@ Swoole http server without framework
 11. Monitor
 
 ## Deploy
-Nginx
-```ini
+Demo Nginx Config
+```shell
+server {
+    listen 80;
+    server_name www.sw-fw-less.dev;
+
+    location / {
+        proxy_pass http://127.0.0.1:9501;
+    }
+}
 ```
 
 ## Usage
