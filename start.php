@@ -156,8 +156,21 @@ $http->on("request", function (\Swoole\Http\Request $request, \Swoole\Http\Respo
                 $response->end();
         }
     } catch (\Exception $e) {
-        $response->status(!is_string($e->getCode()) && $e->getCode() ? $e->getCode() : 500);
-        $response->end(nl2br($e->getMessage() . PHP_EOL . $e->getTraceAsString()));
+        ob_start();
+        $res = \App\components\ErrorHandler::handle($e);
+        $content = $res->getContent();
+        if (!$content && ob_get_length() > 0) {
+            $content = ob_get_contents();
+        }
+        ob_end_clean();
+
+        $response->status($res->getStatus());
+        if ($headers = $res->getHeaders()) {
+            foreach ($headers as $key => $value) {
+                $response->header($key, $value);
+            }
+        }
+        $response->end($content);
     }
 });
 
