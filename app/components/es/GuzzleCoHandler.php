@@ -1,6 +1,6 @@
 <?php
 
-namespace App\components;
+namespace App\components\es;
 
 use GuzzleHttp\Ring\Core;
 use GuzzleHttp\Ring\Future\CompletedFutureArray;
@@ -17,7 +17,7 @@ use GuzzleHttp\Ring\Exception\RingException;
  *
  * @author https://github.com/limingxinleo/guzzle-swoole-handler
  *
- * @package App\components
+ * @package App\components\es
  */
 class GuzzleCoHandler
 {

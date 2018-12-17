@@ -3,7 +3,6 @@
 namespace App\components\es;
 
 use App\components\Config;
-use App\components\GuzzleCoHandler;
 use App\facades\Log;
 use Elasticsearch\Client;
 use Elasticsearch\ClientBuilder;
