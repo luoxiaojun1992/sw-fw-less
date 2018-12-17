@@ -16,7 +16,7 @@ Swoole http server without framework
 10. Parameter Validator
 11. Monitor
 
-## Deploy
+## Deployment
 Demo Nginx Config
 ```shell
 server {
