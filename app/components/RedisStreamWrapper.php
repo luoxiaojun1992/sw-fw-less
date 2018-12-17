@@ -80,6 +80,58 @@ class RedisStreamWrapper
     }
 
     /**
+     * @param $path
+     * @param $flags
+     * @return array|int
+     * @throws \Exception
+     */
+    function url_stat($path, $flags)
+    {
+        $url = parse_url($path);
+        $this->host = $url['host'];
+
+        /** @var \Redis $redis */
+        $redis = RedisPool::pick();
+        try {
+            $redis->multi(\Redis::PIPELINE);
+            $key = RedisPool::getKey($this->host);
+            $redis->exists($key);
+            $redis->strlen($key);
+            $res = $redis->exec();
+            if ($res[0]) {
+                static $modeMap = [
+                    'r' => 33060,
+                    'r+' => 33206,
+                    'w' => 33188,
+                    'rb' => 33060,
+                ];
+
+                return [
+                    'dev' => 0,
+                    'ino' => 0,
+                    'mode' => $modeMap[$this->mode],
+                    'nlink' => 0,
+                    'uid' => 0,
+                    'gid' => 0,
+                    'rdev' => 0,
+                    'size' => $res[1],
+                    'atime' => 0,
+                    'mtime' => 0,
+                    'ctime' => 0,
+                    'blksize' => 0,
+                    'blocks' => 0
+                ];
+            }
+        } catch (\Exception $e) {
+            throw $e;
+        } finally {
+            RedisPool::release($redis);
+        }
+
+        return 0;
+    }
+
+    /**
      * @return array|int
      * @throws \Exception
      */

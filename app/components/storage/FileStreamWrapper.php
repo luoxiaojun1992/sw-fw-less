@@ -2,9 +2,8 @@
 
 namespace App\components\storage;
 
-class QiniuStreamWrapper
+class FileStreamWrapper
 {
-    private $host;
     private $path;
     private $mode;
     private $data;
@@ -12,7 +11,7 @@ class QiniuStreamWrapper
 
     public static function register()
     {
-        stream_wrapper_register('qiniu', __CLASS__);
+        stream_wrapper_register('storage', __CLASS__);
     }
 
     /**
@@ -25,8 +24,7 @@ class QiniuStreamWrapper
     function stream_open($path, $mode, $options, &$opened_path)
     {
         $url = parse_url($path);
-        $this->host = $url['host'];
-        $this->path = $url['path'];
+        $this->path = $url['host'] . (isset($url['path']) ? $url['path'] : '');
         $this->mode = $mode;
         $this->position = 0;
 
@@ -41,7 +39,7 @@ class QiniuStreamWrapper
     function stream_read($count)
     {
         if (is_null($this->data)) {
-            $this->data = \App\facades\Qiniu::prepare($this->host)->read($this->path);
+            $this->data = \App\facades\File::prepare()->read($this->path);
         }
 
         $ret = substr($this->data, $this->position, $count);
@@ -74,11 +72,10 @@ class QiniuStreamWrapper
     function url_stat($path, $flags)
     {
         $url = parse_url($path);
-        $this->host = $url['host'];
-        $this->path = $url['path'];
+        $this->path = $url['host'] . (isset($url['path']) ? $url['path'] : '');
 
-        $qiniu = \App\facades\Qiniu::prepare($this->host);
-        if ($qiniu->has($this->path)) {
+        $file = \App\facades\File::prepare();
+        if ($file->has($this->path)) {
             return [
                 'dev'     => 0,
                 'ino'     => 0,
@@ -87,7 +84,7 @@ class QiniuStreamWrapper
                 'uid'     => 0,
                 'gid'     => 0,
                 'rdev'    => 0,
-                'size'    => $qiniu->getSize($this->path),
+                'size'    => $file->getSize($this->path),
                 'atime'   => 0,
                 'mtime'   => 0,
                 'ctime'   => 0,
@@ -134,10 +131,10 @@ class QiniuStreamWrapper
 //            $exists = true;
 //            $size = strlen($this->data);
 //        } else {
-//            $qiniu = \App\facades\Qiniu::prepare($this->host);
-//            if ($qiniu->has($this->path)) {
+//            $file = \App\facades\File::prepare();
+//            if ($file->has($this->path)) {
 //                $exists = true;
-//                $size = $qiniu->getSize($this->path);
+//                $size = $file->getSize($this->path);
 //            }
 //        }
 //
@@ -176,7 +173,7 @@ class QiniuStreamWrapper
      */
     function stream_write($data)
     {
-        \App\facades\Qiniu::prepare($this->host)->write($this->path, $data);
+        \App\facades\File::prepare()->write($this->path, $data);
 
         $this->data = $data;
 
@@ -191,10 +188,9 @@ class QiniuStreamWrapper
     function unlink($path)
     {
         $url = parse_url($path);
-        $this->host = $url['host'];
-        $this->path = $url['path'];
+        $this->path = $url['host'] . (isset($url['path']) ? $url['path'] : '');
 
-        \App\facades\Qiniu::prepare($this->host)->delete($this->path);
+        \App\facades\File::prepare()->delete($this->path);
 
         return true;
     }

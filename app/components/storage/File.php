@@ -18,6 +18,8 @@ class File
     public function __construct()
     {
         $this->config = Config::get('storage');
+
+        FileStreamWrapper::register();
     }
 
     /**
