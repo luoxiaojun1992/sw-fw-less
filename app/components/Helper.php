@@ -131,6 +131,15 @@ class Helper
     }
 
     /**
+     * @param $string
+     * @return string
+     */
+    public static function snake2Hump($string)
+    {
+        return lcfirst(self::snake2Camel($string));
+    }
+
+    /**
      * @param $data
      * @param int $options
      * @return false|string

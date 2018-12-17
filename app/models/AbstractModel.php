@@ -53,7 +53,7 @@ abstract class AbstractModel implements \JsonSerializable, \ArrayAccess
 
     public function attributeExists($name)
     {
-        $getter = 'exist' . Helper::snake2Camel($name);
+        $getter = Helper::snake2Hump($name) . 'Exists';
         if (method_exists($this, $getter)) {
             return call_user_func([$this, $getter]);
         } else {
