@@ -6,7 +6,7 @@ Swoole http server without framework
 ## Features
 1. Faster Router
 2. Router & Global Middleware
-3. Model(MySQL & Eleasticsearch)
+3. Model(MySQL & Eleasticsearch、Json Serializable、Array Accessable)
 4. Query Builder(MySQL & Elasticsearch)
 5. Connection Pool(MySQL & Redis)
 6. Storage(File & Qiniu)
