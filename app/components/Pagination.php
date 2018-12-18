@@ -49,12 +49,10 @@ class Pagination
                 $this->total = $current_total;
                 $this->calculate();
             }
-        } else {
+        } elseif ($current_total < $this->total) {
             if ($current_page_count < $this->per_page) {
-                if ($current_total < $this->total) {
-                    $this->total = $current_total;
-                    $this->calculate();
-                }
+                $this->total = $current_total;
+                $this->calculate();
             }
         }
         return $this;
