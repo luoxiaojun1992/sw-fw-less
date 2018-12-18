@@ -1,0 +1,14 @@
+version: '1'
+
+services:
+  swoft:
+    image: luoxiaojun1992/sw-fw-less:latest
+    #       build: ./
+    ports:
+    - "9501:9501"
+    volumes:
+    - ./:/var/www/sw-fw-less
+    stdin_open: true
+    tty: true
+    privileged: true
+    entrypoint: ["php", "/var/www/sw-fw-less/start.php"]
