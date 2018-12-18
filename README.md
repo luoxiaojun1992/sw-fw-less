@@ -22,7 +22,9 @@ Swoole http server without framework
 
 >## Installation
 ```shell
-cp .env.example .env && composer install -vvv
+git clone git@github.com:luoxiaojun1992/sw-fw-less.git
+cp .env.example .env
+composer install -vvv
 ```
 
 >## Deployment
