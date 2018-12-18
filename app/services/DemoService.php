@@ -7,6 +7,7 @@ use App\components\Response;
 use App\models\Member;
 use App\models\Test;
 use Cake\Validation\Validator;
+use Phalcon\Validation;
 use Swlib\SaberGM;
 
 class DemoService extends BaseService
@@ -21,12 +22,27 @@ class DemoService extends BaseService
         $params = $this->getRequest()->all();
 
         //Param Validation
-        $errors = (new Validator())->requirePresence('key')
-            ->lengthBetween('key', [1, 10])
-            ->add('key', 'string', [
-                'rule' => [\App\components\Validator::class, 'string'],
-                'message' => 'key is not a string'
-            ])->errors($params);
+        if (extension_loaded('phalcon')) {
+            $messages = (new Validation())->add('key', new Validation\Validator\PresenceOf(['message' => 'key is required']))
+                ->add('key', new Validation\Validator\StringLength(['min' => 1, 'max' => 10, 'message' => 'key is not between 1 t0 10']))
+                ->add('key', new Validation\Validator\Callback([
+                    'callback' => function($data) {
+                        return \App\components\Validator::string($data['key'], $data);
+                    },
+                    'message' => 'key is not a string',
+                ]))->validate($params);
+            $errors = [];
+            foreach ($messages as $message) {
+                $errors[] = $message->getMessage();
+            }
+        } else {
+            $errors = (new Validator())->requirePresence('key')
+                ->lengthBetween('key', [1, 10])
+                ->add('key', 'string', [
+                    'rule' => [\App\components\Validator::class, 'string'],
+                    'message' => 'key is not a string'
+                ])->errors($params);
+        }
         if (count($errors) > 0) {
             return Response::json(['code' => 1, 'msg' => Helper::jsonEncode($errors), 'data' => []]);
         }
