@@ -14,7 +14,7 @@ return [
 
     //Server
     'server' => [
-        'host' => \App\components\Helper::env('SERVER_HOST', '127.0.0.1'),
+        'host' => \App\components\Helper::env('SERVER_HOST', '0.0.0.0'),
         'port' => \App\components\Helper::envInt('SERVER_PORT', 9501),
         'reactor_num' => \App\components\Helper::envInt('SERVER_REACTOR_NUM', 8),
         'worker_num' => \App\components\Helper::envInt('SERVER_WORKER_NUM', 32),
