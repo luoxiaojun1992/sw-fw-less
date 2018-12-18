@@ -6,7 +6,7 @@ use League\Flysystem\Adapter\Local;
 use League\Flysystem\Filesystem;
 
 /**
- * Class Es
+ * Class File
  *
  * @method static string basePath()
  * @method static string path($relativePath)
