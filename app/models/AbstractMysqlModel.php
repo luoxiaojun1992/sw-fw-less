@@ -57,14 +57,16 @@ abstract class AbstractMysqlModel extends AbstractModel
         if (count($attributes) > 0) {
             $primaryValue = $this->{$primaryKey};
             if ($primaryValue) {
-                $updateBuilder = static::update();
-                $updateBuilder->where("`{$primaryKey}` = :primaryValue", ['primaryValue' => $primaryValue]);
-                foreach ($attributes as $attributeName => $attribute) {
-                    $updateBuilder->col($attributeName);
-                    $updateBuilder->bindValue($attributeName, $this->{$attributeName});
+                if (count($attributes) > 1) {
+                    $updateBuilder = static::update();
+                    $updateBuilder->where("`{$primaryKey}` = :primaryValue", ['primaryValue' => $primaryValue]);
+                    foreach ($attributes as $attributeName => $attribute) {
+                        $updateBuilder->col($attributeName);
+                        $updateBuilder->bindValue($attributeName, $this->{$attributeName});
+                    }
+                    $updateBuilder->write();
+                    return true;
                 }
-                $updateBuilder->write();
-                return true;
             } else {
                 $insertBuilder = static::insert();
                 foreach ($attributes as $attributeName => $attribute) {
