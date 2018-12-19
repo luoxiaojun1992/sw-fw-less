@@ -6,6 +6,8 @@ use App\components\Helper;
 
 abstract class AbstractModel implements \JsonSerializable, \ArrayAccess
 {
+    protected static $primaryKey = 'id';
+
     private $attributes = [];
 
     /**
@@ -33,12 +35,16 @@ abstract class AbstractModel implements \JsonSerializable, \ArrayAccess
 
     public function getAttribute($name)
     {
-        $getter = 'get' . Helper::snake2Camel($name);
-        if (method_exists($this, $getter)) {
-            return call_user_func([$this, $getter]);
-        } else {
-            return $this->attributes[$name];
+        if ($this->attributeExists($name)) {
+            $getter = 'get' . Helper::snake2Camel($name);
+            if (method_exists($this, $getter)) {
+                return call_user_func([$this, $getter]);
+            } else {
+                return $this->attributes[$name];
+            }
         }
+
+        return null;
     }
 
     public function removeAttribute($name)
@@ -67,6 +73,24 @@ abstract class AbstractModel implements \JsonSerializable, \ArrayAccess
     public function toArray()
     {
         return $this->attributes;
+    }
+
+    /**
+     * @param $name
+     * @return mixed|null
+     */
+    public function __get($name)
+    {
+        return $this->getAttribute($name);
+    }
+
+    /**
+     * @param $name
+     * @param $value
+     */
+    public function __set($name, $value)
+    {
+        $this->setAttribute($name, $value);
     }
 
     /**

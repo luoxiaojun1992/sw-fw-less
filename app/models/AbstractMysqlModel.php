@@ -44,4 +44,37 @@ abstract class AbstractMysqlModel extends AbstractModel
     {
         return ModelQuery::delete()->from(static::$table)->setModelClass(static::class);
     }
+
+    /**
+     * @return bool
+     */
+    public function save()
+    {
+        $primaryKey = static::$primaryKey;
+
+        $attributes = $this->toArray();
+
+        if (count($attributes) > 0) {
+            $primaryValue = $this->{$primaryKey};
+            if ($primaryValue) {
+                $updateBuilder = static::update();
+                $updateBuilder->where("`{$primaryKey}` = :primaryValue", ['primaryValue' => $primaryValue]);
+                foreach ($attributes as $attributeName => $attribute) {
+                    $updateBuilder->col($attributeName);
+                    $updateBuilder->bindValue($attributeName, $this->{$attributeName});
+                }
+                $updateBuilder->write();
+                return true;
+            } else {
+                $insertBuilder = static::insert();
+                foreach ($attributes as $attributeName => $attribute) {
+                    $insertBuilder->col($attributeName);
+                    $insertBuilder->bindValue($attributeName, $this->{$attributeName});
+                }
+                return $insertBuilder->write() > 0;
+            }
+        }
+
+        return false;
+    }
 }
