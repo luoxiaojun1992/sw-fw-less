@@ -97,7 +97,7 @@ return [
         'base_path' => \App\components\Helper::env('APP_BASE_PATH', __DIR__ . '/../'),
         'switch' => \App\components\Helper::envInt('STORAGE_SWITCH', 0),
         'storage_path' => \App\components\Helper::env('STORAGE_PATH', __DIR__ . '/../runtime/storage/'),
-        'types' => ['file', 'qiniu', 'alioss'],
+        'types' => \App\components\Helper::envArray('STORAGE_TYPES', ['file', 'qiniu', 'alioss']),
         'ext' => [
             'qiniu' => [
                 'default_bucket' => \App\components\Helper::env('QINIU_DEFAULT_BUCKET', 'default'),

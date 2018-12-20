@@ -122,6 +122,22 @@ class Helper
     }
 
     /**
+     * @param $name
+     * @param array $default
+     * @param string $separator
+     * @return array|false|null|string
+     */
+    public static function envArray($name, $default = null, $separator = ',')
+    {
+        $value = self::env($name, $default);
+        if (is_string($value)) {
+            $value = explode($separator, $value);
+        }
+
+        return $value;
+    }
+
+    /**
      * @param $string
      * @return mixed
      */
