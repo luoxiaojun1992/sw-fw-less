@@ -31,6 +31,8 @@ abstract class AbstractModel implements \JsonSerializable, \ArrayAccess
         } else {
             $this->attributes[$name] = $value;
         }
+
+        return $this;
     }
 
     public function getAttribute($name)
@@ -91,6 +93,15 @@ abstract class AbstractModel implements \JsonSerializable, \ArrayAccess
     public function __set($name, $value)
     {
         $this->setAttribute($name, $value);
+    }
+
+    /**
+     * @param $primaryValue
+     * @return AbstractModel
+     */
+    public function setPrimaryValue($primaryValue)
+    {
+        return $this->setAttribute(static::$primaryKey, $primaryValue);
     }
 
     /**

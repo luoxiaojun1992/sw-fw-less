@@ -41,11 +41,11 @@ class ModelQuery extends QueryBuilder
     {
         $models = [];
         $result = parent::get();
-        if ($result['hits']['total'] > 0) {
-            $models = $this->setModels($result['hits']['hits']);
+        if ($result['found']) {
+            $models = $this->setModels([$result]);
         }
 
-        return $models;
+        return count($models) > 0 ? $models[0] : null;
     }
 
     /**
@@ -57,7 +57,7 @@ class ModelQuery extends QueryBuilder
         $models = [];
         $modelClass = $this->modelClass;
         foreach ($docs as $doc) {
-            $models[] = (new $modelClass)->setAttributes($doc['_source']);
+            $models[] = (new $modelClass)->setAttributes($doc['_source'])->setPrimaryValue($doc['_id']);
         }
 
         return $models;

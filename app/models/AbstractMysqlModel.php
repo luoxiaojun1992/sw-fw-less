@@ -71,6 +71,12 @@ abstract class AbstractMysqlModel extends AbstractModel
                 foreach ($attributes as $attributeName => $attribute) {
                     $insertBuilder->col($attributeName)->bindValue($attributeName, $this->{$attributeName});
                 }
+
+                $lastInsetId = $insertBuilder->getLastInsertId();
+                if ($lastInsetId) {
+                    $this->setPrimaryValue($lastInsetId);
+                }
+
                 return $insertBuilder->write() > 0;
             }
         }

@@ -21,13 +21,13 @@ class ModelQuery extends Query
 
     /**
      * @param null $pdo
-     * @return AbstractMysqlModel
+     * @return AbstractMysqlModel|null
      */
     public function first($pdo = null)
     {
         $result = parent::first($pdo);
         $modelClass = $this->modelClass;
-        return (new $modelClass)->setAttributes($result);
+        return $result ? (new $modelClass)->setAttributes($result) : null;
     }
 
     /**

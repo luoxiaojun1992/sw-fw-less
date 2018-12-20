@@ -15,6 +15,8 @@ class Query
 
     private $needRelease = true;
 
+    private $lastInsertId;
+
     /**
      * @param $db
      * @return QueryFactory|Query
@@ -98,7 +100,9 @@ class Query
                 case 1:
                     return $result ? $pdoStatement->fetchAll(\PDO::FETCH_ASSOC) : [];
                 case 2:
-                    return $result ? $pdoStatement->rowCount() : 0;
+                    $res = $result ? $pdoStatement->rowCount() : 0;
+                    $this->lastInsertId = $pdo->lastInsertId();
+                    return $res;
             }
         }
 
@@ -188,6 +192,14 @@ class Query
     public function write($pdo = null)
     {
         return $this->execute($pdo, 2);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getLastInsertId()
+    {
+        return $this->getLastInsertId();
     }
 
     /**

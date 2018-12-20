@@ -33,4 +33,57 @@ abstract class AbstractEsModel extends AbstractModel
             ->index(static::$index)
             ->type(static::$type);
     }
+
+    /**
+     * @return bool
+     */
+    public function save()
+    {
+        $primaryKey = static::$primaryKey;
+
+        $attributes = $this->toArray();
+
+        if (count($attributes) > 0) {
+            $primaryValue = $this->{$primaryKey};
+            if ($primaryValue) {
+                if (count($attributes) > 1) {
+                    $indexBuilder = static::index();
+                    foreach ($attributes as $attributeName => $attribute) {
+                        $indexBuilder->addField($attributeName, $attribute);
+                    }
+                    $res = $indexBuilder->id($primaryValue)->addDoc();
+                    return $res['result'] == 'updated';
+                }
+            } else {
+                $indexBuilder = static::index();
+                foreach ($attributes as $attributeName => $attribute) {
+                    $indexBuilder->addField($attributeName, $attribute);
+                }
+                $res = $indexBuilder->addDoc();
+
+                if (!empty($res['_id'])) {
+                    $this->setPrimaryValue($res['_id']);
+                }
+
+                return $res['result'] == 'created';
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @return bool
+     */
+    public function delete()
+    {
+        $primaryKey = static::$primaryKey;
+        $primaryValue = $this->{$primaryKey};
+        if ($primaryValue) {
+            $res = static::index()->id($primaryValue)->deleteDoc();
+            return $res['result'] == 'deleted';
+        }
+
+        return false;
+    }
 }
