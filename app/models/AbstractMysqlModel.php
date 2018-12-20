@@ -86,8 +86,8 @@ abstract class AbstractMysqlModel extends AbstractModel
         $primaryKey = static::$primaryKey;
         $primaryValue = $this->{$primaryKey};
         if ($primaryValue) {
-            $deleteBuilder = static::delete();
-            $deleteBuilder->where("`{$primaryKey}` = :primaryValue", ['primaryValue' => $primaryValue])->write();
+            static::delete()->where("`{$primaryKey}` = :primaryValue", ['primaryValue' => $primaryValue])
+                ->write();
             return true;
         }
 
