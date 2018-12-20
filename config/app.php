@@ -3,13 +3,18 @@
 return [
     //Router
     'router' => [
-        ['GET', '/ping', [\App\services\DemoService::class, 'ping']],
-        ['GET', '/redis', [\App\services\DemoService::class, 'redis', [\App\middlewares\Cors::class]]],
-        ['GET', '/mysql', [\App\services\DemoService::class, 'mysql']],
-        ['GET', '/http', [\App\services\DemoService::class, 'http']],
-        ['GET', '/es', [\App\services\DemoService::class, 'es']],
-        ['GET', '/file', [\App\services\DemoService::class, 'file']],
-        ['GET', '/qiniu', [\App\services\DemoService::class, 'qiniu']],
+        'single' => [
+            ['GET', '/ping', [\App\services\DemoService::class, 'ping']],
+            ['GET', '/redis', [\App\services\DemoService::class, 'redis', [\App\middlewares\Cors::class]]],
+            ['GET', '/mysql', [\App\services\DemoService::class, 'mysql']],
+            ['GET', '/http', [\App\services\DemoService::class, 'http']],
+            ['GET', '/es', [\App\services\DemoService::class, 'es']],
+            ['GET', '/file', [\App\services\DemoService::class, 'file']],
+            ['GET', '/qiniu', [\App\services\DemoService::class, 'qiniu']],
+        ],
+        'group' => [
+            //
+        ],
     ],
 
     //Server
