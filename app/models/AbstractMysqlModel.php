@@ -61,8 +61,7 @@ abstract class AbstractMysqlModel extends AbstractModel
                     $updateBuilder = static::update();
                     $updateBuilder->where("`{$primaryKey}` = :primaryValue", ['primaryValue' => $primaryValue]);
                     foreach ($attributes as $attributeName => $attribute) {
-                        $updateBuilder->col($attributeName);
-                        $updateBuilder->bindValue($attributeName, $this->{$attributeName});
+                        $updateBuilder->col($attributeName)->bindValue($attributeName, $this->{$attributeName});
                     }
                     $updateBuilder->write();
                     return true;
@@ -70,11 +69,26 @@ abstract class AbstractMysqlModel extends AbstractModel
             } else {
                 $insertBuilder = static::insert();
                 foreach ($attributes as $attributeName => $attribute) {
-                    $insertBuilder->col($attributeName);
-                    $insertBuilder->bindValue($attributeName, $this->{$attributeName});
+                    $insertBuilder->col($attributeName)->bindValue($attributeName, $this->{$attributeName});
                 }
                 return $insertBuilder->write() > 0;
             }
+        }
+
+        return false;
+    }
+
+    /**
+     * @return bool
+     */
+    public function del()
+    {
+        $primaryKey = static::$primaryKey;
+        $primaryValue = $this->{$primaryKey};
+        if ($primaryValue) {
+            $deleteBuilder = static::delete();
+            $deleteBuilder->where("`{$primaryKey}` = :primaryValue", ['primaryValue' => $primaryValue])->write();
+            return true;
         }
 
         return false;
