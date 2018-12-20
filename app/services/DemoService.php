@@ -8,6 +8,9 @@ use App\models\Member;
 use App\models\Test;
 use Cake\Validation\Validator;
 use Phalcon\Validation;
+use PhpAmqpLib\Connection\AMQPSocketConnection;
+use PhpAmqpLib\Message\AMQPMessage;
+use PhpAmqpLib\Wire\IO\SocketIO;
 use Swlib\SaberGM;
 
 class DemoService extends BaseService
@@ -100,5 +103,17 @@ class DemoService extends BaseService
         file_put_contents('qiniu://musics/test2.txt', 'test111111111111111111111111111');
 
         return Response::output(file_get_contents('qiniu://musics/test2.txt'));
+    }
+
+    public function rabbitmq()
+    {
+        //todo connection pool
+        $connection = new AMQPSocketConnection('127.0.0.1', 32775, 'guest', 'guest');
+        $channel = $connection->channel();
+        $channel->queue_declare('hello', false, false, false, false);
+        $msg = new AMQPMessage('Hello World!');
+        $channel->basic_publish($msg, '', 'hello');
+
+        return Response::output("Sent 'Hello World!'");
     }
 }

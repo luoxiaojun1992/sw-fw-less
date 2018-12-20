@@ -11,6 +11,7 @@ return [
             ['GET', '/es', [\App\services\DemoService::class, 'es']],
             ['GET', '/file', [\App\services\DemoService::class, 'file']],
             ['GET', '/qiniu', [\App\services\DemoService::class, 'qiniu']],
+            ['GET', '/rabbitmq', [\App\services\DemoService::class, 'rabbitmq']],
         ],
         'group' => [
             //

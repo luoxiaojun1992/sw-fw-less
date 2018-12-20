@@ -3,6 +3,8 @@
     "description": "Swoole Http Server without framework",
     "type": "project",
     "require": {
+        "php": ">=7.1",
+        "ext-json": "*",
         "nikic/fast-route": "^1",
         "aura/sqlquery": "^2",
         "swlib/saber": "^1",
