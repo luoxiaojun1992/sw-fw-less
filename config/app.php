@@ -121,4 +121,22 @@ return [
     'monitor' => [
         'switch' => \App\components\Helper::envInt('MONITOR_SWITCH', 0),
     ],
+
+    //AMQP
+    'amqp' => [
+        'pool_size' => \App\components\Helper::envInt('AMQP_POOL_SIZE', 5),
+        'switch' => \App\components\Helper::envInt('AMQP_SWITCH', 0),
+        'prefix' => \App\components\Helper::env('AMQP_PREFIX', 'sw-fw-less:'),
+        'channel_id' => \App\components\Helper::envInt('AMQP_CHANNEL_ID', 1),
+        'host' => '127.0.0.1',
+        'port' => '32771',
+        'user' => 'guest',
+        'passwd' => 'guest',
+        'vhost' => '/',
+        'locale' => 'en_US',
+        'read_timeout' => 3,
+        'keepalive' => false,
+        'write_timeout' => 3,
+        'heartbeat' => 0,
+    ],
 ];

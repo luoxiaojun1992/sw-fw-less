@@ -107,8 +107,7 @@ class CoroutineSocketIO extends AbstractIO
     {
         if (!($this->sock instanceof Socket)) {
             throw new AMQPSocketException(sprintf(
-                'Socket was null! Last SocketError was: %s',
-                $this->sock->errCode
+                'Socket was null!'
             ));
         }
         $res = '';
@@ -152,8 +151,7 @@ class CoroutineSocketIO extends AbstractIO
             // Null sockets are invalid, throw exception
             if (!($this->sock instanceof Socket)) {
                 throw new AMQPSocketException(sprintf(
-                    'Socket was null! Last SocketError was: %s',
-                    $this->sock->errCode
+                    'Socket was null!'
                 ));
             }
 

@@ -70,8 +70,10 @@ $http->on('workerStart', function($server, $id) {
         \App\components\storage\Storage::init();
     }
 
-    //todo connection pool create
-    class_alias(\App\components\amqp\CoroutineSocketIO::class, \PhpAmqpLib\Wire\IO\SocketIO::class);
+    //AMQP
+    if (\App\components\Config::get('amqp.switch')) {
+        \App\components\amqp\ConnectionPool::create();
+    }
 });
 
 $http->on("request", function (\Swoole\Http\Request $request, \Swoole\Http\Response $response) use ($dispatcher) {

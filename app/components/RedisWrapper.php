@@ -103,7 +103,7 @@ class RedisWrapper
     private function handleCommandException(\RedisException $e)
     {
         if (!$this->inTransaction() && Helper::causedByLostConnection($e)) {
-            $this->redis = RedisPool::getConnect()->getRedis();
+            $this->setRedis(RedisPool::getConnect(false)->getRedis());
         }
     }
 }

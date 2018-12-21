@@ -4,13 +4,14 @@ namespace App\services;
 
 use App\components\Helper;
 use App\components\Response;
+use App\facades\AMQPConnectionPool;
 use App\models\Member;
 use App\models\Test;
 use Cake\Validation\Validator;
 use Phalcon\Validation;
+use PhpAmqpLib\Channel\AbstractChannel;
 use PhpAmqpLib\Connection\AMQPSocketConnection;
 use PhpAmqpLib\Message\AMQPMessage;
-use PhpAmqpLib\Wire\IO\SocketIO;
 use Swlib\SaberGM;
 
 class DemoService extends BaseService
@@ -107,12 +108,7 @@ class DemoService extends BaseService
 
     public function rabbitmq()
     {
-        //todo connection pool
-        $connection = new AMQPSocketConnection('127.0.0.1', 32775, 'guest', 'guest');
-        $channel = $connection->channel();
-        $channel->queue_declare('hello', false, false, false, false);
-        $msg = new AMQPMessage('Hello World!');
-        $channel->basic_publish($msg, '', 'hello');
+        file_put_contents('amqp://hello', 'Hello World!');
 
         return Response::output("Sent 'Hello World!'");
     }

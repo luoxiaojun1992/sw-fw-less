@@ -3,6 +3,7 @@
 namespace App\services\internals;
 
 use App\components\Response;
+use App\facades\AMQPConnectionPool;
 use App\facades\Log;
 use App\facades\MysqlPool;
 use App\facades\RedisPool;
@@ -19,6 +20,7 @@ class MonitorService extends BaseService
                 'pool' => Log::countPool(),
                 'record_buffer' => Log::countRecordBuffer(),
             ],
+            'amqp' => AMQPConnectionPool::countPool(),
         ]);
     }
 }
