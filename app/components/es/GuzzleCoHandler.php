@@ -56,10 +56,13 @@ class GuzzleCoHandler
         $params = parse_url($this->effectiveUrl);
         $host = $params['host'];
         if (!isset($params['port'])) {
-            $params['port'] = $ssl ? '443' : '80';
+            $params['port'] = $ssl ? 443 : 80;
         }
         $port = $params['port'];
         $path = isset($params['path']) ? $params['path'] : '/';
+        if (!empty($params['query'])) {
+            $path .= ('?' . $params['query']);
+        }
 
         $this->client = new Client($host, $port, $ssl);
         $this->client->setMethod($method);

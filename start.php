@@ -145,8 +145,10 @@ $http->on("request", function (\Swoole\Http\Request $request, \Swoole\Http\Respo
                 $content = $res->getContent();
                 if (!$content && ob_get_length() > 0) {
                     $content = ob_get_contents();
+                    ob_end_clean();
+                } else {
+                    ob_end_flush();
                 }
-                ob_end_clean();
 
                 $response->status($res->getStatus());
                 if ($headers = $res->getHeaders()) {
@@ -166,8 +168,10 @@ $http->on("request", function (\Swoole\Http\Request $request, \Swoole\Http\Respo
         $content = $res->getContent();
         if (!$content && ob_get_length() > 0) {
             $content = ob_get_contents();
+            ob_end_clean();
+        } else {
+            ob_end_flush();
         }
-        ob_end_clean();
 
         $response->status($res->getStatus());
         if ($headers = $res->getHeaders()) {
