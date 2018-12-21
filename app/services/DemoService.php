@@ -4,14 +4,10 @@ namespace App\services;
 
 use App\components\Helper;
 use App\components\Response;
-use App\facades\AMQPConnectionPool;
 use App\models\Member;
 use App\models\Test;
 use Cake\Validation\Validator;
 use Phalcon\Validation;
-use PhpAmqpLib\Channel\AbstractChannel;
-use PhpAmqpLib\Connection\AMQPSocketConnection;
-use PhpAmqpLib\Message\AMQPMessage;
 use Swlib\SaberGM;
 
 class DemoService extends BaseService
