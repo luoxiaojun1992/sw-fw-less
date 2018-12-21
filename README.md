@@ -8,13 +8,14 @@ Swoole http server without framework
 2. Router & Global Middleware
 3. Model(MySQL & Eleasticsearch、Json Serializable、Array Accessable)
 4. Query Builder(MySQL & Elasticsearch)
-5. Connection Pool(MySQL & Redis)
+5. Connection Pool(MySQL、Redis、AMQP)
 6. Storage(File & Qiniu)
 7. Full Coroutine
 8. Log(Based on Monolog)
 9. Distributed Lock(Based on Redis)
 10. Parameter Validator
 11. Monitor
+12. AMQP-0-9-1
 
 >## Requirements
 * PHP 7.1+
