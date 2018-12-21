@@ -36,6 +36,9 @@ RUN docker-php-ext-install pdo_mysql
 # Bcmath extension
 RUN docker-php-ext-install bcmath
 
+# Sockets extension
+RUN docker-php-ext-install sockets
+
 # Redis extension
 RUN wget http://pecl.php.net/get/redis-${PHPREDIS_VERSION}.tgz -O /tmp/redis.tar.tgz \
     && pecl install /tmp/redis.tar.tgz \
