@@ -75,12 +75,14 @@ class RedisPool
             $this->redisPool[] = $this->getConnect();
         }
 
-        EventManager::instance()->dispatch(
-            new Event('redis:pool:change',
-                null,
-                ['count' => $poolSize]
-            )
-        );
+        if (Config::get('monitor.switch')) {
+            EventManager::instance()->dispatch(
+                new Event('redis:pool:change',
+                    null,
+                    ['count' => $poolSize]
+                )
+            );
+        }
 
         RedisStreamWrapper::register();
     }
@@ -103,12 +105,14 @@ class RedisPool
         if (!$redis) {
             $redis = $this->getConnect(false);
         } else {
-            EventManager::instance()->dispatch(
-                new Event('redis:pool:change',
-                    null,
-                    ['count' => -1]
-                )
-            );
+            if (Config::get('monitor.switch')) {
+                EventManager::instance()->dispatch(
+                    new Event('redis:pool:change',
+                        null,
+                        ['count' => -1]
+                    )
+                );
+            }
         }
 
         return $redis;
@@ -131,12 +135,14 @@ class RedisPool
             }
             if ($redis->isNeedRelease()) {
                 $this->redisPool[] = $redis;
-                EventManager::instance()->dispatch(
-                    new Event('redis:pool:change',
-                        null,
-                        ['count' => 1]
-                    )
-                );
+                if (Config::get('monitor.switch')) {
+                    EventManager::instance()->dispatch(
+                        new Event('redis:pool:change',
+                            null,
+                            ['count' => 1]
+                        )
+                    );
+                }
             }
         }
     }
