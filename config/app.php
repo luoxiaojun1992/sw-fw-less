@@ -40,6 +40,8 @@ return [
         'db' => \App\components\Helper::envInt('REDIS_DB', 0),
         'switch' => \App\components\Helper::envInt('REDIS_SWITCH', 0),
         'prefix' => \App\components\Helper::env('REDIS_PREFIX', 'sw-fw-less:'),
+        'pool_change_event' => \App\components\Helper::envInt('REDIS_POOL_CHANGE_EVENT', 0),
+        'report_pool_change' => \App\components\Helper::envInt('REDIS_REPORT_POOL_CHANGE', 0),
     ],
 
     //MySQL
@@ -146,7 +148,7 @@ return [
             function ($event) {
                 $count = $event->getData('count');
 
-                if (\App\components\Config::get('monitor.switch')) {
+                if (\App\components\Config::get('redis.report_pool_change')) {
                     if (extension_loaded('swoole')) {
                         \App\components\utils\swoole\Counter::incr('monitor:pool:redis', $count);
                     }

@@ -75,7 +75,7 @@ class RedisPool
             $this->redisPool[] = $this->getConnect();
         }
 
-        if (Config::get('monitor.switch')) {
+        if (Config::get('redis.pool_change_event')) {
             EventManager::instance()->dispatch(
                 new Event('redis:pool:change',
                     null,
@@ -105,7 +105,7 @@ class RedisPool
         if (!$redis) {
             $redis = $this->getConnect(false);
         } else {
-            if (Config::get('monitor.switch')) {
+            if (Config::get('redis.pool_change_event')) {
                 EventManager::instance()->dispatch(
                     new Event('redis:pool:change',
                         null,
@@ -135,7 +135,7 @@ class RedisPool
             }
             if ($redis->isNeedRelease()) {
                 $this->redisPool[] = $redis;
-                if (Config::get('monitor.switch')) {
+                if (Config::get('redis.pool_change_event')) {
                     EventManager::instance()->dispatch(
                         new Event('redis:pool:change',
                             null,
