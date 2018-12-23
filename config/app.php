@@ -139,4 +139,19 @@ return [
         'write_timeout' => \App\components\Helper::envInt('AMQP_WRITE_TIMEOUT', 3),
         'heartbeat' => \App\components\Helper::envInt('AMQP_HEARTBEAT', 0),
     ],
+
+    //Events
+    'events' => [
+        'redis:pool:change' => [
+            function ($event) {
+                $count = $event->getData('count');
+
+                if (\App\components\Config::get('monitor.switch')) {
+                    if (extension_loaded('swoole')) {
+                        \App\components\utils\swoole\Counter::incr('monitor:pool:redis', $count);
+                    }
+                }
+            },
+        ],
+    ]
 ];

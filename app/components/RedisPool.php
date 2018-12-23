@@ -2,6 +2,9 @@
 
 namespace App\components;
 
+use Cake\Event\Event;
+use Cake\Event\EventManager;
+
 class RedisPool
 {
     private static $instance;
@@ -72,6 +75,13 @@ class RedisPool
             $this->redisPool[] = $this->getConnect();
         }
 
+        EventManager::instance()->dispatch(
+            new Event('redis:pool:change',
+                null,
+                ['count' => $poolSize]
+            )
+        );
+
         RedisStreamWrapper::register();
     }
 
@@ -92,6 +102,13 @@ class RedisPool
         $redis = array_pop($this->redisPool);
         if (!$redis) {
             $redis = $this->getConnect(false);
+        } else {
+            EventManager::instance()->dispatch(
+                new Event('redis:pool:change',
+                    null,
+                    ['count' => -1]
+                )
+            );
         }
 
         return $redis;
@@ -114,6 +131,12 @@ class RedisPool
             }
             if ($redis->isNeedRelease()) {
                 $this->redisPool[] = $redis;
+                EventManager::instance()->dispatch(
+                    new Event('redis:pool:change',
+                        null,
+                        ['count' => 1]
+                    )
+                );
             }
         }
     }

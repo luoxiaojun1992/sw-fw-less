@@ -3,6 +3,7 @@
 namespace App\services\internals;
 
 use App\components\Response;
+use App\components\utils\swoole\Counter;
 use App\facades\AMQPConnectionPool;
 use App\facades\Log;
 use App\facades\MysqlPool;
@@ -13,14 +14,26 @@ class MonitorService extends BaseService
 {
     public function pool()
     {
-        return Response::json([
-            'redis' => RedisPool::countPool(),
-            'mysql' => MysqlPool::countPool(),
-            'log' => [
-                'pool' => Log::countPool(),
-                'record_buffer' => Log::countRecordBuffer(),
-            ],
-            'amqp' => AMQPConnectionPool::countPool(),
-        ]);
+        if (extension_loaded('swoole')) {
+            return Response::json([
+                'redis' => Counter::get('monitor:pool:redis'),
+                'mysql' => MysqlPool::countPool(),
+                'log' => [
+                    'pool' => Log::countPool(),
+                    'record_buffer' => Log::countRecordBuffer(),
+                ],
+                'amqp' => AMQPConnectionPool::countPool(),
+            ]);
+        } else {
+            return Response::json([
+                'redis' => RedisPool::countPool(),
+                'mysql' => MysqlPool::countPool(),
+                'log' => [
+                    'pool' => Log::countPool(),
+                    'record_buffer' => Log::countRecordBuffer(),
+                ],
+                'amqp' => AMQPConnectionPool::countPool(),
+            ]);
+        }
     }
 }
