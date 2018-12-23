@@ -85,12 +85,13 @@ class Query
     }
 
     /**
-     * @param MysqlWrapper $pdo
+     * @param MysqlWrapper|\PDO $pdo
      * @param int $mode
      * @return mixed
      */
     private function doMysqlExecute($pdo, $mode = 0)
     {
+        /** @var \PDOStatement $pdoStatement */
         $pdoStatement = $pdo->prepare($this->auraQuery->getStatement());
         if ($pdoStatement) {
             $result = $pdoStatement->execute($this->auraQuery->getBindValues());
@@ -110,7 +111,7 @@ class Query
     }
 
     /**
-     * @param null $pdo
+     * @param MysqlWrapper|null|\PDO $pdo
      * @param $mode
      * @return mixed
      */
@@ -203,7 +204,7 @@ class Query
     }
 
     /**
-     * @param MysqlWrapper $pdo
+     * @param MysqlWrapper|\PDO $pdo
      * @param \PDOException $e
      * @return MysqlWrapper
      */
