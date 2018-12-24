@@ -14,7 +14,7 @@ class Alioss
     private $config;
 
     /**
-     * Qiniu constructor.
+     * Alioss constructor.
      */
     public function __construct()
     {
@@ -28,7 +28,7 @@ class Alioss
     }
 
     /**
-     * @return Qiniu|null
+     * @return Alioss|null
      */
     public static function create()
     {
