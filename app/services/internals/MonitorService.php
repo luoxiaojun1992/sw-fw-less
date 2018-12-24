@@ -17,12 +17,12 @@ class MonitorService extends BaseService
         if (extension_loaded('swoole')) {
             return Response::json([
                 'redis' => Counter::get('monitor:pool:redis'),
-                'mysql' => MysqlPool::countPool(),
+                'mysql' => Counter::get('monitor:pool:mysql'),
                 'log' => [
                     'pool' => Log::countPool(),
                     'record_buffer' => Log::countRecordBuffer(),
                 ],
-                'amqp' => AMQPConnectionPool::countPool(),
+                'amqp' => Counter::get('monitor:pool:amqp'),
             ]);
         } else {
             return Response::json([

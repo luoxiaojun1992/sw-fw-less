@@ -58,6 +58,8 @@ return [
         ],
         'pool_size' => \App\components\Helper::envInt('MYSQL_POOL_SIZE', 5),
         'switch' => \App\components\Helper::envInt('MYSQL_SWITCH', 0),
+        'pool_change_event' => \App\components\Helper::envInt('MYSQL_POOL_CHANGE_EVENT', 0),
+        'report_pool_change' => \App\components\Helper::envInt('MYSQL_REPORT_POOL_CHANGE', 0),
     ],
 
     //Log
@@ -112,7 +114,20 @@ return [
                     ],
                 ],
             ],
-            'alioss' => [],
+            'alioss' => [
+                'default_bucket' => \App\components\Helper::env('ALIOSS_DEFAULT_BUCKET', 'default'),
+                'buckets' => [
+                    \App\components\Helper::env('ALIOSS_DEFAULT_BUCKET', 'default') => [
+                        'access_id' => \App\components\Helper::env('ALIOSS_DEFAULT_ACCESS_ID', ''),
+                        'access_secret' => \App\components\Helper::env('ALIOSS_DEFAULT_ACCESS_SECRET', ''),
+                        'endpoint' => \App\components\Helper::env('ALIOSS_DEFAULT_ENDPOINT', ''),
+                        'timeout' => \App\components\Helper::envDouble('ALIOSS_DEFAULT_TIMEOUT', 1),
+                        'connectTimeout' => \App\components\Helper::envDouble('ALIOSS_DEFAULT_CONNECT_TIMEOUT', 1),
+                        'isCName' => \App\components\Helper::envBool('ALIOSS_DEFAULT_IS_CNAME', false),
+                        'securityToken' => \App\components\Helper::env('ALIOSS_DEFAULT_SECURITY_TOKEN', null),
+                    ],
+                ],
+            ],
         ],
     ],
 
@@ -140,6 +155,8 @@ return [
         'keepalive' => \App\components\Helper::envBool('AMQP_KEEPALIVE', false),
         'write_timeout' => \App\components\Helper::envInt('AMQP_WRITE_TIMEOUT', 3),
         'heartbeat' => \App\components\Helper::envInt('AMQP_HEARTBEAT', 0),
+        'pool_change_event' => \App\components\Helper::envInt('AMQP_POOL_CHANGE_EVENT', 0),
+        'report_pool_change' => \App\components\Helper::envInt('AMQP_REPORT_POOL_CHANGE', 0),
     ],
 
     //Events
@@ -151,6 +168,28 @@ return [
                 if (\App\components\Config::get('redis.report_pool_change')) {
                     if (extension_loaded('swoole')) {
                         \App\components\utils\swoole\Counter::incr('monitor:pool:redis', $count);
+                    }
+                }
+            },
+        ],
+        'mysql:pool:change' => [
+            function ($event) {
+                $count = $event->getData('count');
+
+                if (\App\components\Config::get('mysql.report_pool_change')) {
+                    if (extension_loaded('swoole')) {
+                        \App\components\utils\swoole\Counter::incr('monitor:pool:mysql', $count);
+                    }
+                }
+            },
+        ],
+        'amqp:pool:change' => [
+            function ($event) {
+                $count = $event->getData('count');
+
+                if (\App\components\Config::get('amqp.report_pool_change')) {
+                    if (extension_loaded('swoole')) {
+                        \App\components\utils\swoole\Counter::incr('monitor:pool:amqp', $count);
                     }
                 }
             },

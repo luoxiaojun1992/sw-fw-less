@@ -2,6 +2,9 @@
 
 namespace App\components;
 
+use Cake\Event\Event;
+use Cake\Event\EventManager;
+
 class MysqlPool
 {
     private static $instance;
@@ -47,6 +50,15 @@ class MysqlPool
         for ($i = 0; $i < $poolSize; ++$i) {
             $this->pdoPool[] = $this->getConnect();
         }
+
+        if (Config::get('mysql.pool_change_event')) {
+            EventManager::instance()->dispatch(
+                new Event('mysql:pool:change',
+                    null,
+                    ['count' => $poolSize]
+                )
+            );
+        }
     }
 
     /**
@@ -57,6 +69,15 @@ class MysqlPool
         $pdo = array_pop($this->pdoPool);
         if (!$pdo) {
             $pdo = $this->getConnect(false);
+        } else {
+            if (Config::get('mysql.pool_change_event')) {
+                EventManager::instance()->dispatch(
+                    new Event('mysql:pool:change',
+                        null,
+                        ['count' => -1]
+                    )
+                );
+            }
         }
 
         return $pdo;
@@ -79,6 +100,14 @@ class MysqlPool
             }
             if ($pdo->isNeedRelease()) {
                 $this->pdoPool[] = $pdo;
+                if (Config::get('mysql.pool_change_event')) {
+                    EventManager::instance()->dispatch(
+                        new Event('mysql:pool:change',
+                            null,
+                            ['count' => 1]
+                        )
+                    );
+                }
             }
         }
     }

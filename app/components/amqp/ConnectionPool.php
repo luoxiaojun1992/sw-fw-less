@@ -3,6 +3,8 @@
 namespace App\components\amqp;
 
 use App\components\Config;
+use Cake\Event\Event;
+use Cake\Event\EventManager;
 use PhpAmqpLib\Connection\AMQPSocketConnection;
 use PhpAmqpLib\Wire\IO\SocketIO;
 
@@ -47,6 +49,15 @@ class ConnectionPool
             $this->connectionPool[] = $this->getConnect();
         }
 
+        if (Config::get('amqp.pool_change_event')) {
+            EventManager::instance()->dispatch(
+                new Event('amqp:pool:change',
+                    null,
+                    ['count' => $poolSize]
+                )
+            );
+        }
+
         AMQPStreamWrapper::register();
     }
 
@@ -67,6 +78,15 @@ class ConnectionPool
         $connection = array_pop($this->connectionPool);
         if (!$connection) {
             $connection = $this->getConnect(false);
+        } else {
+            if (Config::get('amqp.pool_change_event')) {
+                EventManager::instance()->dispatch(
+                    new Event('amqp:pool:change',
+                        null,
+                        ['count' => -1]
+                    )
+                );
+            }
         }
 
         return $connection;
@@ -80,6 +100,14 @@ class ConnectionPool
         if ($connection) {
             if ($connection->isNeedRelease()) {
                 $this->connectionPool[] = $connection;
+                if (Config::get('amqp.pool_change_event')) {
+                    EventManager::instance()->dispatch(
+                        new Event('amqp:pool:change',
+                            null,
+                            ['count' => 1]
+                        )
+                    );
+                }
             }
         }
     }
