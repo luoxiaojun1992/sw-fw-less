@@ -4,7 +4,7 @@ namespace App\components\storage;
 
 use App\components\Config;
 use League\Flysystem\Filesystem;
-use Qiniu\Http\Client;
+use OSS\Http\RequestCore;
 use Xxtime\Flysystem\Aliyun\OssAdapter;
 
 class Alioss
@@ -21,10 +21,10 @@ class Alioss
         $this->config = Config::get('storage');
 
         if (extension_loaded('swoole')) {
-//            class_alias(QiniuCoHttpClient::class, Client::class);
+            class_alias(AliossCoRequest::class, RequestCore::class);
         }
 
-//        QiniuStreamWrapper::register();
+        AliossStreamWrapper::register();
     }
 
     /**

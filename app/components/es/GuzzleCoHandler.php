@@ -79,6 +79,7 @@ class GuzzleCoHandler
 
         $this->btime = microtime(true);
         $this->client->execute($path);
+        $this->client->close();
 
         return $this->getResponse();
     }

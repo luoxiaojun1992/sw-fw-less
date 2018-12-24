@@ -108,6 +108,7 @@ final class QiniuCoHttpClient
             $client->setData($request->body);
         }
         $client->execute($path);
+        $client->close();
 
         $t2 = microtime(true);
         $duration = round($t2 - $t1, 3);
@@ -130,7 +131,6 @@ final class QiniuCoHttpClient
         foreach ($client->headers as $k => $v) {
             $headers[self::ucwordsHyphen($k)] = $v;
         }
-        $client->close();
         return new Response($statusCode, $duration, $headers, $client->body, null);
     }
 
