@@ -47,22 +47,6 @@ class Qiniu
     }
 
     /**
-     * @return string
-     */
-    public function bucket()
-    {
-        return $this->config['ext']['qiniu']['bucket'];
-    }
-
-    /**
-     * @return string
-     */
-    public function domain()
-    {
-        return $this->config['ext']['qiniu']['domain'];
-    }
-
-    /**
      * @param null $bucket
      * @return Filesystem
      */

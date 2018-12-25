@@ -108,4 +108,14 @@ class DemoService extends BaseService
 
         return Response::output("Sent 'Hello World!'");
     }
+
+    public function alioss()
+    {
+        if (file_exists('alioss://sw-fw-less/test2.txt')) {
+            unlink('alioss://sw-fw-less/test2.txt');
+        }
+        file_put_contents('alioss://sw-fw-less/test2.txt', 'test111111111111111111111111111');
+
+        return Response::output(file_get_contents('alioss://sw-fw-less/test2.txt'));
+    }
 }

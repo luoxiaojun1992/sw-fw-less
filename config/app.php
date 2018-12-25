@@ -12,6 +12,7 @@ return [
             ['GET', '/file', [\App\services\DemoService::class, 'file']],
             ['GET', '/qiniu', [\App\services\DemoService::class, 'qiniu']],
             ['GET', '/rabbitmq', [\App\services\DemoService::class, 'rabbitmq']],
+            ['GET', '/alioss', [\App\services\DemoService::class, 'alioss']],
         ],
         'group' => [
             //
@@ -125,6 +126,7 @@ return [
                         'connectTimeout' => \App\components\Helper::envDouble('ALIOSS_DEFAULT_CONNECT_TIMEOUT', 1),
                         'isCName' => \App\components\Helper::envBool('ALIOSS_DEFAULT_IS_CNAME', false),
                         'securityToken' => \App\components\Helper::env('ALIOSS_DEFAULT_SECURITY_TOKEN', null),
+                        'domain' => \App\components\Helper::env('ALIOSS_DEFAULT_DOMAIN', ''),
                     ],
                 ],
             ],

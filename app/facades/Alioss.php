@@ -7,8 +7,6 @@ use League\Flysystem\Filesystem;
 /**
  * Class Alioss
  *
- * @method static string bucket()
- * @method static string endpoint()
  * @method static Filesystem prepare($bucket = null)
  * @package App\facades
  */

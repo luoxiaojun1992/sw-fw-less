@@ -47,22 +47,6 @@ class Alioss
     }
 
     /**
-     * @return string
-     */
-    public function bucket()
-    {
-        return $this->config['ext']['alioss']['bucket'];
-    }
-
-    /**
-     * @return string
-     */
-    public function endpoint()
-    {
-        return $this->config['ext']['alioss']['endpoint'];
-    }
-
-    /**
      * @param null $bucket
      * @return Filesystem
      * @throws \Exception
@@ -72,6 +56,7 @@ class Alioss
         $aliossConfig = $this->config['ext']['alioss'];
         $bucket = $bucket ? : $aliossConfig['default_bucket'];
         $bucketConfig = $aliossConfig['buckets'][$bucket];
+
         $local = new OssAdapter([
             'access_id' => $bucketConfig['access_id'],
             'access_secret' => $bucketConfig['access_secret'],

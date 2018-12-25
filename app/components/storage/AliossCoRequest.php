@@ -699,7 +699,7 @@ class AliossCoRequest
             $this->response_code = $client->statusCode;
             $this->response_info = [
                 'url' => $this->request_url,
-                'content_type' => $this->response_headers['content-type'],
+                'content_type' => isset($this->response_headers['content-type']) ? $this->response_headers['content-type'] : '',
                 'http_code' => $this->response_code,
                 'header_size' => 1,
                 'request_size' => strlen($client->requestBody),
