@@ -29,6 +29,7 @@ composer install -vvv
 ```
 
 >## Deployment
+### Nginx
 Nginx Config Demo(Modify according to your requirements)
 ```shell
 server {
@@ -42,6 +43,10 @@ server {
         proxy_pass http://127.0.0.1:9501;
     }
 }
+```
+### Docker
+```shell
+docker run -d -P luoxiaojun1992/sw-fw-less:latest
 ```
 
 >## Usage
