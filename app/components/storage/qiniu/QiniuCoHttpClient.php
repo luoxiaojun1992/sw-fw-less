@@ -1,6 +1,6 @@
 <?php
 
-namespace App\components\storage;
+namespace App\components\storage\qiniu;
 
 use Qiniu\Config;
 use Qiniu\Http\Request;

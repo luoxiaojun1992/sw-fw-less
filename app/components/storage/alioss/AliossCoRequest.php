@@ -1,6 +1,6 @@
 <?php
 
-namespace App\components\storage;
+namespace App\components\storage\alioss;
 
 use OSS\Http\RequestCore_Exception;
 use OSS\Http\ResponseCore;

@@ -14,6 +14,6 @@ class Alioss extends AbstractFacade
 {
     protected static function getAccessor()
     {
-        return \App\components\storage\Alioss::create();
+        return \App\components\storage\alioss\Alioss::create();
     }
 }

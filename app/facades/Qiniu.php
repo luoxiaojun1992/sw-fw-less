@@ -14,6 +14,6 @@ class Qiniu extends AbstractFacade
 {
     protected static function getAccessor()
     {
-        return \App\components\storage\Qiniu::create();
+        return \App\components\storage\qiniu\Qiniu::create();
     }
 }

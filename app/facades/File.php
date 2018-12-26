@@ -19,6 +19,6 @@ class File extends AbstractFacade
 {
     protected static function getAccessor()
     {
-        return \App\components\storage\File::create();
+        return \App\components\storage\file\File::create();
     }
 }

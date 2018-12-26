@@ -1,6 +1,6 @@
 <?php
 
-namespace App\components\storage;
+namespace App\components\storage\file;
 
 class FileStreamWrapper
 {
