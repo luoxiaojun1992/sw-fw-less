@@ -11,7 +11,7 @@ class Counter
 
     public static function init()
     {
-        if (!(self::$swTable instanceof swTable)) {
+        if (!(self::$swTable instanceof Table)) {
             self::$swTable = new Table(1024);
             self::$swTable->column('count', Table::TYPE_INT, 8);
             self::$swTable->create();
