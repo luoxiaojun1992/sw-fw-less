@@ -139,4 +139,13 @@ class Request
     {
         return $this->getSwRequest()->rawcontent();
     }
+
+    /**
+     * @param $swRequest
+     * @return Request
+     */
+    public static function fromSwRequest($swRequest)
+    {
+        return (new self())->setSwRequest($swRequest);
+    }
 }

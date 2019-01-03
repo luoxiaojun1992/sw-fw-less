@@ -196,5 +196,13 @@ return [
                 }
             },
         ],
-    ]
+    ],
+
+    //Trace
+    'trace' => [
+        'switch' => \App\components\Helper::envInt('TRACE_SWITCH', 0),
+        'zipkin_url' => \App\components\Helper::env('TRACE_ZIPKIN_URL', 'http://127.0.0.1:9411/api/v2/spans'),
+        'sample_rate' => \App\components\Helper::envDouble('TRACE_SAMPLE_RATE', 0),
+        'service_name' => \App\components\Helper::env('TRACE_SERVICE_NAME', 'sw-fw-less'),
+    ],
 ];

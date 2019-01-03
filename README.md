@@ -16,6 +16,7 @@ Swoole http server without framework
 10. Parameter Validator
 11. Monitor
 12. AMQP-0-9-1
+13. Zipkin Trace
 
 >## Requirements
 * PHP 7.1+
@@ -63,7 +64,7 @@ curl -i 'http://127.0.0.1:9501/ping'
 >## Performance
 Environment:
 * OS: MacOS 10.14.1
-* CPU: 2.3 GHz Intel Core i5 Dual Core
+* CPU: 2.3 GHz Intel Core i5 4 Cores
 * Memory: 16 GB 2133 MHz LPDDR3
 * Swoole: 4.2.9
 * PHP: 7.2.8
