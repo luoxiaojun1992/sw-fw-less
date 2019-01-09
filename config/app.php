@@ -13,6 +13,7 @@ return [
             ['GET', '/qiniu', [\App\services\DemoService::class, 'qiniu']],
             ['GET', '/rabbitmq', [\App\services\DemoService::class, 'rabbitmq']],
             ['GET', '/alioss', [\App\services\DemoService::class, 'alioss']],
+            ['GET', '/hbase', [\App\services\DemoService::class, 'hbase']],
         ],
         'group' => [
             //

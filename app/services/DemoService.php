@@ -4,11 +4,17 @@ namespace App\services;
 
 use App\components\Helper;
 use App\components\Response;
+use App\facades\File;
 use App\models\Member;
 use App\models\Test;
 use Cake\Validation\Validator;
+use Hbase\HbaseClient;
 use Phalcon\Validation;
 use Swlib\SaberGM;
+
+use Thrift\Protocol\TBinaryProtocol;
+use Thrift\Transport\TSocket;
+use Thrift\Transport\TBufferedTransport;
 
 class DemoService extends BaseService
 {
@@ -117,5 +123,25 @@ class DemoService extends BaseService
         file_put_contents('alioss://sw-fw-less/test2.txt', 'test111111111111111111111111111');
 
         return Response::output(file_get_contents('alioss://sw-fw-less/test2.txt'));
+    }
+
+    public function hbase()
+    {
+        require_once File::path('/app/components/hbase/thrift/Hbase.php');
+        require_once File::path('/app/components/hbase/thrift/Types.php');
+
+        $socket = new TSocket('localhost', 32796);
+        $socket->setSendTimeout(5000);
+        $socket->setRecvTimeout(5000);
+
+        $transport = new TBufferedTransport($socket);
+        $protocol = new TBinaryProtocol($transport);
+
+        $client = new HbaseClient($protocol);
+        $transport->open();
+        $tables = $client->getTableNames();
+        $transport->close();
+
+        return Response::json($tables);
     }
 }
