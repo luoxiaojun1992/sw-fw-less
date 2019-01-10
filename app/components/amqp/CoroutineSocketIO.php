@@ -106,9 +106,7 @@ class CoroutineSocketIO extends AbstractIO
     public function read($n)
     {
         if (!($this->sock instanceof Socket)) {
-            throw new AMQPSocketException(sprintf(
-                'Socket was null!'
-            ));
+            throw new AMQPSocketException('Socket was null!');
         }
         $res = '';
         $read = 0;
@@ -150,9 +148,7 @@ class CoroutineSocketIO extends AbstractIO
         while (true) {
             // Null sockets are invalid, throw exception
             if (!($this->sock instanceof Socket)) {
-                throw new AMQPSocketException(sprintf(
-                    'Socket was null!'
-                ));
+                throw new AMQPSocketException('Socket was null!');
             }
 
             $sent = $this->sock->send($data, $this->send_timeout);

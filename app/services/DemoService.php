@@ -4,6 +4,7 @@ namespace App\services;
 
 use App\components\Helper;
 use App\components\Response;
+use App\components\thrift\TCoroutineSocket;
 use App\facades\File;
 use App\models\Member;
 use App\models\Test;
@@ -130,7 +131,7 @@ class DemoService extends BaseService
         require_once File::path('/app/components/hbase/thrift/Hbase.php');
         require_once File::path('/app/components/hbase/thrift/Types.php');
 
-        $socket = new TSocket('localhost', 32796);
+        $socket = new TCoroutineSocket('localhost', 32810);
         $socket->setSendTimeout(5000);
         $socket->setRecvTimeout(5000);
 
