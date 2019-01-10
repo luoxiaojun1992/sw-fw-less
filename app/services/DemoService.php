@@ -131,7 +131,7 @@ class DemoService extends BaseService
         require_once File::path('/app/components/hbase/thrift/Hbase.php');
         require_once File::path('/app/components/hbase/thrift/Types.php');
 
-        $socket = new TCoroutineSocket('localhost', 32810);
+        $socket = new TCoroutineSocket('localhost', 32816);
         $socket->setSendTimeout(5000);
         $socket->setRecvTimeout(5000);
 
@@ -141,8 +141,9 @@ class DemoService extends BaseService
         $client = new HbaseClient($protocol);
         $transport->open();
         $tables = $client->getTableNames();
+        $row1 = $client->get('User', 'row1', 'info:age', []);
         $transport->close();
 
-        return Response::json($tables);
+        return Response::json(['tables' => $tables, 'row1' => $row1]);
     }
 }
