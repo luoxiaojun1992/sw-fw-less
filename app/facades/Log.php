@@ -23,6 +23,7 @@ use Monolog\Logger;
  * @method static Logger getLogger()
  * @method static int countRecordBuffer()
  * @method static int countPool()
+ * @method static flush()
  * @package App\facades
  */
 class Log extends AbstractFacade

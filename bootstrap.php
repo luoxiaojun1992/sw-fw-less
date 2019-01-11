@@ -44,5 +44,6 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
     }
     if (\App\components\Config::get('monitor.switch')) {
         $r->addRoute('GET', '/monitor/pool', [\App\services\internals\MonitorService::class, 'pool']);
+        $r->addRoute('GET', '/log/flush', [\App\services\internals\LogService::class, 'flush']);
     }
 });
