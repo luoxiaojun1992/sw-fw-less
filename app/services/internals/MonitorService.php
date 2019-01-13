@@ -6,6 +6,7 @@ use App\components\Config;
 use App\components\Response;
 use App\components\utils\swoole\Counter;
 use App\facades\AMQPConnectionPool;
+use App\facades\HbasePool;
 use App\facades\Log;
 use App\facades\MysqlPool;
 use App\facades\RedisPool;
@@ -27,6 +28,8 @@ class MonitorService extends BaseService
                 ],
                 'amqp' => Config::get('amqp.pool_change_event') && Config::get('amqp.report_pool_change') ?
                     Counter::get('monitor:pool:amqp') : AMQPConnectionPool::countPool(),
+                'hbase' => Config::get('hbase.pool_change_event') && Config::get('hbase.report_pool_change') ?
+                    Counter::get('monitor:pool:hbase') : HbasePool::countPool(),
             ]);
         } else {
             return Response::json([
@@ -37,6 +40,7 @@ class MonitorService extends BaseService
                     'record_buffer' => Log::countRecordBuffer(),
                 ],
                 'amqp' => AMQPConnectionPool::countPool(),
+                'hbase' => HbasePool::countPool(),
             ]);
         }
     }

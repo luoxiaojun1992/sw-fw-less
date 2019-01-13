@@ -4,18 +4,13 @@ namespace App\services;
 
 use App\components\Helper;
 use App\components\Response;
-use App\components\thrift\TCoroutineSocket;
-use App\facades\File;
+use App\facades\HbasePool;
 use App\models\Member;
 use App\models\Test;
 use Cake\Validation\Validator;
 use Hbase\HbaseClient;
 use Phalcon\Validation;
 use Swlib\SaberGM;
-
-use Thrift\Protocol\TBinaryProtocol;
-use Thrift\Transport\TSocket;
-use Thrift\Transport\TBufferedTransport;
 
 class DemoService extends BaseService
 {
@@ -128,22 +123,19 @@ class DemoService extends BaseService
 
     public function hbase()
     {
-        require_once File::path('/app/components/hbase/thrift/Hbase.php');
-        require_once File::path('/app/components/hbase/thrift/Types.php');
+        $tables = [];
 
-        $socket = new TCoroutineSocket('localhost', 32816);
-        $socket->setSendTimeout(5000);
-        $socket->setRecvTimeout(5000);
+        /** @var HbaseClient $client */
+        $client = HbasePool::pick();
 
-        $transport = new TBufferedTransport($socket);
-        $protocol = new TBinaryProtocol($transport);
+        try {
+            $tables = $client->getTableNames();
+        } catch (\Exception $e) {
+            throw $e;
+        } finally {
+            HbasePool::release($client);
+        }
 
-        $client = new HbaseClient($protocol);
-        $transport->open();
-        $tables = $client->getTableNames();
-        $row1 = $client->get('User', 'row1', 'info:age', []);
-        $transport->close();
-
-        return Response::json(['tables' => $tables, 'row1' => $row1]);
+        return Response::json(['tables' => $tables]);
     }
 }

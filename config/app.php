@@ -197,6 +197,17 @@ return [
                 }
             },
         ],
+        'hbase:pool:change' => [
+            function ($event) {
+                $count = $event->getData('count');
+
+                if (\App\components\Config::get('hbase.report_pool_change')) {
+                    if (extension_loaded('swoole')) {
+                        \App\components\utils\swoole\Counter::incr('monitor:pool:hbase', $count);
+                    }
+                }
+            },
+        ],
     ],
 
     //Trace
@@ -205,5 +216,17 @@ return [
         'zipkin_url' => \App\components\Helper::env('TRACE_ZIPKIN_URL', 'http://127.0.0.1:9411/api/v2/spans'),
         'sample_rate' => \App\components\Helper::envDouble('TRACE_SAMPLE_RATE', 0),
         'service_name' => \App\components\Helper::env('TRACE_SERVICE_NAME', 'sw-fw-less'),
+    ],
+
+    //Hbase
+    'hbase' => [
+        'pool_size' => \App\components\Helper::envInt('HBASE_POOL_SIZE', 5),
+        'switch' => \App\components\Helper::envInt('HBASE_SWITCH', 0),
+        'host' => \App\components\Helper::env('HBASE_HOST', '127.0.0.1'),
+        'port' => \App\components\Helper::envInt('HBASE_PORT', 9090),
+        'read_timeout' => \App\components\Helper::envInt('HBASE_READ_TIMEOUT', 5000),
+        'write_timeout' => \App\components\Helper::envInt('HBASE_WRITE_TIMEOUT', 5000),
+        'pool_change_event' => \App\components\Helper::envInt('HBASE_POOL_CHANGE_EVENT', 0),
+        'report_pool_change' => \App\components\Helper::envInt('HBASE_REPORT_POOL_CHANGE', 0),
     ],
 ];

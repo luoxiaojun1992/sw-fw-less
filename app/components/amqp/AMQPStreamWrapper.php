@@ -62,9 +62,9 @@ class AMQPStreamWrapper
 
         $channel = null;
         $channel_id = Config::get('amqp.channel_id');
+        /** @var AMQPSocketConnection|ConnectionWrapper $connection */
+        $connection = AMQPConnectionPool::pick();
         try {
-            /** @var AMQPSocketConnection $connection */
-            $connection = AMQPConnectionPool::pick();
             $channel = $connection->channel($channel_id);
             $do($channel);
         } catch (\Exception $e) {

@@ -8,7 +8,7 @@ Swoole http server without framework
 2. Router & Global Middleware
 3. Model(MySQL & Eleasticsearch、Json Serializable、Array Accessable)
 4. Query Builder(MySQL & Elasticsearch)
-5. Connection Pool(MySQL、Redis、AMQP-0-9-1)
+5. Connection Pool(MySQL、Redis、Experimental AMQP-0-9-1、Experimental HBase)
 6. Storage(File、Qiniu、Alioss)
 7. Full Coroutine
 8. Log(Based on Monolog)

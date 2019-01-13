@@ -79,6 +79,11 @@ $httpServer->on('workerStart', function($server, $id) {
     if (\App\components\Config::get('trace.switch')) {
         \App\components\Trace::create(\App\components\Config::get('trace.zipkin_url'));
     }
+
+    //Hbase
+    if (\App\components\Config::get('hbase.switch')) {
+        \App\components\hbase\HbasePool::create();
+    }
 });
 
 $httpServer->on("request", function (\Swoole\Http\Request $request, \Swoole\Http\Response $response) use ($dispatcher) {
