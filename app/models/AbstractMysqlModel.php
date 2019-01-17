@@ -50,6 +50,8 @@ abstract class AbstractMysqlModel extends AbstractModel
      */
     public function save()
     {
+        $this->fireEvent('saving');
+
         $primaryKey = static::$primaryKey;
 
         $attributes = $this->toArray();
@@ -58,15 +60,25 @@ abstract class AbstractMysqlModel extends AbstractModel
             $primaryValue = $this->{$primaryKey};
             if ($primaryValue) {
                 if (count($attributes) > 1) {
+                    $this->fireEvent('updating');
+                    $attributes = $this->toArray();
                     $updateBuilder = static::update();
                     $updateBuilder->where("`{$primaryKey}` = :primaryValue", ['primaryValue' => $primaryValue]);
                     foreach ($attributes as $attributeName => $attribute) {
+                        if ($attributeName == $primaryKey) {
+                            continue;
+                        }
+
                         $updateBuilder->col($attributeName)->bindValue($attributeName, $this->{$attributeName});
                     }
                     $updateBuilder->write();
+                    $this->fireEvent('updated');
+                    $this->fireEvent('saved');
                     return true;
                 }
             } else {
+                $this->fireEvent('creating');
+                $attributes = $this->toArray();
                 $insertBuilder = static::insert();
                 foreach ($attributes as $attributeName => $attribute) {
                     $insertBuilder->col($attributeName)->bindValue($attributeName, $this->{$attributeName});
@@ -77,6 +89,11 @@ abstract class AbstractMysqlModel extends AbstractModel
                 $lastInsetId = $insertBuilder->getLastInsertId();
                 if ($lastInsetId) {
                     $this->setPrimaryValue($lastInsetId);
+                }
+
+                if ($res) {
+                    $this->fireEvent('created');
+                    $this->fireEvent('saved');
                 }
 
                 return $res;
@@ -91,11 +108,15 @@ abstract class AbstractMysqlModel extends AbstractModel
      */
     public function del()
     {
+        $this->fireEvent('saving');
+
         $primaryKey = static::$primaryKey;
         $primaryValue = $this->{$primaryKey};
         if ($primaryValue) {
             static::delete()->where("`{$primaryKey}` = :primaryValue", ['primaryValue' => $primaryValue])
                 ->write();
+
+            $this->fireEvent('saved');
             return true;
         }
 

@@ -49,6 +49,10 @@ abstract class AbstractEsModel extends AbstractModel
                 if (count($attributes) > 1) {
                     $indexBuilder = static::index();
                     foreach ($attributes as $attributeName => $attribute) {
+                        if ($attributeName == $primaryKey) {
+                            continue;
+                        }
+
                         $indexBuilder->addField($attributeName, $attribute);
                     }
                     $res = $indexBuilder->id($primaryValue)->addDoc();

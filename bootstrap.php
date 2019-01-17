@@ -25,7 +25,7 @@ date_default_timezone_set(\App\components\Config::get('timezone'));
 //Events
 foreach (\App\components\Config::get('events') as $eventName => $eventListeners) {
     foreach ($eventListeners as $eventListener) {
-        \Cake\Event\EventManager::instance()->on($eventName, $eventListener);
+        \App\facades\Event::on($eventName, $eventListener);
     }
 }
 

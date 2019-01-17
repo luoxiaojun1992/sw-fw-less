@@ -3,12 +3,77 @@
 namespace App\models;
 
 use App\components\Helper;
+use App\models\traits\ModelArrayTrait;
+use App\models\traits\ModelEventsTrait;
+use App\models\traits\ModelJsonTrait;
+use Cake\Event\Event;
 
 abstract class AbstractModel implements \JsonSerializable, \ArrayAccess
 {
+    use ModelArrayTrait;
+    use ModelJsonTrait;
+    use ModelEventsTrait;
+
     protected static $primaryKey = 'id';
+    protected static $bootedLock = [true];
 
     private $attributes = [];
+
+    public function __construct()
+    {
+        static::bootOnce();
+    }
+
+    protected static function setFilter()
+    {
+        static::creating(function (Event $event) {
+            $model = $event->getData('model');
+            if (method_exists($model, 'beforeCreate')) {
+                call_user_func([$model, 'beforeCreate']);
+            }
+        });
+        static::created(function (Event $event) {
+            $model = $event->getData('model');
+            if (method_exists($model, 'afterCreate')) {
+                call_user_func([$model, 'afterCreate']);
+            }
+        });
+        static::updating(function (Event $event) {
+            $model = $event->getData('model');
+            if (method_exists($model, 'beforeUpdate')) {
+                call_user_func([$model, 'beforeUpdate']);
+            }
+        });
+        static::updated(function (Event $event) {
+            $model = $event->getData('model');
+            if (method_exists($model, 'afterUpdate')) {
+                call_user_func([$model, 'afterUpdate']);
+            }
+        });
+        static::saving(function (Event $event) {
+            $model = $event->getData('model');
+            if (method_exists($model, 'beforeSave')) {
+                call_user_func([$model, 'beforeSave']);
+            }
+        });
+        static::saved(function (Event $event) {
+            $model = $event->getData('model');
+            if (method_exists($model, 'afterSave')) {
+                call_user_func([$model, 'afterSave']);
+            }
+        });
+    }
+
+    protected static function bootOnce()
+    {
+        if (array_pop(static::$bootedLock)) {
+            static::setFilter();
+
+            if (method_exists(static::class, 'boot')) {
+                call_user_func([static::class, 'boot']);
+            }
+        }
+    }
 
     /**
      * @param $attributes
@@ -102,79 +167,5 @@ abstract class AbstractModel implements \JsonSerializable, \ArrayAccess
     public function setPrimaryValue($primaryValue)
     {
         return $this->setAttribute(static::$primaryKey, $primaryValue);
-    }
-
-    /**
-     * Specify data which should be serialized to JSON
-     * @link https://php.net/manual/en/jsonserializable.jsonserialize.php
-     * @return mixed data which can be serialized by <b>json_encode</b>,
-     * which is a value of any type other than a resource.
-     * @since 5.4.0
-     */
-    public function jsonSerialize()
-    {
-        return $this->toArray();
-    }
-
-    /**
-     * Whether a offset exists
-     * @link https://php.net/manual/en/arrayaccess.offsetexists.php
-     * @param mixed $offset <p>
-     * An offset to check for.
-     * </p>
-     * @return boolean true on success or false on failure.
-     * </p>
-     * <p>
-     * The return value will be casted to boolean if non-boolean was returned.
-     * @since 5.0.0
-     */
-    public function offsetExists($offset)
-    {
-        return $this->attributeExists($offset);
-    }
-
-    /**
-     * Offset to retrieve
-     * @link https://php.net/manual/en/arrayaccess.offsetget.php
-     * @param mixed $offset <p>
-     * The offset to retrieve.
-     * </p>
-     * @return mixed Can return all value types.
-     * @since 5.0.0
-     */
-    public function offsetGet($offset)
-    {
-        return $this->getAttribute($offset);
-    }
-
-    /**
-     * Offset to set
-     * @link https://php.net/manual/en/arrayaccess.offsetset.php
-     * @param mixed $offset <p>
-     * The offset to assign the value to.
-     * </p>
-     * @param mixed $value <p>
-     * The value to set.
-     * </p>
-     * @return void
-     * @since 5.0.0
-     */
-    public function offsetSet($offset, $value)
-    {
-        $this->setAttribute($offset, $value);
-    }
-
-    /**
-     * Offset to unset
-     * @link https://php.net/manual/en/arrayaccess.offsetunset.php
-     * @param mixed $offset <p>
-     * The offset to unset.
-     * </p>
-     * @return void
-     * @since 5.0.0
-     */
-    public function offsetUnset($offset)
-    {
-        $this->removeAttribute($offset);
     }
 }
