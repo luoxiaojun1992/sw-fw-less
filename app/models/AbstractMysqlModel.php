@@ -71,9 +71,11 @@ abstract class AbstractMysqlModel extends AbstractModel
 
                         $updateBuilder->col($attributeName)->bindValue($attributeName, $this->{$attributeName});
                     }
-                    $updateBuilder->write();
-                    $this->fireEvent('updated');
-                    $this->fireEvent('saved');
+                    $res = $updateBuilder->write();
+                    if ($res > 0) {
+                        $this->fireEvent('updated');
+                        $this->fireEvent('saved');
+                    }
                     return true;
                 }
             } else {
@@ -109,14 +111,18 @@ abstract class AbstractMysqlModel extends AbstractModel
     public function del()
     {
         $this->fireEvent('saving');
+        $this->fireEvent('deleting');
 
         $primaryKey = static::$primaryKey;
         $primaryValue = $this->{$primaryKey};
         if ($primaryValue) {
-            static::delete()->where("`{$primaryKey}` = :primaryValue", ['primaryValue' => $primaryValue])
+            $res = static::delete()->where("`{$primaryKey}` = :primaryValue", ['primaryValue' => $primaryValue])
                 ->write();
 
-            $this->fireEvent('saved');
+            if ($res > 0) {
+                $this->fireEvent('deleted');
+                $this->fireEvent('saved');
+            }
             return true;
         }
 

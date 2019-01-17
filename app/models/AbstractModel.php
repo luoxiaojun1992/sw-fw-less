@@ -50,6 +50,18 @@ abstract class AbstractModel implements \JsonSerializable, \ArrayAccess
                 call_user_func([$model, 'afterUpdate']);
             }
         });
+        static::deleting(function (Event $event) {
+            $model = $event->getData('model');
+            if (method_exists($model, 'beforeDelete')) {
+                call_user_func([$model, 'beforeDelete']);
+            }
+        });
+        static::deleted(function (Event $event) {
+            $model = $event->getData('model');
+            if (method_exists($model, 'afterDelete')) {
+                call_user_func([$model, 'afterDelete']);
+            }
+        });
         static::saving(function (Event $event) {
             $model = $event->getData('model');
             if (method_exists($model, 'beforeSave')) {

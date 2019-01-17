@@ -82,6 +82,26 @@ trait ModelEventsTrait
     }
 
     /**
+     * Listen a model deleting event
+     *
+     * @param $callback
+     */
+    public static function deleting($callback)
+    {
+        self::listenEvent('deleting', $callback);
+    }
+
+    /**
+     * Listen a model deleted event
+     *
+     * @param $callback
+     */
+    public static function deleted($callback)
+    {
+        self::listenEvent('deleted', $callback);
+    }
+
+    /**
      * Listen a model saving event
      *
      * @param $callback
