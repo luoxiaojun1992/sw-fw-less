@@ -19,14 +19,6 @@ abstract class AbstractModel implements \JsonSerializable, \ArrayAccess
     private $attributes = [];
     private $newRecord = true;
 
-    protected $rules = [
-        //
-    ];
-
-    protected $ruleMessages = [
-        //
-    ];
-
     public function __construct()
     {
         static::bootOnce();
@@ -238,6 +230,6 @@ abstract class AbstractModel implements \JsonSerializable, \ArrayAccess
 
     protected function validate()
     {
-        //todo
+        //
     }
 }
