@@ -96,7 +96,6 @@ abstract class AbstractEsModel extends AbstractModel
      */
     public function delete()
     {
-        $this->fireEvent('saving');
         $this->fireEvent('deleting');
 
         $primaryKey = static::$primaryKey;
@@ -106,7 +105,6 @@ abstract class AbstractEsModel extends AbstractModel
             $result = $res['result'] == 'deleted';
             if ($result) {
                 $this->fireEvent('deleted');
-                $this->fireEvent('saved');
             }
             return $result;
         }

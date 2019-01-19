@@ -27,7 +27,7 @@ class ModelQuery extends Query
     {
         $result = parent::first($pdo);
         $modelClass = $this->modelClass;
-        return $result ? (new $modelClass)->setAttributes($result) : null;
+        return $result ? (new $modelClass)->setAttributes($result)->setNewRecord(false) : null;
     }
 
     /**
@@ -40,7 +40,7 @@ class ModelQuery extends Query
         $results = parent::get($pdo);
         $modelClass = $this->modelClass;
         foreach ($results as $result) {
-            $models[] = (new $modelClass)->setAttributes($result);
+            $models[] = (new $modelClass)->setAttributes($result)->setNewRecord(false);
         }
 
         return $models;

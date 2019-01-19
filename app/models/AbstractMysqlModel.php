@@ -110,7 +110,6 @@ abstract class AbstractMysqlModel extends AbstractModel
      */
     public function del()
     {
-        $this->fireEvent('saving');
         $this->fireEvent('deleting');
 
         $primaryKey = static::$primaryKey;
@@ -121,7 +120,6 @@ abstract class AbstractMysqlModel extends AbstractModel
 
             if ($res > 0) {
                 $this->fireEvent('deleted');
-                $this->fireEvent('saved');
             }
             return true;
         }

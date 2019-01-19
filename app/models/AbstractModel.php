@@ -6,7 +6,6 @@ use App\components\Helper;
 use App\models\traits\ModelArrayTrait;
 use App\models\traits\ModelEventsTrait;
 use App\models\traits\ModelJsonTrait;
-use Cake\Event\Event;
 
 abstract class AbstractModel implements \JsonSerializable, \ArrayAccess
 {
@@ -18,6 +17,15 @@ abstract class AbstractModel implements \JsonSerializable, \ArrayAccess
     protected static $bootedLock = [true];
 
     private $attributes = [];
+    private $newRecord = true;
+
+    protected $rules = [
+        //
+    ];
+
+    protected $ruleMessages = [
+        //
+    ];
 
     public function __construct()
     {
@@ -26,52 +34,54 @@ abstract class AbstractModel implements \JsonSerializable, \ArrayAccess
 
     protected static function setFilter()
     {
-        static::creating(function (Event $event) {
-            $model = $event->getData('model');
+        static::creating(function (self $model, $payload) {
             if (method_exists($model, 'beforeCreate')) {
                 call_user_func([$model, 'beforeCreate']);
             }
         });
-        static::created(function (Event $event) {
-            $model = $event->getData('model');
+        static::created(function (self $model, $payload) {
             if (method_exists($model, 'afterCreate')) {
                 call_user_func([$model, 'afterCreate']);
             }
         });
-        static::updating(function (Event $event) {
-            $model = $event->getData('model');
+        static::updating(function (self $model, $payload) {
             if (method_exists($model, 'beforeUpdate')) {
                 call_user_func([$model, 'beforeUpdate']);
             }
         });
-        static::updated(function (Event $event) {
-            $model = $event->getData('model');
+        static::updated(function (self $model, $payload) {
             if (method_exists($model, 'afterUpdate')) {
                 call_user_func([$model, 'afterUpdate']);
             }
         });
-        static::deleting(function (Event $event) {
-            $model = $event->getData('model');
+        static::deleting(function (self $model, $payload) {
             if (method_exists($model, 'beforeDelete')) {
                 call_user_func([$model, 'beforeDelete']);
             }
         });
-        static::deleted(function (Event $event) {
-            $model = $event->getData('model');
+        static::deleted(function (self $model, $payload) {
             if (method_exists($model, 'afterDelete')) {
                 call_user_func([$model, 'afterDelete']);
             }
         });
-        static::saving(function (Event $event) {
-            $model = $event->getData('model');
+        static::saving(function (self $model, $payload) {
             if (method_exists($model, 'beforeSave')) {
                 call_user_func([$model, 'beforeSave']);
             }
         });
-        static::saved(function (Event $event) {
-            $model = $event->getData('model');
+        static::saved(function (self $model, $payload) {
             if (method_exists($model, 'afterSave')) {
                 call_user_func([$model, 'afterSave']);
+            }
+        });
+        static::validating(function (self $model, $payload) {
+            if (method_exists($model, 'beforeValidate')) {
+                call_user_func([$model, 'beforeValidate']);
+            }
+        });
+        static::validated(function (self $model, $payload) {
+            if (method_exists($model, 'afterValidate')) {
+                call_user_func([$model, 'afterValidate']);
             }
         });
     }
@@ -179,5 +189,55 @@ abstract class AbstractModel implements \JsonSerializable, \ArrayAccess
     public function setPrimaryValue($primaryValue)
     {
         return $this->setAttribute(static::$primaryKey, $primaryValue);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isNewRecord(): bool
+    {
+        return $this->newRecord;
+    }
+
+    /**
+     * @param bool $newRecord
+     * @return $this
+     */
+    public function setNewRecord(bool $newRecord)
+    {
+        $this->newRecord = $newRecord;
+        return $this;
+    }
+
+    /**
+     * @param bool $validate
+     */
+    protected function beforeCreate($validate = false)
+    {
+        if ($validate) {
+            $this->validate();
+        }
+    }
+
+    /**
+     * @param bool $validate
+     */
+    protected function beforeUpdate($validate = false)
+    {
+        if ($validate) {
+            $this->validate();
+        }
+    }
+
+    protected function afterCreate()
+    {
+        if ($this->isNewRecord()) {
+            $this->setNewRecord(false);
+        }
+    }
+
+    protected function validate()
+    {
+        //todo
     }
 }

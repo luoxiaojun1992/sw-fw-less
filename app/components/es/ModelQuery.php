@@ -57,7 +57,9 @@ class ModelQuery extends QueryBuilder
         $models = [];
         $modelClass = $this->modelClass;
         foreach ($docs as $doc) {
-            $models[] = (new $modelClass)->setAttributes($doc['_source'])->setPrimaryValue($doc['_id']);
+            $models[] = (new $modelClass)->setAttributes($doc['_source'])
+                ->setPrimaryValue($doc['_id'])
+                ->setNewRecord(false);
         }
 
         return $models;

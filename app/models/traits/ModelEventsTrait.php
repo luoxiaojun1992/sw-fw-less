@@ -120,4 +120,24 @@ trait ModelEventsTrait
     {
         self::listenEvent('saved', $callback);
     }
+
+    /**
+     * Listen a model validating event
+     *
+     * @param $callback
+     */
+    public static function validating($callback)
+    {
+        self::listenEvent('validating', $callback);
+    }
+
+    /**
+     * Listen a model validated event
+     *
+     * @param $callback
+     */
+    public static function validated($callback)
+    {
+        self::listenEvent('validated', $callback);
+    }
 }
