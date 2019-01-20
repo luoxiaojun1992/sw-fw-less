@@ -3,6 +3,7 @@
 namespace App\models;
 
 use App\components\Helper;
+use App\exceptions\ValidationException;
 use App\models\traits\ModelArrayTrait;
 use App\models\traits\ModelEventsTrait;
 use App\models\traits\ModelJsonTrait;
@@ -232,13 +233,18 @@ abstract class AbstractModel implements \JsonSerializable, \ArrayAccess
     {
         $this->fireEvent('validating');
 
-        $this->validate();
+        if (count($errors = $this->validate()) > 0) {
+            throw new ValidationException($errors, 400);
+        }
 
         $this->fireEvent('validated');
     }
 
-    protected function validate()
+    /**
+     * @return array
+     */
+    protected function validate() : array
     {
-        //
+        return [];
     }
 }
