@@ -207,7 +207,7 @@ abstract class AbstractModel implements \JsonSerializable, \ArrayAccess
     protected function beforeCreate($validate = false)
     {
         if ($validate) {
-            $this->validate();
+            $this->__validate();
         }
     }
 
@@ -217,7 +217,7 @@ abstract class AbstractModel implements \JsonSerializable, \ArrayAccess
     protected function beforeUpdate($validate = false)
     {
         if ($validate) {
-            $this->validate();
+            $this->__validate();
         }
     }
 
@@ -226,6 +226,15 @@ abstract class AbstractModel implements \JsonSerializable, \ArrayAccess
         if ($this->isNewRecord()) {
             $this->setNewRecord(false);
         }
+    }
+
+    private function __validate()
+    {
+        $this->fireEvent('validating');
+
+        $this->validate();
+
+        $this->fireEvent('validated');
     }
 
     protected function validate()
