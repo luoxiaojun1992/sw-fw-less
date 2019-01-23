@@ -46,31 +46,37 @@ abstract class AbstractEsModel extends AbstractModel
         $attributes = $this->toArray();
 
         if (count($attributes) > 0) {
-            $primaryValue = $this->{$primaryKey};
-            if ($primaryValue) {
-                if (count($attributes) > 1) {
-                    $this->fireEvent('updating');
-                    $attributes = $this->toArray();
-                    $indexBuilder = static::index();
-                    foreach ($attributes as $attributeName => $attribute) {
-                        if ($attributeName == $primaryKey) {
-                            continue;
-                        }
+            if (!$this->isNewRecord()) {
+                $primaryValue = $this->getPrimaryValue();
+                if ($primaryValue) {
+                    if (count($attributes) > 1) {
+                        $this->fireEvent('updating');
+                        $attributes = $this->toArray();
+                        $indexBuilder = static::index();
+                        foreach ($attributes as $attributeName => $attribute) {
+                            if ($attributeName == $primaryKey) {
+                                continue;
+                            }
 
-                        $indexBuilder->addField($attributeName, $attribute);
+                            $indexBuilder->addField($attributeName, $attribute);
+                        }
+                        $res = $indexBuilder->id($primaryValue)->addDoc();
+                        $result = $res['result'] == 'updated';
+                        if ($result) {
+                            $this->fireEvent('updated');
+                            $this->finishSave();
+                        }
+                        return $result;
                     }
-                    $res = $indexBuilder->id($primaryValue)->addDoc();
-                    $result = $res['result'] == 'updated';
-                    if ($result) {
-                        $this->fireEvent('updated');
-                        $this->fireEvent('saved');
-                    }
-                    return $result;
                 }
             } else {
                 $this->fireEvent('creating');
                 $indexBuilder = static::index();
                 foreach ($attributes as $attributeName => $attribute) {
+                    if ($attributeName == $primaryKey) {
+                        $indexBuilder->id($attribute);
+                    }
+
                     $indexBuilder->addField($attributeName, $attribute);
                 }
                 $res = $indexBuilder->addDoc();
@@ -82,7 +88,7 @@ abstract class AbstractEsModel extends AbstractModel
                 $result = $res['result'] == 'created';
                 if ($result) {
                     $this->fireEvent('created');
-                    $this->fireEvent('saved');
+                    $this->finishSave();
                 }
                 return $result;
             }
@@ -98,8 +104,11 @@ abstract class AbstractEsModel extends AbstractModel
     {
         $this->fireEvent('deleting');
 
-        $primaryKey = static::$primaryKey;
-        $primaryValue = $this->{$primaryKey};
+        if ($this->isNewRecord()) {
+            return false;
+        }
+
+        $primaryValue = $this->getPrimaryValue();
         if ($primaryValue) {
             $res = static::index()->id($primaryValue)->deleteDoc();
             $result = $res['result'] == 'deleted';

@@ -57,26 +57,28 @@ abstract class AbstractMysqlModel extends AbstractModel
         $attributes = $this->toArray();
 
         if (count($attributes) > 0) {
-            $primaryValue = $this->{$primaryKey};
-            if ($primaryValue) {
-                if (count($attributes) > 1) {
-                    $this->fireEvent('updating');
-                    $attributes = $this->toArray();
-                    $updateBuilder = static::update();
-                    $updateBuilder->where("`{$primaryKey}` = :primaryValue", ['primaryValue' => $primaryValue]);
-                    foreach ($attributes as $attributeName => $attribute) {
-                        if ($attributeName == $primaryKey) {
-                            continue;
-                        }
+            if (!$this->isNewRecord()) {
+                $primaryValue = $this->getPrimaryValue();
+                if ($primaryValue) {
+                    if (count($attributes) > 1) {
+                        $this->fireEvent('updating');
+                        $attributes = $this->toArray();
+                        $updateBuilder = static::update();
+                        $updateBuilder->where("`{$primaryKey}` = :primaryValue", ['primaryValue' => $primaryValue]);
+                        foreach ($attributes as $attributeName => $attribute) {
+                            if ($attributeName == $primaryKey) {
+                                continue;
+                            }
 
-                        $updateBuilder->col($attributeName)->bindValue($attributeName, $this->{$attributeName});
+                            $updateBuilder->col($attributeName)->bindValue($attributeName, $this->{$attributeName});
+                        }
+                        $res = $updateBuilder->write();
+                        if ($res > 0) {
+                            $this->fireEvent('updated');
+                            $this->finishSave();
+                        }
+                        return true;
                     }
-                    $res = $updateBuilder->write();
-                    if ($res > 0) {
-                        $this->fireEvent('updated');
-                        $this->fireEvent('saved');
-                    }
-                    return true;
                 }
             } else {
                 $this->fireEvent('creating');
@@ -95,7 +97,7 @@ abstract class AbstractMysqlModel extends AbstractModel
 
                 if ($res) {
                     $this->fireEvent('created');
-                    $this->fireEvent('saved');
+                    $this->finishSave();
                 }
 
                 return $res;
@@ -112,8 +114,12 @@ abstract class AbstractMysqlModel extends AbstractModel
     {
         $this->fireEvent('deleting');
 
+        if ($this->isNewRecord()) {
+            return false;
+        }
+
         $primaryKey = static::$primaryKey;
-        $primaryValue = $this->{$primaryKey};
+        $primaryValue = $this->getPrimaryValue();
         if ($primaryValue) {
             $res = static::delete()->where("`{$primaryKey}` = :primaryValue", ['primaryValue' => $primaryValue])
                 ->write();
