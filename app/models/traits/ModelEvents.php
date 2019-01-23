@@ -5,7 +5,7 @@ namespace App\models\traits;
 use App\facades\Event;
 use Cake\Event\Event as CakeEvent;
 
-trait ModelEventsTrait
+trait ModelEvents
 {
     /**
      * Fire a model event

@@ -2,7 +2,7 @@
 
 namespace App\models\traits;
 
-trait ModelArrayTrait
+trait ModelArray
 {
     /**
      * Whether a offset exists

@@ -2,7 +2,7 @@
 
 namespace App\models\traits;
 
-trait ModelJsonTrait
+trait ModelJson
 {
     /**
      * Specify data which should be serialized to JSON
