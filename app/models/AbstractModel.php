@@ -18,7 +18,8 @@ abstract class AbstractModel implements \JsonSerializable, \ArrayAccess
     protected static $primaryKey = 'id';
     protected static $bootedLock = [true];
 
-    private $newRecord = true;
+    protected $newRecord = true;
+    protected $justSaved = false;
 
     public function __construct()
     {
@@ -175,9 +176,16 @@ abstract class AbstractModel implements \JsonSerializable, \ArrayAccess
 
     protected function afterCreate()
     {
+        $this->justSaved = true;
+
         if ($this->isNewRecord()) {
             $this->setNewRecord(false);
         }
+    }
+
+    protected function afterUpdate()
+    {
+        $this->justSaved = true;
     }
 
     protected function afterDelete()
@@ -215,5 +223,28 @@ abstract class AbstractModel implements \JsonSerializable, \ArrayAccess
     {
         $this->fireEvent('saved');
         $this->syncOriginalAttributes();
+        $this->justSaved = false;
+    }
+
+    /**
+     * @return bool
+     */
+    protected function isDirty()
+    {
+        if (!$this->isNewRecord()) {
+            if ($this->justSaved) {
+                return false;
+            }
+
+            foreach ($this->attributes as $key => $value) {
+                if (array_key_exists($key, $this->originalAttributes)) {
+                    return $this->originalAttributes[$key] != $value;
+                } else {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 }

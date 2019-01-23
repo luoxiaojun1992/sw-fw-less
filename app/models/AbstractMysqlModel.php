@@ -46,9 +46,10 @@ abstract class AbstractMysqlModel extends AbstractModel
     }
 
     /**
-     * @return bool
+     * @param bool $force
+     * @return bool|mixed
      */
-    public function save()
+    public function save($force = false)
     {
         $this->fireEvent('saving');
 
@@ -58,26 +59,28 @@ abstract class AbstractMysqlModel extends AbstractModel
 
         if (count($attributes) > 0) {
             if (!$this->isNewRecord()) {
-                $primaryValue = $this->getPrimaryValue();
-                if ($primaryValue) {
-                    if (count($attributes) > 1) {
-                        $this->fireEvent('updating');
-                        $attributes = $this->toArray();
-                        $updateBuilder = static::update();
-                        $updateBuilder->where("`{$primaryKey}` = :primaryValue", ['primaryValue' => $primaryValue]);
-                        foreach ($attributes as $attributeName => $attribute) {
-                            if ($attributeName == $primaryKey) {
-                                continue;
-                            }
+                $this->fireEvent('updating');
+                if ($force || $this->isDirty()) {
+                    $primaryValue = $this->getPrimaryValue();
+                    if ($primaryValue) {
+                        if (count($attributes) > 1) {
+                            $attributes = $this->toArray();
+                            $updateBuilder = static::update();
+                            $updateBuilder->where("`{$primaryKey}` = :primaryValue", ['primaryValue' => $primaryValue]);
+                            foreach ($attributes as $attributeName => $attribute) {
+                                if ($attributeName == $primaryKey) {
+                                    continue;
+                                }
 
-                            $updateBuilder->col($attributeName)->bindValue($attributeName, $this->{$attributeName});
+                                $updateBuilder->col($attributeName)->bindValue($attributeName, $this->{$attributeName});
+                            }
+                            $res = $updateBuilder->write();
+                            if ($res > 0) {
+                                $this->fireEvent('updated');
+                                $this->finishSave();
+                            }
+                            return true;
                         }
-                        $res = $updateBuilder->write();
-                        if ($res > 0) {
-                            $this->fireEvent('updated');
-                            $this->finishSave();
-                        }
-                        return true;
                     }
                 }
             } else {

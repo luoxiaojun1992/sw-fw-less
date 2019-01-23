@@ -6,8 +6,8 @@ use App\components\Helper;
 
 trait ModelAttributes
 {
-    private $originalAttributes = [];
-    private $attributes = [];
+    protected $originalAttributes = [];
+    protected $attributes = [];
 
     /**
      * @param $attributes

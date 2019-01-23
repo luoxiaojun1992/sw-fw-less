@@ -35,9 +35,10 @@ abstract class AbstractEsModel extends AbstractModel
     }
 
     /**
+     * @param bool $force
      * @return bool
      */
-    public function save()
+    public function save($force = false)
     {
         $this->fireEvent('saving');
 
@@ -47,26 +48,28 @@ abstract class AbstractEsModel extends AbstractModel
 
         if (count($attributes) > 0) {
             if (!$this->isNewRecord()) {
-                $primaryValue = $this->getPrimaryValue();
-                if ($primaryValue) {
-                    if (count($attributes) > 1) {
-                        $this->fireEvent('updating');
-                        $attributes = $this->toArray();
-                        $indexBuilder = static::index();
-                        foreach ($attributes as $attributeName => $attribute) {
-                            if ($attributeName == $primaryKey) {
-                                continue;
-                            }
+                $this->fireEvent('updating');
+                if ($force || $this->isDirty()) {
+                    $primaryValue = $this->getPrimaryValue();
+                    if ($primaryValue) {
+                        if (count($attributes) > 1) {
+                            $attributes = $this->toArray();
+                            $indexBuilder = static::index();
+                            foreach ($attributes as $attributeName => $attribute) {
+                                if ($attributeName == $primaryKey) {
+                                    continue;
+                                }
 
-                            $indexBuilder->addField($attributeName, $attribute);
+                                $indexBuilder->addField($attributeName, $attribute);
+                            }
+                            $res = $indexBuilder->id($primaryValue)->addDoc();
+                            $result = $res['result'] == 'updated';
+                            if ($result) {
+                                $this->fireEvent('updated');
+                                $this->finishSave();
+                            }
+                            return $result;
                         }
-                        $res = $indexBuilder->id($primaryValue)->addDoc();
-                        $result = $res['result'] == 'updated';
-                        if ($result) {
-                            $this->fireEvent('updated');
-                            $this->finishSave();
-                        }
-                        return $result;
                     }
                 }
             } else {
