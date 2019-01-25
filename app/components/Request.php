@@ -4,6 +4,8 @@ namespace App\components;
 
 class Request
 {
+    private $traceId;
+
     /** @var \Swoole\Http\Request */
     private $swRequest;
 
@@ -23,6 +25,24 @@ class Request
     public function getSwRequest()
     {
         return $this->swRequest;
+    }
+
+    /**
+     * @param mixed $traceId
+     * @return $this
+     */
+    public function setTraceId($traceId)
+    {
+        $this->traceId = $traceId;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getTraceId()
+    {
+        return $this->traceId;
     }
 
     /**

@@ -87,7 +87,13 @@ $httpServer->on('workerStart', function($server, $id) {
 });
 
 $httpServer->on("request", function (\Swoole\Http\Request $request, \Swoole\Http\Response $response) use ($dispatcher) {
-    $callback = function () use ($request, $response, $dispatcher) {
+    $header = isset($request->header) ? $request->header : [];
+    foreach ($header as $k => $v) {
+        $header[strtolower($k)] = $v;
+    }
+    $traceId = isset($header['x-trace-id']) ? $header['x-trace-id'] : null;
+
+    $callback = function () use ($request, $response, $dispatcher, &$traceId) {
         try {
             clearstatcache();
 
@@ -113,7 +119,7 @@ $httpServer->on("request", function (\Swoole\Http\Request $request, \Swoole\Http
                 case FastRoute\Dispatcher::FOUND:
                     $handler = $routeInfo[1];
                     $handler[0] = new $handler[0];
-                    $appRequest = \App\components\Request::fromSwRequest($request);
+                    $appRequest = \App\components\Request::fromSwRequest($request)->setTraceId($traceId);
                     if ($handler[0] instanceof \App\services\BaseService) {
                         $handler[0]->setRequest($appRequest);
                     }
@@ -197,29 +203,29 @@ $httpServer->on("request", function (\Swoole\Http\Request $request, \Swoole\Http
     $traceConfig = \App\components\Config::get('trace');
     $needSample = false;
     if ($traceConfig['switch']) {
-        if (!empty($traceConfig['zipkin_url']) && !empty($traceConfig['sample_rate'])) {
-            if ($traceConfig['sample_rate'] >= 1) {
+        if (!empty($traceConfig['zipkin_url'])) {
+            if ($traceId) {
                 $needSample = true;
-            } else {
-                mt_srand(time());
-                if (mt_rand() / mt_getrandmax() <= $traceConfig['sample_rate']) {
+            } elseif (!empty($traceConfig['sample_rate'])) {
+                if ($traceConfig['sample_rate'] >= 1) {
                     $needSample = true;
+                } else {
+                    mt_srand(time());
+                    if (mt_rand() / mt_getrandmax() <= $traceConfig['sample_rate']) {
+                        $needSample = true;
+                    }
                 }
             }
         }
     }
     if ($needSample) {
         $serviceName = $traceConfig['service_name'];
-        $header = isset($request->header) ? $request->header : [];
-        foreach ($header as $k => $v) {
-            $header[strtolower($k)] = $v;
-        }
-        $traceId = isset($header['x-trace-id']) ? $header['x-trace-id'] : null;
         $server = isset($request->server) ? $request->server : [];
         foreach ($server as $k => $v) {
             $server[strtolower($k)] = $v;
         }
         $spanName = isset($server['request_uri']) ? $server['request_uri'] : 'request';
+        $traceId = $traceId ? : str_replace('-', '', \Ramsey\Uuid\Uuid::uuid4());
         \App\facades\Trace::span([
             'service_name' => $serviceName,
             'span_name' => $spanName,
