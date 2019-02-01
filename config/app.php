@@ -229,4 +229,13 @@ return [
         'pool_change_event' => \App\components\Helper::envInt('HBASE_POOL_CHANGE_EVENT', 0),
         'report_pool_change' => \App\components\Helper::envInt('HBASE_REPORT_POOL_CHANGE', 0),
     ],
+
+    //Throttle
+    'throttle' => [
+        'metric' => function(\App\components\Request $request){
+            return $request->uri();
+        },
+        'period' => \App\components\Helper::envInt('THROTTLE_PERIOD', 60),
+        'throttle' => \App\components\Helper::envInt('THROTTLE_THROTTLE', 10000),
+    ],
 ];
