@@ -197,7 +197,9 @@ abstract class AbstractModel implements \JsonSerializable, \ArrayAccess
 
     private function __validate()
     {
-        $this->fireEvent('validating');
+        if ($this->fireEvent('validating')->getResult() === false) {
+            throw new ValidationException(['Error before validation'], 400);
+        }
 
         if (count($errors = $this->validate()) > 0) {
             throw new ValidationException($errors, 400);

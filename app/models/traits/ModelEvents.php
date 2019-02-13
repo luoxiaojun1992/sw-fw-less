@@ -12,10 +12,11 @@ trait ModelEvents
      *
      * @param string $event
      * @param mixed $payload
+     * @return CakeEvent
      */
     protected function fireEvent($event, $payload = null)
     {
-        Event::dispatch(
+        return Event::dispatch(
             new CakeEvent(
                 'model.' . static::class . '.' . $event,
                 null,
