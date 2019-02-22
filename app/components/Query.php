@@ -71,7 +71,7 @@ class Query
     /**
      * @param $name
      * @param $arguments
-     * @return $this
+     * @return $this|mixed|null
      */
     public function __call($name, $arguments)
     {
@@ -79,9 +79,13 @@ class Query
             $result = call_user_func_array([$this->auraQuery, $name], $arguments);
             if (is_object($result)) {
                 $this->auraQuery = $result;
+                return $this;
+            } else {
+                return $result;
             }
         }
-        return $this;
+
+        return null;
     }
 
     /**
