@@ -126,10 +126,6 @@ class Query
         }
 
         $doMethod = 'doMysqlExecute';
-        if (!method_exists($this, $doMethod)) {
-            $this->releasePDO($pdo);
-            return null;
-        }
 
         try {
             $pdo = $pdo ?: MysqlPool::pick();
