@@ -20,6 +20,7 @@ abstract class AbstractModel implements \JsonSerializable, \ArrayAccess
 
     protected $newRecord = true;
     protected $justSaved = false;
+    protected $needValidate = true;
 
     public function __construct()
     {
@@ -32,53 +33,64 @@ abstract class AbstractModel implements \JsonSerializable, \ArrayAccess
     {
         static::creating(function (self $model, $payload) {
             if (method_exists($model, 'beforeCreate')) {
-                call_user_func([$model, 'beforeCreate']);
+                return call_user_func([$model, 'beforeCreate']);
             }
+            return null;
         });
         static::created(function (self $model, $payload) {
             if (method_exists($model, 'afterCreate')) {
-                call_user_func([$model, 'afterCreate']);
+                return call_user_func([$model, 'afterCreate']);
             }
+            return null;
         });
         static::updating(function (self $model, $payload) {
             if (method_exists($model, 'beforeUpdate')) {
-                call_user_func([$model, 'beforeUpdate']);
+                return call_user_func([$model, 'beforeUpdate']);
             }
+            return null;
         });
         static::updated(function (self $model, $payload) {
             if (method_exists($model, 'afterUpdate')) {
-                call_user_func([$model, 'afterUpdate']);
+                return call_user_func([$model, 'afterUpdate']);
             }
+            return null;
         });
         static::deleting(function (self $model, $payload) {
             if (method_exists($model, 'beforeDelete')) {
-                call_user_func([$model, 'beforeDelete']);
+                return call_user_func([$model, 'beforeDelete']);
             }
+            return null;
         });
         static::deleted(function (self $model, $payload) {
             if (method_exists($model, 'afterDelete')) {
-                call_user_func([$model, 'afterDelete']);
+                return call_user_func([$model, 'afterDelete']);
             }
+            return null;
         });
         static::saving(function (self $model, $payload) {
             if (method_exists($model, 'beforeSave')) {
-                call_user_func([$model, 'beforeSave']);
+                return call_user_func([$model, 'beforeSave']);
             }
+            return null;
         });
         static::saved(function (self $model, $payload) {
             if (method_exists($model, 'afterSave')) {
-                call_user_func([$model, 'afterSave']);
+                return call_user_func([$model, 'afterSave']);
             }
+            return null;
         });
         static::validating(function (self $model, $payload) {
             if (method_exists($model, 'beforeValidate')) {
-                call_user_func([$model, 'beforeValidate']);
+                return call_user_func([$model, 'beforeValidate']);
             }
+
+            return null;
         });
         static::validated(function (self $model, $payload) {
             if (method_exists($model, 'afterValidate')) {
-                call_user_func([$model, 'afterValidate']);
+                return call_user_func([$model, 'afterValidate']);
             }
+            return null;
         });
     }
 
@@ -155,6 +167,24 @@ abstract class AbstractModel implements \JsonSerializable, \ArrayAccess
     }
 
     /**
+     * @return bool
+     */
+    public function isNeedValidate(): bool
+    {
+        return $this->needValidate;
+    }
+
+    /**
+     * @param bool $needValidate
+     * @return $this
+     */
+    public function setNeedValidate(bool $needValidate)
+    {
+        $this->needValidate = $needValidate;
+        return $this;
+    }
+
+    /**
      * @param bool $validate
      */
     protected function beforeCreate($validate = false)
@@ -201,8 +231,10 @@ abstract class AbstractModel implements \JsonSerializable, \ArrayAccess
             throw new ValidationException(['Error before validation'], 400);
         }
 
-        if (count($errors = $this->validate()) > 0) {
-            throw new ValidationException($errors, 400);
+        if ($this->isNeedValidate()) {
+            if (count($errors = $this->validate()) > 0) {
+                throw new ValidationException($errors, 400);
+            }
         }
 
         $this->fireEvent('validated');
@@ -240,7 +272,9 @@ abstract class AbstractModel implements \JsonSerializable, \ArrayAccess
 
             foreach ($this->attributes as $key => $value) {
                 if (array_key_exists($key, $this->originalAttributes)) {
-                    return $this->originalAttributes[$key] != $value;
+                    if ($this->originalAttributes[$key] !== $value) {
+                        return true;
+                    }
                 } else {
                     return true;
                 }
