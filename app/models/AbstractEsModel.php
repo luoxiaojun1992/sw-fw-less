@@ -68,11 +68,8 @@ abstract class AbstractEsModel extends AbstractModel
         }
         $res = $indexBuilder->addDoc();
 
-        if (!empty($res['_id'])) {
-            $this->setPrimaryValue($res['_id']);
-        }
-
         if ($result = ($res['result'] == 'created')) {
+            $this->setPrimaryValue($res['_id']);
             $this->fireEvent('created');
         }
 
@@ -111,22 +108,18 @@ abstract class AbstractEsModel extends AbstractModel
      */
     public function delete()
     {
-        $this->fireEvent('deleting');
+        if ($this->fireEvent('deleting')->getResult() === false) {
+            return false;
+        }
 
         if ($this->isNewRecord()) {
             return false;
         }
 
-        $primaryValue = $this->getPrimaryValue();
-        if ($primaryValue) {
-            $res = static::index()->id($primaryValue)->deleteDoc();
-            $result = $res['result'] == 'deleted';
-            if ($result) {
-                $this->fireEvent('deleted');
-            }
-            return $result;
+        $res = static::index()->id($this->getPrimaryValue())->deleteDoc();
+        if ($result = ($res['result'] == 'deleted')) {
+            $this->fireEvent('deleted');
         }
-
-        return false;
+        return $result;
     }
 }
