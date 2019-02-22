@@ -51,63 +51,73 @@ abstract class AbstractMysqlModel extends AbstractModel
      */
     public function save($force = false)
     {
-        $this->fireEvent('saving');
-
-        $primaryKey = static::$primaryKey;
-
-        $attributes = $this->toArray();
-
-        if (count($attributes) > 0) {
-            if (!$this->isNewRecord()) {
-                $this->fireEvent('updating');
-                if ($force || $this->isDirty()) {
-                    $primaryValue = $this->getPrimaryValue();
-                    if ($primaryValue) {
-                        if (count($attributes) > 1) {
-                            $attributes = $this->toArray();
-                            $updateBuilder = static::update();
-                            $updateBuilder->where("`{$primaryKey}` = :primaryValue", ['primaryValue' => $primaryValue]);
-                            foreach ($attributes as $attributeName => $attribute) {
-                                if ($attributeName == $primaryKey) {
-                                    continue;
-                                }
-
-                                $updateBuilder->col($attributeName)->bindValue($attributeName, $this->{$attributeName});
-                            }
-                            $res = $updateBuilder->write();
-                            if ($res > 0) {
-                                $this->fireEvent('updated');
-                                $this->finishSave();
-                            }
-                            return true;
-                        }
-                    }
-                }
-            } else {
-                $this->fireEvent('creating');
-                $attributes = $this->toArray();
-                $insertBuilder = static::insert();
-                foreach ($attributes as $attributeName => $attribute) {
-                    $insertBuilder->col($attributeName)->bindValue($attributeName, $this->{$attributeName});
-                }
-
-                $res = $insertBuilder->write() > 0;
-
-                $lastInsetId = $insertBuilder->getLastInsertId();
-                if ($lastInsetId) {
-                    $this->setPrimaryValue($lastInsetId);
-                }
-
-                if ($res) {
-                    $this->fireEvent('created');
-                    $this->finishSave();
-                }
-
-                return $res;
-            }
+        if ($this->fireEvent('saving')->getResult() === false) {
+            return false;
         }
 
-        return false;
+        if ($result = ($this->isNewRecord() ? $this->performInsert() : $this->performUpdate($force))) {
+            $this->finishSave();
+        }
+
+        return $result;
+    }
+
+    protected function performInsert()
+    {
+        if ($this->fireEvent('creating')->getResult() === false) {
+            return false;
+        }
+
+        $insertBuilder = static::insert();
+        foreach ($this->attributes as $attributeName => $attribute) {
+            $insertBuilder->col($attributeName)->bindValue($attributeName, $this->{$attributeName});
+        }
+
+        $res = $insertBuilder->write() > 0;
+
+        $lastInsetId = $insertBuilder->getLastInsertId();
+        if ($lastInsetId) {
+            $this->setPrimaryValue($lastInsetId);
+        }
+
+        if ($res) {
+            $this->fireEvent('created');
+        }
+
+        return $res;
+    }
+
+    protected function performUpdate($force = false)
+    {
+        if ($this->fireEvent('updating')->getResult() === false) {
+            return false;
+        }
+
+        if (!$force && !$this->isDirty()) {
+            return false;
+        }
+
+        $attributes = $this->attributes;
+
+        if (count($attributes) < 1) {
+            return false;
+        }
+
+        $attributes = $this->toArray();
+        $updateBuilder = static::update();
+        $primaryKey = static::$primaryKey;
+        $updateBuilder->where("`{$primaryKey}` = :primaryValue", ['primaryValue' => $this->getPrimaryValue()]);
+        foreach ($attributes as $attributeName => $attribute) {
+            if ($attributeName == $primaryKey) {
+                continue;
+            }
+
+            $updateBuilder->col($attributeName)->bindValue($attributeName, $this->{$attributeName});
+        }
+        $updateBuilder->write();
+        $this->fireEvent('updated');
+
+        return true;
     }
 
     /**
@@ -115,24 +125,19 @@ abstract class AbstractMysqlModel extends AbstractModel
      */
     public function del()
     {
-        $this->fireEvent('deleting');
+        if ($this->fireEvent('deleting')->getResult() === false) {
+            return false;
+        }
 
         if ($this->isNewRecord()) {
             return false;
         }
 
         $primaryKey = static::$primaryKey;
-        $primaryValue = $this->getPrimaryValue();
-        if ($primaryValue) {
-            $res = static::delete()->where("`{$primaryKey}` = :primaryValue", ['primaryValue' => $primaryValue])
-                ->write();
+        static::delete()->where("`{$primaryKey}` = :primaryValue", ['primaryValue' => $this->getPrimaryValue()])
+            ->write();
 
-            if ($res > 0) {
-                $this->fireEvent('deleted');
-            }
-            return true;
-        }
-
-        return false;
+        $this->fireEvent('deleted');
+        return true;
     }
 }
