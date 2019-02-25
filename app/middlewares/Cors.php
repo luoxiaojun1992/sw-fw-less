@@ -14,9 +14,9 @@ class Cors extends AbstractMiddleware
     public function handle(Request $request)
     {
         if (Config::get('cors.switch')) {
-            return $this->next($request)->header('Access-Control-Allow-Origin', (string)Config::get('cors.origin'));
+            return $this->next()->header('Access-Control-Allow-Origin', (string)Config::get('cors.origin'));
         }
 
-        return $this->next($request);
+        return $this->next();
     }
 }

@@ -19,7 +19,7 @@ class Throttle extends AbstractMiddleware
             return Response::output('', 429);
         }
 
-        return $this->next($request);
+        return $this->next();
     }
 
     /**
