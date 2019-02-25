@@ -15,6 +15,8 @@ abstract class AbstractMiddleware implements MiddlewareContract
      */
     private $next;
 
+    private $options;
+
     /**
      * @param Request $request
      * @return \App\components\Response
@@ -36,6 +38,24 @@ abstract class AbstractMiddleware implements MiddlewareContract
     public function setNext(MiddlewareContract $middleware)
     {
         $this->next = $middleware;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getOptions()
+    {
+        return $this->options;
+    }
+
+    /**
+     * @param mixed $options
+     * @return $this
+     */
+    public function setOptions($options)
+    {
+        $this->options = $options;
         return $this;
     }
 }

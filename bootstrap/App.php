@@ -82,6 +82,19 @@ class App
         });
     }
 
+    /**
+     * @param $middlewareName
+     * @return array
+     */
+    private function parseMiddlewareName($middlewareName)
+    {
+        if (strpos($middlewareName, ':') > 0) {
+            return explode(':', $middlewareName);
+        }
+
+        return [$middlewareName, null];
+    }
+
     public function swHttpStart($server)
     {
         echo 'Server started.', PHP_EOL;
@@ -210,9 +223,11 @@ class App
                         /** @var \App\middlewares\MiddlewareContract[]|\App\middlewares\AbstractMiddleware[] $middlewareConcretes */
                         $middlewareConcretes = [];
                         foreach ($middlewareNames as $i => $middlewareName) {
+                            list($middlewareClass, $middlewareOptions) = $this->parseMiddlewareName($middlewareName);
+
                             /** @var \App\middlewares\AbstractMiddleware $middlewareConcrete */
-                            $middlewareConcrete = new $middlewareName;
-                            $middlewareConcrete->setParameters([$appRequest]);
+                            $middlewareConcrete = new $middlewareClass;
+                            $middlewareConcrete->setParameters([$appRequest])->setOptions($middlewareOptions);
                             if (isset($middlewareConcretes[$i - 1])) {
                                 $middlewareConcretes[$i - 1]->setNext($middlewareConcrete);
                             }
