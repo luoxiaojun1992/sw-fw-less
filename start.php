@@ -128,6 +128,7 @@ $httpServer->on("request", function (\Swoole\Http\Request $request, \Swoole\Http
                     $vars = $routeInfo[2];
 
                     //Middleware
+                    //todo refactory
                     if (isset($handler[2])) {
                         $handler[2] = array_merge(\App\components\Config::get('middleware'), $handler[2]);
                         $middlewareCount = count($handler[2]);

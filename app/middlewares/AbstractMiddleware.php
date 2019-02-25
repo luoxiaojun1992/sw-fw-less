@@ -4,16 +4,16 @@ namespace App\middlewares;
 
 use App\components\Request;
 use App\components\Response;
+use App\middlewares\traits\Handler;
 
 abstract class AbstractMiddleware implements MiddlewareContract
 {
+    use Handler;
+
+    /**
+     * @var MiddlewareContract
+     */
     private $next;
-
-    private $isTerminal = false;
-
-    private $terminalCallback;
-
-    private $terminalCallbackVars;
 
     /**
      * @param Request $request
@@ -22,16 +22,11 @@ abstract class AbstractMiddleware implements MiddlewareContract
     abstract public function handle(Request $request);
 
     /**
-     * @param Request $request
      * @return Response
      */
-    public function next(Request $request)
+    public function next()
     {
-        if (!$this->isTerminal) {
-            return call_user_func_array([$this->next, 'handle'], [$request]);
-        }
-
-        return call_user_func_array($this->terminalCallback, $this->terminalCallbackVars);
+        return $this->next->call();
     }
 
     /**
@@ -41,19 +36,6 @@ abstract class AbstractMiddleware implements MiddlewareContract
     public function setNext(MiddlewareContract $middleware)
     {
         $this->next = $middleware;
-        return $this;
-    }
-
-    /**
-     * @param $callback
-     * @param $callbackVars
-     * @return $this
-     */
-    public function terminal($callback, $callbackVars)
-    {
-        $this->isTerminal = true;
-        $this->terminalCallback = $callback;
-        $this->terminalCallbackVars = $callbackVars;
         return $this;
     }
 }

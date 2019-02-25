@@ -3,9 +3,13 @@
 namespace App\services;
 
 use App\components\Request;
+use App\middlewares\MiddlewareContract;
+use App\middlewares\traits\Handler;
 
-abstract class BaseService
+abstract class BaseService implements MiddlewareContract
 {
+    use Handler;
+
     /** @var Request */
     protected $request;
 

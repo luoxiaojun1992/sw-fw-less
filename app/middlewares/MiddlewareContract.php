@@ -2,14 +2,29 @@
 
 namespace App\middlewares;
 
-use App\components\Request;
-use App\components\Response;
-
 interface MiddlewareContract
 {
     /**
-     * @param Request $request
-     * @return Response
+     * @return string
      */
-    public function handle(Request $request);
+    public function getHandler(): string;
+
+    /**
+     * @param string $handler
+     * @return $this
+     */
+    public function setHandler(string $handler);
+
+    /**
+     * @return array
+     */
+    public function getParameters(): array;
+
+    /**
+     * @param array $parameters
+     * @return $this
+     */
+    public function setParameters(array $parameters);
+
+    public function call();
 }
