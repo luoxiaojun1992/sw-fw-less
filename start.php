@@ -104,7 +104,8 @@ $httpServer->on("request", function (\Swoole\Http\Request $request, \Swoole\Http
             $requestUri = rawurldecode($requestUri);
 
             $routeInfo = $dispatcher->dispatch($request->server['request_method'], $requestUri);
-            switch ($routeInfo[0]) {
+            $routeResult = $routeInfo[0];
+            switch ($routeResult) {
                 case FastRoute\Dispatcher::NOT_FOUND:
                     // ... 404 Not Found
                     $response->status(404);
@@ -117,49 +118,44 @@ $httpServer->on("request", function (\Swoole\Http\Request $request, \Swoole\Http
                     $response->end();
                     break;
                 case FastRoute\Dispatcher::FOUND:
-                    $handler = $routeInfo[1];
-                    $handler[0] = new $handler[0];
                     $appRequest = \App\components\Request::fromSwRequest($request)->setTraceId($traceId);
-                    if ($handler[0] instanceof \App\services\BaseService) {
-                        $handler[0]->setRequest($appRequest);
-                    }
 
-                    $callBack = [$handler[0], $handler[1]];
-                    $vars = $routeInfo[2];
+                    $controllerAction = $routeInfo[1];
+                    $controllerName = $controllerAction[0];
+                    $action = $controllerAction[1];
+                    $parameters = $routeInfo[2];
+                    $controller = new $controllerName;
+                    if ($controller instanceof \App\services\BaseService) {
+                        $controller->setRequest($appRequest);
+                    }
+                    $controller->setHandler($action)->setParameters($parameters);
 
                     //Middleware
-                    //todo refactory
-                    if (isset($handler[2])) {
-                        $handler[2] = array_merge(\App\components\Config::get('middleware'), $handler[2]);
-                        $middlewareCount = count($handler[2]);
-                        foreach ($handler[2] as $i => $middlewareClass) {
-                            if ($middlewareCount > 1) {
-                                if ($i > 0) {
-                                    $previousMiddleware = new $handler[2][$i - 1];
-                                    $currentMiddleware = new $middlewareClass;
-                                    $previousMiddleware->setNext($currentMiddleware);
-                                    if ($i == ($middlewareCount - 1)) {
-                                        $currentMiddleware->terminal([$handler[0], $handler[1]], $routeInfo[2]);
-                                    }
-                                    if ($i == 1) {
-                                        $callBack = [$previousMiddleware, 'handle'];
-                                        $vars = [$appRequest];
-                                    }
-                                }
-                            } else {
-                                $currentMiddleware = new $middlewareClass;
-                                $currentMiddleware->terminal([$handler[0], $handler[1]], $routeInfo[2]);
-                                $callBack = [$currentMiddleware, 'handle'];
-                                $vars = [$appRequest];
-                            }
+                    $middlewareNames = \App\components\Config::get('middleware');
+                    if (isset($controllerAction[2])) {
+                        $middlewareNames = array_merge($middlewareNames, $controllerAction[2]);
+                    }
+                    /** @var \App\middlewares\MiddlewareContract[]|\App\middlewares\AbstractMiddleware[] $middlewareConcretes */
+                    $middlewareConcretes = [];
+                    foreach ($middlewareNames as $i => $middlewareName) {
+                        /** @var \App\middlewares\AbstractMiddleware $middlewareConcrete */
+                        $middlewareConcrete = new $middlewareName;
+                        $middlewareConcrete->setParameters([$appRequest]);
+                        if (isset($middlewareConcretes[$i - 1])) {
+                            $middlewareConcretes[$i - 1]->setNext($middlewareConcrete);
                         }
                     }
+                    $middlewareConcretesCount = count($middlewareConcretes);
+                    if ($middlewareConcretesCount > 0) {
+                        $middlewareConcretes[$middlewareConcretesCount - 1]->setNext($controller);
+                    }
+                    array_push($middlewareConcretes, $controller);
 
                     ob_start();
                     /**
                      * @var \App\components\Response $res
                      */
-                    $res = call_user_func_array($callBack, $vars);
+                    $res = $middlewareConcretes[0]->call();
                     $content = $res->getContent();
                     if (!$content && ob_get_length() > 0) {
                         $content = ob_get_contents();
@@ -239,3 +235,5 @@ $httpServer->on("request", function (\Swoole\Http\Request $request, \Swoole\Http
 });
 
 $httpServer->start();
+
+//todo app object & run method
