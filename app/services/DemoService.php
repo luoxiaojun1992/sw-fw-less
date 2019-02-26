@@ -3,6 +3,7 @@
 namespace App\services;
 
 use App\components\Helper;
+use App\components\HttpClient;
 use App\components\Response;
 use App\facades\HbasePool;
 use App\models\Member;
@@ -10,7 +11,6 @@ use App\models\Test;
 use Cake\Validation\Validator;
 use Hbase\HbaseClient;
 use Phalcon\Validation;
-use Swlib\SaberGM;
 
 class DemoService extends BaseService
 {
@@ -72,9 +72,23 @@ class DemoService extends BaseService
 
     public function http()
     {
-        $res = SaberGM::get('http://news.baidu.com/widget?ajax=json&id=ad');
+        $start = microtime(true);
 
-        return Response::json($res->getBody());
+        $urls = [
+            'a' => 'http://news.baidu.com/widget?ajax=json&id=ad',
+            'b' => 'http://127.0.0.1:9501/ping',
+            'c' => 'http://news.baidu.com/widget?ajax=json&id=ad',
+        ];
+
+        $aggResult = HttpClient::multiGet($urls);
+
+        var_dump(microtime(true) - $start);
+
+        $aggResult = array_map(function ($v) {
+            return (string)$v->getBody();
+        }, $aggResult);
+
+        return Response::json($aggResult);
     }
 
     public function es()
