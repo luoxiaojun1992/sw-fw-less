@@ -13,8 +13,6 @@ namespace App\components;
  */
 class RedLock
 {
-    private static $instance;
-
     private $locked_keys = [];
 
     /**
@@ -28,11 +26,7 @@ class RedLock
      */
     public static function create(RedisPool $redisPool = null)
     {
-        if (self::$instance instanceof self) {
-            return self::$instance;
-        }
-
-        return self::$instance = new self($redisPool);
+        return new self($redisPool);
     }
 
     /**

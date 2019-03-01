@@ -90,7 +90,6 @@ return [
 
     //Middleware
     'middleware' => [
-        \App\middlewares\RedLock::class,
         //\App\middlewares\Cors::class,
     ],
 

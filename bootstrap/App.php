@@ -168,11 +168,6 @@ class App
                 \App\components\Config::get('redis.db'),
                 \App\components\Config::get('redis.prefix')
             );
-
-            //RedLock
-            \App\components\RedLock::create(
-                \App\components\RedisPool::create()
-            );
         }
 
         //MySQL

@@ -14,6 +14,6 @@ class RedLock extends AbstractFacade
 {
     protected static function getAccessor()
     {
-        return \App\components\RedLock::create();
+        return \App\components\RedLock::create(\App\components\RedisPool::create());
     }
 }
