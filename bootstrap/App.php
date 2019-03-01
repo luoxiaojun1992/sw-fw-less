@@ -231,6 +231,8 @@ class App
                             if (isset($middlewareConcretes[$i - 1])) {
                                 $middlewareConcretes[$i - 1]->setNext($middlewareConcrete);
                             }
+
+                            array_push($middlewareConcretes, $middlewareConcrete);
                         }
                         $middlewareConcretesCount = count($middlewareConcretes);
                         if ($middlewareConcretesCount > 0) {
