@@ -57,11 +57,12 @@ class RateLimit
                 return false;
             }
 
-            $redis->multi(\Redis::PIPELINE);
-            $redis->incr($key);
-            $redis->expire($key, $period);
-            $result = $redis->exec();
-            return $result[0] <= $throttle;
+            //todo use lua script
+            $passed = $redis->incr($key);
+            if ($passed == 1) {
+                $redis->expire($key, $period);
+            }
+            return $passed <= $throttle;
         } catch (\Exception $e) {
             throw $e;
         } finally {

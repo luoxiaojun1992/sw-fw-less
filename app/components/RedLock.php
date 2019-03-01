@@ -58,14 +58,12 @@ class RedLock
         /** @var \Redis $redis */
         $redis = $this->redisPool->pick();
         try {
-            $redis->multi(\Redis::PIPELINE);
             //因为redis整数对象有缓存，此处value使用1
-            $redis->setnx($key, 1);
-            if ($ttl > 0) {
-                $redis->expire($key, $ttl);
-            }
-            $result = $redis->exec();
-            if ($result[0] > 0) {
+            //todo use lua script
+            if ($redis->setnx($key, 1) > 0) {
+                if ($ttl > 0) {
+                    $redis->expire($key, $ttl);
+                }
                 $this->addLockedKey($originKey, $guard);
                 return true;
             }
