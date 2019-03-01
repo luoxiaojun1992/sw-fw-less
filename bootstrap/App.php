@@ -95,6 +95,48 @@ class App
         return [$middlewareName, null];
     }
 
+    private function getRequestHandler($request, $traceId, $routeInfo)
+    {
+        $appRequest = \App\components\Request::fromSwRequest($request)->setTraceId($traceId);
+
+        $controllerAction = $routeInfo[1];
+        $controllerName = $controllerAction[0];
+        $action = $controllerAction[1];
+        $parameters = $routeInfo[2];
+        $controller = new $controllerName;
+        if ($controller instanceof \App\services\BaseService) {
+            $controller->setRequest($appRequest);
+        }
+        $controller->setHandler($action)->setParameters($parameters);
+
+        //Middleware
+        $middlewareNames = \App\components\Config::get('middleware');
+        if (isset($controllerAction[2])) {
+            $middlewareNames = array_merge($middlewareNames, $controllerAction[2]);
+        }
+        /** @var \App\middlewares\MiddlewareContract[]|\App\middlewares\AbstractMiddleware[] $middlewareConcretes */
+        $middlewareConcretes = [];
+        foreach ($middlewareNames as $i => $middlewareName) {
+            list($middlewareClass, $middlewareOptions) = $this->parseMiddlewareName($middlewareName);
+
+            /** @var \App\middlewares\AbstractMiddleware $middlewareConcrete */
+            $middlewareConcrete = new $middlewareClass;
+            $middlewareConcrete->setParameters([$appRequest])->setOptions($middlewareOptions);
+            if (isset($middlewareConcretes[$i - 1])) {
+                $middlewareConcretes[$i - 1]->setNext($middlewareConcrete);
+            }
+
+            array_push($middlewareConcretes, $middlewareConcrete);
+        }
+        $middlewareConcretesCount = count($middlewareConcretes);
+        if ($middlewareConcretesCount > 0) {
+            $middlewareConcretes[$middlewareConcretesCount - 1]->setNext($controller);
+        }
+        array_push($middlewareConcretes, $controller);
+
+        return $middlewareConcretes[0];
+    }
+
     public function swHttpStart($server)
     {
         echo 'Server started.', PHP_EOL;
@@ -203,48 +245,11 @@ class App
                         $response->end();
                         break;
                     case FastRoute\Dispatcher::FOUND:
-                        $appRequest = \App\components\Request::fromSwRequest($request)->setTraceId($traceId);
-
-                        $controllerAction = $routeInfo[1];
-                        $controllerName = $controllerAction[0];
-                        $action = $controllerAction[1];
-                        $parameters = $routeInfo[2];
-                        $controller = new $controllerName;
-                        if ($controller instanceof \App\services\BaseService) {
-                            $controller->setRequest($appRequest);
-                        }
-                        $controller->setHandler($action)->setParameters($parameters);
-
-                        //Middleware
-                        $middlewareNames = \App\components\Config::get('middleware');
-                        if (isset($controllerAction[2])) {
-                            $middlewareNames = array_merge($middlewareNames, $controllerAction[2]);
-                        }
-                        /** @var \App\middlewares\MiddlewareContract[]|\App\middlewares\AbstractMiddleware[] $middlewareConcretes */
-                        $middlewareConcretes = [];
-                        foreach ($middlewareNames as $i => $middlewareName) {
-                            list($middlewareClass, $middlewareOptions) = $this->parseMiddlewareName($middlewareName);
-
-                            /** @var \App\middlewares\AbstractMiddleware $middlewareConcrete */
-                            $middlewareConcrete = new $middlewareClass;
-                            $middlewareConcrete->setParameters([$appRequest])->setOptions($middlewareOptions);
-                            if (isset($middlewareConcretes[$i - 1])) {
-                                $middlewareConcretes[$i - 1]->setNext($middlewareConcrete);
-                            }
-
-                            array_push($middlewareConcretes, $middlewareConcrete);
-                        }
-                        $middlewareConcretesCount = count($middlewareConcretes);
-                        if ($middlewareConcretesCount > 0) {
-                            $middlewareConcretes[$middlewareConcretesCount - 1]->setNext($controller);
-                        }
-                        array_push($middlewareConcretes, $controller);
-
                         ob_start();
                         /**
                          * @var \App\components\Response $res
                          */
-                        $res = $middlewareConcretes[0]->call();
+                        $res = $this->getRequestHandler($request, $traceId, $routeInfo)->call();
                         $content = $res->getContent();
                         if (!$content && ob_get_length() > 0) {
                             $content = ob_get_contents();
