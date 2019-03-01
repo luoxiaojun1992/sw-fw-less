@@ -53,21 +53,19 @@ class RateLimit
         /** @var \Redis $redis */
         $redis = $this->redisPool->pick();
         try {
-            if ($redis->get($key) < $throttle) {
-                $redis->multi(\Redis::PIPELINE);
-                $redis->incr($key);
-                $redis->expire($key, $period);
-                $result = $redis->exec();
-                return $result[0] <= $throttle;
-            } else {
+            if ($redis->get($key) >= $throttle) {
                 return false;
             }
+
+            $redis->multi(\Redis::PIPELINE);
+            $redis->incr($key);
+            $redis->expire($key, $period);
+            $result = $redis->exec();
+            return $result[0] <= $throttle;
         } catch (\Exception $e) {
             throw $e;
         } finally {
             $this->redisPool->release($redis);
         }
-
-        return false;
     }
 }
