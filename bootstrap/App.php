@@ -168,6 +168,11 @@ class App
                 \App\components\Config::get('redis.db'),
                 \App\components\Config::get('redis.prefix')
             );
+
+            //Rate limiter
+            \App\components\RateLimit::create(
+                \App\components\RedisPool::create()
+            );
         }
 
         //MySQL
