@@ -68,4 +68,21 @@ class RateLimit
             $this->redisPool->release($redis);
         }
     }
+
+    /**
+     * @param $metric
+     * @throws \Exception
+     */
+    public function clear($metric)
+    {
+        /** @var \Redis $redis */
+        $redis = $this->redisPool->pick();
+        try {
+            $redis->del($this->redisPool->getKey($metric));
+        } catch (\Exception $e) {
+            throw $e;
+        } finally {
+            $this->redisPool->release($redis);
+        }
+    }
 }
