@@ -57,11 +57,14 @@ class RateLimit
                 return false;
             }
 
-            //todo use lua script
-            $passed = $redis->incr($key);
-            if ($passed == 1) {
-                $redis->expire($key, $period);
-            }
+            $lua = <<<EOF
+local new_value=redis.call('incr', KEYS[1]);
+if(new_value == 1) then 
+redis.call('expire', KEYS[1], ARGV[1]) 
+end
+return new_value
+EOF;
+            $passed = $redis->eval($lua, [$key, $period], 1);
             return $passed <= $throttle;
         } catch (\Exception $e) {
             throw $e;
