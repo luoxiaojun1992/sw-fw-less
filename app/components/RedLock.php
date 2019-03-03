@@ -59,11 +59,19 @@ class RedLock
         $redis = $this->redisPool->pick();
         try {
             //因为redis整数对象有缓存，此处value使用1
-            //todo use lua script
-            if ($redis->setnx($key, 1) > 0) {
-                if ($ttl > 0) {
-                    $redis->expire($key, $ttl);
-                }
+            if ($ttl > 0) {
+                $lua = <<<EOF
+local new_value=redis.call('setnx', KEYS[1], ARGV[1]);
+if(new_value > 0) then 
+redis.call('expire', KEYS[1], ARGV[2]) 
+end
+return new_value
+EOF;
+                $result = $redis->eval($lua, [$key, 1, $ttl], 1);
+            } else {
+                $result = $redis->setnx($key, 1);
+            }
+            if ($result > 0) {
                 $this->addLockedKey($originKey, $guard);
                 return true;
             }
