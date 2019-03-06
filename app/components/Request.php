@@ -2,6 +2,8 @@
 
 namespace App\components;
 
+use App\components\http\ServerRequestFactory;
+
 class Request
 {
     private $traceId;
@@ -158,6 +160,34 @@ class Request
     public function body()
     {
         return $this->getSwRequest()->rawcontent();
+    }
+
+    public function convertToPsr7()
+    {
+        //todo test
+
+        $rawBody = $this->getSwRequest()->rawcontent();
+        $contentType = $this->header('content-type');
+
+        if (in_array($contentType, ['application/x-www-form-urlencoded', 'multipart/form-data']) && $this->method() === 'POST') {
+            $parsedBody = $this->getSwRequest()->post;
+        } else {
+            if ($contentType === 'application/x-www-form-urlencoded') {
+                parse_str((string) $rawBody, $parsedBody);
+            } else {
+                $parsedBody = null;
+            }
+        }
+
+        return ServerRequestFactory::fromGlobals(
+            $this->getSwRequest()->server,
+            $this->getSwRequest()->get,
+            $parsedBody,
+            $this->getSwRequest()->cookie,
+            $this->getSwRequest()->files,
+            $this->getSwRequest()->header,
+            $rawBody
+        );
     }
 
     /**

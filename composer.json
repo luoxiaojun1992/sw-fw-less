@@ -20,7 +20,8 @@
         "cakephp/event": "3.7.1",
         "xxtime/flysystem-aliyun-oss": "1.2.0",
         "ramsey/uuid": "~3",
-        "apache/thrift": "0.11.0"
+        "apache/thrift": "0.11.0",
+        "zendframework/zend-diactoros": "~2.1"
     },
     "license": "apache-2.0",
     "authors": [

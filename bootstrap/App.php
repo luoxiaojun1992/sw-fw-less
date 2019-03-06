@@ -215,9 +215,6 @@ class App
     public function swHttpRequest(\Swoole\Http\Request $request, \Swoole\Http\Response $response)
     {
         $header = isset($request->header) ? $request->header : [];
-        foreach ($header as $k => $v) {
-            $header[strtolower($k)] = $v;
-        }
         $traceId = isset($header['x-trace-id']) ? $header['x-trace-id'] : null;
 
         $callback = function () use ($request, $response, &$traceId) {
@@ -312,9 +309,6 @@ class App
         if ($needSample) {
             $serviceName = $traceConfig['service_name'];
             $server = isset($request->server) ? $request->server : [];
-            foreach ($server as $k => $v) {
-                $server[strtolower($k)] = $v;
-            }
             $spanName = isset($server['request_uri']) ? $server['request_uri'] : 'request';
             $traceId = $traceId ? : str_replace('-', '', \Ramsey\Uuid\Uuid::uuid4());
             \App\facades\Trace::span([
