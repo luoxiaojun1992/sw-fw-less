@@ -46,13 +46,10 @@ class ServerRequestFactory extends \Zend\Diactoros\ServerRequestFactory
                 $formattedServer[strtoupper($key)] = $value;
             }
         } else {
-            $formattedServer = null;
+            $formattedServer = [];
         }
 
         if ($headers) {
-            if (is_null($formattedServer)) {
-                $formattedServer = [];
-            }
             foreach ($headers as $key => $value) {
                 $formattedServer['HTTP_' . strtoupper(str_replace('-', '_', $key))] = $value;
             }

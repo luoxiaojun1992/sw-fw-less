@@ -164,8 +164,6 @@ class Request
 
     public function convertToPsr7()
     {
-        //todo test
-
         $rawBody = $this->getSwRequest()->rawcontent();
         $contentType = $this->header('content-type');
 
@@ -180,12 +178,12 @@ class Request
         }
 
         return ServerRequestFactory::fromGlobals(
-            $this->getSwRequest()->server,
-            $this->getSwRequest()->get,
-            $parsedBody,
-            $this->getSwRequest()->cookie,
-            $this->getSwRequest()->files,
-            $this->getSwRequest()->header,
+            $this->getSwRequest()->server ?? [],
+            $this->getSwRequest()->get ?? [],
+            $parsedBody ?? [],
+            $this->getSwRequest()->cookie ?? [],
+            $this->getSwRequest()->files ?? [],
+            $this->getSwRequest()->header ?? [],
             $rawBody
         );
     }
