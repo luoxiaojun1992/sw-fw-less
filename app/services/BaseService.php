@@ -2,7 +2,7 @@
 
 namespace App\services;
 
-use App\components\Request;
+use App\components\http\Request;
 use App\middlewares\MiddlewareContract;
 use App\middlewares\traits\Handler;
 

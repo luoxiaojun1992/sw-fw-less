@@ -2,8 +2,8 @@
 
 namespace App\middlewares;
 
-use App\components\Request;
-use App\components\Response;
+use App\components\http\Request;
+use App\components\http\Response;
 use App\middlewares\traits\Handler;
 
 abstract class AbstractMiddleware implements MiddlewareContract
@@ -19,7 +19,7 @@ abstract class AbstractMiddleware implements MiddlewareContract
 
     /**
      * @param Request $request
-     * @return \App\components\Response
+     * @return \App\components\http\Response
      */
     abstract public function handle(Request $request);
 

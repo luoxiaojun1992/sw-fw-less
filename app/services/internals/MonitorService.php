@@ -3,7 +3,7 @@
 namespace App\services\internals;
 
 use App\components\Config;
-use App\components\Response;
+use App\components\http\Response;
 use App\components\utils\swoole\Counter;
 use App\facades\AMQPConnectionPool;
 use App\facades\HbasePool;

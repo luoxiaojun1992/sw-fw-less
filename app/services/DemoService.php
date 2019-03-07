@@ -4,7 +4,7 @@ namespace App\services;
 
 use App\components\Helper;
 use App\components\HttpClient;
-use App\components\Response;
+use App\components\http\Response;
 use App\facades\HbasePool;
 use App\models\Member;
 use App\models\Test;

@@ -1,8 +1,6 @@
 <?php
 
-namespace App\components;
-
-use App\components\http\ServerRequestFactory;
+namespace App\components\http;
 
 class Request
 {

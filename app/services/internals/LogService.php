@@ -2,7 +2,7 @@
 
 namespace App\services\internals;
 
-use App\components\Response;
+use App\components\http\Response;
 use App\facades\Log;
 use App\services\BaseService;
 

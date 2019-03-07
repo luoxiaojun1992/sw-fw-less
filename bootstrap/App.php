@@ -97,7 +97,7 @@ class App
 
     private function getRequestHandler($request, $traceId, $routeInfo)
     {
-        $appRequest = \App\components\Request::fromSwRequest($request)->setTraceId($traceId);
+        $appRequest = \App\components\http\Request::fromSwRequest($request)->setTraceId($traceId);
 
         $controllerAction = $routeInfo[1];
         $controllerName = $controllerAction[0];
@@ -244,7 +244,7 @@ class App
                     case FastRoute\Dispatcher::FOUND:
                         ob_start();
                         /**
-                         * @var \App\components\Response $res
+                         * @var \App\components\http\Response $res
                          */
                         $res = $this->getRequestHandler($request, $traceId, $routeInfo)->call();
                         $content = $res->getContent();

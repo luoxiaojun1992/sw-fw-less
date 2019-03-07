@@ -3,8 +3,8 @@
 namespace App\middlewares;
 
 use App\components\Config;
-use App\components\Request;
-use App\components\Response;
+use App\components\http\Request;
+use App\components\http\Response;
 use App\facades\RateLimit;
 
 class Throttle extends AbstractMiddleware
