@@ -90,13 +90,10 @@ final class RedisReporter implements Reporter
 
     private function getRedisClient()
     {
-        //todo use pool, redis pool connection implementation
-//        if (!empty($this->options['connection'])) {
-//            return Redis::connection($this->options['connection']);
-//        }
-//
-//        return null;
+        if (!empty($this->options['connection'])) {
+            return RedisPool::pick($this->options['connection']);
+        }
 
-        return RedisPool::pick();
+        return null;
     }
 }

@@ -9,43 +9,24 @@ class RedisPool
 {
     private static $instance;
 
-    /** @var RedisWrapper[] */
+    /** @var RedisWrapper[][] */
     private $redisPool = [];
 
-    private $host;
-    private $port;
-    private $timeout;
-    private $poolSize;
-    private $passwd;
-    private $db = 0;
-    private $prefix = 'sw-fw-less:';
+    private $defaultConnection = 'default';
+    private $connectionConfigs = [];
 
     /**
-     * @param string $host
-     * @param int $port
-     * @param int $timeout
-     * @param int $poolSize
-     * @param null $passwd
-     * @param int $db
-     * @param string $prefix
+     * @param array $redisConfig
      * @return RedisPool|null
      */
-    public static function create(
-        $host = '127.0.0.1',
-        $port = 6379,
-        $timeout = 1,
-        $poolSize = 100,
-        $passwd = null,
-        $db = 0,
-        $prefix = 'sw-fw-less:'
-    )
+    public static function create($redisConfig = null)
     {
         if (self::$instance instanceof self) {
             return self::$instance;
         }
 
         if (Config::get('redis.switch')) {
-            return self::$instance = new self($host, $port, $timeout, $poolSize, $passwd, $db, $prefix);
+            return self::$instance = new self($redisConfig);
         } else {
             return null;
         }
@@ -53,50 +34,57 @@ class RedisPool
 
     /**
      * Redis constructor.
-     * @param $host
-     * @param $port
-     * @param $timeout
-     * @param $poolSize
-     * @param $passwd
-     * @param $db
-     * @param $prefix
+     * @param array $redisConfig
      */
-    public function __construct($host, $port, $timeout, $poolSize, $passwd, $db, $prefix = 'sw-fw-less:')
+    public function __construct($redisConfig)
     {
-        $this->host = $host;
-        $this->port = $port;
-        $this->timeout = $timeout;
-        $this->poolSize = $poolSize;
-        $this->passwd = $passwd;
-        $this->db = $db;
-        $this->prefix = $prefix;
+        $this->defaultConnection = $redisConfig['default'];
 
-        for ($i = 0; $i < $poolSize; ++$i) {
-            $this->redisPool[] = $this->getConnect();
-        }
+        foreach ($redisConfig['connections'] as $connectionName => $redisConnection) {
+            $this->connectionConfigs[$connectionName]['host'] = $redisConnection['host'];
+            $this->connectionConfigs[$connectionName]['port'] = $redisConnection['port'];
+            $this->connectionConfigs[$connectionName]['timeout'] = $redisConnection['timeout'];
+            $this->connectionConfigs[$connectionName]['pool_size'] = $redisConnection['pool_size'];
+            $this->connectionConfigs[$connectionName]['passwd'] = $redisConnection['passwd'];
+            $this->connectionConfigs[$connectionName]['db'] = $redisConnection['db'];
+            $this->connectionConfigs[$connectionName]['prefix'] = $redisConnection['prefix'];
 
-        if (Config::get('redis.pool_change_event')) {
-            Event::dispatch(
-                new CakeEvent('redis:pool:change',
-                    null,
-                    ['count' => $poolSize]
-                )
-            );
+            for ($i = 0; $i < $redisConnection['pool_size']; ++$i) {
+                if (!is_null($connection = $this->getConnect(true, $connectionName))) {
+                    $this->redisPool[$connectionName][] = $connection;
+                }
+            }
+
+            if ($redisConfig['pool_change_event']) {
+                Event::dispatch(
+                    new CakeEvent('redis:pool:change',
+                        null,
+                        ['count' => $redisConnection['pool_size']]
+                    )
+                );
+            }
         }
 
         RedisStreamWrapper::register();
     }
 
     /**
+     * @param string $connectionName
      * @return RedisWrapper mixed
      */
-    public function pick()
+    public function pick($connectionName = null)
     {
-        $redis = array_pop($this->redisPool);
+        if (is_null($connectionName)) {
+            $connectionName = $this->defaultConnection;
+        }
+        if (!isset($this->redisPool[$connectionName])) {
+            return null;
+        }
+        $redis = array_pop($this->redisPool[$connectionName]);
         if (!$redis) {
-            $redis = $this->getConnect(false);
+            $redis = $this->getConnect(false, $connectionName);
         } else {
-            if (Config::get('redis.pool_change_event')) {
+            if (config('redis.pool_change_event')) {
                 Event::dispatch(
                     new CakeEvent('redis:pool:change',
                         null,
@@ -125,7 +113,7 @@ class RedisPool
                 }
             }
             if ($redis->isNeedRelease()) {
-                $this->redisPool[] = $redis;
+                $this->redisPool[$redis->getConnectionName()][] = $redis;
                 if (Config::get('redis.pool_change_event')) {
                     Event::dispatch(
                         new CakeEvent('redis:pool:change',
@@ -140,25 +128,40 @@ class RedisPool
 
     public function __destruct()
     {
-        foreach ($this->redisPool as $redis) {
-            $redis->close();
+        foreach ($this->redisPool as $connectionName => $connections) {
+            foreach ($connections as $connection) {
+                $connection->close();
+            }
         }
     }
 
     /**
      * @param bool $needRelease
+     * @param string $connectionName
      * @return RedisWrapper
      */
-    public function getConnect($needRelease = true)
+    public function getConnect($needRelease = true, $connectionName = null)
     {
-        $redis = new \Redis();
-        $redis->connect($this->host, $this->port, $this->timeout);
-        if ($this->passwd) {
-            $redis->auth($this->passwd);
+        if (is_null($connectionName)) {
+            $connectionName = $this->defaultConnection;
         }
-        $redis->setOption(\Redis::OPT_PREFIX, $this->prefix);
-        $redis->select($this->db);
-        return (new RedisWrapper())->setRedis($redis)->setNeedRelease($needRelease);
+        if (!isset($this->connectionConfigs[$connectionName])) {
+            return null;
+        }
+        $redis = new \Redis();
+        $redis->connect(
+            $this->connectionConfigs[$connectionName]['host'],
+            $this->connectionConfigs[$connectionName]['port'],
+            $this->connectionConfigs[$connectionName]['timeout']
+        );
+        if ($this->connectionConfigs[$connectionName]['passwd']) {
+            $redis->auth($this->connectionConfigs[$connectionName]['passwd']);
+        }
+        $redis->setOption(\Redis::OPT_PREFIX, $this->connectionConfigs[$connectionName]['prefix']);
+        $redis->select($this->connectionConfigs[$connectionName]['db']);
+        return (new RedisWrapper())->setRedis($redis)
+            ->setNeedRelease($needRelease)
+            ->setConnectionName($connectionName);
     }
 
     /**
@@ -169,7 +172,7 @@ class RedisPool
     public function handleRollbackException($redis, \RedisException $e)
     {
         if (Helper::causedByLostConnection($e)) {
-            $redis = $this->getConnect();
+            $redis = $this->getConnect(true, $redis->getConnectionName());
         }
 
         return $redis;
@@ -180,6 +183,10 @@ class RedisPool
      */
     public function countPool()
     {
-        return count($this->redisPool);
+        $sum = 0;
+        foreach ($this->redisPool as $connectionName => $connections) {
+            $sum += count($connections);
+        }
+        return $sum;
     }
 }

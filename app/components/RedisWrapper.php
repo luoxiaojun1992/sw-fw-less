@@ -10,6 +10,7 @@ class RedisWrapper
     private $redis;
     private $inTransaction = false;
     private $needRelease = true;
+    private $connectionName;
 
     /**
      * @return \Redis
@@ -44,6 +45,24 @@ class RedisWrapper
     public function setNeedRelease($needRelease)
     {
         $this->needRelease = $needRelease;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getConnectionName()
+    {
+        return $this->connectionName;
+    }
+
+    /**
+     * @param mixed $connectionName
+     * @return $this
+     */
+    public function setConnectionName($connectionName)
+    {
+        $this->connectionName = $connectionName;
         return $this;
     }
 
@@ -104,7 +123,7 @@ class RedisWrapper
     private function handleCommandException(\RedisException $e)
     {
         if (!$this->inTransaction() && Helper::causedByLostConnection($e)) {
-            $this->setRedis(RedisPool::getConnect(false)->getRedis());
+            $this->setRedis(RedisPool::getConnect(false, $this->getConnectionName())->getRedis());
         }
     }
 }

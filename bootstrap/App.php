@@ -166,15 +166,7 @@ class App
 
         //Redis
         if (config('redis.switch')) {
-            \App\components\RedisPool::create(
-                config('redis.host'),
-                config('redis.port'),
-                config('redis.timeout'),
-                config('redis.pool_size'),
-                config('redis.passwd'),
-                config('redis.db'),
-                config('redis.prefix')
-            );
+            \App\components\RedisPool::create(config('redis'));
 
             //Rate limiter
             \App\components\RateLimit::create(

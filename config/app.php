@@ -33,15 +33,30 @@ return [
     ],
 
     //Redis
+    //todo redlock、ratelimit 区分connection
     'redis' => [
-        'host' => env('REDIS_HOST', '127.0.0.1'),
-        'port' => envInt('REDIS_PORT', 6379),
-        'timeout' => envDouble('REDIS_TIMEOUT', 1),
-        'pool_size' => envInt('REDIS_POOL_SIZE', 5),
-        'passwd' => env('REDIS_PASSWD', null),
-        'db' => envInt('REDIS_DB', 0),
+        'default' => env('REDIS_DEFAULT', 'default'),
+        'connections' => [
+            env('REDIS_DEFAULT', 'default') => [
+                'host' => env('REDIS_HOST', '127.0.0.1'),
+                'port' => envInt('REDIS_PORT', 6379),
+                'timeout' => envDouble('REDIS_TIMEOUT', 1),
+                'pool_size' => envInt('REDIS_POOL_SIZE', 5),
+                'passwd' => env('REDIS_PASSWD', null),
+                'db' => envInt('REDIS_DB', 0),
+                'prefix' => env('REDIS_PREFIX', 'sw-fw-less:'),
+            ],
+            'zipkin' => [
+                'host' => env('REDIS_ZIPKIN_HOST', '127.0.0.1'),
+                'port' => envInt('REDIS_ZIPKIN_PORT', 6379),
+                'timeout' => envDouble('REDIS_ZIPKIN_TIMEOUT', 1),
+                'pool_size' => envInt('REDIS_ZIPKIN_POOL_SIZE', 5),
+                'passwd' => env('REDIS_ZIPKIN_PASSWD', null),
+                'db' => envInt('REDIS_ZIPKIN_DB', 1),
+                'prefix' => env('REDIS_ZIPKIN_PREFIX', 'sw-fw-less:'),
+            ],
+        ],
         'switch' => envInt('REDIS_SWITCH', 0),
-        'prefix' => env('REDIS_PREFIX', 'sw-fw-less:'),
         'pool_change_event' => envInt('REDIS_POOL_CHANGE_EVENT', 0),
         'report_pool_change' => envInt('REDIS_REPORT_POOL_CHANGE', 0),
     ],
