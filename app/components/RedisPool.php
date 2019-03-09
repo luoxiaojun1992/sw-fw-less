@@ -9,7 +9,7 @@ class RedisPool
 {
     private static $instance;
 
-    /** @var RedisWrapper[][] */
+    /** @var RedisWrapper[][]|\Redis[][] */
     private $redisPool = [];
 
     private $config = [];
@@ -89,7 +89,7 @@ class RedisPool
     }
 
     /**
-     * @param RedisWrapper $redis
+     * @param RedisWrapper|\Redis $redis
      */
     public function release($redis)
     {

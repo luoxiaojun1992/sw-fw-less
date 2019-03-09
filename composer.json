@@ -5,6 +5,7 @@
     "require": {
         "php": ">=7.1",
         "ext-json": "*",
+        "ext-redis": "*",
         "nikic/fast-route": "^1",
         "aura/sqlquery": "^2",
         "swlib/saber": "^1",

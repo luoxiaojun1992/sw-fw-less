@@ -128,6 +128,7 @@ EOF;
 
     /**
      * 清除所有锁
+     * @throws \Exception
      */
     public function flushAll()
     {
@@ -138,6 +139,9 @@ EOF;
         }
     }
 
+    /**
+     * @throws \Exception
+     */
     public function __destruct()
     {
         $this->flushAll();
