@@ -33,7 +33,6 @@ return [
     ],
 
     //Redis
-    //todo redlock、ratelimit 区分connection
     'redis' => [
         'default' => env('REDIS_DEFAULT', 'default'),
         'connections' => [
@@ -54,6 +53,24 @@ return [
                 'passwd' => env('REDIS_ZIPKIN_PASSWD', null),
                 'db' => envInt('REDIS_ZIPKIN_DB', 1),
                 'prefix' => env('REDIS_ZIPKIN_PREFIX', 'sw-fw-less:'),
+            ],
+            'red_lock' => [
+                'host' => env('REDIS_RED_LOCK_HOST', '127.0.0.1'),
+                'port' => envInt('REDIS_RED_LOCK_PORT', 6379),
+                'timeout' => envDouble('REDIS_RED_LOCK_TIMEOUT', 1),
+                'pool_size' => envInt('REDIS_RED_LOCK_POOL_SIZE', 5),
+                'passwd' => env('REDIS_RED_LOCK_PASSWD', null),
+                'db' => envInt('REDIS_RED_LOCK_DB', 2),
+                'prefix' => env('REDIS_RED_LOCK_PREFIX', 'sw-fw-less:'),
+            ],
+            'rate_limit' => [
+                'host' => env('REDIS_RATE_LIMIT_HOST', '127.0.0.1'),
+                'port' => envInt('REDIS_RATE_LIMIT_PORT', 6379),
+                'timeout' => envDouble('REDIS_RATE_LIMIT_TIMEOUT', 1),
+                'pool_size' => envInt('REDIS_RATE_LIMIT_POOL_SIZE', 5),
+                'passwd' => env('REDIS_RATE_LIMIT_PASSWD', null),
+                'db' => envInt('REDIS_RATE_LIMIT_DB', 3),
+                'prefix' => env('REDIS_RATE_LIMIT_PREFIX', 'sw-fw-less:'),
             ],
         ],
         'switch' => envInt('REDIS_SWITCH', 0),
@@ -233,7 +250,7 @@ return [
     //Throttle
     'throttle' => [
         'metric' => function(\App\components\http\Request $request){
-            return $request->uri();
+            return $request->getRoute();
         },
         'period' => envInt('THROTTLE_PERIOD', 60),
         'throttle' => envInt('THROTTLE_THROTTLE', 10000),
@@ -251,5 +268,15 @@ return [
             'connection' => env('ZIPKIN_REDIS_CONNECTION', 'zipkin'),
         ],
         'report_type' => env('ZIPKIN_REPORT_TYPE', 'http'),
+    ],
+
+    //RedLock
+    'red_lock' => [
+        'connection' => env('RED_LOCK_CONNECTION', 'red_lock'),
+    ],
+
+    //RateLimit
+    'rate_limit' => [
+        'connection' => env('RATE_LIMIT_CONNECTION', 'rate_limit'),
     ],
 ];

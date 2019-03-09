@@ -20,22 +20,27 @@ class RedLock
      */
     private $redisPool;
 
+    private $config = ['connection' => 'red_lock'];
+
     /**
      * @param RedisPool|null $redisPool
+     * @param array $config
      * @return RedLock
      */
-    public static function create(RedisPool $redisPool = null)
+    public static function create(RedisPool $redisPool = null, $config = [])
     {
-        return new self($redisPool);
+        return new self($redisPool, $config);
     }
 
     /**
      * RedLock constructor.
      * @param RedisPool|null $redisPool
+     * @param array $config
      */
-    public function __construct(RedisPool $redisPool = null)
+    public function __construct(RedisPool $redisPool = null, $config = [])
     {
         $this->redisPool = $redisPool;
+        $this->config = array_merge($this->config, $config);
     }
 
     /**
@@ -55,7 +60,7 @@ class RedLock
     public function lock($key, $ttl = 0, $guard = false)
     {
         /** @var \Redis $redis */
-        $redis = $this->redisPool->pick();
+        $redis = $this->redisPool->pick($this->config['connection']);
         try {
             //因为redis整数对象有缓存，此处value使用1
             if ($ttl > 0) {
@@ -98,7 +103,7 @@ EOF;
     public function unlock($key)
     {
         /** @var \Redis $redis */
-        $redis = $this->redisPool->pick();
+        $redis = $this->redisPool->pick($this->config['connection']);
         try {
             $result = $redis->del($key);
             if ($result > 0) {

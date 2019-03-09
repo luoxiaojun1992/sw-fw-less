@@ -18,26 +18,31 @@ class RateLimit
      */
     private $redisPool;
 
+    private $config = ['connection' => 'rate_limit'];
+
     /**
      * @param RedisPool|null $redisPool
+     * @param array $config
      * @return RateLimit
      */
-    public static function create(RedisPool $redisPool = null)
+    public static function create(RedisPool $redisPool = null, $config = [])
     {
         if (self::$instance instanceof self) {
             return self::$instance;
         }
 
-        return self::$instance = new self($redisPool);
+        return self::$instance = new self($redisPool, $config);
     }
 
     /**
      * RedLock constructor.
      * @param RedisPool|null $redisPool
+     * @param array $config
      */
-    public function __construct(RedisPool $redisPool = null)
+    public function __construct(RedisPool $redisPool = null, $config = [])
     {
         $this->redisPool = $redisPool;
+        $this->config = array_merge($this->config, $config);
     }
 
     /**
@@ -50,7 +55,7 @@ class RateLimit
     public function pass($metric, $period, $throttle)
     {
         /** @var \Redis $redis */
-        $redis = $this->redisPool->pick();
+        $redis = $this->redisPool->pick($this->config['connection']);
         try {
             if ($redis->get($metric) >= $throttle) {
                 return false;
@@ -79,7 +84,7 @@ EOF;
     public function clear($metric)
     {
         /** @var \Redis $redis */
-        $redis = $this->redisPool->pick();
+        $redis = $this->redisPool->pick($this->config['connection']);
         try {
             $redis->del($metric);
         } catch (\Exception $e) {

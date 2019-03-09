@@ -170,7 +170,8 @@ class App
 
             //Rate limiter
             \App\components\RateLimit::create(
-                \App\components\RedisPool::create()
+                \App\components\RedisPool::create(),
+                config('rate_limit')
             );
         }
 
