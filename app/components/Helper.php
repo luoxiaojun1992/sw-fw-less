@@ -18,15 +18,16 @@ class Helper
     /**
      * @param $arr
      * @param $keys
+     * @param null $default
      * @return null
      */
-    public static function nestedArrGet($arr, $keys)
+    public static function nestedArrGet($arr, $keys, $default = null)
     {
         if (is_string($keys)) {
             $keys = explode('.', $keys);
         } else {
             if (!is_array($keys)) {
-                return null;
+                return $default;
             }
         }
 
@@ -34,7 +35,7 @@ class Helper
             if (isset($arr[$key])) {
                 $arr = $arr[$key];
             } else {
-                $arr = null;
+                $arr = $default;
             }
         }
 

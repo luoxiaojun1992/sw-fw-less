@@ -3,11 +3,14 @@
 namespace App\components\http;
 
 use App\components\Helper;
+use Zend\Diactoros\ResponseFactory;
 
 class Response
 {
     private $content;
     private $status = 200;
+    private $reasonPhrase = '';
+    private $protocolVersion = '1.1'; //Swoole not supported
     private $headers = [];
 
     /**
@@ -37,6 +40,26 @@ class Response
     public function setHeaders($headers)
     {
         $this->headers = $headers;
+        return $this;
+    }
+
+    /**
+     * @param $protocolVersion
+     * @return $this
+     */
+    public function setProtocolVersion($protocolVersion)
+    {
+        $this->protocolVersion = $protocolVersion;
+        return $this;
+    }
+
+    /**
+     * @param $reasonPhrase
+     * @return $this
+     */
+    public function setReasonPhrase($reasonPhrase)
+    {
+        $this->reasonPhrase = $reasonPhrase;
         return $this;
     }
 
@@ -73,6 +96,51 @@ class Response
     public function getHeaders()
     {
         return $this->headers;
+    }
+
+    /**
+     * @return string
+     */
+    public function getProtocolVersion()
+    {
+        return $this->protocolVersion;
+    }
+
+    /**
+     * @return string
+     */
+    public function getReasonPhrase()
+    {
+        return $this->reasonPhrase;
+    }
+
+    /**
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    public function convertToPsr7()
+    {
+        $psrResponse = (new ResponseFactory())->createResponse($this->getStatus(), $this->getReasonPhrase())
+            ->withProtocolVersion($this->getProtocolVersion())
+            ->withBody($this->getContent());
+
+        $headers = $this->getHeaders();
+        foreach ($headers as $name => $value) {
+            $psrResponse->withAddedHeader($name, $value);
+        }
+
+        return $psrResponse;
+    }
+
+    public function isServerError()
+    {
+        $statusCode = $this->getStatus();
+        return $statusCode >= 500 && $statusCode < 600;
+    }
+
+    public function isClientError()
+    {
+        $statusCode = $this->getStatus();
+        return $statusCode >= 400 && $statusCode < 500;
     }
 
     /**

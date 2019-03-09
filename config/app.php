@@ -90,6 +90,7 @@ return [
 
     //Middleware
     'middleware' => [
+        \App\components\zipkin\Middleware::class,
         //\App\middlewares\Cors::class,
     ],
 
@@ -169,9 +170,7 @@ return [
                 $count = $event->getData('count');
 
                 if (\App\components\Config::get('redis.report_pool_change')) {
-                    if (extension_loaded('swoole')) {
-                        \App\components\utils\swoole\Counter::incr('monitor:pool:redis', $count);
-                    }
+                    \App\components\utils\swoole\Counter::incr('monitor:pool:redis', $count);
                 }
             },
         ],
@@ -180,9 +179,7 @@ return [
                 $count = $event->getData('count');
 
                 if (\App\components\Config::get('mysql.report_pool_change')) {
-                    if (extension_loaded('swoole')) {
-                        \App\components\utils\swoole\Counter::incr('monitor:pool:mysql', $count);
-                    }
+                    \App\components\utils\swoole\Counter::incr('monitor:pool:mysql', $count);
                 }
             },
         ],
@@ -191,9 +188,7 @@ return [
                 $count = $event->getData('count');
 
                 if (\App\components\Config::get('amqp.report_pool_change')) {
-                    if (extension_loaded('swoole')) {
-                        \App\components\utils\swoole\Counter::incr('monitor:pool:amqp', $count);
-                    }
+                    \App\components\utils\swoole\Counter::incr('monitor:pool:amqp', $count);
                 }
             },
         ],
@@ -202,9 +197,7 @@ return [
                 $count = $event->getData('count');
 
                 if (\App\components\Config::get('hbase.report_pool_change')) {
-                    if (extension_loaded('swoole')) {
-                        \App\components\utils\swoole\Counter::incr('monitor:pool:hbase', $count);
-                    }
+                    \App\components\utils\swoole\Counter::incr('monitor:pool:hbase', $count);
                 }
             },
         ],

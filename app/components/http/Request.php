@@ -2,12 +2,17 @@
 
 namespace App\components\http;
 
+use App\components\Helper;
+use App\components\http\traits\Tracer;
+
 class Request
 {
-    private $traceId;
+    use Tracer;
 
     /** @var \Swoole\Http\Request */
     private $swRequest;
+
+    private $route;
 
     /**
      * @param \Swoole\Http\Request $swRequest
@@ -28,21 +33,21 @@ class Request
     }
 
     /**
-     * @param mixed $traceId
+     * @param mixed $route
      * @return $this
      */
-    public function setTraceId($traceId)
+    public function setRoute($route)
     {
-        $this->traceId = $traceId;
+        $this->route = $route;
         return $this;
     }
 
     /**
      * @return mixed
      */
-    public function getTraceId()
+    public function getRoute()
     {
-        return $this->traceId;
+        return $this->route;
     }
 
     /**
@@ -115,6 +120,16 @@ class Request
     public function header($name, $default = null)
     {
         return Helper::arrGet($this->getSwRequest()->header, $name, $default);
+    }
+
+    /**
+     * @param $name
+     * @return bool
+     */
+    public function hasHeader($name)
+    {
+        $headers = $this->getSwRequest()->header;
+        return !is_null($headers) && array_key_exists($name, $headers);
     }
 
     /**

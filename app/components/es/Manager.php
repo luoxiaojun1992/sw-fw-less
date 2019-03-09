@@ -51,9 +51,7 @@ class Manager
         $clientBuilder = ClientBuilder::create();
         $clientBuilder->setHosts($this->config['connections'][$connection_name]['hosts']);
         $clientBuilder->setLogger(Log::getLogger());
-        if (extension_loaded('swoole')) {
-            $clientBuilder->setHandler(new GuzzleCoHandler(['timeout' => $this->config['connections'][$connection_name]['timeout']]));
-        }
+        $clientBuilder->setHandler(new GuzzleCoHandler(['timeout' => $this->config['connections'][$connection_name]['timeout']]));
         return $clientBuilder->build();
     }
 }

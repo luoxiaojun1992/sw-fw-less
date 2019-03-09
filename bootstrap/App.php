@@ -35,14 +35,10 @@ class App
 
     private function bootstrap()
     {
-        if (extension_loaded('swoole')) {
-            \Swoole\Runtime::enableCoroutine();
-        }
+        \Swoole\Runtime::enableCoroutine();
 
         //Counter
-        if (extension_loaded('swoole')) {
-            \App\components\utils\swoole\Counter::init();
-        }
+        \App\components\utils\swoole\Counter::init();
 
         //Dot Env
         if (file_exists(__DIR__ . '/../.env')) {
@@ -66,18 +62,20 @@ class App
         $this->httpRouteDispatcher = FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) {
             $routerConfig = \App\components\Config::get('router');
             foreach ($routerConfig['single'] as $router) {
+                array_unshift($router[2], $router[1]);
                 $r->addRoute($router[0], $router[1], $router[2]);
             }
             foreach ($routerConfig['group'] as $prefix => $routers) {
-                $r->addGroup($prefix, function (FastRoute\RouteCollector $r) use ($routers) {
+                $r->addGroup($prefix, function (FastRoute\RouteCollector $r) use ($routers, $prefix) {
                     foreach ($routers as $router) {
+                        array_unshift($router[2], '/' . trim($prefix, '/') . '/' . trim($router[1], '/'));
                         $r->addRoute($router[0], $router[1], $router[2]);
                     }
                 });
             }
             if (\App\components\Config::get('monitor.switch')) {
-                $r->addRoute('GET', '/monitor/pool', [\App\services\internals\MonitorService::class, 'pool']);
-                $r->addRoute('GET', '/log/flush', [\App\services\internals\LogService::class, 'flush']);
+                $r->addRoute('GET', '/monitor/pool', ['/monitor/pool', \App\services\internals\MonitorService::class, 'pool']);
+                $r->addRoute('GET', '/log/flush', ['/log/flush', \App\services\internals\LogService::class, 'flush']);
             }
         });
     }
@@ -95,13 +93,15 @@ class App
         return [$middlewareName, null];
     }
 
-    private function getRequestHandler($request, $traceId, $routeInfo)
+    private function getRequestHandler($request, $routeInfo)
     {
-        $appRequest = \App\components\http\Request::fromSwRequest($request)->setTraceId($traceId);
+        $appRequest = \App\components\http\Request::fromSwRequest($request);
 
         $controllerAction = $routeInfo[1];
-        $controllerName = $controllerAction[0];
-        $action = $controllerAction[1];
+        $route = $controllerAction[0];
+        $appRequest->setRoute($route);
+        $controllerName = $controllerAction[1];
+        $action = $controllerAction[2];
         $parameters = $routeInfo[2];
         $controller = new $controllerName;
         if ($controller instanceof \App\services\BaseService) {
@@ -111,8 +111,8 @@ class App
 
         //Middleware
         $middlewareNames = \App\components\Config::get('middleware');
-        if (isset($controllerAction[2])) {
-            $middlewareNames = array_merge($middlewareNames, $controllerAction[2]);
+        if (isset($controllerAction[3])) {
+            $middlewareNames = array_merge($middlewareNames, $controllerAction[3]);
         }
         /** @var \App\middlewares\MiddlewareContract[]|\App\middlewares\AbstractMiddleware[] $middlewareConcretes */
         $middlewareConcretes = [];
@@ -214,112 +214,80 @@ class App
 
     public function swHttpRequest(\Swoole\Http\Request $request, \Swoole\Http\Response $response)
     {
-        $header = isset($request->header) ? $request->header : [];
-        $traceId = isset($header['x-trace-id']) ? $header['x-trace-id'] : null;
+        try {
+            clearstatcache();
 
-        $callback = function () use ($request, $response, &$traceId) {
-            try {
-                clearstatcache();
-
-                $requestUri = $request->server['request_uri'];
-                if (false !== $pos = strpos($requestUri, '?')) {
-                    $requestUri = substr($requestUri, 0, $pos);
-                }
-                $requestUri = rawurldecode($requestUri);
-
-                $routeInfo = $this->httpRouteDispatcher->dispatch($request->server['request_method'], $requestUri);
-                $routeResult = $routeInfo[0];
-                switch ($routeResult) {
-                    case FastRoute\Dispatcher::NOT_FOUND:
-                        // ... 404 Not Found
-                        $response->status(404);
-                        $response->end();
-                        break;
-                    case FastRoute\Dispatcher::METHOD_NOT_ALLOWED:
-                        $allowedMethods = $routeInfo[1];
-                        // ... 405 Method Not Allowed
-                        $response->status(405);
-                        $response->end();
-                        break;
-                    case FastRoute\Dispatcher::FOUND:
-                        ob_start();
-                        /**
-                         * @var \App\components\http\Response $res
-                         */
-                        $res = $this->getRequestHandler($request, $traceId, $routeInfo)->call();
-                        $content = $res->getContent();
-                        if (!$content && ob_get_length() > 0) {
-                            $content = ob_get_contents();
-                            ob_end_clean();
-                        } else {
-                            ob_end_flush();
-                        }
-
-                        $response->status($res->getStatus());
-                        if ($headers = $res->getHeaders()) {
-                            foreach ($headers as $key => $value) {
-                                $response->header($key, $value);
-                            }
-                        }
-
-                        $response->end($content);
-                        break;
-                    default:
-                        $response->end();
-                }
-            } catch (\Exception $e) {
-                ob_start();
-                $res = \App\components\ErrorHandler::handle($e);
-                $content = $res->getContent();
-                if (!$content && ob_get_length() > 0) {
-                    $content = ob_get_contents();
-                    ob_end_clean();
-                } else {
-                    ob_end_flush();
-                }
-
-                $response->status($res->getStatus());
-                if ($headers = $res->getHeaders()) {
-                    foreach ($headers as $key => $value) {
-                        $response->header($key, $value);
-                    }
-                }
-                $response->end($content);
+            $requestUri = $request->server['request_uri'];
+            if (false !== $pos = strpos($requestUri, '?')) {
+                $requestUri = substr($requestUri, 0, $pos);
             }
-        };
+            $requestUri = rawurldecode($requestUri);
 
-        $traceConfig = \App\components\Config::get('trace');
-        $needSample = false;
-        if ($traceConfig['switch']) {
-            if (!empty($traceConfig['zipkin_url'])) {
-                if ($traceId) {
-                    $needSample = true;
-                } elseif (!empty($traceConfig['sample_rate'])) {
-                    if ($traceConfig['sample_rate'] >= 1) {
-                        $needSample = true;
-                    } else {
-                        mt_srand(time());
-                        if (mt_rand() / mt_getrandmax() <= $traceConfig['sample_rate']) {
-                            $needSample = true;
-                        }
-                    }
-                }
+            $routeInfo = $this->httpRouteDispatcher->dispatch($request->server['request_method'], $requestUri);
+            $routeResult = $routeInfo[0];
+            switch ($routeResult) {
+                case FastRoute\Dispatcher::NOT_FOUND:
+                    // ... 404 Not Found
+                    $this->swResponse(
+                        \App\components\http\Response::output(null, 404),
+                        $response
+                    );
+                    break;
+                case FastRoute\Dispatcher::METHOD_NOT_ALLOWED:
+                    $allowedMethods = $routeInfo[1];
+                    // ... 405 Method Not Allowed
+                    $this->swResponse(
+                        \App\components\http\Response::output(null, 405),
+                        $response
+                    );
+                    break;
+                case FastRoute\Dispatcher::FOUND:
+                    $this->swResponse($this->swfRequest(function () use ($request, $routeInfo) {
+                        return $this->getRequestHandler($request, $routeInfo)->call();
+                    }), $response);
+                    break;
+                default:
+                    $this->swResponse(
+                        \App\components\http\Response::output(null),
+                        $response
+                    );
             }
+        } catch (\Exception $e) {
+            $this->swResponse($this->swfRequest(function () use ($e) {
+                return \App\components\ErrorHandler::handle($e);
+            }), $response);
         }
-        if ($needSample) {
-            $serviceName = $traceConfig['service_name'];
-            $server = isset($request->server) ? $request->server : [];
-            $spanName = isset($server['request_uri']) ? $server['request_uri'] : 'request';
-            $traceId = $traceId ? : str_replace('-', '', \Ramsey\Uuid\Uuid::uuid4());
-            \App\facades\Trace::span([
-                'service_name' => $serviceName,
-                'span_name' => $spanName,
-                'zipkin_url' => $traceConfig['zipkin_url'],
-                'trace_id' => $traceId,
-            ], $callback);
+    }
+
+    private function swfRequest(callable $callback)
+    {
+        ob_start();
+
+        $swfResponse = call_user_func($callback);
+
+        $content = $swfResponse->getContent();
+        if (!$content && ob_get_length() > 0) {
+            $swfResponse->setContent(ob_get_contents());
+            ob_end_clean();
         } else {
-            call_user_func($callback);
+            ob_end_flush();
         }
+
+        return $swfResponse;
+    }
+
+    private function swResponse(\App\components\http\Response $swfResponse, \Swoole\Http\Response $swResponse)
+    {
+        $swResponse->status($swfResponse->getStatus());
+        if ($headers = $swfResponse->getHeaders()) {
+            foreach ($headers as $key => $value) {
+                $swResponse->header($key, $value);
+            }
+        }
+
+        //todo before after event aop hook
+
+        $swResponse->end($swfResponse->getContent());
     }
 
     public function run()

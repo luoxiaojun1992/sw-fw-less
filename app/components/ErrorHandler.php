@@ -2,6 +2,8 @@
 
 namespace App\components;
 
+use App\components\http\Response;
+
 class ErrorHandler
 {
     public static function handle(\Exception $e)

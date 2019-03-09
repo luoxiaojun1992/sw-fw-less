@@ -20,9 +20,7 @@ class Qiniu
     {
         $this->config = Config::get('storage');
 
-        if (extension_loaded('swoole')) {
-            class_alias(QiniuCoHttpClient::class, Client::class);
-        }
+        class_alias(QiniuCoHttpClient::class, Client::class);
 
         QiniuStreamWrapper::register();
     }

@@ -123,11 +123,7 @@ class HbasePool
         require_once File::path('/app/components/hbase/thrift/Hbase.php');
         require_once File::path('/app/components/hbase/thrift/Types.php');
 
-        if (extension_loaded('swoole')) {
-            $socket = new TCoroutineSocket($this->config['host'], $this->config['port']);
-        } else {
-            $socket = new TSocket($this->config['host'], $this->config['port']);
-        }
+        $socket = new TCoroutineSocket($this->config['host'], $this->config['port']);
         $socket->setSendTimeout($this->config['write_timeout']);
         $socket->setRecvTimeout($this->config['read_timeout']);
 

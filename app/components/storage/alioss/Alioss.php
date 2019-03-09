@@ -20,9 +20,7 @@ class Alioss
     {
         $this->config = Config::get('storage');
 
-        if (extension_loaded('swoole')) {
-            class_alias(AliossCoRequest::class, RequestCore::class);
-        }
+        class_alias(AliossCoRequest::class, RequestCore::class);
 
         AliossStreamWrapper::register();
     }

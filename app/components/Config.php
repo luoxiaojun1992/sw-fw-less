@@ -16,17 +16,18 @@ class Config
 
     /**
      * @param $key
+     * @param null $default
      * @return array|mixed|null
      */
-    public static function get($key)
+    public static function get($key, $default = null)
     {
         if (!$key) {
-            return null;
+            return $default;
         }
         if (!is_string($key) && !is_array($key)) {
-            return null;
+            return $default;
         }
 
-        return Helper::nestedArrGet(self::$config, $key);
+        return Helper::nestedArrGet(self::$config, $key, $default);
     }
 }
