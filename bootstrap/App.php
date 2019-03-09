@@ -15,17 +15,17 @@ class App
         $this->bootstrap();
 
         $this->swHttpServer = new \Swoole\Http\Server(
-            \App\components\Config::get('server.host'),
-            \App\components\Config::get('server.port')
+            config('server.host'),
+            config('server.port')
         );
 
         $this->swHttpServer->set([
-            'reactor_num' => \App\components\Config::get('server.reactor_num'),
-            'worker_num' => \App\components\Config::get('server.worker_num'),
-            'daemonize' => \App\components\Config::get('server.daemonize'),
-            'backlog' => \App\components\Config::get('server.backlog'),
-            'max_request' => \App\components\Config::get('server.max_request'),
-            'dispatch_mode' => \App\components\Config::get('server.dispatch_mode'),
+            'reactor_num' => config('server.reactor_num'),
+            'worker_num' => config('server.worker_num'),
+            'daemonize' => config('server.daemonize'),
+            'backlog' => config('server.backlog'),
+            'max_request' => config('server.max_request'),
+            'dispatch_mode' => config('server.dispatch_mode'),
         ]);
 
         $this->swHttpServer->on('start', [$this, 'swHttpStart']);
@@ -35,6 +35,8 @@ class App
 
     private function bootstrap()
     {
+        require_once __DIR__ . '/../app/components/functions.php';
+
         \Swoole\Runtime::enableCoroutine();
 
         //Counter
@@ -49,10 +51,10 @@ class App
         \App\components\Config::init(require_once __DIR__ . '/../config/app.php');
 
         //Timezone
-        date_default_timezone_set(\App\components\Config::get('timezone'));
+        date_default_timezone_set(config('timezone'));
 
         //Events
-        foreach (\App\components\Config::get('events') as $eventName => $eventListeners) {
+        foreach (config('events') as $eventName => $eventListeners) {
             foreach ($eventListeners as $eventListener) {
                 \App\facades\Event::on($eventName, $eventListener);
             }
@@ -60,7 +62,7 @@ class App
 
         //Route Config
         $this->httpRouteDispatcher = FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) {
-            $routerConfig = \App\components\Config::get('router');
+            $routerConfig = config('router');
             foreach ($routerConfig['single'] as $router) {
                 array_unshift($router[2], $router[1]);
                 $r->addRoute($router[0], $router[1], $router[2]);
@@ -73,7 +75,7 @@ class App
                     }
                 });
             }
-            if (\App\components\Config::get('monitor.switch')) {
+            if (config('monitor.switch')) {
                 $r->addRoute('GET', '/monitor/pool', ['/monitor/pool', \App\services\internals\MonitorService::class, 'pool']);
                 $r->addRoute('GET', '/log/flush', ['/log/flush', \App\services\internals\LogService::class, 'flush']);
             }
@@ -110,7 +112,7 @@ class App
         $controller->setHandler($action)->setParameters($parameters);
 
         //Middleware
-        $middlewareNames = \App\components\Config::get('middleware');
+        $middlewareNames = config('middleware');
         if (isset($controllerAction[3])) {
             $middlewareNames = array_merge($middlewareNames, $controllerAction[3]);
         }
@@ -143,30 +145,35 @@ class App
         echo 'Listening ' . $server->ports[0]->host . ':' . $server->ports[0]->port, PHP_EOL;
     }
 
+    /**
+     * @param $server
+     * @param $id
+     * @throws Exception
+     */
     public function swHttpWorkerStart($server, $id)
     {
         //Log
-        if (\App\components\Config::get('log.switch')) {
+        if (config('log.switch')) {
             \App\components\Log::create(
-                \App\components\Config::get('log.path'),
-                \App\components\Config::get('log.level'),
-                \App\components\Config::get('log.pool_size'),
-                \App\components\Config::get('log.buffer_max_size'),
-                \App\components\Config::get('log.name'),
-                \App\components\Config::get('log.reserve_days')
+                config('log.path'),
+                config('log.level'),
+                config('log.pool_size'),
+                config('log.buffer_max_size'),
+                config('log.name'),
+                config('log.reserve_days')
             );
         }
 
         //Redis
-        if (\App\components\Config::get('redis.switch')) {
+        if (config('redis.switch')) {
             \App\components\RedisPool::create(
-                \App\components\Config::get('redis.host'),
-                \App\components\Config::get('redis.port'),
-                \App\components\Config::get('redis.timeout'),
-                \App\components\Config::get('redis.pool_size'),
-                \App\components\Config::get('redis.passwd'),
-                \App\components\Config::get('redis.db'),
-                \App\components\Config::get('redis.prefix')
+                config('redis.host'),
+                config('redis.port'),
+                config('redis.timeout'),
+                config('redis.pool_size'),
+                config('redis.passwd'),
+                config('redis.db'),
+                config('redis.prefix')
             );
 
             //Rate limiter
@@ -176,38 +183,33 @@ class App
         }
 
         //MySQL
-        if (\App\components\Config::get('mysql.switch')) {
+        if (config('mysql.switch')) {
             \App\components\MysqlPool::create(
-                \App\components\Config::get('mysql.dsn'),
-                \App\components\Config::get('mysql.username'),
-                \App\components\Config::get('mysql.passwd'),
-                \App\components\Config::get('mysql.options'),
-                \App\components\Config::get('mysql.pool_size')
+                config('mysql.dsn'),
+                config('mysql.username'),
+                config('mysql.passwd'),
+                config('mysql.options'),
+                config('mysql.pool_size')
             );
         }
 
         //Elasticsearch
-        if (\App\components\Config::get('elasticsearch.switch')) {
+        if (config('elasticsearch.switch')) {
             \App\components\es\Manager::create();
         }
 
         //Storage
-        if (\App\components\Config::get('storage.switch')) {
+        if (config('storage.switch')) {
             \App\components\storage\Storage::init();
         }
 
         //AMQP
-        if (\App\components\Config::get('amqp.switch')) {
+        if (config('amqp.switch')) {
             \App\components\amqp\ConnectionPool::create();
         }
 
-        //Trace
-        if (\App\components\Config::get('trace.switch')) {
-            \App\components\Trace::create(\App\components\Config::get('trace.zipkin_url'));
-        }
-
         //Hbase
-        if (\App\components\Config::get('hbase.switch')) {
+        if (config('hbase.switch')) {
             \App\components\hbase\HbasePool::create();
         }
     }

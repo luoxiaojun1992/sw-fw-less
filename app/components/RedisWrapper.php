@@ -62,6 +62,7 @@ class RedisWrapper
      */
     private function callRedis($name, $arguments)
     {
+        //todo before after event (duration、connection)
         $result = call_user_func_array([$this->redis, $name], $arguments);
         $lowerName = strtolower($name);
         if ($lowerName == 'multi') {

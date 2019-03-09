@@ -1,11 +1,11 @@
 <?php
 
-namespace App\components;
+namespace App\components\http;
 
 use Swlib\SaberGM;
 use Swoole\Coroutine\Channel;
 
-class HttpClient
+class Client
 {
     public static function multiGet($urls)
     {

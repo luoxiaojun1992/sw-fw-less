@@ -98,6 +98,7 @@ class Query
         /** @var \PDOStatement $pdoStatement */
         $pdoStatement = $pdo->prepare($this->auraQuery->getStatement());
         if ($pdoStatement) {
+            //todo before after event query duration db type
             $result = $pdoStatement->execute($this->auraQuery->getBindValues());
             switch ($mode) {
                 case 0:
