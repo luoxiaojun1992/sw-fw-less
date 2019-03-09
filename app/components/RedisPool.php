@@ -12,8 +12,7 @@ class RedisPool
     /** @var RedisWrapper[][] */
     private $redisPool = [];
 
-    private $defaultConnection = 'default';
-    private $connectionConfigs = [];
+    private $config = [];
 
     /**
      * @param array $redisConfig
@@ -38,17 +37,9 @@ class RedisPool
      */
     public function __construct($redisConfig)
     {
-        $this->defaultConnection = $redisConfig['default'];
+        $this->config = $redisConfig;
 
         foreach ($redisConfig['connections'] as $connectionName => $redisConnection) {
-            $this->connectionConfigs[$connectionName]['host'] = $redisConnection['host'];
-            $this->connectionConfigs[$connectionName]['port'] = $redisConnection['port'];
-            $this->connectionConfigs[$connectionName]['timeout'] = $redisConnection['timeout'];
-            $this->connectionConfigs[$connectionName]['pool_size'] = $redisConnection['pool_size'];
-            $this->connectionConfigs[$connectionName]['passwd'] = $redisConnection['passwd'];
-            $this->connectionConfigs[$connectionName]['db'] = $redisConnection['db'];
-            $this->connectionConfigs[$connectionName]['prefix'] = $redisConnection['prefix'];
-
             for ($i = 0; $i < $redisConnection['pool_size']; ++$i) {
                 if (!is_null($connection = $this->getConnect(true, $connectionName))) {
                     $this->redisPool[$connectionName][] = $connection;
@@ -75,7 +66,7 @@ class RedisPool
     public function pick($connectionName = null)
     {
         if (is_null($connectionName)) {
-            $connectionName = $this->defaultConnection;
+            $connectionName = $this->config['default'];
         }
         if (!isset($this->redisPool[$connectionName])) {
             return null;
@@ -143,22 +134,22 @@ class RedisPool
     public function getConnect($needRelease = true, $connectionName = null)
     {
         if (is_null($connectionName)) {
-            $connectionName = $this->defaultConnection;
+            $connectionName = $this->config['default'];
         }
-        if (!isset($this->connectionConfigs[$connectionName])) {
+        if (!isset($this->config['connections'][$connectionName])) {
             return null;
         }
         $redis = new \Redis();
         $redis->connect(
-            $this->connectionConfigs[$connectionName]['host'],
-            $this->connectionConfigs[$connectionName]['port'],
-            $this->connectionConfigs[$connectionName]['timeout']
+            $this->config['connections'][$connectionName]['host'],
+            $this->config['connections'][$connectionName]['port'],
+            $this->config['connections'][$connectionName]['timeout']
         );
-        if ($this->connectionConfigs[$connectionName]['passwd']) {
-            $redis->auth($this->connectionConfigs[$connectionName]['passwd']);
+        if ($this->config['connections'][$connectionName]['passwd']) {
+            $redis->auth($this->config['connections'][$connectionName]['passwd']);
         }
-        $redis->setOption(\Redis::OPT_PREFIX, $this->connectionConfigs[$connectionName]['prefix']);
-        $redis->select($this->connectionConfigs[$connectionName]['db']);
+        $redis->setOption(\Redis::OPT_PREFIX, $this->config['connections'][$connectionName]['prefix']);
+        $redis->select($this->config['connections'][$connectionName]['db']);
         return (new RedisWrapper())->setRedis($redis)
             ->setNeedRelease($needRelease)
             ->setConnectionName($connectionName);
