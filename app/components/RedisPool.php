@@ -88,15 +88,6 @@ class RedisPool
     }
 
     /**
-     * @param $key
-     * @return string
-     */
-    public function getKey($key)
-    {
-        return $this->prefix . $key;
-    }
-
-    /**
      * @return RedisWrapper mixed
      */
     public function pick()
@@ -165,6 +156,7 @@ class RedisPool
         if ($this->passwd) {
             $redis->auth($this->passwd);
         }
+        $redis->setOption(\Redis::OPT_PREFIX, $this->prefix);
         $redis->select($this->db);
         return (new RedisWrapper())->setRedis($redis)->setNeedRelease($needRelease);
     }

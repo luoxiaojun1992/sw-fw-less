@@ -10,7 +10,6 @@ use Zipkin\Endpoint;
 use Zipkin\Propagation\DefaultSamplingFlags;
 use Zipkin\Propagation\RequestHeaders;
 use Zipkin\Propagation\TraceContext;
-use Zipkin\Reporters\Http;
 use Zipkin\Samplers\BinarySampler;
 use Zipkin\Span;
 use const Zipkin\Tags\ERROR;
@@ -106,10 +105,10 @@ class Tracer
         if ($this->reportType === 'redis') {
             return new RedisReporter($this->redisOptions);
         } elseif ($this->reportType === 'http') {
-            return new Http(null, ['endpoint_url' => $this->endpointUrl, 'timeout' => $this->curlTimeout]);
+            return new HttpReporter(['endpoint_url' => $this->endpointUrl, 'timeout' => $this->curlTimeout]);
         }
 
-        return new Http(null, ['endpoint_url' => $this->endpointUrl, 'timeout' => $this->curlTimeout]);
+        return new HttpReporter(['endpoint_url' => $this->endpointUrl, 'timeout' => $this->curlTimeout]);
     }
 
     /**

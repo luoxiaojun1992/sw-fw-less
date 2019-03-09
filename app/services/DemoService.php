@@ -80,7 +80,7 @@ class DemoService extends BaseService
             'c' => 'http://news.baidu.com/widget?ajax=json&id=ad',
         ];
 
-        $aggResult = Client::multiGet($urls);
+        $aggResult = Client::multiGet($urls, $this->getRequest());
 
         var_dump(microtime(true) - $start);
 

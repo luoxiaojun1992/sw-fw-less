@@ -2,19 +2,17 @@
 
 namespace App\components\zipkin;
 
-use App\facades\Log;
-use App\facades\RedisPool;
 use RuntimeException;
+use Swlib\SaberGM;
 use Zipkin\Recording\Span;
 use Zipkin\Reporter;
 use Zipkin\Reporters\Metrics;
 use Zipkin\Reporters\NoopMetrics;
 
-final class RedisReporter implements Reporter
+final class HttpReporter implements Reporter
 {
     const DEFAULT_OPTIONS = [
-        'queue_name' => 'queue:zipkin:span',
-        'connection' => 'zipkin',
+        'endpoint_url' => 'http://localhost:9411/api/v2/spans',
     ];
 
     /**
@@ -38,7 +36,6 @@ final class RedisReporter implements Reporter
     /**
      * @param Span[] $spans
      * @return void
-     * @throws \Exception
      */
     public function report(array $spans)
     {
@@ -54,49 +51,19 @@ final class RedisReporter implements Reporter
         $this->reportMetrics->incrementMessageBytes($payloadLength);
 
         try {
-            $this->enqueue($payload);
+            $this->sendToZipkin($payload);
         } catch (RuntimeException $e) {
             $this->reportMetrics->incrementSpansDropped(count($spans));
             $this->reportMetrics->incrementMessagesDropped($e);
         }
     }
 
-    /**
-     * @param $payload
-     * @throws \Exception
-     */
-    private function enqueue($payload)
+    private function sendToZipkin($payload)
     {
-        /** @var \Redis $redisClient */
-        $redisClient = $this->getRedisClient();
-        if (is_null($redisClient)) {
-            Log::error('Zipkin report error: redis client is null');
-            return;
-        }
-
-        if (empty($this->options['queue_name'])) {
-            Log::error('Zipkin report error: redis queue name is empty');
-            return;
-        }
-
         try {
-            $redisClient->lpush($this->options['queue_name'], $payload);
+            SaberGM::post($this->options['endpoint_url'], $payload, $this->options);
         } catch (\Exception $e) {
-            throw $e;
-        } finally {
-            RedisPool::release($redisClient);
+            throw new RuntimeException($e);
         }
-    }
-
-    private function getRedisClient()
-    {
-        //todo use pool, redis pool connection implementation
-//        if (!empty($this->options['connection'])) {
-//            return Redis::connection($this->options['connection']);
-//        }
-//
-//        return null;
-
-        return RedisPool::pick();
     }
 }

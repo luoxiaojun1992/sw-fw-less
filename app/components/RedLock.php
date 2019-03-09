@@ -52,9 +52,8 @@ class RedLock
      * @return    bool
      * @throws \Exception
      */
-    public function lock($originKey, $ttl = 0, $guard = false)
+    public function lock($key, $ttl = 0, $guard = false)
     {
-        $key = $this->redisPool->getKey($originKey);
         /** @var \Redis $redis */
         $redis = $this->redisPool->pick();
         try {
@@ -72,7 +71,7 @@ EOF;
                 $result = $redis->setnx($key, 1);
             }
             if ($result > 0) {
-                $this->addLockedKey($originKey, $guard);
+                $this->addLockedKey($key, $guard);
                 return true;
             }
         } catch (\Exception $e) {
@@ -96,15 +95,14 @@ EOF;
      * @return    bool
      * @throws \Exception
      */
-    public function unlock($originKey)
+    public function unlock($key)
     {
-        $key = $this->redisPool->getKey($originKey);
         /** @var \Redis $redis */
         $redis = $this->redisPool->pick();
         try {
             $result = $redis->del($key);
             if ($result > 0) {
-                unset($this->locked_keys[$originKey]);
+                unset($this->locked_keys[$key]);
                 return true;
             }
             return false;

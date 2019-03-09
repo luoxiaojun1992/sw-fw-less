@@ -49,11 +49,10 @@ class RateLimit
      */
     public function pass($metric, $period, $throttle)
     {
-        $key = $this->redisPool->getKey($metric);
         /** @var \Redis $redis */
         $redis = $this->redisPool->pick();
         try {
-            if ($redis->get($key) >= $throttle) {
+            if ($redis->get($metric) >= $throttle) {
                 return false;
             }
 
@@ -64,7 +63,7 @@ redis.call('expire', KEYS[1], ARGV[1])
 end
 return new_value
 EOF;
-            $passed = $redis->eval($lua, [$key, $period], 1);
+            $passed = $redis->eval($lua, [$metric, $period], 1);
             return $passed <= $throttle;
         } catch (\Exception $e) {
             throw $e;
@@ -82,7 +81,7 @@ EOF;
         /** @var \Redis $redis */
         $redis = $this->redisPool->pick();
         try {
-            $redis->del($this->redisPool->getKey($metric));
+            $redis->del($metric);
         } catch (\Exception $e) {
             throw $e;
         } finally {

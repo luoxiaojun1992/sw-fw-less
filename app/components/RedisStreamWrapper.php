@@ -49,7 +49,7 @@ class RedisStreamWrapper
             /** @var \Redis $redis */
             $redis = RedisPool::pick();
             try {
-                $result = $redis->get(RedisPool::getKey($this->host));
+                $result = $redis->get($this->host);
             } catch (\Exception $e) {
                 throw $e;
             } finally {
@@ -94,7 +94,7 @@ class RedisStreamWrapper
         $redis = RedisPool::pick();
         try {
             $redis->multi(\Redis::PIPELINE);
-            $key = RedisPool::getKey($this->host);
+            $key = $this->host;
             $redis->exists($key);
             $redis->strlen($key);
             $res = $redis->exec();
@@ -170,7 +170,7 @@ class RedisStreamWrapper
 //            $redis = RedisPool::pick();
 //            try {
 //                $redis->multi(\Redis::PIPELINE);
-//                $key = RedisPool::getKey($this->host);
+//                $key = $this->host;
 //                $redis->exists($key);
 //                $redis->strlen($key);
 //                $res = $redis->exec();
@@ -223,7 +223,7 @@ class RedisStreamWrapper
         /** @var \Redis $redis */
         $redis = RedisPool::pick();
         try {
-            $redis->set(RedisPool::getKey($this->host), $data);
+            $redis->set($this->host, $data);
         } catch (\Exception $e) {
             throw $e;
         } finally {
@@ -248,7 +248,7 @@ class RedisStreamWrapper
         /** @var \Redis $redis */
         $redis = RedisPool::pick();
         try {
-            $redis->del(RedisPool::getKey($this->host));
+            $redis->del($this->host);
         } catch (\Exception $e) {
             throw $e;
         } finally {

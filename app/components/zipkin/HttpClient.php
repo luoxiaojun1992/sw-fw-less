@@ -2,10 +2,9 @@
 
 namespace App\components\zipkin;
 
-use App\components\http\Request;
-use GuzzleHttp\Client as GuzzleHttpClient;
-use Illuminate\Support\Facades\Log;
-use Psr\Http\Message\RequestInterface;
+use App\components\http\Request as SwfRequest;
+use App\facades\Log;
+use Swlib\Saber\Request as SaberRequest;
 use Zipkin\Span;
 use const Zipkin\Tags\HTTP_HOST;
 use const Zipkin\Tags\HTTP_METHOD;
@@ -16,27 +15,27 @@ use const Zipkin\Tags\HTTP_STATUS_CODE;
  * Class HttpClient
  * @package App\components\zipkin
  */
-class HttpClient extends GuzzleHttpClient
+class HttpClient
 {
     /**
      * Send http request with zipkin trace
      *
-     * @param RequestInterface $request
-     * @param array $options
+     * @param SaberRequest $saberRequest
+     * @param SwfRequest $swfRequest
      * @param string $spanName
-     * @param Request $swfRequest
      * @return mixed|\Psr\Http\Message\ResponseInterface|null
      * @throws \Exception
      */
-    public function send(RequestInterface $request, array $options = [], $spanName = null, $swfRequest = null)
+    public function send(SaberRequest $saberRequest, $swfRequest = null, $spanName = null)
     {
         /** @var Tracer $swfTracer */
         $swfTracer = $swfRequest->getTracer();
+        $request = $saberRequest;
         $path = $request->getUri()->getPath();
 
         return $swfTracer->span(
             isset($spanName) ? $spanName : $swfTracer->formatRoutePath($path),
-            function (Span $span) use ($request, $options, $swfTracer, $path) {
+            function (Span $span) use ($request, $swfTracer, $path) {
                 //Inject trace context to api psr request
                 $swfTracer->injectContextToRequest($span->getContext(), $request);
 
@@ -47,8 +46,10 @@ class HttpClient extends GuzzleHttpClient
                     $swfTracer->addTag($span, HTTP_METHOD, $request->getMethod());
                     $httpRequestBodyLen = $request->getBody()->getSize();
                     $swfTracer->addTag($span, Tracer::HTTP_REQUEST_BODY_SIZE, $httpRequestBodyLen);
-                    $swfTracer->addTag($span, Tracer::HTTP_REQUEST_BODY, $swfTracer->formatHttpBody($request->getBody()->getContents(), $httpRequestBodyLen));
-                    $request->getBody()->seek(0);
+                    $swfTracer->addTag($span, Tracer::HTTP_REQUEST_BODY, $swfTracer->formatHttpBody((string)$request->getBody(), $httpRequestBodyLen));
+                    if ($httpRequestBodyLen > 0) {
+                        $request->getBody()->seek(0);
+                    }
                     $swfTracer->addTag($span, Tracer::HTTP_REQUEST_HEADERS, json_encode($request->getHeaders(), JSON_UNESCAPED_UNICODE));
                     $swfTracer->addTag(
                         $span,
@@ -60,7 +61,7 @@ class HttpClient extends GuzzleHttpClient
 
                 $response = null;
                 try {
-                    $response = parent::send($request, $options);
+                    $response = $request->exec()->recv();
                     return $response;
                 } catch (\Exception $e) {
                     Log::error('CURL ERROR ' . $e->getMessage());
@@ -71,8 +72,10 @@ class HttpClient extends GuzzleHttpClient
                             $swfTracer->addTag($span, HTTP_STATUS_CODE, $response->getStatusCode());
                             $httpResponseBodyLen = $response->getBody()->getSize();
                             $swfTracer->addTag($span, Tracer::HTTP_RESPONSE_BODY_SIZE, $httpResponseBodyLen);
-                            $swfTracer->addTag($span, Tracer::HTTP_RESPONSE_BODY, $swfTracer->formatHttpBody($response->getBody()->getContents(), $httpResponseBodyLen));
-                            $response->getBody()->seek(0);
+                            $swfTracer->addTag($span, Tracer::HTTP_RESPONSE_BODY, $swfTracer->formatHttpBody((string)$response->getBody(), $httpResponseBodyLen));
+                            if ($httpResponseBodyLen > 0) {
+                                $response->getBody()->seek(0);
+                            }
                             $swfTracer->addTag($span, Tracer::HTTP_RESPONSE_HEADERS, json_encode($response->getHeaders(), JSON_UNESCAPED_UNICODE));
                             $swfTracer->addTag(
                                 $span,
