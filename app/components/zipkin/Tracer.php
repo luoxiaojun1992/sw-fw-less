@@ -3,6 +3,7 @@
 namespace App\components\zipkin;
 
 use App\components\Config;
+use App\components\Helper;
 use App\components\http\Request;
 //use Illuminate\Database\Events\QueryExecuted;
 use App\facades\Log;
@@ -74,9 +75,9 @@ class Tracer
      */
     public function __construct()
     {
-        $this->serviceName = Config::get('zipkin.service_name', 'jstracking');
-        $this->endpointUrl = Config::get('zipkin.endpoint_url', 'http://localhost:9411/api/v2/spans');
-        $this->sampleRate = Config::get('zipkin.sample_rate', 0);
+        $this->serviceName = Config::get('zipkin.service_name', 'Sw-Fw-Less');
+        $this->endpointUrl = Config::get('zipkin.endpoint_url', 'http://localhost:32768/api/v2/spans');
+        $this->sampleRate = Config::get('zipkin.sample_rate', 1);
         $this->bodySize = Config::get('zipkin.body_size', 500);
         $this->curlTimeout = Config::get('zipkin.curl_timeout', 1);
         $this->redisOptions = array_merge($this->redisOptions, Config::get('zipkin.redis_options', []));
@@ -463,7 +464,7 @@ class Tracer
      */
     private function beforeSpanTags($span)
     {
-        $this->addTag($span, self::FRAMEWORK_VERSION, 'Laravel-' . app()->version());
+        $this->addTag($span, self::FRAMEWORK_VERSION, 'Sw-Fw-Less-' . Helper::appVersion());
         $this->addTag($span, self::RUNTIME_PHP_VERSION, PHP_VERSION);
 
         $this->startSysLoadTag($span);

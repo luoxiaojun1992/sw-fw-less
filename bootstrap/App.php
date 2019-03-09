@@ -1,9 +1,9 @@
 <?php
 
-require_once __DIR__ . '/../vendor/autoload.php';
-
 class App
 {
+    const VERSION = '0.1.0';
+
     /** @var \Swoole\Http\Server */
     private $swHttpServer;
 

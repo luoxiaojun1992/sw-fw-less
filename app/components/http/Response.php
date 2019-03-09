@@ -4,6 +4,7 @@ namespace App\components\http;
 
 use App\components\Helper;
 use Zend\Diactoros\ResponseFactory;
+use Zend\Diactoros\StreamFactory;
 
 class Response
 {
@@ -121,7 +122,7 @@ class Response
     {
         $psrResponse = (new ResponseFactory())->createResponse($this->getStatus(), $this->getReasonPhrase())
             ->withProtocolVersion($this->getProtocolVersion())
-            ->withBody($this->getContent());
+            ->withBody((new StreamFactory())->createStream($this->getContent()));
 
         $headers = $this->getHeaders();
         foreach ($headers as $name => $value) {

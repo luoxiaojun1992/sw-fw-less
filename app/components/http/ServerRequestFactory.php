@@ -56,7 +56,7 @@ class ServerRequestFactory extends \Zend\Diactoros\ServerRequestFactory
         }
 
         $files   = normalizeUploadedFiles($files);
-        $headers = marshalHeadersFromSapi($server);
+        $headers = marshalHeadersFromSapi($formattedServer);
 
         if (null === $cookies && array_key_exists('cookie', $headers)) {
             $cookies = parseCookieHeader($headers['cookie']);

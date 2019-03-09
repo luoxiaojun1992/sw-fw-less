@@ -175,4 +175,12 @@ class Helper
     {
         return json_decode($data, $assoc);
     }
+
+    /**
+     * @return string
+     */
+    public static function appVersion()
+    {
+        return \App::VERSION;
+    }
 }
