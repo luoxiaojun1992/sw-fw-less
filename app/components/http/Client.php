@@ -14,48 +14,50 @@ class Client
     const FORM_BODY = 'form';
     const STRING_BODY = 'string';
 
-    public static function get($url, $swfRequest, $headers = [])
+    public static function get($url, $swfRequest = null, $headers = [])
     {
         return static::multiGet($url, $swfRequest, $headers);
     }
 
-    public static function post($url, $swfRequest, $headers = [], $body = null, $bodyType = self::JSON_BODY)
+    public static function post($url, $swfRequest = null, $headers = [], $body = null, $bodyType = self::JSON_BODY)
     {
         return static::multiPost($url, $swfRequest, $headers, $body, $bodyType);
     }
 
-    public static function put($url, $swfRequest, $headers = [], $body = null, $bodyType = self::JSON_BODY)
+    public static function put($url, $swfRequest = null, $headers = [], $body = null, $bodyType = self::JSON_BODY)
     {
         return static::multiPut($url, $swfRequest, $headers, $body, $bodyType);
     }
 
-    public static function delete($url, $swfRequest, $headers = [], $body = null, $bodyType = self::JSON_BODY)
+    public static function delete($url, $swfRequest = null, $headers = [], $body = null, $bodyType = self::JSON_BODY)
     {
         return static::multiDelete($url, $swfRequest, $headers, $body, $bodyType);
     }
 
-    public static function multiGet($urls, $swfRequest, $headers = [])
+    public static function multiGet($urls, $swfRequest = null, $headers = [])
     {
         return static::multiRequest($urls, 'GET', $swfRequest, $headers);
     }
 
-    public static function multiPost($urls, $swfRequest, $headers = [], $body = null, $bodyType = self::JSON_BODY)
+    public static function multiPost($urls, $swfRequest = null, $headers = [], $body = null, $bodyType = self::JSON_BODY)
     {
         return static::multiRequest($urls, 'POST', $swfRequest, $headers, $body, $bodyType);
     }
 
-    public static function multiPut($urls, $swfRequest, $headers = [], $body = null, $bodyType = self::JSON_BODY)
+    public static function multiPut($urls, $swfRequest = null, $headers = [], $body = null, $bodyType = self::JSON_BODY)
     {
         return static::multiRequest($urls, 'PUT', $swfRequest, $headers, $body, $bodyType);
     }
 
-    public static function multiDelete($urls, $swfRequest, $headers = [], $body = null, $bodyType = self::JSON_BODY)
+    public static function multiDelete($urls, $swfRequest = null, $headers = [], $body = null, $bodyType = self::JSON_BODY)
     {
         return static::multiRequest($urls, 'DELETE', $swfRequest, $headers, $body, $bodyType);
     }
 
-    public static function multiRequest($urls, $method, $swfRequest, $headers = [], $body = null, $bodyType = self::JSON_BODY)
+    public static function multiRequest($urls, $method, $swfRequest = null, $headers = [], $body = null, $bodyType = self::JSON_BODY)
     {
+        $swfRequest = $swfRequest ?? request();
+
         if (!is_array($urls)) {
             $urls = (array)$urls;
         }

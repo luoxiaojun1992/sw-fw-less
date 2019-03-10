@@ -283,6 +283,8 @@ class App
         //todo before after event aop hook
 
         $swResponse->end($swfResponse->getContent());
+
+        \App\components\http\Request::release();
     }
 
     public function run()

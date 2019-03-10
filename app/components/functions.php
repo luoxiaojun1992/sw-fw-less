@@ -53,3 +53,10 @@ if (!function_exists('appVersion')) {
         return helper(__METHOD__);
     }
 }
+
+if (!function_exists('request')) {
+    function request()
+    {
+        return \App\components\http\Request::fetch();
+    }
+}

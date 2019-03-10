@@ -4,15 +4,22 @@ namespace App\components\http;
 
 use App\components\Helper;
 use App\components\http\traits\Tracer;
+use App\components\utils\swoole\traits\CoroutineRes;
 
 class Request
 {
     use Tracer;
+    use CoroutineRes;
 
     /** @var \Swoole\Http\Request */
     private $swRequest;
 
     private $route;
+
+    public function __construct()
+    {
+        self::register($this);
+    }
 
     /**
      * @param \Swoole\Http\Request $swRequest

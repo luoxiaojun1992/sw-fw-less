@@ -4,6 +4,7 @@ namespace App\services;
 
 use App\components\Helper;
 use App\components\http\Client;
+use App\components\http\Request;
 use App\components\http\Response;
 use App\facades\HbasePool;
 use App\models\Member;
@@ -80,7 +81,7 @@ class DemoService extends BaseService
             'c' => 'http://news.baidu.com/widget?ajax=json&id=ad',
         ];
 
-        $aggResult = Client::multiGet($urls, $this->getRequest());
+        $aggResult = Client::multiGet($urls);
 
         var_dump(microtime(true) - $start);
 

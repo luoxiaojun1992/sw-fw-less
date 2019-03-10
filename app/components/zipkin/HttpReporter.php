@@ -13,6 +13,9 @@ final class HttpReporter implements Reporter
 {
     const DEFAULT_OPTIONS = [
         'endpoint_url' => 'http://localhost:9411/api/v2/spans',
+        'headers' => [
+            'Content-Type' => 'application/json',
+        ],
     ];
 
     /**
@@ -61,6 +64,9 @@ final class HttpReporter implements Reporter
     private function sendToZipkin($payload)
     {
         try {
+            $this->options['headers'] = array_merge($this->options['headers'], [
+                'Content-Length' => strlen($payload),
+            ]);
             SaberGM::post($this->options['endpoint_url'], $payload, $this->options);
         } catch (\Exception $e) {
             throw new RuntimeException($e);

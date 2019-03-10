@@ -3,6 +3,7 @@
 namespace App\components\zipkin;
 
 use App\components\http\Request as SwfRequest;
+use App\components\http\Request;
 use App\facades\Log;
 use Swlib\Saber\Request as SaberRequest;
 use Zipkin\Span;
@@ -28,6 +29,7 @@ class HttpClient
      */
     public function send(SaberRequest $saberRequest, $swfRequest = null, $spanName = null)
     {
+        $swfRequest = $swfRequest ?? request();
         /** @var Tracer $swfTracer */
         $swfTracer = $swfRequest->getTracer();
         $request = $saberRequest;
