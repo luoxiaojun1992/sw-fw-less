@@ -95,6 +95,8 @@ class MysqlPool
                 } catch (\PDOException $rollbackException) {
                     if ($pdo->isNeedRelease()) {
                         $pdo = $this->handleRollbackException($pdo, $rollbackException);
+                    } else {
+                        throw $rollbackException;
                     }
                 }
             }
@@ -138,6 +140,8 @@ class MysqlPool
     {
         if (Helper::causedByLostConnection($e)) {
             $pdo = $this->getConnect();
+        } else {
+            throw $e;
         }
 
         return $pdo;

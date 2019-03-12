@@ -90,6 +90,7 @@ class RedisPool
 
     /**
      * @param RedisWrapper|\Redis $redis
+     * @throws \RedisException
      */
     public function release($redis)
     {
@@ -100,6 +101,8 @@ class RedisPool
                 } catch (\RedisException $e) {
                     if ($redis->isNeedRelease()) {
                         $redis = $this->handleRollbackException($redis, $e);
+                    } else {
+                        throw $e;
                     }
                 }
             }
@@ -159,11 +162,14 @@ class RedisPool
      * @param RedisWrapper $redis
      * @param \RedisException $e
      * @return RedisWrapper
+     * @throws \RedisException
      */
     public function handleRollbackException($redis, \RedisException $e)
     {
         if (Helper::causedByLostConnection($e)) {
             $redis = $this->getConnect(true, $redis->getConnectionName());
+        } else {
+            throw $e;
         }
 
         return $redis;
