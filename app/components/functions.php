@@ -55,6 +55,9 @@ if (!function_exists('appVersion')) {
 }
 
 if (!function_exists('request')) {
+    /**
+     * @return \App\components\http\Request
+     */
     function request()
     {
         return \App\components\http\Request::fetch();
