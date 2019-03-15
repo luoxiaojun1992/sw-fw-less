@@ -4,7 +4,7 @@ namespace App\services\internals;
 
 use App\components\Config;
 use App\components\http\Response;
-use App\components\utils\swoole\Counter;
+use App\components\utils\swoole\counter\Counter;
 use App\facades\AMQPConnectionPool;
 use App\facades\HbasePool;
 use App\facades\Log;

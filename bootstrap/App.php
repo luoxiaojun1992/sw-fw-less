@@ -39,9 +39,6 @@ class App
 
         \Swoole\Runtime::enableCoroutine();
 
-        //Counter
-        \App\components\utils\swoole\Counter::init();
-
         //Dot Env
         if (file_exists(__DIR__ . '/../.env')) {
             (new Dotenv\Dotenv(__DIR__ . '/../'))->load();
@@ -49,6 +46,12 @@ class App
 
         //Init Config
         \App\components\Config::init(require_once __DIR__ . '/../config/app.php');
+
+        //Executing providers
+        $providers = config('providers');
+        foreach ($providers as $provider) {
+            call_user_func([$provider, 'bootApp']);
+        }
 
         //Timezone
         date_default_timezone_set(config('timezone'));
