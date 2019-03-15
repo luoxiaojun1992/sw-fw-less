@@ -279,4 +279,9 @@ return [
     'rate_limit' => [
         'connection' => env('RATE_LIMIT_CONNECTION', 'rate_limit'),
     ],
+
+    //Providers
+    'providers' => [
+        \App\components\utils\swoole\counter\CounterProvider::class,
+    ],
 ];
