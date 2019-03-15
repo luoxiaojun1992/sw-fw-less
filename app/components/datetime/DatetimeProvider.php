@@ -1,16 +1,16 @@
 <?php
 
-namespace App\components\utils\swoole\counter;
+namespace App\components\datetime;
 
 use App\components\core\AbstractProvider;
 use App\components\core\AppProvider;
 
-class CounterProvider extends AbstractProvider implements AppProvider
+class DatetimeProvider extends AbstractProvider implements AppProvider
 {
     public static function bootApp()
     {
         parent::bootApp();
 
-        Counter::init();
+        date_default_timezone_set(config('timezone'));
     }
 }

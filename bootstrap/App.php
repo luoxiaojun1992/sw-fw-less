@@ -10,6 +10,10 @@ class App
     /** @var \FastRoute\Dispatcher */
     private $httpRouteDispatcher;
 
+    /**
+     * App constructor.
+     * @throws ReflectionException
+     */
     public function __construct()
     {
         $this->bootstrap();
@@ -33,6 +37,9 @@ class App
         $this->swHttpServer->on('request', [$this, 'swHttpRequest']);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     private function bootstrap()
     {
         require_once __DIR__ . '/../app/components/functions.php';
@@ -47,21 +54,8 @@ class App
         //Init Config
         \App\components\Config::init(require_once __DIR__ . '/../config/app.php');
 
-        //Executing providers
-        $providers = config('providers');
-        foreach ($providers as $provider) {
-            call_user_func([$provider, 'bootApp']);
-        }
-
-        //Timezone
-        date_default_timezone_set(config('timezone'));
-
-        //Events
-        foreach (config('events') as $eventName => $eventListeners) {
-            foreach ($eventListeners as $eventListener) {
-                \App\facades\Event::on($eventName, $eventListener);
-            }
-        }
+        //Boot providers
+        \App\components\core\KernelProvider::bootApp();
 
         //Route Config
         $this->httpRouteDispatcher = FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) {
@@ -155,59 +149,8 @@ class App
      */
     public function swHttpWorkerStart($server, $id)
     {
-        //Log
-        if (config('log.switch')) {
-            \App\components\Log::create(
-                config('log.path'),
-                config('log.level'),
-                config('log.pool_size'),
-                config('log.buffer_max_size'),
-                config('log.name'),
-                config('log.reserve_days')
-            );
-        }
-
-        //Redis
-        if (config('redis.switch')) {
-            \App\components\RedisPool::create(config('redis'));
-
-            //Rate limiter
-            \App\components\RateLimit::create(
-                \App\components\RedisPool::create(),
-                config('rate_limit')
-            );
-        }
-
-        //MySQL
-        if (config('mysql.switch')) {
-            \App\components\MysqlPool::create(
-                config('mysql.dsn'),
-                config('mysql.username'),
-                config('mysql.passwd'),
-                config('mysql.options'),
-                config('mysql.pool_size')
-            );
-        }
-
-        //Elasticsearch
-        if (config('elasticsearch.switch')) {
-            \App\components\es\Manager::create();
-        }
-
-        //Storage
-        if (config('storage.switch')) {
-            \App\components\storage\Storage::init();
-        }
-
-        //AMQP
-        if (config('amqp.switch')) {
-            \App\components\amqp\ConnectionPool::create();
-        }
-
-        //Hbase
-        if (config('hbase.switch')) {
-            \App\components\hbase\HbasePool::create();
-        }
+        //Boot providers
+        \App\components\core\KernelProvider::bootRequest();
     }
 
     public function swHttpRequest(\Swoole\Http\Request $request, \Swoole\Http\Response $response)
