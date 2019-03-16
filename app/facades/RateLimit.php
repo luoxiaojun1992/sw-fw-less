@@ -5,7 +5,7 @@ namespace App\facades;
 /**
  * Class RateLimit
  *
- * @method static bool pass($metric, $period, $throttle)
+ * @method static bool pass($metric, $period, $throttle, &$remaining = null)
  * @package App\facades
  */
 class RateLimit extends AbstractFacade

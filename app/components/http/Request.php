@@ -18,7 +18,7 @@ class Request
 
     public function __construct()
     {
-        self::register($this);
+        static::register($this);
     }
 
     /**

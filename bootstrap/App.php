@@ -231,6 +231,7 @@ class App
         $swResponse->end($swfResponse->getContent());
 
         \App\components\http\Request::release();
+        \App\components\auth\Auth::release();
     }
 
     public function run()

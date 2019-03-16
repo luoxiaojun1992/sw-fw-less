@@ -19,8 +19,12 @@ class Throttle extends AbstractMiddleware
     {
         $this->config = array_merge(Config::get('throttle'), $this->parseOptions());
 
-        if (!RateLimit::pass(...$this->parseConfig($request))) {
-            return Response::output('', 429);
+        list($metric, $period, $throttle) = $this->parseConfig($request);
+
+        if (!RateLimit::pass($metric, $period, $throttle, $remaining)) {
+            return Response::output('', 429)->header('X-RateLimit-Period', $period)
+                ->header('X-RateLimit-Throttle', $throttle)
+                ->header('X-RateLimit-Remaining', $remaining);
         }
 
         return $this->next();
