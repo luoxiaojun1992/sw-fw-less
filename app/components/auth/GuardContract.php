@@ -2,16 +2,13 @@
 
 namespace App\components\auth;
 
-use App\components\auth\token\UserProviderContract;
-use App\components\http\Request;
-
 interface GuardContract
 {
     /**
-     * @param Request $request
+     * @param $credentialCarrier
      * @param $credentialKey
-     * @param UserProviderContract $userProvider
+     * @param $userProvider
      * @return bool
      */
-    public function validate(Request $request, $credentialKey, UserProviderContract $userProvider);
+    public function validate($credentialCarrier, $credentialKey, $userProvider);
 }

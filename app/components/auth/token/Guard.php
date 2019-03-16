@@ -2,19 +2,20 @@
 
 namespace App\components\auth\token;
 
+use App\components\auth\GuardContract;
 use App\components\http\Request;
 
-class Guard
+class Guard implements GuardContract
 {
     /**
-     * @param Request $request
+     * @param Request $credentialCarrier
      * @param $tokenKey
      * @param UserProviderContract $userProvider
      * @return bool
      */
-    public function validate(Request $request, $tokenKey, UserProviderContract $userProvider)
+    public function validate($credentialCarrier, $tokenKey, $userProvider)
     {
-        $token = $request->get($tokenKey) ?: $request->header($tokenKey);
+        $token = $credentialCarrier->get($tokenKey) ?: $credentialCarrier->header($tokenKey);
         return $token === $userProvider->retrieveByToken($token);
     }
 }
