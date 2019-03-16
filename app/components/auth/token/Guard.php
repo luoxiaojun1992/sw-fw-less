@@ -16,6 +16,6 @@ class Guard implements GuardContract
     public function validate($credentialCarrier, $tokenKey, $userProvider)
     {
         $token = $credentialCarrier->get($tokenKey) ?: $credentialCarrier->header($tokenKey);
-        return $token === $userProvider->retrieveByToken($token);
+        return (bool)$userProvider->retrieveByToken($token);
     }
 }
