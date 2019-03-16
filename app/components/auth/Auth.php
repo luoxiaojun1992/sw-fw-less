@@ -72,7 +72,7 @@ class Auth
 
         $result = $guard->validate($credentialCarrier, $guardConfig['credential_key'], $userProvider);
         if ($result) {
-            (new Auth())->setGuard($guard)->setUserProvider($userProvider);
+            (new static())->setGuard($guard)->setUserProvider($userProvider);
         }
 
         return $result;
