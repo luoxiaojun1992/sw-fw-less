@@ -35,6 +35,7 @@ class App
         $this->swHttpServer->on('start', [$this, 'swHttpStart']);
         $this->swHttpServer->on('workerStart', [$this, 'swHttpWorkerStart']);
         $this->swHttpServer->on('request', [$this, 'swHttpRequest']);
+        $this->swHttpServer->on('shutdown', [$this, 'swHttpShutdown']);
     }
 
     /**
@@ -136,10 +137,17 @@ class App
         return $middlewareConcretes[0];
     }
 
-    public function swHttpStart($server)
+    public function swHttpStart(\Swoole\Http\Server $server)
     {
         echo 'Server started.', PHP_EOL;
         echo 'Listening ' . $server->ports[0]->host . ':' . $server->ports[0]->port, PHP_EOL;
+
+        $this->hotReload($server);
+    }
+
+    public function swHttpShutdown(\Swoole\Http\Server $server)
+    {
+        echo 'Server shutdown.', PHP_EOL;
     }
 
     /**
@@ -232,6 +240,17 @@ class App
 
         \App\components\http\Request::release();
         \App\components\auth\Auth::release();
+    }
+
+    private function hotReload(\Swoole\Http\Server $server)
+    {
+        go(function () use ($server) {
+            $watcher = Kwf\FileWatcher\Watcher::create('.');
+            $watcher->addListener(Kwf\FileWatcher\Event\Modify::NAME, function ($e) use ($server) {
+                $server->reload();
+            });
+            $watcher->start();
+        });
     }
 
     public function run()

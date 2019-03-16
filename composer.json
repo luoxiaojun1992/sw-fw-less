@@ -23,7 +23,8 @@
         "ramsey/uuid": "~3",
         "apache/thrift": "0.11.0",
         "zendframework/zend-diactoros": "~2.1",
-        "openzipkin/zipkin": "~1.3"
+        "openzipkin/zipkin": "~1.3",
+        "koala-framework/file-watcher": " ~1.0"
     },
     "license": "apache-2.0",
     "authors": [
