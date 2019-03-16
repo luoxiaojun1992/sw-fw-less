@@ -17,7 +17,7 @@ return [
         ],
         'group' => [
             '/dining' => [
-                ['GET', '/menu', [\App\services\DiningService::class, 'menu', [\App\components\auth\Middleware::class]]],
+                ['GET', '/menu', [\App\services\DiningService::class, 'menu']],
                 ['GET', '/ordered', [\App\services\DiningService::class, 'ordered', [\App\components\auth\Middleware::class]]],
                 ['POST', '/order', [\App\services\DiningService::class, 'order', [\App\components\auth\Middleware::class]]],
                 ['POST', '/login', [\App\services\DiningService::class, 'login']],
