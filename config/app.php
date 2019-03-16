@@ -123,7 +123,8 @@ return [
     //Middleware
     'middleware' => [
         \App\components\zipkin\Middleware::class,
-        //\App\middlewares\Cors::class,
+//        \App\middlewares\Cors::class,
+//        \App\components\auth\Middleware::class,
     ],
 
     //Cors
@@ -202,7 +203,7 @@ return [
                 $count = $event->getData('count');
 
                 if (\App\components\Config::get('redis.report_pool_change')) {
-                    \App\components\utils\swoole\Counter::incr('monitor:pool:redis', $count);
+                    \App\components\utils\swoole\counter\Counter::incr('monitor:pool:redis', $count);
                 }
             },
         ],
@@ -211,7 +212,7 @@ return [
                 $count = $event->getData('count');
 
                 if (\App\components\Config::get('mysql.report_pool_change')) {
-                    \App\components\utils\swoole\Counter::incr('monitor:pool:mysql', $count);
+                    \App\components\utils\swoole\counter\Counter::incr('monitor:pool:mysql', $count);
                 }
             },
         ],
@@ -220,7 +221,7 @@ return [
                 $count = $event->getData('count');
 
                 if (\App\components\Config::get('amqp.report_pool_change')) {
-                    \App\components\utils\swoole\Counter::incr('monitor:pool:amqp', $count);
+                    \App\components\utils\swoole\counter\Counter::incr('monitor:pool:amqp', $count);
                 }
             },
         ],
@@ -229,7 +230,7 @@ return [
                 $count = $event->getData('count');
 
                 if (\App\components\Config::get('hbase.report_pool_change')) {
-                    \App\components\utils\swoole\Counter::incr('monitor:pool:hbase', $count);
+                    \App\components\utils\swoole\counter\Counter::incr('monitor:pool:hbase', $count);
                 }
             },
         ],
@@ -295,5 +296,17 @@ return [
         \App\components\storage\StorageProvider::class,
         \App\components\amqp\AmqpProvider::class,
         \App\components\hbase\HbaseProvider::class,
+    ],
+
+    //Auth
+    'auth' => [
+        'guard' => 'token',
+        'guards' => [
+            'token' => [
+                'guard' => \App\components\auth\token\Guard::class,
+                'user_provider' => \App\models\User::class,
+                'credential_key' => 'auth_token',
+            ]
+        ],
     ],
 ];
