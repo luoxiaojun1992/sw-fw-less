@@ -13,12 +13,6 @@ class RedisProvider extends AbstractProvider implements RequestProvider
 
         if (config('redis.switch')) {
             \App\components\RedisPool::create(config('redis'));
-
-            //Rate limiter
-            \App\components\RateLimit::create(
-                \App\components\RedisPool::create(),
-                config('rate_limit')
-            );
         }
     }
 }

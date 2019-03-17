@@ -12,6 +12,6 @@ class RateLimit extends AbstractFacade
 {
     protected static function getAccessor()
     {
-        return \App\components\RateLimit::create();
+        return \App\components\ratelimit\RateLimit::create();
     }
 }

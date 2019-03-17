@@ -130,6 +130,7 @@ return [
         \App\components\zipkin\Middleware::class,
 //        \App\middlewares\Cors::class,
 //        \App\components\auth\Middleware::class,
+//        \App\components\ratelimit\Middleware::class,
     ],
 
     //Cors
@@ -296,6 +297,7 @@ return [
         //Request Providers
         \App\components\log\LogProvider::class,
         \App\components\redis\RedisProvider::class,
+        \App\components\ratelimit\RatelimitProvider::class,
         \App\components\mysql\MysqlProvider::class,
         \App\components\es\EsProvider::class,
         \App\components\storage\StorageProvider::class,

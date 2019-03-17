@@ -1,13 +1,15 @@
 <?php
 
-namespace App\components;
+namespace App\components\ratelimit;
+
+use App\components\RedisPool;
 
 /**
  * Class RateLimit
  *
  * {@inheritdoc}
  *
- * @package App\components
+ * @package App\components\ratelimit
  */
 class RateLimit
 {

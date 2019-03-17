@@ -1,13 +1,14 @@
 <?php
 
-namespace App\middlewares;
+namespace App\components\ratelimit;
 
 use App\components\Config;
 use App\components\http\Request;
 use App\components\http\Response;
 use App\facades\RateLimit;
+use App\middlewares\AbstractMiddleware;
 
-class Throttle extends AbstractMiddleware
+class Middleware extends AbstractMiddleware
 {
     private $config = [];
 
