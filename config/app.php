@@ -311,7 +311,7 @@ return [
         'guards' => [
             'token' => [
                 'guard' => \App\components\auth\token\Guard::class,
-                'user_provider' => \App\models\User::class,
+                'user_provider' => \App\models\TokenUser::class,
                 'credential_key' => env('AUTH_TOKEN_CREDENTIAL_KEY', 'auth_token'),
             ],
             'jwt' => [

@@ -6,7 +6,7 @@ use App\components\auth\token\UserProviderContract;
 use App\components\RedisWrapper;
 use App\facades\RedisPool;
 
-class User extends AbstractMysqlModel implements UserProviderContract
+class TokenUser extends AbstractMysqlModel implements UserProviderContract
 {
     public function retrieveByToken($authToken)
     {
