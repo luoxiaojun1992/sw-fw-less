@@ -1,6 +1,6 @@
 <?php
 
-namespace App\components\auth\token;
+namespace App\components\auth\jwt;
 
 use App\components\auth\GuardContract;
 use App\components\http\Request;
@@ -17,6 +17,11 @@ class Guard implements GuardContract
     public function validate($credentialCarrier, $tokenKey, $userProvider, $config)
     {
         $token = $credentialCarrier->get($tokenKey) ?: $credentialCarrier->header(strtolower($tokenKey));
-        return (bool)$userProvider->retrieveByToken($token);
+        if (stripos($token, 'Bearer ') === 0) {
+            $token = str_ireplace('Bearer ', '', $token);
+        } elseif (stripos($token, 'Basic ') === 0) {
+            $token = str_ireplace('Basic ', '', $token);
+        }
+        return (bool)$userProvider->retrieveByToken($token, $config['sign_key'], $config['jid']);
     }
 }

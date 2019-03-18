@@ -307,13 +307,20 @@ return [
 
     //Auth
     'auth' => [
-        'guard' => 'token',
+        'guard' => env('AUTH_GUARD', 'token'),
         'guards' => [
             'token' => [
                 'guard' => \App\components\auth\token\Guard::class,
                 'user_provider' => \App\models\User::class,
-                'credential_key' => 'auth_token',
-            ]
+                'credential_key' => env('AUTH_TOKEN_CREDENTIAL_KEY', 'auth_token'),
+            ],
+            'jwt' => [
+                'guard' => \App\components\auth\jwt\Guard::class,
+                'user_provider' => \App\models\JwtUser::class,
+                'credential_key' => env('AUTH_JWT_CREDENTIAL_KEY', 'Authorization'),
+                'sign_key' => env('AUTH_JWT_SIGN_KEY', ''),
+                'jid' => env('AUTH_JWT_JID', ''),
+            ],
         ],
     ],
 ];

@@ -64,13 +64,12 @@ class Auth
         $config = $config ?? config('auth');
         $guardName = $guard ?? $config['guard'];
         $guardConfig = $config['guards'][$guardName];
-
         /** @var GuardContract $guard */
         $guard = new $guardConfig['guard'];
 
         $userProvider = new $guardConfig['user_provider'];
 
-        $result = $guard->validate($credentialCarrier, $guardConfig['credential_key'], $userProvider);
+        $result = $guard->validate($credentialCarrier, $guardConfig['credential_key'], $userProvider, $guardConfig);
         if ($result) {
             (new static())->setGuard($guard)->setUserProvider($userProvider);
         }
