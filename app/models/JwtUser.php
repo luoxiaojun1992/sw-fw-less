@@ -11,6 +11,10 @@ class JwtUser extends AbstractMysqlModel implements UserProviderContract
 {
     public function retrieveByToken($authToken, $signKey, $jid)
     {
+        if (!$authToken) {
+            return false;
+        }
+
         $token = (new Parser())->parse((string) $authToken);
         if (!$token->verify(new Sha256(), $signKey)) {
             return false;

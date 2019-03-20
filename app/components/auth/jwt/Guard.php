@@ -22,6 +22,9 @@ class Guard implements GuardContract
         } elseif (stripos($token, 'Basic ') === 0) {
             $token = str_ireplace('Basic ', '', $token);
         }
+        if (!$token) {
+            return false;
+        }
         return (bool)$userProvider->retrieveByToken($token, $config['sign_key'], $config['jid']);
     }
 }
