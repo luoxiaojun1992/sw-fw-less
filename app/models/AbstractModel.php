@@ -106,14 +106,6 @@ abstract class AbstractModel implements \JsonSerializable, \ArrayAccess
     }
 
     /**
-     * @return array
-     */
-    public function toArray()
-    {
-        return $this->attributes;
-    }
-
-    /**
      * @param $name
      * @return mixed|null
      */

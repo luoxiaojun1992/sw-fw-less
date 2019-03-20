@@ -65,4 +65,12 @@ trait ModelArray
     {
         $this->removeAttribute($offset);
     }
+
+    /**
+     * @return array
+     */
+    public function toArray()
+    {
+        return $this->attributes;
+    }
 }

@@ -8,6 +8,7 @@ trait ModelAttributes
 {
     protected $originalAttributes = [];
     protected $attributes = [];
+    protected $fillable = ['*'];
 
     /**
      * @param $attributes
@@ -24,6 +25,10 @@ trait ModelAttributes
 
     public function setAttribute($name, $value)
     {
+        if (count(array_intersect(['*', $name], $this->fillable)) <= 0) {
+            return $this;
+        }
+
         $setter = 'set' . Helper::snake2Camel($name);
         if (method_exists($this, $setter)) {
             call_user_func_array([$this, $setter], [$value]);
