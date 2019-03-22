@@ -2,7 +2,7 @@
 
 namespace App\components\auth;
 
-use App\components\utils\swoole\traits\CoroutineRes;
+use App\components\utils\swoole\coresource\traits\CoroutineRes;
 
 class Auth
 {

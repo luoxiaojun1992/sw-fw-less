@@ -13,4 +13,9 @@ abstract class AbstractProvider implements ProviderContract
     {
         //
     }
+
+    public static function shutdown()
+    {
+        //
+    }
 }

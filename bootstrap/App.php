@@ -238,8 +238,7 @@ class App
 
         $swResponse->end($swfResponse->getContent());
 
-        \App\components\http\Request::release();
-        \App\components\auth\Auth::release();
+        \App\components\core\KernelProvider::shutdown();
     }
 
     private function hotReload(\Swoole\Http\Server $server)

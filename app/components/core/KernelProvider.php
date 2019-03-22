@@ -31,4 +31,13 @@ class KernelProvider extends AbstractProvider
             }
         }
     }
+
+    public static function shutdown()
+    {
+        parent::shutdown();
+
+        foreach (config('providers') as $provider) {
+            call_user_func([$provider, 'shutdown']);
+        }
+    }
 }

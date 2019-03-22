@@ -75,9 +75,9 @@ class DemoService extends BaseService
         $start = microtime(true);
 
         $urls = [
-            'a' => 'http://news.baidu.com/widget?ajax=json&id=ad',
+            'a' => 'http://127.0.0.1:9501/ping',
             'b' => 'http://127.0.0.1:9501/ping',
-            'c' => 'http://news.baidu.com/widget?ajax=json&id=ad',
+            'c' => 'http://127.0.0.1:9501/ping',
         ];
 
         $aggResult = Client::multiGet($urls);

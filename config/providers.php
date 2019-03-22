@@ -1,6 +1,9 @@
 <?php
 
 return [
+    //Common Providers
+    //
+
     //App Providers
     \App\components\datetime\DatetimeProvider::class,
     \App\components\utils\swoole\counter\CounterProvider::class,
@@ -15,4 +18,7 @@ return [
     \App\components\storage\StorageProvider::class,
     \App\components\amqp\AmqpProvider::class,
     \App\components\hbase\HbaseProvider::class,
+
+    //Shutdown Providers
+    \App\components\utils\swoole\coresource\CoroutineResProvider::class,
 ];

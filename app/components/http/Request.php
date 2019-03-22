@@ -4,7 +4,7 @@ namespace App\components\http;
 
 use App\components\Helper;
 use App\components\http\traits\Tracer;
-use App\components\utils\swoole\traits\CoroutineRes;
+use App\components\utils\swoole\coresource\traits\CoroutineRes;
 
 class Request
 {
