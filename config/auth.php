@@ -15,5 +15,10 @@ return [
             'sign_key' => env('AUTH_JWT_SIGN_KEY', ''),
             'jid' => env('AUTH_JWT_JID', ''),
         ],
+        'basic' => [
+            'guard' => \App\components\auth\basic\Guard::class,
+            'user_provider' => \App\models\BasicUser::class,
+            'credential_key' => env('AUTH_BASIC_CREDENTIAL_KEY', 'Authorization'),
+        ],
     ],
 ];

@@ -16,9 +16,15 @@ class Middleware extends AbstractMiddleware
         $config['guards'][$guardName] = array_merge($config['guards'][$guardName], $this->parseOptions());
 
         if (!Auth::verify($request, null, $config)) {
-            return Response::output('', 401)
+            $response = Response::output('', 401)
                 ->header('X-Auth-Guard', $guardName)
                 ->header('X-Auth-Key', $config['guards'][$guardName]['credential_key']);
+
+            if ($guardName === 'basic') {
+                $response->header('WWW-Authenticate', 'Basic realm="Basic authentication failed."');
+            }
+
+            return $response;
         }
 
         return $this->next();
