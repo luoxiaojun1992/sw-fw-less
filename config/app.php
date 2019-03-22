@@ -33,6 +33,12 @@ $config = [
     'rate_limit' => [
         'connection' => env('RATE_LIMIT_CONNECTION', 'rate_limit'),
     ],
+
+    //Cache
+    'cache' => [
+        'connection' => env('CACHE_CONNECTION', 'cache'), //redis connection
+        'update_lock_ttl' => envInt('CACHE_UPDATE_LOCK_TTL', 10),
+    ],
 ];
 
 $fd = opendir(__DIR__);

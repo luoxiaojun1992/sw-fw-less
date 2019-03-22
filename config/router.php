@@ -12,6 +12,7 @@ return [
         ['GET', '/rabbitmq', [\App\services\DemoService::class, 'rabbitmq']],
         ['GET', '/alioss', [\App\services\DemoService::class, 'alioss']],
         ['GET', '/hbase', [\App\services\DemoService::class, 'hbase']],
+        ['GET', '/cache', [\App\services\DemoService::class, 'cache']],
     ],
     'group' => [
         '/dining' => [

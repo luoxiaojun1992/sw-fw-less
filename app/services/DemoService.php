@@ -5,6 +5,7 @@ namespace App\services;
 use App\components\Helper;
 use App\components\http\Client;
 use App\components\http\Response;
+use App\facades\Cache;
 use App\facades\HbasePool;
 use App\models\Member;
 use App\models\Test;
@@ -151,5 +152,11 @@ class DemoService extends BaseService
         }
 
         return Response::json(['tables' => $tables]);
+    }
+
+    public function cache()
+    {
+        Cache::set('foo', 'bar', 10);
+        return Response::output(Cache::get('foo'));
     }
 }

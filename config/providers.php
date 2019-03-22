@@ -13,6 +13,7 @@ return [
     \App\components\log\LogProvider::class,
     \App\components\redis\RedisProvider::class,
     \App\components\ratelimit\RatelimitProvider::class,
+    \App\components\cache\CacheProvider::class,
     \App\components\mysql\MysqlProvider::class,
     \App\components\es\EsProvider::class,
     \App\components\storage\StorageProvider::class,
