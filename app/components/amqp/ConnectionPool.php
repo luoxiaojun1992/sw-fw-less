@@ -3,7 +3,6 @@
 namespace App\components\amqp;
 
 use App\components\Config;
-use App\facades\Event;
 use Cake\Event\Event as CakeEvent;
 use PhpAmqpLib\Connection\AMQPSocketConnection;
 use PhpAmqpLib\Wire\IO\SocketIO;
@@ -48,7 +47,7 @@ class ConnectionPool
         }
 
         if (Config::get('amqp.pool_change_event')) {
-            Event::dispatch(
+            event(
                 new CakeEvent('amqp:pool:change',
                     null,
                     ['count' => $poolSize]
@@ -78,7 +77,7 @@ class ConnectionPool
             $connection = $this->getConnect(false);
         } else {
             if (Config::get('amqp.pool_change_event')) {
-                Event::dispatch(
+                event(
                     new CakeEvent('amqp:pool:change',
                         null,
                         ['count' => -1]
@@ -99,7 +98,7 @@ class ConnectionPool
             if ($connection->isNeedRelease()) {
                 $this->connectionPool[] = $connection;
                 if (Config::get('amqp.pool_change_event')) {
-                    Event::dispatch(
+                    event(
                         new CakeEvent('amqp:pool:change',
                             null,
                             ['count' => 1]

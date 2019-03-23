@@ -16,7 +16,7 @@ trait ModelEvents
      */
     protected function fireEvent($event, $payload = null)
     {
-        return Event::dispatch(
+        return event(
             new CakeEvent(
                 'model.' . static::class . '.' . $event,
                 null,

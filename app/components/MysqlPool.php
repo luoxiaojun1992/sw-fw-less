@@ -2,7 +2,6 @@
 
 namespace App\components;
 
-use App\facades\Event;
 use Cake\Event\Event as CakeEvent;
 
 class MysqlPool
@@ -52,7 +51,7 @@ class MysqlPool
         }
 
         if (Config::get('mysql.pool_change_event')) {
-            Event::dispatch(
+            event(
                 new CakeEvent('mysql:pool:change',
                     null,
                     ['count' => $poolSize]
@@ -71,7 +70,7 @@ class MysqlPool
             $pdo = $this->getConnect(false);
         } else {
             if (Config::get('mysql.pool_change_event')) {
-                Event::dispatch(
+                event(
                     new CakeEvent('mysql:pool:change',
                         null,
                         ['count' => -1]
@@ -103,7 +102,7 @@ class MysqlPool
             if ($pdo->isNeedRelease()) {
                 $this->pdoPool[] = $pdo;
                 if (Config::get('mysql.pool_change_event')) {
-                    Event::dispatch(
+                    event(
                         new CakeEvent('mysql:pool:change',
                             null,
                             ['count' => 1]

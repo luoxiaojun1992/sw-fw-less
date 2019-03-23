@@ -5,12 +5,10 @@ namespace App\components\hbase;
 use App\components\Config;
 use App\components\thrift\TCoroutineSocket;
 use App\facades\File;
-use App\facades\Event;
 use Cake\Event\Event as CakeEvent;
 use Hbase\HbaseClient;
 use Thrift\Protocol\TBinaryProtocol;
 use Thrift\Transport\TBufferedTransport;
-use Thrift\Transport\TSocket;
 
 class HbasePool
 {
@@ -50,7 +48,7 @@ class HbasePool
         }
 
         if (Config::get('hbase.pool_change_event')) {
-            Event::dispatch(
+            event(
                 new CakeEvent('hbase:pool:change',
                     null,
                     ['count' => $poolSize]
@@ -69,7 +67,7 @@ class HbasePool
             $connection = $this->getConnect(false);
         } else {
             if (Config::get('hbase.pool_change_event')) {
-                Event::dispatch(
+                event(
                     new CakeEvent('hbase:pool:change',
                         null,
                         ['count' => -1]
@@ -94,7 +92,7 @@ class HbasePool
                 }
                 $this->connectionPool[] = $connection;
                 if (Config::get('hbase.pool_change_event')) {
-                    Event::dispatch(
+                    event(
                         new CakeEvent('hbase:pool:change',
                             null,
                             ['count' => 1]

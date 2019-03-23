@@ -63,3 +63,10 @@ if (!function_exists('request')) {
         return \App\components\http\Request::fetch();
     }
 }
+
+if (!function_exists('event')) {
+    function event($event)
+    {
+        return \App\facades\Event::dispatch($event);
+    }
+}

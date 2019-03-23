@@ -2,7 +2,6 @@
 
 namespace App\components;
 
-use App\facades\Event;
 use Cake\Event\Event as CakeEvent;
 
 class RedisPool
@@ -47,7 +46,7 @@ class RedisPool
             }
 
             if ($redisConfig['pool_change_event']) {
-                Event::dispatch(
+                event(
                     new CakeEvent('redis:pool:change',
                         null,
                         ['count' => $redisConnection['pool_size']]
@@ -76,7 +75,7 @@ class RedisPool
             $redis = $this->getConnect(false, $connectionName);
         } else {
             if (config('redis.pool_change_event')) {
-                Event::dispatch(
+                event(
                     new CakeEvent('redis:pool:change',
                         null,
                         ['count' => -1]
@@ -109,7 +108,7 @@ class RedisPool
             if ($redis->isNeedRelease()) {
                 $this->redisPool[$redis->getConnectionName()][] = $redis;
                 if (Config::get('redis.pool_change_event')) {
-                    Event::dispatch(
+                    event(
                         new CakeEvent('redis:pool:change',
                             null,
                             ['count' => 1]
