@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'redis:pool:change' => [
+    \App\components\RedisPool::EVENT_REDIS_POOL_CHANGE => [
         function (\Cake\Event\Event $event) {
             $count = $event->getData('count');
 
@@ -10,7 +10,7 @@ return [
             }
         },
     ],
-    'mysql:pool:change' => [
+    \App\components\MysqlPool::EVENT_MYSQL_POOL_CHANGE => [
         function (\Cake\Event\Event $event) {
             $count = $event->getData('count');
 
@@ -19,7 +19,7 @@ return [
             }
         },
     ],
-    'amqp:pool:change' => [
+    \App\components\amqp\ConnectionPool::EVENT_AMQP_POOL_CHANGE => [
         function (\Cake\Event\Event $event) {
             $count = $event->getData('count');
 
@@ -28,7 +28,7 @@ return [
             }
         },
     ],
-    'hbase:pool:change' => [
+    \App\components\hbase\HbasePool::EVENT_HBASE_POOL_CHANGE => [
         function (\Cake\Event\Event $event) {
             $count = $event->getData('count');
 

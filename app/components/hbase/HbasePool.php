@@ -12,6 +12,8 @@ use Thrift\Transport\TBufferedTransport;
 
 class HbasePool
 {
+    const EVENT_HBASE_POOL_CHANGE = 'hbase.pool.change';
+
     private static $instance;
 
     /** @var HbaseWrapper[] */
@@ -49,7 +51,7 @@ class HbasePool
 
         if (Config::get('hbase.pool_change_event')) {
             event(
-                new CakeEvent('hbase:pool:change',
+                new CakeEvent(static::EVENT_HBASE_POOL_CHANGE,
                     null,
                     ['count' => $poolSize]
                 )
@@ -68,7 +70,7 @@ class HbasePool
         } else {
             if (Config::get('hbase.pool_change_event')) {
                 event(
-                    new CakeEvent('hbase:pool:change',
+                    new CakeEvent(static::EVENT_HBASE_POOL_CHANGE,
                         null,
                         ['count' => -1]
                     )
@@ -93,7 +95,7 @@ class HbasePool
                 $this->connectionPool[] = $connection;
                 if (Config::get('hbase.pool_change_event')) {
                     event(
-                        new CakeEvent('hbase:pool:change',
+                        new CakeEvent(static::EVENT_HBASE_POOL_CHANGE,
                             null,
                             ['count' => 1]
                         )

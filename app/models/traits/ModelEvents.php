@@ -35,7 +35,7 @@ trait ModelEvents
     {
         Event::on(
             'model.' . static::class . '.' . $event,
-            null,
+            [],
             function(CakeEvent $event) use ($callback) {
                 call_user_func_array($callback, $event->getData());
             }

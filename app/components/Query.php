@@ -5,9 +5,13 @@ namespace App\components;
 use App\facades\MysqlPool;
 use Aura\SqlQuery\QueryFactory;
 use Aura\SqlQuery\QueryInterface;
+use Cake\Event\Event;
 
 class Query
 {
+    const EVENT_EXECUTING = 'query.executing';
+    const EVENT_EXECUTED = 'query.executed';
+
     /** @var QueryInterface|QueryFactory */
     private $auraQuery;
 
@@ -98,7 +102,6 @@ class Query
         /** @var \PDOStatement $pdoStatement */
         $pdoStatement = $pdo->prepare($this->auraQuery->getStatement());
         if ($pdoStatement) {
-            //todo before after event query duration db type
             $result = $pdoStatement->execute($this->auraQuery->getBindValues());
             switch ($mode) {
                 case 0:
@@ -162,7 +165,30 @@ class Query
     {
         $method = $this->db . 'Execute';
         if (method_exists($this, $method)) {
-            return call_user_func_array([$this, $method], [$pdo, $mode]);
+            event(new Event(
+                static::EVENT_EXECUTING,
+                null,
+                [
+                    'db' => $this->db,
+                    'connection' => 'default', //todo multi connections
+                ]
+            ));
+
+            $queryBeginAt = microtime(true) * 1000;
+
+            $result = call_user_func_array([$this, $method], [$pdo, $mode]);
+
+            event(new Event(
+                static::EVENT_EXECUTED,
+                null,
+                [
+                    'db' => $this->db,
+                    'connection' => 'default', //todo multi connections,
+                    'time' => microtime(true) * 1000 - $queryBeginAt,
+                ]
+            ));
+
+            return $result;
         }
 
         return null;

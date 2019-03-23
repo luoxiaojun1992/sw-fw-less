@@ -6,6 +6,8 @@ use Cake\Event\Event as CakeEvent;
 
 class MysqlPool
 {
+    const EVENT_MYSQL_POOL_CHANGE = 'mysql.pool.change';
+
     private static $instance;
 
     /** @var MysqlWrapper[] */
@@ -52,7 +54,7 @@ class MysqlPool
 
         if (Config::get('mysql.pool_change_event')) {
             event(
-                new CakeEvent('mysql:pool:change',
+                new CakeEvent(static::EVENT_MYSQL_POOL_CHANGE,
                     null,
                     ['count' => $poolSize]
                 )
@@ -71,7 +73,7 @@ class MysqlPool
         } else {
             if (Config::get('mysql.pool_change_event')) {
                 event(
-                    new CakeEvent('mysql:pool:change',
+                    new CakeEvent(static::EVENT_MYSQL_POOL_CHANGE,
                         null,
                         ['count' => -1]
                     )
@@ -103,7 +105,7 @@ class MysqlPool
                 $this->pdoPool[] = $pdo;
                 if (Config::get('mysql.pool_change_event')) {
                     event(
-                        new CakeEvent('mysql:pool:change',
+                        new CakeEvent(static::EVENT_MYSQL_POOL_CHANGE,
                             null,
                             ['count' => 1]
                         )

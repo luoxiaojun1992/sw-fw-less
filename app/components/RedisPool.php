@@ -6,6 +6,8 @@ use Cake\Event\Event as CakeEvent;
 
 class RedisPool
 {
+    const EVENT_REDIS_POOL_CHANGE = 'redis.pool.change';
+
     private static $instance;
 
     /** @var RedisWrapper[][]|\Redis[][] */
@@ -47,7 +49,7 @@ class RedisPool
 
             if ($redisConfig['pool_change_event']) {
                 event(
-                    new CakeEvent('redis:pool:change',
+                    new CakeEvent(static::EVENT_REDIS_POOL_CHANGE,
                         null,
                         ['count' => $redisConnection['pool_size']]
                     )
@@ -76,7 +78,7 @@ class RedisPool
         } else {
             if (config('redis.pool_change_event')) {
                 event(
-                    new CakeEvent('redis:pool:change',
+                    new CakeEvent(static::EVENT_REDIS_POOL_CHANGE,
                         null,
                         ['count' => -1]
                     )
@@ -109,7 +111,7 @@ class RedisPool
                 $this->redisPool[$redis->getConnectionName()][] = $redis;
                 if (Config::get('redis.pool_change_event')) {
                     event(
-                        new CakeEvent('redis:pool:change',
+                        new CakeEvent(static::EVENT_REDIS_POOL_CHANGE,
                             null,
                             ['count' => 1]
                         )

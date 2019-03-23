@@ -13,7 +13,7 @@ class EventProvider extends AbstractProvider implements AppProvider
 
         foreach (config('events') as $eventName => $eventListeners) {
             foreach ($eventListeners as $eventListener) {
-                \App\facades\Event::on($eventName, $eventListener);
+                \App\facades\Event::on($eventName, [], $eventListener);
             }
         }
     }

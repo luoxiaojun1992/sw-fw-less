@@ -9,6 +9,8 @@ use PhpAmqpLib\Wire\IO\SocketIO;
 
 class ConnectionPool
 {
+    const EVENT_AMQP_POOL_CHANGE = 'amqp.pool.change';
+
     private static $instance;
 
     /** @var ConnectionWrapper[] */
@@ -48,7 +50,7 @@ class ConnectionPool
 
         if (Config::get('amqp.pool_change_event')) {
             event(
-                new CakeEvent('amqp:pool:change',
+                new CakeEvent(static::EVENT_AMQP_POOL_CHANGE,
                     null,
                     ['count' => $poolSize]
                 )
@@ -78,7 +80,7 @@ class ConnectionPool
         } else {
             if (Config::get('amqp.pool_change_event')) {
                 event(
-                    new CakeEvent('amqp:pool:change',
+                    new CakeEvent(static::EVENT_AMQP_POOL_CHANGE,
                         null,
                         ['count' => -1]
                     )
@@ -99,7 +101,7 @@ class ConnectionPool
                 $this->connectionPool[] = $connection;
                 if (Config::get('amqp.pool_change_event')) {
                     event(
-                        new CakeEvent('amqp:pool:change',
+                        new CakeEvent(static::EVENT_AMQP_POOL_CHANGE,
                             null,
                             ['count' => 1]
                         )

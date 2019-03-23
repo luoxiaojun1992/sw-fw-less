@@ -3,7 +3,8 @@
 namespace App\components\zipkin;
 
 use App\components\http\Request;
-//use Illuminate\Database\Events\QueryExecuted;
+use App\components\Query;
+use App\facades\Event;
 use App\facades\Log;
 use Psr\Http\Message\RequestInterface;
 use Zipkin\Endpoint;
@@ -82,7 +83,7 @@ class Tracer
 
         $this->createTracer();
 
-//        $this->listenDbQuery();
+        $this->listenDbQuery();
     }
 
     /**
@@ -116,18 +117,17 @@ class Tracer
      */
     private function listenDbQuery()
     {
-        //todo not implementation
-        \Event::listen(QueryExecuted::class, function (QueryExecuted $event) {
-            $identify = $event->connection->getDriverName() . '.' . $event->connectionName;
+        Event::on(Query::EVENT_EXECUTED, [], function (\Cake\Event\Event $event) {
+            $identify = $event->getData('db') . '.' . $event->getData('connection');
             if (isset($this->dbQueryTimes[$identify])) {
                 $this->dbQueryTimes[$identify]++;
             } else {
                 $this->dbQueryTimes[$identify] = 1;
             }
             if (isset($this->totalDbQueryDuration[$identify])) {
-                $this->totalDbQueryDuration[$identify] += $event->time;
+                $this->totalDbQueryDuration[$identify] += $event->getData('time');
             } else {
-                $this->totalDbQueryDuration[$identify] = $event->time;
+                $this->totalDbQueryDuration[$identify] = $event->getData('time');
             }
         });
     }
@@ -350,7 +350,6 @@ class Tracer
      */
     public function injectContextToRequest($context, &$request)
     {
-        //todo customize requestHeaders for coroutine http client
         $injector = $this->getTracing()->getPropagation()->getInjector(new RequestHeaders());
         $injector($context, $request);
     }
