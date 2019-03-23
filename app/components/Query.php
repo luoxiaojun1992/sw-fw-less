@@ -165,35 +165,47 @@ class Query
     {
         $method = $this->db . 'Execute';
         if (method_exists($this, $method)) {
-            event(new Event(
-                static::EVENT_EXECUTING,
-                null,
-                [
-                    'db' => $this->db,
-                    'connection' => 'default', //todo multi connections,
-                    'mode' => $mode,
-                ]
-            ));
-
-            $queryBeginAt = microtime(true) * 1000;
-
-            $result = call_user_func_array([$this, $method], [$pdo, $mode]);
-
-            event(new Event(
-                static::EVENT_EXECUTED,
-                null,
-                [
-                    'db' => $this->db,
-                    'connection' => 'default', //todo multi connections,
-                    'mode' => $mode,
-                    'time' => microtime(true) * 1000 - $queryBeginAt,
-                ]
-            ));
-
-            return $result;
+            return $this->executeWithEvents(function () use ($method, $pdo, $mode) {
+                return call_user_func_array([$this, $method], [$pdo, $mode]);
+            }, $mode);
         }
 
         return null;
+    }
+
+    /**
+     * @param $executor
+     * @param $mode
+     * @return mixed
+     */
+    private function executeWithEvents($executor, $mode)
+    {
+        event(new Event(
+            static::EVENT_EXECUTING,
+            null,
+            [
+                'db' => $this->db,
+                'connection' => 'default', //todo multi connections,
+                'mode' => $mode,
+            ]
+        ));
+
+        $queryBeginAt = microtime(true) * 1000;
+
+        $result = call_user_func($executor);
+
+        event(new Event(
+            static::EVENT_EXECUTED,
+            null,
+            [
+                'db' => $this->db,
+                'connection' => 'default', //todo multi connections,
+                'mode' => $mode,
+                'time' => microtime(true) * 1000 - $queryBeginAt,
+            ]
+        ));
+
+        return $result;
     }
 
     /**
