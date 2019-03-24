@@ -19,6 +19,7 @@ return [
     \App\components\storage\StorageProvider::class,
     \App\components\amqp\AmqpProvider::class,
     \App\components\hbase\HbaseProvider::class,
+    \App\components\di\ContainerProvider::class,
 
     //Shutdown Providers
     \App\components\utils\swoole\coresource\CoroutineResProvider::class,

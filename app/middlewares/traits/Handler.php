@@ -2,6 +2,8 @@
 
 namespace App\middlewares\traits;
 
+use App\facades\Container;
+
 trait Handler
 {
     private $handler = 'handle';
@@ -49,6 +51,6 @@ trait Handler
      */
     public function call()
     {
-        return call_user_func_array([$this, $this->getHandler()], $this->getParameters());
+        return Container::call([$this, $this->getHandler()], $this->getParameters());
     }
 }

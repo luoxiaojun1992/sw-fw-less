@@ -106,7 +106,7 @@ class App
         $controllerName = $controllerAction[1];
         $action = $controllerAction[2];
         $parameters = $routeInfo[2];
-        $controller = new $controllerName;
+        $controller = \App\facades\Container::get($controllerName);
         if ($controller instanceof \App\services\BaseService) {
             $controller->setRequest($appRequest);
         }
@@ -123,7 +123,7 @@ class App
             list($middlewareClass, $middlewareOptions) = $this->parseMiddlewareName($middlewareName);
 
             /** @var \App\middlewares\AbstractMiddleware $middlewareConcrete */
-            $middlewareConcrete = new $middlewareClass;
+            $middlewareConcrete = \App\facades\Container::get($middlewareClass);
             $middlewareConcrete->setParameters([$appRequest])->setOptions($middlewareOptions);
             if (isset($middlewareConcretes[$i - 1])) {
                 $middlewareConcretes[$i - 1]->setNext($middlewareConcrete);
