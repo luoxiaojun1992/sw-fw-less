@@ -190,7 +190,7 @@ class Query
             ]
         ));
 
-        $queryBeginAt = microtime(true) * 1000;
+        $executingAt = microtime(true) * 1000;
 
         $result = call_user_func($executor);
 
@@ -201,7 +201,7 @@ class Query
                 'db' => $this->db,
                 'connection' => 'default', //todo multi connections
                 'mode' => $mode,
-                'time' => microtime(true) * 1000 - $queryBeginAt,
+                'time' => microtime(true) * 1000 - $executingAt,
             ]
         ));
 

@@ -4,6 +4,7 @@ namespace App\components\zipkin;
 
 use App\components\http\Request;
 use App\components\Query;
+use App\components\RedisWrapper;
 use App\facades\Event;
 use App\facades\Log;
 use Psr\Http\Message\RequestInterface;
@@ -38,6 +39,8 @@ class Tracer
     const RUNTIME_PHP_VERSION = 'runtime.php.version';
     const DB_QUERY_TIMES = 'db.query.times';
     const DB_QUERY_TOTAL_DURATION = 'db.query.total.duration';
+    const REDIS_EXEC_TIMES = 'redis.exec.times';
+    const REDIS_EXEC_TOTAL_DURATION = 'redis.exec.total.duration';
     const FRAMEWORK_VERSION = 'framework.version';
     const HTTP_QUERY_STRING = 'http.query_string';
 
@@ -65,6 +68,10 @@ class Tracer
     private $dbQueryTimes = [];
     private $totalDbQueryDuration = [];
 
+    //Redis metrics
+    private $redisExecTimes = [];
+    private $totalRedisExecDuration = [];
+
     /** @var Request */
     private $request;
 
@@ -84,6 +91,8 @@ class Tracer
         $this->createTracer();
 
         $this->listenDbQuery();
+
+        $this->listenRedisExec();
     }
 
     /**
@@ -128,6 +137,26 @@ class Tracer
                 $this->totalDbQueryDuration[$identify] += $event->getData('time');
             } else {
                 $this->totalDbQueryDuration[$identify] = $event->getData('time');
+            }
+        });
+    }
+
+    /**
+     * Listen redis exec event
+     */
+    private function listenRedisExec()
+    {
+        Event::on(RedisWrapper::EVENT_EXECUTED, [], function (\Cake\Event\Event $event) {
+            $identify = $event->getData('connection');
+            if (isset($this->redisExecTimes[$identify])) {
+                $this->redisExecTimes[$identify]++;
+            } else {
+                $this->redisExecTimes[$identify] = 1;
+            }
+            if (isset($this->totalRedisExecDuration[$identify])) {
+                $this->totalRedisExecDuration[$identify] += $event->getData('time');
+            } else {
+                $this->totalRedisExecDuration[$identify] = $event->getData('time');
             }
         });
     }
@@ -196,8 +225,15 @@ class Tracer
             $this->rootContext = $span->getContext();
         }
 
+        //Db metrics tags
         $startDbQueryTimes = $this->dbQueryTimes;
         $startDbQueryDuration = $this->totalDbQueryDuration;
+
+        //Redis metrics tags
+        $startRedisExecTimes = $this->redisExecTimes;
+        $startRedisExecDuration = $this->totalRedisExecDuration;
+
+        //Memory tags
         $startMemory = 0;
         if ($span->getContext()->isSampled()) {
             $startMemory = memory_get_usage();
@@ -213,13 +249,25 @@ class Tracer
             throw $e;
         } finally {
             if ($span->getContext()->isSampled()) {
+                //Db metrics tags
                 foreach ($this->dbQueryTimes as $identify => $value) {
                     $this->addTag($span, self::DB_QUERY_TIMES . '.' . $identify, $value - (isset($startDbQueryTimes[$identify]) ? $startDbQueryTimes[$identify] : 0));
                 }
                 foreach ($this->totalDbQueryDuration as $identify => $value) {
                     $this->addTag($span, self::DB_QUERY_TOTAL_DURATION . '.' . $identify, ($value - (isset($startDbQueryDuration[$identify]) ? $startDbQueryDuration[$identify] : 0)) . 'ms');
                 }
+
+                //Redis metrics tags
+                foreach ($this->redisExecTimes as $identify => $value) {
+                    $this->addTag($span, self::REDIS_EXEC_TIMES . '.' . $identify, $value - (isset($startRedisExecTimes[$identify]) ? $startRedisExecTimes[$identify] : 0));
+                }
+                foreach ($this->totalRedisExecDuration as $identify => $value) {
+                    $this->addTag($span, self::REDIS_EXEC_TOTAL_DURATION . '.' . $identify, ($value - (isset($startRedisExecDuration[$identify]) ? $startRedisExecDuration[$identify] : 0)) . 'ms');
+                }
+
+                //Memory tags
                 $this->addTag($span, static::RUNTIME_MEMORY, round((memory_get_usage() - $startMemory) / 1000000, 2) . 'MB');
+
                 $this->afterSpanTags($span);
             }
 

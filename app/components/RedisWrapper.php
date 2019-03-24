@@ -3,9 +3,13 @@
 namespace App\components;
 
 use App\facades\RedisPool;
+use Cake\Event\Event;
 
 class RedisWrapper
 {
+    const EVENT_EXECUTING = 'redis.executing';
+    const EVENT_EXECUTED = 'redis.executed';
+
     /** @var \Redis */
     private $redis;
     private $inTransaction = false;
@@ -81,8 +85,9 @@ class RedisWrapper
      */
     private function callRedis($name, $arguments)
     {
-        //todo before after event (duration、connection)
-        $result = call_user_func_array([$this->redis, $name], $arguments);
+        $result = $this->callRedisWithEvents(function () use ($name, $arguments) {
+            return call_user_func_array([$this->redis, $name], $arguments);
+        });
         $lowerName = strtolower($name);
         if ($lowerName == 'multi') {
             $this->inTransaction = true;
@@ -90,6 +95,36 @@ class RedisWrapper
         if (in_array($lowerName, ['exec', 'discard'])) {
             $this->inTransaction = false;
         }
+        return $result;
+    }
+
+    /**
+     * @param $executor
+     * @return mixed
+     */
+    private function callRedisWithEvents($executor)
+    {
+        event(new Event(
+            static::EVENT_EXECUTING,
+            null,
+            [
+                'connection' => $this->getConnectionName()
+            ]
+        ));
+
+        $executingAt = microtime(true) * 1000;
+
+        $result = call_user_func($executor);
+
+        event(new Event(
+            static::EVENT_EXECUTED,
+            null,
+            [
+                'connection' => $this->getConnectionName(),
+                'time' => microtime(true) * 1000 - $executingAt,
+            ]
+        ));
+
         return $result;
     }
 
