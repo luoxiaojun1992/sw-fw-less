@@ -37,8 +37,8 @@ class Tracer
     const RUNTIME_FINISH_SYSTEM_LOAD = 'runtime.finish_system_load';
     const RUNTIME_MEMORY = 'runtime.memory';
     const RUNTIME_PHP_VERSION = 'runtime.php.version';
-    const DB_QUERY_TIMES = 'db.query.times';
-    const DB_QUERY_TOTAL_DURATION = 'db.query.total.duration';
+    const DB_EXEC_TIMES = 'db.exec.times';
+    const DB_EXEC_TOTAL_DURATION = 'db.exec.total.duration';
     const REDIS_EXEC_TIMES = 'redis.exec.times';
     const REDIS_EXEC_TOTAL_DURATION = 'redis.exec.total.duration';
     const FRAMEWORK_VERSION = 'framework.version';
@@ -65,8 +65,8 @@ class Tracer
     private $rootContext;
 
     //DB metrics
-    private $dbQueryTimes = [];
-    private $totalDbQueryDuration = [];
+    private $dbExecTimes = [];
+    private $totalDbExecDuration = [];
 
     //Redis metrics
     private $redisExecTimes = [];
@@ -90,7 +90,7 @@ class Tracer
 
         $this->createTracer();
 
-        $this->listenDbQuery();
+        $this->listenDbExec();
 
         $this->listenRedisExec();
     }
@@ -122,27 +122,27 @@ class Tracer
     }
 
     /**
-     * Listen db query event
+     * Listen db exec events
      */
-    private function listenDbQuery()
+    private function listenDbExec()
     {
         Event::on(Query::EVENT_EXECUTED, [], function (\Cake\Event\Event $event) {
             $identify = $event->getData('db') . '.' . $event->getData('connection');
-            if (isset($this->dbQueryTimes[$identify])) {
-                $this->dbQueryTimes[$identify]++;
+            if (isset($this->dbExecTimes[$identify])) {
+                $this->dbExecTimes[$identify]++;
             } else {
-                $this->dbQueryTimes[$identify] = 1;
+                $this->dbExecTimes[$identify] = 1;
             }
-            if (isset($this->totalDbQueryDuration[$identify])) {
-                $this->totalDbQueryDuration[$identify] += $event->getData('time');
+            if (isset($this->totalDbExecDuration[$identify])) {
+                $this->totalDbExecDuration[$identify] += $event->getData('time');
             } else {
-                $this->totalDbQueryDuration[$identify] = $event->getData('time');
+                $this->totalDbExecDuration[$identify] = $event->getData('time');
             }
         });
     }
 
     /**
-     * Listen redis exec event
+     * Listen redis exec events
      */
     private function listenRedisExec()
     {
@@ -226,8 +226,8 @@ class Tracer
         }
 
         //Db metrics tags
-        $startDbQueryTimes = $this->dbQueryTimes;
-        $startDbQueryDuration = $this->totalDbQueryDuration;
+        $startDbExecTimes = $this->dbExecTimes;
+        $startDbExecDuration = $this->totalDbExecDuration;
 
         //Redis metrics tags
         $startRedisExecTimes = $this->redisExecTimes;
@@ -250,11 +250,11 @@ class Tracer
         } finally {
             if ($span->getContext()->isSampled()) {
                 //Db metrics tags
-                foreach ($this->dbQueryTimes as $identify => $value) {
-                    $this->addTag($span, self::DB_QUERY_TIMES . '.' . $identify, $value - (isset($startDbQueryTimes[$identify]) ? $startDbQueryTimes[$identify] : 0));
+                foreach ($this->dbExecTimes as $identify => $value) {
+                    $this->addTag($span, self::DB_EXEC_TIMES . '.' . $identify, $value - (isset($startDbExecTimes[$identify]) ? $startDbExecTimes[$identify] : 0));
                 }
-                foreach ($this->totalDbQueryDuration as $identify => $value) {
-                    $this->addTag($span, self::DB_QUERY_TOTAL_DURATION . '.' . $identify, ($value - (isset($startDbQueryDuration[$identify]) ? $startDbQueryDuration[$identify] : 0)) . 'ms');
+                foreach ($this->totalDbExecDuration as $identify => $value) {
+                    $this->addTag($span, self::DB_EXEC_TOTAL_DURATION . '.' . $identify, ($value - (isset($startDbExecDuration[$identify]) ? $startDbExecDuration[$identify] : 0)) . 'ms');
                 }
 
                 //Redis metrics tags

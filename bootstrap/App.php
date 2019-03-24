@@ -4,6 +4,9 @@ class App
 {
     const VERSION = '0.1.0';
 
+    const EVENT_RESPONSING = 'app.responsing';
+    const EVENT_RESPONSED = 'app.responsed';
+
     /** @var \Swoole\Http\Server */
     private $swHttpServer;
 
@@ -234,11 +237,35 @@ class App
             }
         }
 
-        //todo before after event aop hook
-
-        $swResponse->end($swfResponse->getContent());
+        $this->swResponseWithEvents(function () use ($swResponse, $swfResponse) {
+            $swResponse->end($swfResponse->getContent());
+        }, $swfResponse);
 
         \App\components\core\KernelProvider::shutdown();
+    }
+
+    private function swResponseWithEvents($callback, \App\components\http\Response $swfResponse)
+    {
+        event(new \Cake\Event\Event(
+            static::EVENT_RESPONSING,
+            null,
+            [
+                'response' => $swfResponse,
+            ]
+        ));
+
+        $responsingAt = microtime(true) * 1000;
+
+        call_user_func($callback);
+
+        event(new \Cake\Event\Event(
+            static::EVENT_RESPONSED,
+            null,
+            [
+                'response' => $swfResponse,
+                'time' => microtime(true) * 1000 - $responsingAt,
+            ]
+        ));
     }
 
     private function hotReload(\Swoole\Http\Server $server)
