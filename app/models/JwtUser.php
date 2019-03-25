@@ -26,7 +26,7 @@ class JwtUser extends AbstractMysqlModel implements UserProviderContract
         $data->setId($jid);
 
         if ($result = $token->validate($data)) {
-            $this->id = $token->getClaim('uid');
+            $this->setPrimaryValue($token->getClaim(static::$primaryKey));
         }
 
         return $result;

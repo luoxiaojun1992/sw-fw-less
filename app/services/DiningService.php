@@ -154,7 +154,7 @@ class DiningService extends BaseService
                     ->setIssuedAt($time) // Configures the time that the token was issue (iat claim)
                     ->setNotBefore($time) // Configures the time that the token can be used (nbf claim)
                     ->setExpiration($time + 86400) // Configures the expiration time of the token (exp claim)
-                    ->set('uid', 1) // Configures a new claim, called "uid"
+                    ->set('id', 1) // Configures a new claim, called "uid"
                     ->sign($signer, 'testing') // creates a signature using "testing" as key
                     ->getToken(); // Retrieves the generated token
 
