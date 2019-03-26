@@ -32,7 +32,9 @@ class Container
     public function __construct()
     {
         $containerBuilder = new ContainerBuilder();
-        $containerBuilder->enableCompilation(File::path('runtime/compiled'));
+        if (config('storage.switch')) {
+            $containerBuilder->enableCompilation(File::path('runtime/compiled'));
+        }
         $this->diContainer = $containerBuilder->build();
     }
 

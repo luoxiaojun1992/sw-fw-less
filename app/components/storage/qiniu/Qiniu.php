@@ -35,8 +35,10 @@ class Qiniu
         }
 
         $storageConfig = Config::get('storage');
-        if (in_array('qiniu', $storageConfig['types'])) {
-            return self::$instance = new self();
+        if ($storageConfig['switch']) {
+            if (in_array('qiniu', $storageConfig['types'])) {
+                return self::$instance = new self();
+            }
         }
 
         return null;

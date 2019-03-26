@@ -2,8 +2,9 @@
 
 return [
     'base_path' => env('APP_BASE_PATH', __DIR__ . '/../'),
+    'switch' => envInt('STORAGE_SWITCH', 0),
     'storage_path' => env('STORAGE_PATH', __DIR__ . '/../runtime/storage/'),
-    'types' => envArray('STORAGE_TYPES', ['file']), //optional: 'qiniu', 'alioss'
+    'types' => envArray('STORAGE_TYPES', ['file', 'qiniu', 'alioss']),
     'ext' => [
         'qiniu' => [
             'default_bucket' => env('QINIU_DEFAULT_BUCKET', 'default'),
