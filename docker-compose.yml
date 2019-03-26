@@ -1,7 +1,7 @@
 version: '3'
 
 services:
-  swoft:
+  sw-fw-less:
     image: luoxiaojun1992/sw-fw-less:latest
     #       build: ./
     ports:

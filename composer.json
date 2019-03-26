@@ -11,9 +11,9 @@
         "swlib/saber": "^1",
         "vlucas/phpdotenv": "~2.2",
         "monolog/monolog": "^1",
-        "luoxiaojun1992/monolog-co-stream-handler": "1.0.11",
+        "luoxiaojun1992/monolog-co-stream-handler": "~1.0",
         "elasticsearch/elasticsearch": "~6",
-        "luoxiaojun1992/laravel-elasticsearch": "1.0.2",
+        "luoxiaojun1992/laravel-elasticsearch": "~1.0",
         "cakephp/validation": "~3",
         "league/flysystem": "~1",
         "overtrue/flysystem-qiniu": "~1",
@@ -37,5 +37,10 @@
     ],
     "autoload": {
         "psr-4": {"App\\": "app/"}
-    }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }
