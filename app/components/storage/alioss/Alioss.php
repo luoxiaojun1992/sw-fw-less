@@ -35,10 +35,8 @@ class Alioss
         }
 
         $storageConfig = Config::get('storage');
-        if ($storageConfig['switch']) {
-            if (in_array('alioss', $storageConfig['types'])) {
-                return self::$instance = new self();
-            }
+        if (in_array('alioss', $storageConfig['types'])) {
+            return self::$instance = new self();
         }
 
         return null;

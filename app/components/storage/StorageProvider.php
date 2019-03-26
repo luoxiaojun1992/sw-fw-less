@@ -11,8 +11,6 @@ class StorageProvider extends AbstractProvider implements RequestProvider
     {
         parent::bootRequest();
 
-        if (config('storage.switch')) {
-            Storage::init();
-        }
+        Storage::init();
     }
 }
