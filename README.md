@@ -20,7 +20,7 @@ Swoole http server without framework
 
 >## Requirements
 * PHP 7.1+
-* Swoole 4.2.*
+* Swoole 4.2.10+
 
 >## Installation
 ```shell
