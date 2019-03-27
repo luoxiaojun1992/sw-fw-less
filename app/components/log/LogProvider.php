@@ -14,7 +14,7 @@ class LogProvider extends AbstractProvider implements RequestProvider
     {
         parent::bootRequest();
         if (config('log.switch')) {
-            \App\components\Log::create(
+            Log::create(
                 config('log.path'),
                 config('log.level'),
                 config('log.pool_size'),

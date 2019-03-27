@@ -1,7 +1,8 @@
 <?php
 
-namespace App\components;
+namespace App\components\log;
 
+use App\components\Config;
 use Lxj\Monolog\Co\Stream\Handler;
 use Monolog\Logger;
 
@@ -97,7 +98,7 @@ class Log
     {
         $this->loggerDate = date('Ymd');
         $log_path = $this->getLogPath($this->loggerDate);
-        $handler = new \Lxj\Monolog\Co\Stream\Handler(
+        $handler = new Handler(
             $log_path,
             $this->level,
             true,

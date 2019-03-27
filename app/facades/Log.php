@@ -30,6 +30,6 @@ class Log extends AbstractFacade
 {
     protected static function getAccessor()
     {
-        return \App\components\Log::create();
+        return \App\components\log\Log::create();
     }
 }

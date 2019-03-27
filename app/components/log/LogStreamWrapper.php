@@ -1,12 +1,12 @@
 <?php
 
-namespace App\components;
+namespace App\components\log;
 
 use App\facades\Log;
 
 /**
  * Class LogStreamWrapper
- * @package App\components
+ * @package App\components\log
  */
 class LogStreamWrapper
 {
