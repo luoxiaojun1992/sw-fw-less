@@ -11,6 +11,7 @@
         "cakephp/event": "3.7.1",
         "cakephp/validation": "~3",
         "elasticsearch/elasticsearch": "~6",
+        "huang-yi/swoole-watcher": "~0.0",
         "koala-framework/file-watcher": " ~1.0",
         "lcobucci/jwt": "~3.2",
         "league/flysystem": "~1",

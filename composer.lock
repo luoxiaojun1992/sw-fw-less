@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d0ee46de75dba72e44c61f28bcda753a",
+    "content-hash": "437e2d5880ef0afbbd1071c363c1e314",
     "packages": [
         {
             "name": "aliyuncs/oss-sdk-php",
@@ -624,6 +624,47 @@
                 "stream"
             ],
             "time": "2014-10-12T19:18:40+00:00"
+        },
+        {
+            "name": "huang-yi/swoole-watcher",
+            "version": "0.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/huang-yi/swoole-watcher.git",
+                "reference": "44ca253453c5f04d7300553bddb736706fbc957a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/huang-yi/swoole-watcher/zipball/44ca253453c5f04d7300553bddb736706fbc957a",
+                "reference": "44ca253453c5f04d7300553bddb736706fbc957a",
+                "shasum": ""
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~6.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "HuangYi\\Watcher\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Huang Yi",
+                    "email": "coodeer@163.com"
+                }
+            ],
+            "description": "Swoole file watcher.",
+            "keywords": [
+                "inotify",
+                "swoole",
+                "watcher"
+            ],
+            "time": "2017-12-19T07:50:04+00:00"
         },
         {
             "name": "illuminate/contracts",

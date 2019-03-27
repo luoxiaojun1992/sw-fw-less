@@ -39,6 +39,20 @@ $config = [
         'connection' => env('CACHE_CONNECTION', 'cache'), //redis connection
         'update_lock_ttl' => envInt('CACHE_UPDATE_LOCK_TTL', 10),
     ],
+
+    //Hot Reload
+    'hot_reload' => [
+        'watch_dirs' => [
+            __DIR__ . '/',
+            __DIR__ . '/../app/',
+            __DIR__ . '/../bootstrap/',
+            __DIR__ . '/../vendor/',
+            __DIR__ . '/../',
+        ],
+        'excluded_dirs' => [],
+        'watch_suffixes' => ['.php', '.env'],
+        'driver' => env('HOT_RELOAD_DRIVER', \Kwf\FileWatcher\Watcher::class), //HuangYi\Watcher\Watcher::class is another choice
+    ],
 ];
 
 $fd = opendir(__DIR__);
