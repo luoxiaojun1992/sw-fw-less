@@ -6,7 +6,7 @@ use App\components\http\Response;
 
 class ErrorHandler
 {
-    public static function handle(\Exception $e)
+    public static function handle(\Throwable $e)
     {
         $statusCode = !is_string($e->getCode()) && $e->getCode() ? $e->getCode() : 500;
         $errMsg = $e->getMessage() . PHP_EOL . $e->getTraceAsString();

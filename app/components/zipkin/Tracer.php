@@ -4,7 +4,7 @@ namespace App\components\zipkin;
 
 use App\components\http\Request;
 use App\components\mysql\Query;
-use App\components\RedisWrapper;
+use App\components\redis\RedisWrapper;
 use App\facades\Event;
 use App\facades\Log;
 use Psr\Http\Message\RequestInterface;
@@ -205,7 +205,7 @@ class Tracer
      * @param bool $isRoot
      * @param bool $flush
      * @return mixed
-     * @throws \Exception
+     * @throws \Throwable
      */
     public function span($name, $callback, $parentContext = null, $kind = null, $isRoot = false, $flush = false)
     {
@@ -242,7 +242,7 @@ class Tracer
 
         try {
             return call_user_func_array($callback, ['span' => $span]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             if ($span->getContext()->isSampled()) {
                 $this->addTag($span, ERROR, $e->getMessage() . PHP_EOL . $e->getTraceAsString());
             }
@@ -536,7 +536,7 @@ class Tracer
     {
         try {
             $this->getTracer()->flush();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             Log::error('Zipkin report error ' . $e->getMessage());
         }
     }

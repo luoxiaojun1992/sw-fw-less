@@ -63,7 +63,7 @@ final class RedisReporter implements Reporter
 
     /**
      * @param $payload
-     * @throws \Exception
+     * @throws \Throwable
      */
     private function enqueue($payload)
     {
@@ -81,7 +81,7 @@ final class RedisReporter implements Reporter
 
         try {
             $redisClient->lpush($this->options['queue_name'], $payload);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             throw $e;
         } finally {
             RedisPool::release($redisClient);

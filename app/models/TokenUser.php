@@ -3,11 +3,16 @@
 namespace App\models;
 
 use App\components\auth\token\UserProviderContract;
-use App\components\RedisWrapper;
+use App\components\redis\RedisWrapper;
 use App\facades\RedisPool;
 
 class TokenUser extends AbstractMysqlModel implements UserProviderContract
 {
+    /**
+     * @param $authToken
+     * @return bool
+     * @throws \Throwable
+     */
     public function retrieveByToken($authToken)
     {
         /** @var \Redis|RedisWrapper $redis */
@@ -17,7 +22,7 @@ class TokenUser extends AbstractMysqlModel implements UserProviderContract
                 $this->id = $id;
                 return true;
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             throw $e;
         } finally {
             RedisPool::release($redis);

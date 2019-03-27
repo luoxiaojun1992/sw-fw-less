@@ -43,7 +43,7 @@ class AMQPStreamWrapper
     /**
      * @param $data
      * @return int
-     * @throws \Exception
+     * @throws \Throwable
      */
     function stream_write($data)
     {
@@ -67,7 +67,7 @@ class AMQPStreamWrapper
         try {
             $channel = $connection->channel($channel_id);
             $do($channel);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             if ($connection->causedByLostConnection($e)) {
                 $realConnection = $connection->getConnection();
                 $realConnection->reconnect();

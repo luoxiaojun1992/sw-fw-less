@@ -122,7 +122,7 @@ class Log
     }
 
     /**
-     * @throws \Exception
+     * @throws \Throwable
      */
     private function rotate()
     {
@@ -132,7 +132,7 @@ class Log
                     if (date('Ymd') != $this->loggerDate) {
                         $this->logger = $this->createLogger();
                     }
-                } catch (\Exception $e) {
+                } catch (\Throwable $e) {
                     throw $e;
                 } finally {
                     array_push($this->rotateLock, true);
@@ -161,7 +161,7 @@ class Log
      * @param $name
      * @param $arguments
      * @return mixed|null
-     * @throws \Exception
+     * @throws \Throwable
      */
     public function __call($name, $arguments)
     {

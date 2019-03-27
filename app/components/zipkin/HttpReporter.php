@@ -68,7 +68,7 @@ final class HttpReporter implements Reporter
                 'Content-Length' => strlen($payload),
             ]);
             SaberGM::post($this->options['endpoint_url'], $payload, $this->options);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             throw new RuntimeException($e);
         }
     }

@@ -21,7 +21,7 @@ class Middleware extends AbstractMiddleware
     /**
      * @param Request $request
      * @return \App\components\http\Response
-     * @throws \Exception
+     * @throws \Throwable
      */
     public function handle(Request $request)
     {
@@ -65,7 +65,7 @@ class Middleware extends AbstractMiddleware
                 }
 
                 return $response;
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 throw $e;
             } finally {
                 if ($response) {

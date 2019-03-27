@@ -136,6 +136,10 @@ class DemoService extends BaseService
         return Response::output(file_get_contents('alioss://sw-fw-less/test2.txt'));
     }
 
+    /**
+     * @return Response
+     * @throws \Throwable
+     */
     public function hbase()
     {
         $tables = [];
@@ -145,7 +149,7 @@ class DemoService extends BaseService
 
         try {
             $tables = $client->getTableNames();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             throw $e;
         } finally {
             HbasePool::release($client);

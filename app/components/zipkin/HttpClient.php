@@ -3,7 +3,6 @@
 namespace App\components\zipkin;
 
 use App\components\http\Request as SwfRequest;
-use App\components\http\Request;
 use App\facades\Log;
 use Swlib\Saber\Request as SaberRequest;
 use Zipkin\Span;
@@ -25,7 +24,7 @@ class HttpClient
      * @param SwfRequest $swfRequest
      * @param string $spanName
      * @return mixed|\Psr\Http\Message\ResponseInterface|null
-     * @throws \Exception
+     * @throws \Throwable
      */
     public function send(SaberRequest $saberRequest, $swfRequest = null, $spanName = null)
     {
@@ -65,7 +64,7 @@ class HttpClient
                 try {
                     $response = $request->exec()->recv();
                     return $response;
-                } catch (\Exception $e) {
+                } catch (\Throwable $e) {
                     Log::error('CURL ERROR ' . $e->getMessage());
                     throw new \Exception('CURL ERROR ' . $e->getMessage());
                 } finally {

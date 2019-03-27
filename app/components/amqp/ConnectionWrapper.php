@@ -67,14 +67,14 @@ class ConnectionWrapper
      * @param $name
      * @param $arguments
      * @return mixed|null
-     * @throws \Exception
+     * @throws \Throwable
      */
     public function __call($name, $arguments)
     {
         if (method_exists($this->connection, $name)) {
             try {
                 return $this->callConnection($name, $arguments);
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 if ($this->causedByLostConnection($e)) {
                     $this->handleCommandException($e);
                     return $this->callConnection($name, $arguments);
@@ -88,10 +88,10 @@ class ConnectionWrapper
     }
 
     /**
-     * @param \Exception $e
+     * @param \Throwable $e
      * @return bool
      */
-    public function causedByLostConnection(\Exception $e) {
+    public function causedByLostConnection(\Throwable $e) {
         if (($e instanceof AMQPConnectionClosedException)
             || ($e instanceof AMQPConnectionException)
             || ($e instanceof AMQPProtocolConnectionException)
@@ -107,9 +107,9 @@ class ConnectionWrapper
     }
 
     /**
-     * @param \Exception $e
+     * @param \Throwable $e
      */
-    private function handleCommandException(\Exception $e)
+    private function handleCommandException(\Throwable $e)
     {
         if ($this->causedByLostConnection($e)) {
             $this->getConnection()->reconnect();

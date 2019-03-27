@@ -15,7 +15,7 @@ class App
 
     /**
      * App constructor.
-     * @throws ReflectionException
+     * @throws Exception
      */
     public function __construct()
     {
@@ -42,10 +42,26 @@ class App
     }
 
     /**
-     * @throws ReflectionException
+     * @throws Exception
+     */
+    private function checkEnvironment()
+    {
+        if (!extension_loaded('swoole')) {
+            throw new \Exception('Swoole extension is not installed.');
+        }
+
+        if (version_compare(PHP_VERSION, '7.1') < 0) {
+            throw new \Exception('PHP7.1+ is not installed.');
+        }
+    }
+
+    /**
+     * @throws \Exception
      */
     private function bootstrap()
     {
+        $this->checkEnvironment();
+
         require_once __DIR__ . '/../app/components/functions.php';
 
         \Swoole\Runtime::enableCoroutine();
@@ -204,7 +220,7 @@ class App
                         $response
                     );
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->swResponse($this->swfRequest(function () use ($e) {
                 return \App\components\ErrorHandler::handle($e);
             }), $response);

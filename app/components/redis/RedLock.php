@@ -44,18 +44,13 @@ class RedLock
     }
 
     /**
-     * 加独占锁
-     *
-     * {@inheritdoc}
-     *
-     * 通过__call魔术方法调用，勿删除
+     * Add a lock
      *
      * @param     $key
      * @param     int $ttl
-     * @param     bool $guard 是否自动释放
-     * @redis_key
+     * @param     bool $guard
      * @return    bool
-     * @throws \Exception
+     * @throws \Throwable
      */
     public function lock($key, $ttl = 0, $guard = false)
     {
@@ -79,7 +74,7 @@ EOF;
                 $this->addLockedKey($key, $guard);
                 return true;
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             throw $e;
         } finally {
             $this->redisPool->release($redis);
@@ -89,16 +84,11 @@ EOF;
     }
 
     /**
-     * 释放独占锁
-     *
-     * {@inheritdoc}
-     *
-     * 通过__call魔术方法调用，勿删除
+     * Release a lock
      *
      * @param     $key
-     * @redis_key
      * @return    bool
-     * @throws \Exception
+     * @throws \Throwable
      */
     public function unlock($key)
     {
@@ -111,7 +101,7 @@ EOF;
                 return true;
             }
             return false;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             throw $e;
         } finally {
             $this->redisPool->release($redis);
@@ -127,8 +117,8 @@ EOF;
     }
 
     /**
-     * 清除所有锁
-     * @throws \Exception
+     * Flush all locks
+     * @throws \Throwable
      */
     public function flushAll()
     {
@@ -140,7 +130,7 @@ EOF;
     }
 
     /**
-     * @throws \Exception
+     * @throws \Throwable
      */
     public function __destruct()
     {

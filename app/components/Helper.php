@@ -45,10 +45,10 @@ class Helper
     /**
      * Determine if the given exception was caused by a lost connection.
      *
-     * @param  \Exception $e
+     * @param  \Throwable $e
      * @return bool
      */
-    public static function causedByLostConnection(\Exception $e)
+    public static function causedByLostConnection(\Throwable $e)
     {
         $message = $e->getMessage();
         $lostConnectionMessages = [

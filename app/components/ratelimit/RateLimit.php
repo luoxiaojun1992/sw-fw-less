@@ -53,7 +53,7 @@ class RateLimit
      * @param $throttle
      * @param $remaining
      * @return bool
-     * @throws \RedisException
+     * @throws \Throwable
      */
     public function pass($metric, $period, $throttle, &$remaining = null)
     {
@@ -74,7 +74,7 @@ EOF;
             $passed = $redis->eval($lua, [$metric, $period], 1);
             $remaining = $throttle - $passed;
             return $passed <= $throttle;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             throw $e;
         } finally {
             $this->redisPool->release($redis);
@@ -83,7 +83,7 @@ EOF;
 
     /**
      * @param $metric
-     * @throws \Exception
+     * @throws \Throwable
      */
     public function clear($metric)
     {
@@ -91,7 +91,7 @@ EOF;
         $redis = $this->redisPool->pick($this->config['connection']);
         try {
             $redis->del($metric);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             throw $e;
         } finally {
             $this->redisPool->release($redis);

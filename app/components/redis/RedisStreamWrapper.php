@@ -40,7 +40,7 @@ class RedisStreamWrapper
     /**
      * @param $count
      * @return bool|string
-     * @throws \Exception
+     * @throws \Throwable
      */
     function stream_read($count)
     {
@@ -50,7 +50,7 @@ class RedisStreamWrapper
             $redis = RedisPool::pick();
             try {
                 $result = $redis->get($this->host);
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 throw $e;
             } finally {
                 RedisPool::release($redis);
@@ -83,7 +83,7 @@ class RedisStreamWrapper
      * @param $path
      * @param $flags
      * @return array|int
-     * @throws \Exception
+     * @throws \Throwable
      */
     function url_stat($path, $flags)
     {
@@ -122,7 +122,7 @@ class RedisStreamWrapper
                     'blocks' => 0
                 ];
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             throw $e;
         } finally {
             RedisPool::release($redis);
@@ -133,7 +133,7 @@ class RedisStreamWrapper
 
     /**
      * @return array|int
-     * @throws \Exception
+     * @throws \Throwable
      */
     public function stream_stat()
     {
@@ -178,7 +178,7 @@ class RedisStreamWrapper
 //                    $exists = true;
 //                    $size = $res[1];
 //                }
-//            } catch (\Exception $e) {
+//            } catch (\Throwable $e) {
 //                throw $e;
 //            } finally {
 //                RedisPool::release($redis);
@@ -216,7 +216,7 @@ class RedisStreamWrapper
     /**
      * @param $data
      * @return int
-     * @throws \Exception
+     * @throws \Throwable
      */
     function stream_write($data)
     {
@@ -224,7 +224,7 @@ class RedisStreamWrapper
         $redis = RedisPool::pick();
         try {
             $redis->set($this->host, $data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             throw $e;
         } finally {
             RedisPool::release($redis);
@@ -238,7 +238,7 @@ class RedisStreamWrapper
     /**
      * @param $path
      * @return bool
-     * @throws \Exception
+     * @throws \Throwable
      */
     function unlink($path)
     {
@@ -249,7 +249,7 @@ class RedisStreamWrapper
         $redis = RedisPool::pick();
         try {
             $redis->del($this->host);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             throw $e;
         } finally {
             RedisPool::release($redis);

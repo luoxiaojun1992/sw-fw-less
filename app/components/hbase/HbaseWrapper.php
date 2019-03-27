@@ -82,14 +82,14 @@ class HbaseWrapper
      * @param $name
      * @param $arguments
      * @return mixed|null
-     * @throws \Exception
+     * @throws \Throwable
      */
     public function __call($name, $arguments)
     {
         if (method_exists($this->client, $name)) {
             try {
                 return $this->callClient($name, $arguments);
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 if (Helper::causedByLostConnection($e)) {
                     $this->handleCommandException($e);
                     return $this->callClient($name, $arguments);
@@ -103,9 +103,9 @@ class HbaseWrapper
     }
 
     /**
-     * @param \Exception $e
+     * @param \Throwable $e
      */
-    private function handleCommandException(\Exception $e)
+    private function handleCommandException(\Throwable $e)
     {
         if (Helper::causedByLostConnection($e)) {
             $hbaseWrapper = \App\facades\HbasePool::getConnect(false);

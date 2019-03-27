@@ -54,7 +54,7 @@ class Cache
      * @param $value
      * @param int $ttl
      * @return bool|mixed
-     * @throws \RedisException
+     * @throws \Throwable
      */
     public function set($key, $value, $ttl = 0)
     {
@@ -77,7 +77,7 @@ EOF;
             }
 
             return $redis->set($key, $value);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             throw $e;
         } finally {
             $this->redisPool->release($redis);
@@ -87,7 +87,7 @@ EOF;
     /**
      * @param $key
      * @return bool|string
-     * @throws \RedisException
+     * @throws \Throwable
      */
     public function get($key)
     {
@@ -105,7 +105,7 @@ EOF;
             }
 
             return $redis->get($key);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             throw $e;
         } finally {
             $this->redisPool->release($redis);
