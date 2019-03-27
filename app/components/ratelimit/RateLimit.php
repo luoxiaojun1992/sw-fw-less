@@ -2,7 +2,7 @@
 
 namespace App\components\ratelimit;
 
-use App\components\RedisPool;
+use App\components\redis\RedisPool;
 
 /**
  * Class RateLimit

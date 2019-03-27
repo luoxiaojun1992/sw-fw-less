@@ -1,7 +1,7 @@
 <?php
 
 return [
-    \App\components\RedisPool::EVENT_REDIS_POOL_CHANGE => [
+    \App\components\redis\RedisPool::EVENT_REDIS_POOL_CHANGE => [
         function (\Cake\Event\Event $event) {
             $count = $event->getData('count');
 

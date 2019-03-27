@@ -2,7 +2,7 @@
 
 namespace App\components\cache;
 
-use App\components\RedisPool;
+use App\components\redis\RedisPool;
 use App\facades\RedLock;
 
 /**

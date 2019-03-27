@@ -1,15 +1,15 @@
 <?php
 
-namespace App\components;
+namespace App\components\redis;
 
 /**
  * Class RedLock
  *
  * {@inheritdoc}
  *
- * Redis实现分布式独占锁
+ * Distributed lock based on redis
  *
- * @package App\components
+ * @package App\components\redis
  */
 class RedLock
 {

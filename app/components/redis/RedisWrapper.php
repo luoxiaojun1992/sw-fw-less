@@ -1,7 +1,8 @@
 <?php
 
-namespace App\components;
+namespace App\components\redis;
 
+use App\components\Helper;
 use App\facades\RedisPool;
 use Cake\Event\Event;
 

@@ -1,7 +1,9 @@
 <?php
 
-namespace App\components;
+namespace App\components\redis;
 
+use App\components\Config;
+use App\components\Helper;
 use Cake\Event\Event as CakeEvent;
 
 class RedisPool

@@ -2,7 +2,7 @@
 
 namespace App\facades;
 
-use App\components\RedisWrapper;
+use App\components\redis\RedisWrapper;
 
 /**
  * Class RedisPool
@@ -18,6 +18,6 @@ class RedisPool extends AbstractFacade
 {
     protected static function getAccessor()
     {
-        return \App\components\RedisPool::create();
+        return \App\components\redis\RedisPool::create();
     }
 }

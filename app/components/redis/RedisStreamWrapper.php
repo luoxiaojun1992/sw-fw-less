@@ -1,12 +1,12 @@
 <?php
 
-namespace App\components;
+namespace App\components\redis;
 
 use App\facades\RedisPool;
 
 /**
  * Class RedisStreamWrapper
- * @package App\components
+ * @package App\components\redis
  */
 class RedisStreamWrapper
 {

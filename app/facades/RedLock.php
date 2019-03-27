@@ -15,7 +15,7 @@ class RedLock extends AbstractFacade
     protected static function getAccessor()
     {
         if (config('redis.switch')) {
-            return \App\components\RedLock::create(\App\components\RedisPool::create(), config('red_lock'));
+            return \App\components\redis\RedLock::create(\App\components\redis\RedisPool::create(), config('red_lock'));
         }
 
         return null;
