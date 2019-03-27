@@ -6,7 +6,7 @@ if (!function_exists('config')) {
     }
 }
 
-if (!function_exists('callHelper')) {
+if (!function_exists('helper')) {
     function helper($method, ...$args) {
         return call_user_func_array([\App\components\Helper::class, $method], $args);
     }
