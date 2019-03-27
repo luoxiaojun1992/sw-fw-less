@@ -2,7 +2,7 @@
 
 namespace App\models;
 
-use App\components\ModelQuery;
+use App\components\mysql\ModelQuery;
 use Aura\SqlQuery\Common\DeleteInterface;
 use Aura\SqlQuery\Common\InsertInterface;
 use Aura\SqlQuery\Common\SelectInterface;

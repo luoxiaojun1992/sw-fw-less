@@ -1,6 +1,6 @@
 <?php
 
-namespace App\components;
+namespace App\components\mysql;
 
 use App\models\AbstractMysqlModel;
 

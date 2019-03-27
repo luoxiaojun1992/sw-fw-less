@@ -10,7 +10,7 @@ return [
             }
         },
     ],
-    \App\components\MysqlPool::EVENT_MYSQL_POOL_CHANGE => [
+    \App\components\mysql\MysqlPool::EVENT_MYSQL_POOL_CHANGE => [
         function (\Cake\Event\Event $event) {
             $count = $event->getData('count');
 

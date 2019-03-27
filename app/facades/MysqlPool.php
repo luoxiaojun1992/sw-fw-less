@@ -2,7 +2,7 @@
 
 namespace App\facades;
 
-use App\components\MysqlWrapper;
+use App\components\mysql\MysqlWrapper;
 
 /**
  * Class MysqlPool
@@ -18,6 +18,6 @@ class MysqlPool extends AbstractFacade
 {
     protected static function getAccessor()
     {
-        return \App\components\MysqlPool::create();
+        return \App\components\mysql\MysqlPool::create();
     }
 }

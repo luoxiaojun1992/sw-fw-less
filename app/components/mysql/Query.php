@@ -1,7 +1,8 @@
 <?php
 
-namespace App\components;
+namespace App\components\mysql;
 
+use App\components\Helper;
 use App\facades\MysqlPool;
 use Aura\SqlQuery\QueryFactory;
 use Aura\SqlQuery\QueryInterface;

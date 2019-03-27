@@ -12,7 +12,7 @@ class MysqlProvider extends AbstractProvider implements RequestProvider
         parent::bootRequest();
 
         if (config('mysql.switch')) {
-            \App\components\MysqlPool::create(
+            MysqlPool::create(
                 config('mysql.dsn'),
                 config('mysql.username'),
                 config('mysql.passwd'),

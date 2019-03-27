@@ -3,7 +3,7 @@
 namespace App\components\zipkin;
 
 use App\components\http\Request;
-use App\components\Query;
+use App\components\mysql\Query;
 use App\components\RedisWrapper;
 use App\facades\Event;
 use App\facades\Log;
