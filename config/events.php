@@ -6,7 +6,7 @@ return [
             $count = $event->getData('count');
 
             if (\App\components\Config::get('redis.report_pool_change')) {
-                \App\components\utils\swoole\counter\Counter::incr('monitor:pool:redis', $count);
+                \App\components\swoole\counter\Counter::incr('monitor:pool:redis', $count);
             }
         },
     ],
@@ -15,7 +15,7 @@ return [
             $count = $event->getData('count');
 
             if (\App\components\Config::get('mysql.report_pool_change')) {
-                \App\components\utils\swoole\counter\Counter::incr('monitor:pool:mysql', $count);
+                \App\components\swoole\counter\Counter::incr('monitor:pool:mysql', $count);
             }
         },
     ],
@@ -24,7 +24,7 @@ return [
             $count = $event->getData('count');
 
             if (\App\components\Config::get('amqp.report_pool_change')) {
-                \App\components\utils\swoole\counter\Counter::incr('monitor:pool:amqp', $count);
+                \App\components\swoole\counter\Counter::incr('monitor:pool:amqp', $count);
             }
         },
     ],
@@ -33,7 +33,7 @@ return [
             $count = $event->getData('count');
 
             if (\App\components\Config::get('hbase.report_pool_change')) {
-                \App\components\utils\swoole\counter\Counter::incr('monitor:pool:hbase', $count);
+                \App\components\swoole\counter\Counter::incr('monitor:pool:hbase', $count);
             }
         },
     ],

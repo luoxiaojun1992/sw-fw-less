@@ -1,8 +1,8 @@
 <?php
 
-namespace App\components\utils\swoole\coresource;
+namespace App\components\swoole\coresource;
 
-use App\components\core\AbstractProvider;
+use App\components\provider\AbstractProvider;
 
 class CoroutineResProvider extends AbstractProvider
 {

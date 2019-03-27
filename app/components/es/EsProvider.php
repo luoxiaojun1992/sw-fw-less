@@ -2,8 +2,8 @@
 
 namespace App\components\es;
 
-use App\components\core\AbstractProvider;
-use App\components\core\RequestProvider;
+use App\components\provider\AbstractProvider;
+use App\components\provider\RequestProvider;
 
 class EsProvider extends AbstractProvider implements RequestProvider
 {

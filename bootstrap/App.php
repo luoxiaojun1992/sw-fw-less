@@ -59,7 +59,7 @@ class App
         \App\components\Config::init(require_once __DIR__ . '/../config/app.php');
 
         //Boot providers
-        \App\components\core\KernelProvider::bootApp();
+        \App\components\provider\KernelProvider::bootApp();
 
         //Route Config
         $this->httpRouteDispatcher = FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) {
@@ -161,7 +161,7 @@ class App
     public function swHttpWorkerStart($server, $id)
     {
         //Boot providers
-        \App\components\core\KernelProvider::bootRequest();
+        \App\components\provider\KernelProvider::bootRequest();
     }
 
     public function swHttpRequest(\Swoole\Http\Request $request, \Swoole\Http\Response $response)
@@ -241,7 +241,7 @@ class App
             $swResponse->end($swfResponse->getContent());
         }, $swfResponse);
 
-        \App\components\core\KernelProvider::shutdown();
+        \App\components\provider\KernelProvider::shutdown();
     }
 
     private function swResponseWithEvents($callback, \App\components\http\Response $swfResponse)

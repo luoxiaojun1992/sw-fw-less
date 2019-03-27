@@ -1,6 +1,6 @@
 <?php
 
-namespace App\components\core;
+namespace App\components\provider;
 
 abstract class AbstractProvider implements ProviderContract
 {

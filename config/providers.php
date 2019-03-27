@@ -6,7 +6,7 @@ return [
 
     //App Providers
     \App\components\datetime\DatetimeProvider::class,
-    \App\components\utils\swoole\counter\CounterProvider::class,
+    \App\components\swoole\counter\CounterProvider::class,
     \App\components\event\EventProvider::class,
 
     //Request Providers
@@ -22,5 +22,5 @@ return [
     \App\components\di\ContainerProvider::class,
 
     //Shutdown Providers
-    \App\components\utils\swoole\coresource\CoroutineResProvider::class,
+    \App\components\swoole\coresource\CoroutineResProvider::class,
 ];

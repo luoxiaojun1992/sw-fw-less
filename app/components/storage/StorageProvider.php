@@ -2,8 +2,8 @@
 
 namespace App\components\storage;
 
-use App\components\core\AbstractProvider;
-use App\components\core\RequestProvider;
+use App\components\provider\AbstractProvider;
+use App\components\provider\RequestProvider;
 
 class StorageProvider extends AbstractProvider implements RequestProvider
 {

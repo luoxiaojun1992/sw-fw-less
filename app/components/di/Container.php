@@ -2,28 +2,16 @@
 
 namespace App\components\di;
 
+use App\components\traits\Singleton;
 use App\facades\File;
 use DI\ContainerBuilder;
 
 class Container
 {
-    private static $instance;
+    use Singleton;
 
     /** @var \DI\Container  */
     private $diContainer;
-
-    /**
-     * @return Container
-     * @throws \Exception
-     */
-    public static function create()
-    {
-        if (self::$instance instanceof self) {
-            return self::$instance;
-        }
-
-        return self::$instance = new self();
-    }
 
     /**
      * Container constructor.

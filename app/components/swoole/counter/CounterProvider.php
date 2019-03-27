@@ -1,9 +1,9 @@
 <?php
 
-namespace App\components\utils\swoole\counter;
+namespace App\components\swoole\counter;
 
-use App\components\core\AbstractProvider;
-use App\components\core\AppProvider;
+use App\components\provider\AbstractProvider;
+use App\components\provider\AppProvider;
 
 class CounterProvider extends AbstractProvider implements AppProvider
 {

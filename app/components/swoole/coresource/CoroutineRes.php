@@ -1,6 +1,6 @@
 <?php
 
-namespace App\components\utils\swoole\coresource;
+namespace App\components\swoole\coresource;
 
 use Swoole\Coroutine;
 

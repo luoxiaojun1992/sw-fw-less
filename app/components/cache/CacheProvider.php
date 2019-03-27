@@ -2,8 +2,8 @@
 
 namespace App\components\cache;
 
-use App\components\core\AbstractProvider;
-use App\components\core\RequestProvider;
+use App\components\provider\AbstractProvider;
+use App\components\provider\RequestProvider;
 
 class CacheProvider extends AbstractProvider implements RequestProvider
 {

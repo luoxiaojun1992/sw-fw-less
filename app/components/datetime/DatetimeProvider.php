@@ -2,8 +2,8 @@
 
 namespace App\components\datetime;
 
-use App\components\core\AbstractProvider;
-use App\components\core\AppProvider;
+use App\components\provider\AbstractProvider;
+use App\components\provider\AppProvider;
 
 class DatetimeProvider extends AbstractProvider implements AppProvider
 {

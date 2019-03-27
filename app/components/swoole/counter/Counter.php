@@ -1,6 +1,6 @@
 <?php
 
-namespace App\components\utils\swoole\counter;
+namespace App\components\swoole\counter;
 
 use Swoole\Table;
 
