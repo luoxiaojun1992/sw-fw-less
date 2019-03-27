@@ -6,6 +6,7 @@
         "php": ">=7.1",
         "ext-json": "*",
         "ext-redis": "*",
+        "ext-pdo": "*",
         "apache/thrift": "0.11.0",
         "aura/sqlquery": "^2",
         "cakephp/event": "3.7.1",
