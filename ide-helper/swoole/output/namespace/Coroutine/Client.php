@@ -9,6 +9,7 @@ class Client
     const MSG_WAITALL = 64;
 
     public $errCode;
+    public $errMsg;
     public $sock;
     public $type;
     public $setting;
@@ -116,11 +117,6 @@ class Client
      * @return mixed
      */
     public function close(){}
-
-    /**
-     * @return mixed
-     */
-    public function getSocket(){}
 
 
 }

@@ -110,13 +110,13 @@ class CoroutineSocketIO extends AbstractIO
         }
         $res = '';
         $read = 0;
-        $buf = $this->sock->recv($n, $this->read_timeout);
+        $buf = $this->sock->recvAll($n, $this->read_timeout);
         $res .= $buf;
         $read += mb_strlen($buf, 'ASCII');
         while ($read < $n && $buf !== '' && $buf !== false) {
             $this->check_heartbeat();
 
-            $buf = $this->sock->recv($n - $read, $this->read_timeout);
+            $buf = $this->sock->recvAll($n - $read, $this->read_timeout);
             $res .= $buf;
             $read += mb_strlen($buf, 'ASCII');
         }
@@ -151,7 +151,7 @@ class CoroutineSocketIO extends AbstractIO
                 throw new AMQPSocketException('Socket was null!');
             }
 
-            $sent = $this->sock->send($data, $this->send_timeout);
+            $sent = $this->sock->sendAll($data, $this->send_timeout);
             if ($sent === false) {
                 throw new AMQPIOException(sprintf(
                     'Error sending data. Last SocketError: %s',

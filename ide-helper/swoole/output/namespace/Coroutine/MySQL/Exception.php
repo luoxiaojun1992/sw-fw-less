@@ -1,7 +1,7 @@
 <?php
 namespace Swoole\Coroutine\MySQL;
 
-class Exception extends \Exception
+class Exception extends \Swoole\Exception
 {
 
     protected $message;

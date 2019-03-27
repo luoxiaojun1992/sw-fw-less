@@ -17,4 +17,5 @@ return [
     'heartbeat' => envInt('AMQP_HEARTBEAT', 0),
     'pool_change_event' => envInt('AMQP_POOL_CHANGE_EVENT', 0),
     'report_pool_change' => envInt('AMQP_REPORT_POOL_CHANGE', 0),
+    'socket_driver' => env('AMQP_SOCKET_DRIVER', \App\components\amqp\CoroutineSocketIO::class),
 ];

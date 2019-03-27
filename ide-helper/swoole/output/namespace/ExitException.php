@@ -1,7 +1,7 @@
 <?php
 namespace Swoole;
 
-class ExitException extends \Exception
+class ExitException extends \Swoole\Exception
 {
 
     protected $message;

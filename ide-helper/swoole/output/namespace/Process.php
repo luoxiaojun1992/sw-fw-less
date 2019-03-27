@@ -44,9 +44,10 @@ class Process
 
     /**
      * @param $usec[required]
+     * @param $type[optional]
      * @return mixed
      */
-    public static function alarm($usec){}
+    public static function alarm($usec, $type=null){}
 
     /**
      * @param $pid[required]
@@ -77,9 +78,10 @@ class Process
     /**
      * @param $key[optional]
      * @param $mode[optional]
+     * @param $capacity[optional]
      * @return mixed
      */
-    public function useQueue($key=null, $mode=null){}
+    public function useQueue($key=null, $mode=null, $capacity=null){}
 
     /**
      * @return mixed
@@ -137,6 +139,11 @@ class Process
      * @return mixed
      */
     public function exec($exec_file, $args){}
+
+    /**
+     * @return mixed
+     */
+    public function exportSocket(){}
 
     /**
      * @param $process_name[required]

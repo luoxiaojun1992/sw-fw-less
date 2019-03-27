@@ -4,11 +4,12 @@ namespace Swoole\Coroutine;
 class Redis
 {
 
-    public $setting;
     public $host;
     public $port;
+    public $setting;
     public $sock;
     public $connected;
+    public $errType;
     public $errCode;
     public $errMsg;
 
@@ -25,21 +26,43 @@ class Redis
 
     /**
      * @param $host[required]
-     * @param $port[required]
+     * @param $port[optional]
      * @param $serialize[optional]
      * @return mixed
      */
-    public function connect($host, $port, $serialize=null){}
+    public function connect($host, $port=null, $serialize=null){}
 
     /**
      * @return mixed
      */
-    public function setDefer(){}
+    public function getAuth(){}
+
+    /**
+     * @return mixed
+     */
+    public function getDBNum(){}
+
+    /**
+     * @return mixed
+     */
+    public function getOptions(){}
+
+    /**
+     * @param $options[required]
+     * @return mixed
+     */
+    public function setOptions($options){}
 
     /**
      * @return mixed
      */
     public function getDefer(){}
+
+    /**
+     * @param $defer[required]
+     * @return mixed
+     */
+    public function setDefer($defer){}
 
     /**
      * @return mixed
@@ -1053,6 +1076,18 @@ class Redis
      * @return mixed
      */
     public function subscribe($channels){}
+
+    /**
+     * @param $channels[required]
+     * @return mixed
+     */
+    public function unsubscribe($channels){}
+
+    /**
+     * @param $patterns[required]
+     * @return mixed
+     */
+    public function pUnSubscribe($patterns){}
 
     /**
      * @return mixed

@@ -4,23 +4,6 @@ namespace Swoole\Http;
 class Server extends \Swoole\Server
 {
 
-    public $onConnect;
-    public $onReceive;
-    public $onClose;
-    public $onPacket;
-    public $onBufferFull;
-    public $onBufferEmpty;
-    public $onStart;
-    public $onShutdown;
-    public $onWorkerStart;
-    public $onWorkerStop;
-    public $onWorkerExit;
-    public $onWorkerError;
-    public $onTask;
-    public $onFinish;
-    public $onManagerStart;
-    public $onManagerStop;
-    public $onPipeMessage;
     public $connections;
     public $host;
     public $port;
@@ -74,6 +57,12 @@ class Server extends \Swoole\Server
     public function on($event_name, $callback){}
 
     /**
+     * @param $event_name[required]
+     * @return mixed
+     */
+    public function getCallback($event_name){}
+
+    /**
      * @param $settings[required]
      * @return mixed
      */
@@ -107,6 +96,12 @@ class Server extends \Swoole\Server
      * @return mixed
      */
     public function sendwait($conn_fd, $send_data){}
+
+    /**
+     * @param $fd[required]
+     * @return mixed
+     */
+    public function exists($fd){}
 
     /**
      * @param $fd[required]
@@ -290,12 +285,6 @@ class Server extends \Swoole\Server
      * @return mixed
      */
     public function stats(){}
-
-    /**
-     * @param $port[optional]
-     * @return mixed
-     */
-    public function getSocket($port=null){}
 
     /**
      * @param $fd[required]

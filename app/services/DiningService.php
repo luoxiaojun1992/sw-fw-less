@@ -6,6 +6,15 @@ use App\components\http\Response;
 use Lcobucci\JWT\Builder;
 use Lcobucci\JWT\Signer\Hmac\Sha256;
 
+/**
+ * Class DiningService
+ *
+ * {@inheritdoc}
+ *
+ * demo service for my demo app
+ *
+ * @package App\services
+ */
 class DiningService extends BaseService
 {
     public function menu()
@@ -157,8 +166,6 @@ class DiningService extends BaseService
                     ->set('id', 1) // Configures a new claim, called "uid"
                     ->sign($signer, 'testing') // creates a signature using "testing" as key
                     ->getToken(); // Retrieves the generated token
-
-                var_dump((string)$token);
 
                 return Response::json(['data' => ['token' => (string)$token], 'code' => 0, 'msg' => 'ok']);
             }

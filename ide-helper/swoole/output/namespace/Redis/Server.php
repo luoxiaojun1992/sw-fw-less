@@ -11,23 +11,6 @@ class Server extends \Swoole\Server
     const SET = 5;
     const MAP = 6;
 
-    public $onConnect;
-    public $onReceive;
-    public $onClose;
-    public $onPacket;
-    public $onBufferFull;
-    public $onBufferEmpty;
-    public $onStart;
-    public $onShutdown;
-    public $onWorkerStart;
-    public $onWorkerStop;
-    public $onWorkerExit;
-    public $onWorkerError;
-    public $onTask;
-    public $onFinish;
-    public $onManagerStart;
-    public $onManagerStop;
-    public $onPipeMessage;
     public $setting;
     public $connections;
     public $host;
@@ -49,11 +32,15 @@ class Server extends \Swoole\Server
     /**
      * @param $command[required]
      * @param $callback[required]
-     * @param $number_of_string_param[optional]
-     * @param $type_of_array_param[optional]
      * @return mixed
      */
-    public function setHandler($command, $callback, $number_of_string_param=null, $type_of_array_param=null){}
+    public function setHandler($command, $callback){}
+
+    /**
+     * @param $command[required]
+     * @return mixed
+     */
+    public function getHandler($command){}
 
     /**
      * @param $type[required]
@@ -100,6 +87,12 @@ class Server extends \Swoole\Server
     public function on($event_name, $callback){}
 
     /**
+     * @param $event_name[required]
+     * @return mixed
+     */
+    public function getCallback($event_name){}
+
+    /**
      * @param $settings[required]
      * @return mixed
      */
@@ -128,6 +121,12 @@ class Server extends \Swoole\Server
      * @return mixed
      */
     public function sendwait($conn_fd, $send_data){}
+
+    /**
+     * @param $fd[required]
+     * @return mixed
+     */
+    public function exists($fd){}
 
     /**
      * @param $fd[required]
@@ -311,12 +310,6 @@ class Server extends \Swoole\Server
      * @return mixed
      */
     public function stats(){}
-
-    /**
-     * @param $port[optional]
-     * @return mixed
-     */
-    public function getSocket($port=null){}
 
     /**
      * @param $fd[required]

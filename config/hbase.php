@@ -9,4 +9,5 @@ return [
     'write_timeout' => envInt('HBASE_WRITE_TIMEOUT', 5000),
     'pool_change_event' => envInt('HBASE_POOL_CHANGE_EVENT', 0),
     'report_pool_change' => envInt('HBASE_REPORT_POOL_CHANGE', 0),
+    'socket_driver' => env('HBASE_SOCKET_DRIVER', \App\components\thrift\TCoroutineSocket::class),
 ];

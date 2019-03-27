@@ -9,6 +9,7 @@ use Cake\Event\Event as CakeEvent;
 use Hbase\HbaseClient;
 use Thrift\Protocol\TBinaryProtocol;
 use Thrift\Transport\TBufferedTransport;
+use Thrift\Transport\TSocket;
 
 class HbasePool
 {
@@ -123,7 +124,9 @@ class HbasePool
         require_once File::path('/app/components/hbase/thrift/Hbase.php');
         require_once File::path('/app/components/hbase/thrift/Types.php');
 
-        $socket = new TCoroutineSocket($this->config['host'], $this->config['port']);
+        $socketClass = $this->config['socket_driver'];
+        /** @var TSocket $socket */
+        $socket = new $socketClass($this->config['host'], $this->config['port']);
         $socket->setSendTimeout($this->config['write_timeout']);
         $socket->setRecvTimeout($this->config['read_timeout']);
 

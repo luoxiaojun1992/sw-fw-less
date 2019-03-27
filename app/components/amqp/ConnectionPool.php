@@ -41,7 +41,9 @@ class ConnectionPool
     {
         $this->config = Config::get('amqp');
 
-        class_alias(CoroutineSocketIO::class, SocketIO::class);
+        if ($this->config['socket_driver'] != SocketIO::class) {
+            class_alias(CoroutineSocketIO::class, SocketIO::class);
+        }
 
         $poolSize = $this->config['pool_size'];
         for ($i = 0; $i < $poolSize; ++$i) {

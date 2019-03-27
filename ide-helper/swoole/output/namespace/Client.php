@@ -159,10 +159,5 @@ class Client
      */
     public function on($event_name, $callback){}
 
-    /**
-     * @return mixed
-     */
-    public function getSocket(){}
-
 
 }

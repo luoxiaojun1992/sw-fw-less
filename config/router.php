@@ -13,6 +13,7 @@ return [
         ['GET', '/alioss', [\App\services\DemoService::class, 'alioss']],
         ['GET', '/hbase', [\App\services\DemoService::class, 'hbase']],
         ['GET', '/cache', [\App\services\DemoService::class, 'cache']],
+        ['GET', '/jwt', [\App\services\DemoService::class, 'jwt']],
     ],
     'group' => [
         '/dining' => [

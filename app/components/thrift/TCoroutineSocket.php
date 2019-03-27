@@ -266,7 +266,7 @@ class TCoroutineSocket extends TTransport
             throw new TTransportException('TSocket: handle_ was null!');
         }
 
-        $data = $this->handle_->recv($len, $this->recvTimeoutSec_ + ($this->recvTimeoutUsec_ / 1000000));
+        $data = $this->handle_->recvAll($len, $this->recvTimeoutSec_ + ($this->recvTimeoutUsec_ / 1000000));
         if ($data === false) {
             throw new TTransportException('TSocket: Could not read '.$len.' bytes from '.
                 $this->host_.':'.$this->port_);
@@ -292,7 +292,7 @@ class TCoroutineSocket extends TTransport
 
         // keep writing until all the data has been written
         while (TStringFuncFactory::create()->strlen($buf) > 0) {
-            $written = $this->handle_->send($buf, $this->sendTimeoutSec_ + ($this->sendTimeoutUsec_ / 1000000));
+            $written = $this->handle_->sendAll($buf, $this->sendTimeoutSec_ + ($this->sendTimeoutUsec_ / 1000000));
             if ($written === -1 || $written === false) {
                 throw new TTransportException('TSocket: Could not write '.TStringFuncFactory::create()->strlen($buf).' bytes '.
                     $this->host_.':'.$this->port_);
