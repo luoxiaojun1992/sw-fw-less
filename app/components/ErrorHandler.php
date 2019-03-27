@@ -3,14 +3,24 @@
 namespace App\components;
 
 use App\components\http\Response;
+use App\exceptions\HttpException;
 
 class ErrorHandler
 {
     public static function handle(\Throwable $e)
     {
-        $statusCode = !is_string($e->getCode()) && $e->getCode() ? $e->getCode() : 500;
+        if ($e instanceof HttpException) {
+            $statusCode = $e->getCode();
+        } else {
+            $statusCode = 500;
+        }
         $errMsg = $e->getMessage() . PHP_EOL . $e->getTraceAsString();
         \App\facades\Log::err($errMsg);
-        return Response::output($errMsg, $statusCode);
+        return Response::output(static::formatErrMsg($errMsg), $statusCode);
+    }
+
+    public static function formatErrMsg($errMsg)
+    {
+        return nl2br($errMsg);
     }
 }

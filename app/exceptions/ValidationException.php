@@ -3,13 +3,12 @@
 namespace App\exceptions;
 
 use App\components\Helper;
-use Throwable;
 
-class ValidationException extends \RuntimeException
+class ValidationException extends HttpException
 {
     private $errors = [];
 
-    public function __construct(array $errors = [], int $code = 0, Throwable $previous = null)
+    public function __construct($errors = [], int $code = 400, \Throwable $previous = null)
     {
         parent::__construct(Helper::jsonEncode($this->errors = $errors), $code, $previous);
     }

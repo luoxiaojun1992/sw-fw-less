@@ -5,6 +5,7 @@ namespace App\services;
 use App\components\Helper;
 use App\components\http\Client;
 use App\components\http\Response;
+use App\exceptions\ValidationException;
 use App\facades\Cache;
 use App\facades\HbasePool;
 use App\models\Member;
@@ -160,6 +161,8 @@ class DemoService extends BaseService
 
     public function cache()
     {
+        throw new ValidationException(['foo' => 'bar']);
+
         Cache::set('foo', 'bar', 10);
         return Response::output(Cache::get('foo'));
     }
