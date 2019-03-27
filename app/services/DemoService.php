@@ -161,8 +161,6 @@ class DemoService extends BaseService
 
     public function cache()
     {
-        throw new ValidationException(['foo' => 'bar']);
-
         Cache::set('foo', 'bar', 10);
         return Response::output(Cache::get('foo'));
     }

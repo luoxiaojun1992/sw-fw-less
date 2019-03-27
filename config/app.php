@@ -53,6 +53,13 @@ $config = [
         'watch_suffixes' => ['.php', '.env'],
         'driver' => env('HOT_RELOAD_DRIVER', \Kwf\FileWatcher\Watcher::class), //HuangYi\Watcher\Watcher::class is another choice
     ],
+
+    //Error handler
+    'error_handler' => [
+        'err_formatter' => function ($errMsg) {
+            return nl2br($errMsg);
+        },
+    ],
 ];
 
 $fd = opendir(__DIR__);

@@ -51,7 +51,7 @@ abstract class AbstractMysqlModel extends AbstractModel
      */
     public function save($force = false)
     {
-        if ($this->fireEvent('saving')->getResult() === false) {
+        if ($this->fireEvent('saving')->isStopped()) {
             return false;
         }
 
@@ -64,7 +64,7 @@ abstract class AbstractMysqlModel extends AbstractModel
 
     protected function performInsert()
     {
-        if ($this->fireEvent('creating')->getResult() === false) {
+        if ($this->fireEvent('creating')->isStopped()) {
             return false;
         }
 
@@ -89,7 +89,7 @@ abstract class AbstractMysqlModel extends AbstractModel
 
     protected function performUpdate($force = false)
     {
-        if ($this->fireEvent('updating')->getResult() === false) {
+        if ($this->fireEvent('updating')->isStopped()) {
             return false;
         }
 
@@ -125,7 +125,7 @@ abstract class AbstractMysqlModel extends AbstractModel
      */
     public function del()
     {
-        if ($this->fireEvent('deleting')->getResult() === false) {
+        if ($this->fireEvent('deleting')->isStopped()) {
             return false;
         }
 
