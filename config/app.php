@@ -56,8 +56,8 @@ $config = [
 
     //Error handler
     'error_handler' => [
-        'err_formatter' => function ($errMsg) {
-            return nl2br($errMsg);
+        'err_formatter' => function (\Throwable $e) {
+            return nl2br($e->getMessage() . PHP_EOL . $e->getTraceAsString());
         },
     ],
 ];
