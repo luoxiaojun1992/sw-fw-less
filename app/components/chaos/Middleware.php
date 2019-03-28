@@ -41,6 +41,8 @@ class Middleware extends AbstractMiddleware
                     $faultData['status'],
                     $faultData['headers']
                 );
+            default:
+                return null;
         }
     }
 }
