@@ -17,6 +17,7 @@ Swoole http server without framework
 11. Monitor
 12. AMQP-0-9-1
 13. Zipkin Trace
+14. Dynamic Fault Injection
 
 >## Requirements
 * PHP 7.1+
