@@ -93,8 +93,28 @@ class App
                 });
             }
             if (config('monitor.switch')) {
-                $r->addRoute('GET', '/monitor/pool', ['/monitor/pool', \App\services\internals\MonitorService::class, 'pool']);
-                $r->addRoute('GET', '/log/flush', ['/log/flush', \App\services\internals\LogService::class, 'flush']);
+                $r->addGroup('/internal', function (FastRoute\RouteCollector $r) {
+                    $r->addRoute(
+                        'GET',
+                        '/monitor/pool',
+                        ['/internal/monitor/pool', \App\services\internals\MonitorService::class, 'pool']
+                    );
+                    $r->addRoute(
+                        'GET',
+                        '/log/flush',
+                        ['/internal/log/flush', \App\services\internals\LogService::class, 'flush']
+                    );
+                    $r->addRoute(
+                        'POST',
+                        '/chaos/fault/{id}',
+                        ['/internal/chaos/fault/{id}', \App\services\internals\ChaosService::class, 'injectFault']
+                    );
+                    $r->addRoute(
+                        'GET',
+                        '/chaos/fault/{id}',
+                        ['/internal/chaos/fault/{id}', \App\services\internals\ChaosService::class, 'fetchFault']
+                    );
+                });
             }
         });
     }

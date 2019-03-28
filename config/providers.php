@@ -7,6 +7,7 @@ return [
     //App Providers
     \App\components\datetime\DatetimeProvider::class,
     \App\components\swoole\counter\CounterProvider::class,
+    \App\components\chaos\ChaosProvider::class,
     \App\components\event\EventProvider::class,
 
     //Request Providers
