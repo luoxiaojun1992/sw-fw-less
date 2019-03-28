@@ -16,24 +16,31 @@ class Middleware extends AbstractMiddleware
             if ($fault) {
                 $faultData = json_decode($fault, true);
                 if (!json_last_error()) {
-                    switch ($faultData['type']) {
-                        case 'exception':
-                            $exceptionClass = $faultData['class'];
-                            throw new $exceptionClass(
-                                $faultData['msg'],
-                                $faultData['code']
-                            );
-                        case 'response':
-                            return Response::output(
-                                $faultData['content'],
-                                $faultData['status'],
-                                $faultData['headers']
-                            );
+                    if (($faultResponse = $this->emulateFault($faultData)) instanceof Response) {
+                        return $faultResponse;
                     }
                 }
             }
         }
 
         return $this->next();
+    }
+
+    private function emulateFault($faultData)
+    {
+        switch ($faultData['type']) {
+            case 'exception':
+                $exceptionClass = $faultData['class'];
+                throw new $exceptionClass(
+                    $faultData['msg'],
+                    $faultData['code']
+                );
+            case 'response':
+                return Response::output(
+                    $faultData['content'],
+                    $faultData['status'],
+                    $faultData['headers']
+                );
+        }
     }
 }
