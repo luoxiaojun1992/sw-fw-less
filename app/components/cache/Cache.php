@@ -74,14 +74,23 @@ end
 return resSet
 EOF;
                 return $redis->eval($lua, [$key, $key . ':ttl', $value, $ttl], 2);
+            } else {
+                $lua = <<<EOF
+local resSet = redis.call('set', KEYS[1], ARGV[1]);
+if(resSet) then
+local resExp = redis.call('set', KEYS[2], ARGV[2]);
+end
+return resSet
+EOF;
+                return $redis->eval($lua, [$key, $key . ':ttl', $value, 1], 2);
             }
-
-            return $redis->set($key, $value);
         } catch (\Throwable $e) {
             throw $e;
         } finally {
             $this->redisPool->release($redis);
         }
+
+        return false;
     }
 
     /**
@@ -96,7 +105,6 @@ EOF;
 
         try {
             if ($redis->get($key . ':ttl') === false) {
-                //todo config ttl
                 if (RedLock::lock('lock:update:cache:' . $key, $this->config['update_lock_ttl'])) {
                     if ($redis->get($key . ':ttl') === false) {
                         return false;
