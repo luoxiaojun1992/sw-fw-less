@@ -18,6 +18,7 @@ Swoole http server without framework
 12. AMQP-0-9-1
 13. Zipkin Trace
 14. Dynamic Fault Injection
+15. Hot Reload(biz code、config、router)
 
 >## Requirements
 * PHP 7.1+
