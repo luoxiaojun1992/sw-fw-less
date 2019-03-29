@@ -55,29 +55,8 @@ class App
         }
     }
 
-    /**
-     * @throws \Exception
-     */
-    private function bootstrap()
+    private function loadRouter()
     {
-        $this->checkEnvironment();
-
-        require_once __DIR__ . '/../app/components/functions.php';
-
-        \Swoole\Runtime::enableCoroutine();
-
-        //Dot Env
-        if (file_exists(__DIR__ . '/../.env')) {
-            (new Dotenv\Dotenv(__DIR__ . '/../'))->load();
-        }
-
-        //Init Config
-        \App\components\Config::init(require_once __DIR__ . '/../config/app.php');
-
-        //Boot providers
-        \App\components\provider\KernelProvider::bootApp();
-
-        //Route Config
         $this->httpRouteDispatcher = FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) {
             $routerConfig = config('router');
             foreach ($routerConfig['single'] as $router) {
@@ -117,6 +96,29 @@ class App
                 });
             }
         });
+    }
+
+    /**
+     * @throws \Exception
+     */
+    private function bootstrap()
+    {
+        $this->checkEnvironment();
+
+        require_once __DIR__ . '/../app/components/functions.php';
+
+        \Swoole\Runtime::enableCoroutine();
+
+        //Load Env
+        if (file_exists(__DIR__ . '/../.env')) {
+            (new Dotenv\Dotenv(__DIR__ . '/../'))->load();
+        }
+
+        //Init Config
+        \App\components\Config::init(require_once __DIR__ . '/../config/app.php');
+
+        //Boot providers
+        \App\components\provider\KernelProvider::bootApp();
     }
 
     /**
@@ -196,6 +198,16 @@ class App
      */
     public function swHttpWorkerStart($server, $id)
     {
+        //Overload Env
+        if (file_exists(__DIR__ . '/../.env')) {
+            (new Dotenv\Dotenv(__DIR__ . '/../'))->overload();
+        }
+
+        //Init Config
+        \App\components\Config::init(require __DIR__ . '/../config/app.php');
+
+        $this->loadRouter();
+
         //Boot providers
         \App\components\provider\KernelProvider::bootRequest();
     }

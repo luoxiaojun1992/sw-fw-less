@@ -13,8 +13,12 @@ use Cake\Event\EventManager;
  */
 class Event extends AbstractFacade
 {
+    /**
+     * @return \App\components\event\Event|null
+     * @throws \Exception
+     */
     protected static function getAccessor()
     {
-        return EventManager::instance();
+        return \App\components\event\Event::create();
     }
 }

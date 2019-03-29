@@ -67,9 +67,9 @@ while($file = readdir($fd)) {
     if (!in_array($file, ['.', '..', 'app.php'])) {
         $configName = substr($file, 0, -4);
         if (isset($config[$configName])) {
-            $config[$configName] = array_merge($config[$configName], require_once __DIR__ . '/' . $file);
+            $config[$configName] = array_merge($config[$configName], require __DIR__ . '/' . $file);
         } else {
-            $config[$configName] = require_once __DIR__ . '/' . $file;
+            $config[$configName] = require __DIR__ . '/' . $file;
         }
     }
 }

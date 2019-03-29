@@ -7,14 +7,13 @@ use App\components\provider\AppProvider;
 
 class EventProvider extends AbstractProvider implements AppProvider
 {
+    /**
+     * @throws \Exception
+     */
     public static function bootApp()
     {
         parent::bootApp();
 
-        foreach (config('events') as $eventName => $eventListeners) {
-            foreach ($eventListeners as $eventListener) {
-                \App\facades\Event::on($eventName, [], $eventListener);
-            }
-        }
+        Event::create();
     }
 }
