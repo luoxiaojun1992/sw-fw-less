@@ -25,14 +25,14 @@ class Counter
         }
     }
 
-    public static function incr($key, $incrby = 1)
+    public static function incr($key, $incrBy = 1)
     {
-        self::$swTable->incr($key, 'count', $incrby);
+        self::$swTable->incr($key, 'count', $incrBy);
     }
 
-    public static function decr($key, $decrby = 1)
+    public static function decr($key, $decrBy = 1)
     {
-        self::$swTable->decr($key, 'count', $decrby);
+        self::$swTable->decr($key, 'count', $decrBy);
     }
 
     public static function set($key, $count)
