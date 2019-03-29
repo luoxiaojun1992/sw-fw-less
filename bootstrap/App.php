@@ -208,6 +208,9 @@ class App
 
         $this->loadRouter();
 
+        //Inject Swoole Server
+        \App\facades\Container::set('swoole.server', $server);
+
         //Boot providers
         \App\components\provider\KernelProvider::bootRequest();
     }
@@ -325,8 +328,6 @@ class App
                 config('hot_reload.excluded_dirs'),
                 config('hot_reload.watch_suffixes')
             )->watch(\App\components\filewatcher\Watcher::EVENT_MODIFY, function ($event) use ($server) {
-                \App\components\swoole\counter\Counter::reload();
-
                 $server->reload();
             });
         });
