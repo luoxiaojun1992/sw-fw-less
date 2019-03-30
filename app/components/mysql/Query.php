@@ -2,7 +2,6 @@
 
 namespace App\components\mysql;
 
-use App\components\Helper;
 use App\facades\MysqlPool;
 use Aura\SqlQuery\QueryFactory;
 use Aura\SqlQuery\QueryInterface;
@@ -94,32 +93,6 @@ class Query
     }
 
     /**
-     * @param MysqlWrapper|\PDO $pdo
-     * @param int $mode
-     * @return mixed
-     */
-    private function doMysqlExecute($pdo, $mode = 0)
-    {
-        /** @var \PDOStatement $pdoStatement */
-        $pdoStatement = $pdo->prepare($this->auraQuery->getStatement());
-        if ($pdoStatement) {
-            $result = $pdoStatement->execute($this->auraQuery->getBindValues());
-            switch ($mode) {
-                case 0:
-                    return $result ? $pdoStatement->fetch(\PDO::FETCH_ASSOC) : [];
-                case 1:
-                    return $result ? $pdoStatement->fetchAll(\PDO::FETCH_ASSOC) : [];
-                case 2:
-                    $res = $result ? $pdoStatement->rowCount() : 0;
-                    $this->lastInsertId = $pdo->lastInsertId();
-                    return $res;
-            }
-        }
-
-        return null;
-    }
-
-    /**
      * @param MysqlWrapper|null|\PDO $pdo
      * @param $mode
      * @return mixed
@@ -130,17 +103,28 @@ class Query
             $this->needRelease = false;
         }
 
-        $doMethod = 'doMysqlExecute';
-
         try {
+            /** @var MysqlWrapper|\PDO $pdo $pdo */
             $pdo = $pdo ?: MysqlPool::pick();
-            return call_user_func_array([$this, $doMethod], [$pdo, $mode]);
-        } catch (\PDOException $e) {
-            if ($pdo && !$pdo->inTransaction() && Helper::causedByLostConnection($e)) {
-                $pdo = $this->handleMysqlExecuteException($pdo, $e);
-                return call_user_func_array([$this, $doMethod], [$pdo, $mode]);
+
+            /** @var \PDOStatement $pdoStatement */
+            $pdoStatement = $pdo->prepare($this->auraQuery->getStatement());
+            if ($pdoStatement) {
+                $result = $pdoStatement->execute($this->auraQuery->getBindValues());
+                switch ($mode) {
+                    case 0:
+                        return $result ? $pdoStatement->fetch(\PDO::FETCH_ASSOC) : [];
+                    case 1:
+                        return $result ? $pdoStatement->fetchAll(\PDO::FETCH_ASSOC) : [];
+                    case 2:
+                        $res = $result ? $pdoStatement->rowCount() : 0;
+                        $this->lastInsertId = $pdo->lastInsertId();
+                        return $res;
+                }
             }
 
+            return null;
+        } catch (\PDOException $e) {
             throw $e;
         } finally {
             $this->releasePDO($pdo);
@@ -243,19 +227,5 @@ class Query
     public function getLastInsertId()
     {
         return $this->getLastInsertId();
-    }
-
-    /**
-     * @param MysqlWrapper|\PDO $pdo
-     * @param \PDOException $e
-     * @return MysqlWrapper
-     */
-    private function handleMysqlExecuteException($pdo, \PDOException $e)
-    {
-        if (!$pdo->inTransaction() && Helper::causedByLostConnection($e)) {
-            $pdo = MysqlPool::getConnect();
-        }
-
-        return $pdo;
     }
 }

@@ -2,6 +2,8 @@
 
 namespace App\components\mysql;
 
+use App\components\Helper;
+
 class MysqlWrapper
 {
     /** @var \PDO */
@@ -49,12 +51,41 @@ class MysqlWrapper
      * @param $arguments
      * @return mixed
      */
+    private function callPdo($name, $arguments)
+    {
+        return call_user_func_array([$this->pdo, $name], $arguments);
+    }
+
+    /**
+     * @param $name
+     * @param $arguments
+     * @return mixed
+     */
     public function __call($name, $arguments)
     {
         if (method_exists($this->pdo, $name)) {
-            return call_user_func_array([$this->pdo, $name], $arguments);
+            try {
+                return $this->callPdo($name, $arguments);
+            } catch (\PDOException $e) {
+                if (!$this->pdo->inTransaction() && Helper::causedByLostConnection($e)) {
+                    $this->handleMysqlExecuteException($e);
+                    return $this->callPdo($name, $arguments);
+                }
+
+                throw $e;
+            }
         }
 
         return null;
+    }
+
+    /**
+     * @param \PDOException $e
+     */
+    private function handleMysqlExecuteException(\PDOException $e)
+    {
+        if (!$this->pdo->inTransaction() && Helper::causedByLostConnection($e)) {
+            $this->setPDO(\App\facades\MysqlPool::getConnect(false)->getPDO());
+        }
     }
 }
