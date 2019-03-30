@@ -5,10 +5,10 @@ $providers = [
     \App\components\swoole\counter\CounterProvider::class,
 
     //App Providers
-    \App\components\datetime\DatetimeProvider::class,
     \App\components\chaos\ChaosProvider::class,
 
     //Request Providers
+    \App\components\datetime\DatetimeProvider::class,
     \App\components\event\EventProvider::class,
     \App\components\log\LogProvider::class,
     \App\components\redis\RedisProvider::class,

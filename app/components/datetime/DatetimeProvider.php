@@ -3,13 +3,13 @@
 namespace App\components\datetime;
 
 use App\components\provider\AbstractProvider;
-use App\components\provider\AppProvider;
+use App\components\provider\RequestProvider;
 
-class DatetimeProvider extends AbstractProvider implements AppProvider
+class DatetimeProvider extends AbstractProvider implements RequestProvider
 {
-    public static function bootApp()
+    public static function bootRequest()
     {
-        parent::bootApp();
+        parent::bootRequest();
 
         $timezone = config('timezone');
         if (date_default_timezone_get() != $timezone) {
