@@ -11,9 +11,9 @@ use App\components\provider\RequestProvider;
  */
 class ContainerProvider extends AbstractProvider implements RequestProvider
 {
-    public static function bootApp()
+    public static function bootRequest()
     {
-        parent::bootApp();
+        parent::bootRequest();
 
         Container::create();
     }
