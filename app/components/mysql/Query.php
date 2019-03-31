@@ -17,58 +17,71 @@ class Query
 
     private $db;
 
+    private $connectionName;
+
     private $needRelease = true;
 
     private $lastInsertId;
 
     /**
-     * @param $db
+     * @param string $db
+     * @param string $connectionName
      * @return QueryFactory|Query
      */
-    public static function create($db = 'mysql')
+    public static function create($db = 'mysql', $connectionName = null)
     {
-        return new static($db);
+        return new static($db, $connectionName);
     }
 
     /**
      * @param string $db
+     * @param string $connectionName
      * @return \Aura\SqlQuery\Common\SelectInterface
      */
-    public static function select($db = 'mysql')
+    public static function select($db = 'mysql', $connectionName = null)
     {
-        return static::create($db)->newSelect();
+        return static::create($db, $connectionName)->newSelect();
     }
 
     /**
      * @param string $db
+     * @param string $connectionName
      * @return \Aura\SqlQuery\Common\UpdateInterface
      */
-    public static function update($db = 'mysql')
+    public static function update($db = 'mysql', $connectionName = null)
     {
-        return static::create($db)->newUpdate();
+        return static::create($db, $connectionName)->newUpdate();
     }
 
     /**
      * @param string $db
+     * @param string $connectionName
      * @return \Aura\SqlQuery\Common\InsertInterface
      */
-    public static function insert($db = 'mysql')
+    public static function insert($db = 'mysql', $connectionName = null)
     {
-        return static::create($db)->newInsert();
+        return static::create($db, $connectionName)->newInsert();
     }
 
     /**
      * @param string $db
+     * @param string $connectionName
      * @return \Aura\SqlQuery\Common\DeleteInterface
      */
-    public static function delete($db = 'mysql')
+    public static function delete($db = 'mysql', $connectionName = null)
     {
-        return static::create($db)->newDelete();
+        return static::create($db, $connectionName)->newDelete();
     }
 
-    public function __construct($db)
+    public function __construct($db, $connectionName)
     {
         $this->db = $db;
+
+        if (is_null($connectionName)) {
+            $connectionName = config($this->db . '.default');
+        }
+        $this->connectionName = $connectionName;
+
         $this->auraQuery = new QueryFactory($db);
     }
 
@@ -105,7 +118,7 @@ class Query
 
         try {
             /** @var MysqlWrapper|\PDO $pdo $pdo */
-            $pdo = $pdo ?: MysqlPool::pick();
+            $pdo = $pdo ?: MysqlPool::pick($this->connectionName);
 
             /** @var \PDOStatement $pdoStatement */
             $pdoStatement = $pdo->prepare($this->auraQuery->getStatement());

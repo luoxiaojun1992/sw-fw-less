@@ -27,7 +27,7 @@ class RedisPool
             return self::$instance;
         }
 
-        if (Config::get('redis.switch')) {
+        if ($redisConfig['switch']) {
             return self::$instance = new self($redisConfig);
         } else {
             return null;
@@ -78,7 +78,7 @@ class RedisPool
         if (!$redis) {
             $redis = $this->getConnect(false, $connectionName);
         } else {
-            if (config('redis.pool_change_event')) {
+            if ($this->config['pool_change_event']) {
                 event(
                     new CakeEvent(static::EVENT_REDIS_POOL_CHANGE,
                         null,
@@ -102,16 +102,12 @@ class RedisPool
                 try {
                     $redis->discard();
                 } catch (\RedisException $e) {
-                    if ($redis->isNeedRelease()) {
-                        $redis = $this->handleRollbackException($redis, $e);
-                    } else {
-                        throw $e;
-                    }
+                    $redis = $this->handleRollbackException($redis, $e);
                 }
             }
             if ($redis->isNeedRelease()) {
                 $this->redisPool[$redis->getConnectionName()][] = $redis;
-                if (Config::get('redis.pool_change_event')) {
+                if ($this->config['pool_change_event']) {
                     event(
                         new CakeEvent(static::EVENT_REDIS_POOL_CHANGE,
                             null,
@@ -145,6 +141,7 @@ class RedisPool
         if (!isset($this->config['connections'][$connectionName])) {
             return null;
         }
+
         $redis = new \Redis();
         $redis->connect(
             $this->config['connections'][$connectionName]['host'],
@@ -170,7 +167,9 @@ class RedisPool
     public function handleRollbackException($redis, \RedisException $e)
     {
         if (Helper::causedByLostConnection($e)) {
-            $redis = $this->getConnect(true, $redis->getConnectionName());
+            if ($redis->isNeedRelease()) {
+                $redis = $this->getConnect(true, $redis->getConnectionName());
+            }
         } else {
             throw $e;
         }

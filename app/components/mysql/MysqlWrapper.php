@@ -9,6 +9,7 @@ class MysqlWrapper
     /** @var \PDO */
     private $pdo;
     private $needRelease = true;
+    private $connectionName;
 
     /**
      * @return \PDO
@@ -43,6 +44,24 @@ class MysqlWrapper
     public function setNeedRelease($needRelease)
     {
         $this->needRelease = $needRelease;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getConnectionName()
+    {
+        return $this->connectionName;
+    }
+
+    /**
+     * @param mixed $connectionName
+     * @return $this
+     */
+    public function setConnectionName($connectionName)
+    {
+        $this->connectionName = $connectionName;
         return $this;
     }
 
@@ -85,7 +104,7 @@ class MysqlWrapper
     private function handleMysqlExecuteException(\PDOException $e)
     {
         if (!$this->pdo->inTransaction() && Helper::causedByLostConnection($e)) {
-            $this->setPDO(\App\facades\MysqlPool::getConnect(false)->getPDO());
+            $this->setPDO(\App\facades\MysqlPool::getConnect(false, $this->getConnectionName())->getPDO());
         }
     }
 }

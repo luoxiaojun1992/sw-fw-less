@@ -13,12 +13,14 @@ abstract class AbstractMysqlModel extends AbstractModel
 {
     protected static $table = '';
 
+    protected static $connectionName = null;
+
     /**
      * @return ModelQuery|QueryInterface|SelectInterface|InsertInterface|DeleteInterface|UpdateInterface
      */
     public static function select()
     {
-        return ModelQuery::select()->from(static::$table)->setModelClass(static::class);
+        return ModelQuery::select('mysql', static::$connectionName)->from(static::$table)->setModelClass(static::class);
     }
 
     /**
@@ -26,7 +28,7 @@ abstract class AbstractMysqlModel extends AbstractModel
      */
     public static function update()
     {
-        return ModelQuery::update()->table(static::$table)->setModelClass(static::class);
+        return ModelQuery::update('mysql', static::$connectionName)->table(static::$table)->setModelClass(static::class);
     }
 
     /**
@@ -34,7 +36,7 @@ abstract class AbstractMysqlModel extends AbstractModel
      */
     public static function insert()
     {
-        return ModelQuery::insert()->into(static::$table)->setModelClass(static::class);
+        return ModelQuery::insert('mysql', static::$connectionName)->into(static::$table)->setModelClass(static::class);
     }
 
     /**
@@ -42,7 +44,7 @@ abstract class AbstractMysqlModel extends AbstractModel
      */
     public static function delete()
     {
-        return ModelQuery::delete()->from(static::$table)->setModelClass(static::class);
+        return ModelQuery::delete('mysql', static::$connectionName)->from(static::$table)->setModelClass(static::class);
     }
 
     /**

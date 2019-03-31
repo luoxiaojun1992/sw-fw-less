@@ -12,23 +12,19 @@ class MysqlPool
 
     private static $instance;
 
-    /** @var MysqlWrapper[] */
+    /** @var MysqlWrapper[][] */
     private $pdoPool = [];
 
-    private $dsn;
-    private $username;
-    private $passwd;
-    private $options = [];
-    private $poolSize;
+    private $config = [];
 
-    public static function create($dsn = '', $username = '', $passwd = null, $options = [], $poolSize = 100)
+    public static function create($mysqlConfig = null)
     {
         if (self::$instance instanceof self) {
             return self::$instance;
         }
 
-        if (Config::get('mysql.switch')) {
-            return self::$instance = new self($dsn, $username, $passwd, $options, $poolSize);
+        if ($mysqlConfig['switch']) {
+            return self::$instance = new self($mysqlConfig);
         } else {
             return null;
         }
@@ -36,44 +32,47 @@ class MysqlPool
 
     /**
      * Mysql constructor.
-     * @param $dsn
-     * @param $username
-     * @param $passwd
-     * @param $options
-     * @param $poolSize
+     * @param array $mysqlConfig
      */
-    public function __construct($dsn, $username, $passwd, $options, $poolSize)
+    public function __construct($mysqlConfig)
     {
-        $this->dsn = $dsn;
-        $this->username = $username;
-        $this->passwd = $passwd;
-        $this->options = $options;
-        $this->poolSize = $poolSize;
+        $this->config = $mysqlConfig;
 
-        for ($i = 0; $i < $poolSize; ++$i) {
-            $this->pdoPool[] = $this->getConnect();
-        }
+        foreach ($mysqlConfig['connections'] as $connectionName => $mysqlConnection) {
+            for ($i = 0; $i < $mysqlConnection['pool_size']; ++$i) {
+                if (!is_null($connection = $this->getConnect(true, $connectionName))) {
+                    $this->pdoPool[$connectionName][] = $connection;
+                }
+            }
 
-        if (Config::get('mysql.pool_change_event')) {
-            event(
-                new CakeEvent(static::EVENT_MYSQL_POOL_CHANGE,
-                    null,
-                    ['count' => $poolSize]
-                )
-            );
+            if ($mysqlConfig['pool_change_event']) {
+                event(
+                    new CakeEvent(static::EVENT_MYSQL_POOL_CHANGE,
+                        null,
+                        ['count' => $mysqlConnection['pool_size']]
+                    )
+                );
+            }
         }
     }
 
     /**
+     * @param string $connectionName
      * @return MysqlWrapper mixed
      */
-    public function pick()
+    public function pick($connectionName = null)
     {
-        $pdo = array_pop($this->pdoPool);
+        if (is_null($connectionName)) {
+            $connectionName = $this->config['default'];
+        }
+        if (!isset($this->pdoPool[$connectionName])) {
+            return null;
+        }
+        $pdo = array_pop($this->pdoPool[$connectionName]);
         if (!$pdo) {
-            $pdo = $this->getConnect(false);
+            $pdo = $this->getConnect(false, $connectionName);
         } else {
-            if (Config::get('mysql.pool_change_event')) {
+            if ($this->config['pool_change_event']) {
                 event(
                     new CakeEvent(static::EVENT_MYSQL_POOL_CHANGE,
                         null,
@@ -87,7 +86,7 @@ class MysqlPool
     }
 
     /**
-     * @param MysqlWrapper $pdo
+     * @param MysqlWrapper|\PDO $pdo
      */
     public function release($pdo)
     {
@@ -96,16 +95,12 @@ class MysqlPool
                 try {
                     $pdo->rollBack();
                 } catch (\PDOException $rollbackException) {
-                    if ($pdo->isNeedRelease()) {
-                        $pdo = $this->handleRollbackException($pdo, $rollbackException);
-                    } else {
-                        throw $rollbackException;
-                    }
+                    $pdo = $this->handleRollbackException($pdo, $rollbackException);
                 }
             }
             if ($pdo->isNeedRelease()) {
-                $this->pdoPool[] = $pdo;
-                if (Config::get('mysql.pool_change_event')) {
+                $this->pdoPool[$pdo->getConnectionName()][] = $pdo;
+                if ($this->config['pool_change_event']) {
                     event(
                         new CakeEvent(static::EVENT_MYSQL_POOL_CHANGE,
                             null,
@@ -119,19 +114,32 @@ class MysqlPool
 
     public function __destruct()
     {
-        foreach ($this->pdoPool as $i => $pdo) {
-            unset($this->pdoPool[$i]);
-        }
+        //
     }
 
     /**
      * @param bool $needRelease
+     * @param string $connectionName
      * @return MysqlWrapper
      */
-    public function getConnect($needRelease = true)
+    public function getConnect($needRelease = true, $connectionName = null)
     {
-        $pdo = new \PDO($this->dsn, $this->username, $this->passwd, $this->options);
-        return (new MysqlWrapper())->setPDO($pdo)->setNeedRelease($needRelease);
+        if (is_null($connectionName)) {
+            $connectionName = $this->config['default'];
+        }
+        if (!isset($this->config['connections'][$connectionName])) {
+            return null;
+        }
+
+        $pdo = new \PDO(
+            $this->config['connections'][$connectionName]['dsn'],
+            $this->config['connections'][$connectionName]['username'],
+            $this->config['connections'][$connectionName]['passwd'],
+            $this->config['connections'][$connectionName]['options']
+        );
+        return (new MysqlWrapper())->setPDO($pdo)
+            ->setNeedRelease($needRelease)
+            ->setConnectionName($connectionName);
     }
 
     /**
@@ -142,7 +150,9 @@ class MysqlPool
     public function handleRollbackException($pdo, \PDOException $e)
     {
         if (Helper::causedByLostConnection($e)) {
-            $pdo = $this->getConnect();
+            if ($pdo->isNeedRelease()) {
+                $pdo = $this->getConnect(true, $pdo->getConnectionName());
+            }
         } else {
             throw $e;
         }
@@ -155,6 +165,10 @@ class MysqlPool
      */
     public function countPool()
     {
-        return count($this->pdoPool);
+        $sum = 0;
+        foreach ($this->pdoPool as $connectionName => $connections) {
+            $sum += count($connections);
+        }
+        return $sum;
     }
 }
