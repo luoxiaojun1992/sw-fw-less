@@ -10,20 +10,30 @@ class Middleware extends AbstractMiddleware
 {
     public function handle(Request $request)
     {
-        if ($chaosId = $request->header('x-chaos-exp-id')) {
-            //Fetch fault by chaos id
-            $fault = FaultStore::get($chaosId);
-            if ($fault) {
-                $faultData = json_decode($fault, true);
-                if (!json_last_error()) {
-                    if (($faultResponse = $this->emulateFault($faultData)) instanceof Response) {
-                        return $faultResponse;
-                    }
+        $chaosExpId = $request->header('x-chaos-exp-id');
+        if (!is_null($chaosExpId)) {
+            $faultData = $this->fetchFault($chaosExpId);
+            if (!is_null($faultData)) {
+                if (($faultResponse = $this->emulateFault($faultData)) instanceof Response) {
+                    return $faultResponse;
                 }
             }
         }
 
         return $this->next();
+    }
+
+    private function fetchFault($chaosExpId)
+    {
+        $fault = FaultStore::get($chaosExpId);
+        if ($fault) {
+            $faultData = json_decode($fault, true);
+            if (!json_last_error()) {
+                return $faultData;
+            }
+        }
+        
+        return null;
     }
 
     private function emulateFault($faultData)
