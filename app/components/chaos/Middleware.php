@@ -32,7 +32,7 @@ class Middleware extends AbstractMiddleware
                 return $faultData;
             }
         }
-        
+
         return null;
     }
 
