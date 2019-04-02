@@ -126,6 +126,7 @@ class Request
      */
     public function header($name, $default = null)
     {
+        $name = strtolower($name);
         return Helper::arrGet($this->getSwRequest()->header, $name, $default);
     }
 
@@ -135,8 +136,25 @@ class Request
      */
     public function hasHeader($name)
     {
+        $name = strtolower($name);
         $headers = $this->getSwRequest()->header;
         return !is_null($headers) && array_key_exists($name, $headers);
+    }
+
+    public function realIp($prior = 'x-real-ip')
+    {
+        $prior = strtolower($prior);
+        if ($this->hasHeader($prior)) {
+            return $this->header($prior);
+        } elseif ($this->hasServer($prior)) {
+            return $this->server($prior);
+        } elseif ($prior !== 'x-forwarded-for' && $this->hasHeader('x-forwarded-for')) {
+            return trim(explode(',', $this->header('x-forwarded-for'))[0]);
+        } elseif ($prior !== 'remote_addr') {
+            return $this->server('remote_addr');
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -148,6 +166,17 @@ class Request
     {
         $name = strtolower($name);
         return Helper::arrGet($this->getSwRequest()->server, $name, $default);
+    }
+
+    /**
+     * @param $name
+     * @return bool
+     */
+    public function hasServer($name)
+    {
+        $name = strtolower($name);
+        $servers = $this->getSwRequest()->server;
+        return !is_null($servers) && array_key_exists($name, $servers);
     }
 
     /**
