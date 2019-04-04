@@ -14,6 +14,7 @@ return [
             'credential_key' => env('AUTH_JWT_CREDENTIAL_KEY', 'Authorization'),
             'sign_key' => env('AUTH_JWT_SIGN_KEY', ''),
             'jid' => env('AUTH_JWT_JID', ''),
+            'expiration' => envInt('AUTH_JWT_EXPIRATION', 86400),
         ],
         'basic' => [
             'guard' => \App\components\auth\basic\Guard::class,

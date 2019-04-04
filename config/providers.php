@@ -20,6 +20,7 @@ $providers = [
     \App\components\amqp\AmqpProvider::class,
     \App\components\hbase\HbaseProvider::class,
     \App\components\di\ContainerProvider::class,
+    \App\components\auth\jwt\JwtProvider::class,
 
     //Shutdown Providers
     \App\components\swoole\coresource\CoroutineResProvider::class,

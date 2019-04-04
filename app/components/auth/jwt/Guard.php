@@ -25,6 +25,6 @@ class Guard implements GuardContract
         if (!$token) {
             return false;
         }
-        return (bool)$userProvider->retrieveByToken($token, $config['sign_key'], $config['jid']);
+        return (bool)$userProvider->retrieveByToken($token, $credentialCarrier);
     }
 }

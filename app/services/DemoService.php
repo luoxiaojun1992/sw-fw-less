@@ -7,12 +7,11 @@ use App\components\http\Client;
 use App\components\http\Response;
 use App\facades\Cache;
 use App\facades\HbasePool;
+use App\facades\Jwt;
 use App\models\Member;
 use App\models\Test;
 use Cake\Validation\Validator;
 use Hbase\HbaseClient;
-use Lcobucci\JWT\Builder;
-use Lcobucci\JWT\Signer\Hmac\Sha256;
 use Phalcon\Validation;
 
 class DemoService extends BaseService
@@ -168,20 +167,7 @@ class DemoService extends BaseService
 
     public function jwt()
     {
-        $signer = new Sha256();
-        $time = time();
-
-        $host = request()->convertToPsr7()->getUri()->getHost();
-
-        $token = (new Builder())->setIssuer($host) // Configures the issuer (iss claim)
-        ->setAudience($host) // Configures the audience (aud claim)
-        ->setId('4f1g23a12aa', true) // Configures the id (jti claim), replicating as a header item
-        ->setIssuedAt($time) // Configures the time that the token was issue (iat claim)
-        ->setNotBefore($time) // Configures the time that the token can be used (nbf claim)
-        ->setExpiration($time + 86400) // Configures the expiration time of the token (exp claim)
-        ->set('id', 1) // Configures a new claim, called "uid"
-        ->sign($signer, 'testing') // creates a signature using "testing" as key
-        ->getToken(); // Retrieves the generated token
+        $token = Jwt::issue(request(), ['id' => 1]);
 
         return Response::json(['data' => ['token' => (string)$token], 'code' => 0, 'msg' => 'ok']);
     }
