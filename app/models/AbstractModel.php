@@ -21,6 +21,10 @@ abstract class AbstractModel implements \JsonSerializable, \ArrayAccess
     protected $newRecord = true;
     protected $justSaved = false;
     protected $needValidate = true;
+    protected $returnErrors = true;
+    protected $errors = [];
+    protected $validationRules = [];
+    protected $validationMessages = [];
 
     public function __construct()
     {
@@ -177,23 +181,65 @@ abstract class AbstractModel implements \JsonSerializable, \ArrayAccess
     }
 
     /**
-     * @param bool $validate
+     * @return bool
      */
-    protected function beforeCreate($validate = false)
+    public function isReturnErrors(): bool
     {
-        if ($validate) {
-            $this->__validate();
-        }
+        return $this->returnErrors;
+    }
+
+    /**
+     * @param bool $returnErrors
+     * @return $this
+     */
+    public function setReturnErrors(bool $returnErrors)
+    {
+        $this->returnErrors = $returnErrors;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getErrors(): array
+    {
+        return $this->errors;
+    }
+
+    /**
+     * @param array $errors
+     * @return $this
+     */
+    public function setErrors(array $errors)
+    {
+        $this->errors = $errors;
+        return $this;
     }
 
     /**
      * @param bool $validate
+     * @return bool
+     */
+    protected function beforeCreate($validate = false)
+    {
+        if ($validate) {
+            return $this->validateWithEvents();
+        }
+
+        return null;
+    }
+
+    /**
+     * @param bool $validate
+     * @return bool
      */
     protected function beforeUpdate($validate = false)
     {
         if ($validate) {
-            $this->__validate();
+            return $this->validateWithEvents();
         }
+
+        return null;
     }
 
     protected function afterCreate()
@@ -217,23 +263,35 @@ abstract class AbstractModel implements \JsonSerializable, \ArrayAccess
         }
     }
 
-    private function __validate()
+    protected function validateWithEvents()
     {
         if ($this->fireEvent('validating')->isStopped()) {
-            throw new ValidationException(['Error before validation'], 400);
+            $this->setErrors(['Error before validation']);
+            if ($this->isReturnErrors()) {
+                return false;
+            } else {
+                throw new ValidationException(['Error before validation'], 400);
+            }
         }
 
         if ($this->isNeedValidate()) {
             if (count($errors = $this->validate()) > 0) {
-                throw new ValidationException($errors, 400);
+                $this->setErrors($errors);
+                if ($this->isReturnErrors()) {
+                    return false;
+                } else {
+                    throw new ValidationException($errors, 400);
+                }
             }
         }
 
         $this->fireEvent('validated');
+
+        return true;
     }
 
     /**
-     * @return array
+     * @return array $errors
      */
     protected function validate() : array
     {
