@@ -23,8 +23,6 @@ abstract class AbstractModel implements \JsonSerializable, \ArrayAccess
     protected $needValidate = true;
     protected $returnErrors = true;
     protected $errors = [];
-    protected $validationRules = [];
-    protected $validationMessages = [];
 
     public function __construct()
     {
