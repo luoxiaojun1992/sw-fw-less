@@ -2,6 +2,12 @@
     "name": "luoxiaojun/sw-fw-less",
     "description": "Swoole Http Server without framework",
     "type": "project",
+    "keywords": [
+        "swoole",
+        "framework",
+        "coroutine",
+        "php"
+    ],
     "require": {
         "php": ">=7.1",
         "ext-json": "*",
