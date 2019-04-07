@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    run: sw-fw-less
+  name: sw-fw-less
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      run: sw-fw-less
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        run: sw-fw-less
+    spec:
+      containers:
+      - image: luoxiaojun1992/sw-fw-less
+        ports:
+        - containerPort: 9501
+        name: sw-fw-less
+        resources: {}
+status: {}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sw-fw-less-svc
+spec:
+  type: ClusterIP
+  selector:
+    run: sw-fw-less
+  ports:
+  - name: http
+    port: 9501
+    targetPort: 9501
+    protocol: TCP
