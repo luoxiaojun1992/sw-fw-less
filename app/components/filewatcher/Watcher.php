@@ -126,6 +126,9 @@ class Watcher
     public function watch($events, $callback, $priority = 0)
     {
         if ($this->driver instanceof \HuangYi\Watcher\Watcher) {
+            if (!is_array($events)) {
+                $events = [$events];
+            }
             $this->driver->setHandler(function ($watcher, $event) use ($callback) {
                 call_user_func_array($callback, [$event]);
             })->setMasks($this->swWatcherEvents($events))->watch();
