@@ -183,4 +183,29 @@ class Helper
     {
         return \App::VERSION;
     }
+
+    /**
+     * @return string
+     */
+    public static function sapi()
+    {
+        return \App::SAPI === 'swoole' ? \App::SAPI : php_sapi_name();
+    }
+
+    /**
+     * @return bool
+     */
+    public static function runningInConsole()
+    {
+        $sapiName = static::sapi();
+        return $sapiName === 'cli' || $sapiName === 'phpdbg';
+    }
+
+    /**
+     * @return bool
+     */
+    public static function runningInSwoole()
+    {
+        return static::sapi() === 'swoole';
+    }
 }

@@ -4,6 +4,8 @@ class App
 {
     const VERSION = '0.1.0';
 
+    const SAPI = 'swoole';
+
     const EVENT_RESPONSING = 'app.responsing';
     const EVENT_RESPONSED = 'app.responsed';
 

@@ -70,3 +70,10 @@ if (!function_exists('event')) {
         return \App\facades\Event::dispatch($event);
     }
 }
+
+if (!function_exists('sapi')) {
+    function sapi()
+    {
+        return helper(__METHOD__);
+    }
+}
