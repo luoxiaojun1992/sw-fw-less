@@ -2,6 +2,8 @@
 
 class App
 {
+    use \App\middlewares\traits\Parser;
+
     const VERSION = '0.1.0';
 
     const SAPI = 'swoole';
@@ -28,14 +30,18 @@ class App
             config('server.port')
         );
 
-        $this->swHttpServer->set([
+        $serverConfig = [
             'reactor_num' => config('server.reactor_num'),
             'worker_num' => config('server.worker_num'),
             'daemonize' => config('server.daemonize'),
             'backlog' => config('server.backlog'),
             'max_request' => config('server.max_request'),
             'dispatch_mode' => config('server.dispatch_mode'),
-        ]);
+        ];
+        if (!empty($pidFile = config('server.pid_file'))) {
+            $serverConfig['pid_file'] = $pidFile;
+        }
+        $this->swHttpServer->set($serverConfig);
 
         $this->swHttpServer->on('start', [$this, 'swHttpStart']);
         $this->swHttpServer->on('workerStart', [$this, 'swHttpWorkerStart']);
@@ -123,40 +129,13 @@ class App
         \App\components\provider\KernelProvider::bootApp();
     }
 
-    /**
-     * @param $middlewareName
-     * @return array
-     */
-    private function parseMiddlewareName($middlewareName)
-    {
-        if (strpos($middlewareName, ':') > 0) {
-            return explode(':', $middlewareName);
-        }
-
-        return [$middlewareName, null];
-    }
-
-    private function getRequestHandler($request, $routeInfo)
+    private function getRequestHandler($request)
     {
         $appRequest = \App\components\http\Request::fromSwRequest($request);
 
-        $controllerAction = $routeInfo[1];
-        $route = $controllerAction[0];
-        $appRequest->setRoute($route);
-        $controllerName = $controllerAction[1];
-        $action = $controllerAction[2];
-        $parameters = $routeInfo[2];
-        $controller = \App\facades\Container::get($controllerName);
-        if ($controller instanceof \App\services\BaseService) {
-            $controller->setRequest($appRequest);
-        }
-        $controller->setHandler($action)->setParameters($parameters);
-
         //Middleware
-        $middlewareNames = config('middleware');
-        if (isset($controllerAction[3])) {
-            $middlewareNames = array_merge($middlewareNames, $controllerAction[3]);
-        }
+        $middlewareNames = config('middleware.middleware');
+        array_push($middlewareNames, \App\middlewares\Route::class);
         /** @var \App\middlewares\MiddlewareContract[]|\App\middlewares\AbstractMiddleware[] $middlewareConcretes */
         $middlewareConcretes = [];
         foreach ($middlewareNames as $i => $middlewareName) {
@@ -164,18 +143,18 @@ class App
 
             /** @var \App\middlewares\AbstractMiddleware $middlewareConcrete */
             $middlewareConcrete = \App\facades\Container::get($middlewareClass);
-            $middlewareConcrete->setParameters([$appRequest])->setOptions($middlewareOptions);
+            $middlewareConcrete->setParameters([$appRequest]);
+            if ($middlewareConcrete instanceof \App\middlewares\Route) {
+                $middlewareConcrete->setOptions($this->httpRouteDispatcher);
+            } else {
+                $middlewareConcrete->setOptions($middlewareOptions);
+            }
             if (isset($middlewareConcretes[$i - 1])) {
                 $middlewareConcretes[$i - 1]->setNext($middlewareConcrete);
             }
 
             array_push($middlewareConcretes, $middlewareConcrete);
         }
-        $middlewareConcretesCount = count($middlewareConcretes);
-        if ($middlewareConcretesCount > 0) {
-            $middlewareConcretes[$middlewareConcretesCount - 1]->setNext($controller);
-        }
-        array_push($middlewareConcretes, $controller);
 
         return $middlewareConcretes[0];
     }
@@ -222,41 +201,9 @@ class App
         try {
             clearstatcache();
 
-            $requestUri = $request->server['request_uri'];
-            if (false !== $pos = strpos($requestUri, '?')) {
-                $requestUri = substr($requestUri, 0, $pos);
-            }
-            $requestUri = rawurldecode($requestUri);
-
-            $routeInfo = $this->httpRouteDispatcher->dispatch($request->server['request_method'], $requestUri);
-            $routeResult = $routeInfo[0];
-            switch ($routeResult) {
-                case FastRoute\Dispatcher::NOT_FOUND:
-                    // ... 404 Not Found
-                    $this->swResponse(
-                        \App\components\http\Response::output(null, 404),
-                        $response
-                    );
-                    break;
-                case FastRoute\Dispatcher::METHOD_NOT_ALLOWED:
-                    $allowedMethods = $routeInfo[1];
-                    // ... 405 Method Not Allowed
-                    $this->swResponse(
-                        \App\components\http\Response::output(null, 405),
-                        $response
-                    );
-                    break;
-                case FastRoute\Dispatcher::FOUND:
-                    $this->swResponse($this->swfRequest(function () use ($request, $routeInfo) {
-                        return $this->getRequestHandler($request, $routeInfo)->call();
-                    }), $response);
-                    break;
-                default:
-                    $this->swResponse(
-                        \App\components\http\Response::output(null),
-                        $response
-                    );
-            }
+            $this->swResponse($this->swfRequest(function () use ($request) {
+                return $this->getRequestHandler($request)->call();
+            }), $response);
         } catch (\Throwable $e) {
             $this->swResponse($this->swfRequest(function () use ($e) {
                 return \App\components\ErrorHandler::handle($e);

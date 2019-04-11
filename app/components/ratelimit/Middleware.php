@@ -5,7 +5,6 @@ namespace App\components\ratelimit;
 use App\components\Config;
 use App\components\http\Request;
 use App\components\http\Response;
-use App\facades\RateLimit;
 use App\middlewares\AbstractMiddleware;
 
 class Middleware extends AbstractMiddleware
@@ -15,6 +14,7 @@ class Middleware extends AbstractMiddleware
     /**
      * @param Request $request
      * @return Response
+     * @throws \Throwable
      */
     public function handle(Request $request)
     {
@@ -22,7 +22,7 @@ class Middleware extends AbstractMiddleware
 
         list($metric, $period, $throttle) = $this->parseConfig($request);
 
-        if (!RateLimit::pass($metric, $period, $throttle, $remaining)) {
+        if (!RateLimit::create()->pass($metric, $period, $throttle, $remaining)) {
             return Response::output('', 429)->header('X-RateLimit-Period', $period)
                 ->header('X-RateLimit-Throttle', $throttle)
                 ->header('X-RateLimit-Remaining', $remaining);
@@ -43,7 +43,7 @@ class Middleware extends AbstractMiddleware
             $metric = $this->config['metric'];
         }
 
-        return [$metric, $this->config['period'], $this->config['throttle']];
+        return [$metric ?: $request->uri(), $this->config['period'], $this->config['throttle']];
     }
 
     /**

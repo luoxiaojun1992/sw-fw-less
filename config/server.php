@@ -1,6 +1,6 @@
 <?php
 
-return [
+$serverConfig = [
     'host' => env('SERVER_HOST', '0.0.0.0'),
     'port' => envInt('SERVER_PORT', 9501),
     'reactor_num' => envInt('SERVER_REACTOR_NUM', 8),
@@ -10,3 +10,9 @@ return [
     'max_request' => envInt('SERVER_MAX_REQUEST', 0),
     'dispatch_mode' => envInt('SERVER_DISPATCH_MODE', 2),
 ];
+
+if (!empty($pidFile = env('SERVER_PID_FILE'))) {
+    $serverConfig['pid_file'] = $pidFile;
+}
+
+return $serverConfig;

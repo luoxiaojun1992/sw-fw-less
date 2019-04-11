@@ -29,7 +29,12 @@ class Middleware extends AbstractMiddleware
         $swfTracer = $request->getTracer();
         $psrRequest = $request->convertToPsr7();
         $path = $psrRequest->getUri()->getPath();
-        return $swfTracer->rootSpan($swfTracer->formatHttpPath($request->getRoute()), function (Span $span) use ($psrRequest, $swfTracer, $path) {
+        if ($request->getRoute()) {
+            $spanName = $swfTracer->formatHttpPath($request->getRoute());
+        } else {
+            $spanName = $swfTracer->formatRoutePath($psrRequest->getUri()->getPath());
+        }
+        return $swfTracer->rootSpan($spanName, function (Span $span) use ($request, $psrRequest, $swfTracer, $path) {
             if ($span->getContext()->isSampled()) {
                 $swfTracer->addTag($span, HTTP_HOST, $psrRequest->getUri()->getHost());
                 $swfTracer->addTag($span, HTTP_PATH, $path);
@@ -68,6 +73,10 @@ class Middleware extends AbstractMiddleware
             } catch (\Throwable $e) {
                 throw $e;
             } finally {
+                $isSampled = $span->getContext()->isSampled();
+                if ($isSampled) {
+                    $span->setName($swfTracer->formatHttpPath($request->getRoute()));
+                }
                 if ($response) {
                     if ($span->getContext()->isSampled()) {
                         $psrResponse = $response->convertToPsr7();

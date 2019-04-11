@@ -183,7 +183,7 @@ class Query
             null,
             [
                 'db' => $this->db,
-                'connection' => 'default', //todo multi connections
+                'connection' => $this->connectionName,
                 'mode' => $mode,
             ]
         ));
@@ -197,7 +197,7 @@ class Query
             null,
             [
                 'db' => $this->db,
-                'connection' => 'default', //todo multi connections
+                'connection' => $this->connectionName,
                 'mode' => $mode,
                 'time' => microtime(true) * 1000 - $executingAt,
             ]
