@@ -96,6 +96,12 @@ class Middleware extends AbstractMiddleware
         }, null, \Zipkin\Kind\SERVER, true);
     }
 
+    /**
+     * @param Tracer $swfTracer
+     * @param Request $request
+     * @param ServerRequestInterface $psrRequest
+     * @return string
+     */
     private function getSpanName(Tracer $swfTracer, Request $request, ServerRequestInterface $psrRequest)
     {
         if ($request->getRoute()) {
