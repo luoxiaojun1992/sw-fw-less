@@ -5,6 +5,7 @@ namespace App\components\zipkin;
 use App\components\http\Request;
 use App\components\http\Response;
 use App\middlewares\AbstractMiddleware;
+use Psr\Http\Message\ServerRequestInterface;
 use Zipkin\Span;
 use const Zipkin\Tags\ERROR;
 use const Zipkin\Tags\HTTP_HOST;
@@ -29,12 +30,7 @@ class Middleware extends AbstractMiddleware
         $swfTracer = $request->getTracer();
         $psrRequest = $request->convertToPsr7();
         $path = $psrRequest->getUri()->getPath();
-        if ($request->getRoute()) {
-            $spanName = $swfTracer->formatHttpPath($request->getRoute());
-        } else {
-            $spanName = $swfTracer->formatRoutePath($psrRequest->getUri()->getPath());
-        }
-        return $swfTracer->rootSpan($spanName, function (Span $span) use ($request, $psrRequest, $swfTracer, $path) {
+        return $swfTracer->rootSpan($this->getSpanName($swfTracer, $request, $psrRequest), function (Span $span) use ($request, $psrRequest, $swfTracer, $path) {
             if ($span->getContext()->isSampled()) {
                 $swfTracer->addTag($span, HTTP_HOST, $psrRequest->getUri()->getHost());
                 $swfTracer->addTag($span, HTTP_PATH, $path);
@@ -75,7 +71,7 @@ class Middleware extends AbstractMiddleware
             } finally {
                 $isSampled = $span->getContext()->isSampled();
                 if ($isSampled) {
-                    $span->setName($swfTracer->formatHttpPath($request->getRoute()));
+                    $span->setName($this->getSpanName($swfTracer, $request, $psrRequest));
                 }
                 if ($response) {
                     if ($span->getContext()->isSampled()) {
@@ -98,5 +94,16 @@ class Middleware extends AbstractMiddleware
                 }
             }
         }, null, \Zipkin\Kind\SERVER, true);
+    }
+
+    private function getSpanName(Tracer $swfTracer, Request $request, ServerRequestInterface $psrRequest)
+    {
+        if ($request->getRoute()) {
+            $spanName = $swfTracer->formatHttpPath($request->getRoute());
+        } else {
+            $spanName = $swfTracer->formatRoutePath($psrRequest->getUri()->getPath());
+        }
+
+        return $spanName;
     }
 }
