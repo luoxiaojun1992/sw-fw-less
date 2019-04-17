@@ -20,9 +20,10 @@ class Process
      * @param $callback[required]
      * @param $redirect_stdin_and_stdout[optional]
      * @param $pipe_type[optional]
+     * @param $enable_coroutine[optional]
      * @return mixed
      */
-    public function __construct($callback, $redirect_stdin_and_stdout=null, $pipe_type=null){}
+    public function __construct($callback, $redirect_stdin_and_stdout=null, $pipe_type=null, $enable_coroutine=null){}
 
     /**
      * @return mixed

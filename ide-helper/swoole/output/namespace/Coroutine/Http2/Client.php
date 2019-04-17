@@ -79,6 +79,11 @@ class Client
     /**
      * @return mixed
      */
+    public function ping(){}
+
+    /**
+     * @return mixed
+     */
     public function close(){}
 
 

@@ -48,13 +48,6 @@ class MySQL
     public function nextResult(){}
 
     /**
-     * @param $string[required]
-     * @param $flags[optional]
-     * @return mixed
-     */
-    public function escape($string, $flags=null){}
-
-    /**
      * @param $timeout[optional]
      * @return mixed
      */

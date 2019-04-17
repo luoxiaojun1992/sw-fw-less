@@ -74,6 +74,11 @@ class CoroutineSocketIO extends AbstractIO
                 $errstr
             ), $errno);
         }
+
+        $this->sock->setOption(SOL_TCP, TCP_NODELAY, 1);
+        if ($this->keepalive) {
+            $this->enable_keepalive();
+        }
     }
 
     /**
@@ -192,6 +197,18 @@ class CoroutineSocketIO extends AbstractIO
     public function select($sec, $usec)
     {
         return true;
+    }
+
+    /**
+     * @throws \PhpAmqpLib\Exception\AMQPIOException
+     */
+    protected function enable_keepalive()
+    {
+        if (!defined('SOL_SOCKET') || !defined('SO_KEEPALIVE')) {
+            throw new AMQPIOException('Can not enable keepalive: SOL_SOCKET or SO_KEEPALIVE is not defined');
+        }
+
+        $this->sock->setOption(SOL_SOCKET, SO_KEEPALIVE, 1);
     }
 
     /**

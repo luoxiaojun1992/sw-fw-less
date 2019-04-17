@@ -8,6 +8,16 @@ class Iterator
     /**
      * @return mixed
      */
+    public function __construct(){}
+
+    /**
+     * @return mixed
+     */
+    public function __destruct(){}
+
+    /**
+     * @return mixed
+     */
     public function rewind(){}
 
     /**
@@ -34,11 +44,6 @@ class Iterator
      * @return mixed
      */
     public function count(){}
-
-    /**
-     * @return mixed
-     */
-    public function __destruct(){}
 
     /**
      * @param $fd[required]

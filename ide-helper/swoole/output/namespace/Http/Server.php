@@ -4,6 +4,7 @@ namespace Swoole\Http;
 class Server extends \Swoole\Server
 {
 
+    public $setting;
     public $connections;
     public $host;
     public $port;
@@ -15,9 +16,8 @@ class Server extends \Swoole\Server
     public $worker_id;
     public $taskworker;
     public $worker_pid;
-    public $onRequest;
-    public $onHandshake;
-    public $setting;
+    private $onRequest;
+    private $onHandshake;
 
     /**
      * @param $host[required]

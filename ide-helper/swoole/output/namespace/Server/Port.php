@@ -12,8 +12,8 @@ class Port
     private $onBufferEmpty;
     private $onRequest;
     private $onHandShake;
-    private $onMessage;
     private $onOpen;
+    private $onMessage;
     public $host;
     public $port;
     public $type;
@@ -43,6 +43,12 @@ class Port
      * @return mixed
      */
     public function on($event_name, $callback){}
+
+    /**
+     * @param $event_name[required]
+     * @return mixed
+     */
+    public function getCallback($event_name){}
 
 
 }

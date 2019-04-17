@@ -4,6 +4,7 @@ namespace Swoole\Process;
 class Pool
 {
 
+    public $master_pid;
 
     /**
      * @param $worker_num[required]
@@ -48,6 +49,11 @@ class Pool
      * @return mixed
      */
     public function start(){}
+
+    /**
+     * @return mixed
+     */
+    public function shutdown(){}
 
 
 }

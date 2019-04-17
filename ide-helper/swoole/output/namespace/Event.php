@@ -59,5 +59,17 @@ class Event
      */
     public static function cycle($callback, $before=null){}
 
+    /**
+     * @return mixed
+     */
+    public static function dispatch(){}
+
+    /**
+     * @param $fd[required]
+     * @param $events[optional]
+     * @return mixed
+     */
+    public static function isset($fd, $events=null){}
+
 
 }

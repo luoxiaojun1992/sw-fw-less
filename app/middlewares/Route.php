@@ -67,16 +67,16 @@ class Route extends AbstractMiddleware
         switch ($routeResult) {
             case Dispatcher::NOT_FOUND:
                 // ... 404 Not Found
-                return \App\components\http\Response::output(null, 404);
+                return \App\components\http\Response::output('', 404);
             case Dispatcher::METHOD_NOT_ALLOWED:
                 $allowedMethods = $routeInfo[1];
                 // ... 405 Method Not Allowed
-                return \App\components\http\Response::output(null, 405);
+                return \App\components\http\Response::output('', 405);
             case Dispatcher::FOUND:
                 $this->setNext($this->getRequestHandler($request, $routeInfo));
                 break;
             default:
-                return \App\components\http\Response::output(null);
+                return \App\components\http\Response::output('');
         }
 
         return $this->next();

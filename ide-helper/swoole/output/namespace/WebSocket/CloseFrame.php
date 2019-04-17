@@ -4,6 +4,9 @@ namespace Swoole\WebSocket;
 class CloseFrame extends \Swoole\WebSocket\Frame
 {
 
+    public $fd;
+    public $data;
+    public $finish;
     public $opcode;
     public $code;
     public $reason;

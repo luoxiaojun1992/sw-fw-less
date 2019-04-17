@@ -10,7 +10,6 @@ class Request
     public $cookies;
     public $data;
     public $pipeline;
-    public $files;
 
 
 }

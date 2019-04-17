@@ -5,7 +5,7 @@ MAINTAINER luoxiaojun1992 <luoxiaojun1992@sina.cn>
 # Version
 ENV PHPREDIS_VERSION 4.0.0
 ENV HIREDIS_VERSION 0.13.3
-ENV SWOOLE_VERSION 4.3.1
+ENV SWOOLE_VERSION 4.3.2
 
 # Timezone
 RUN /bin/cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
