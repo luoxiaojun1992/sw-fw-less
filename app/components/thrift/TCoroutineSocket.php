@@ -237,6 +237,8 @@ class TCoroutineSocket extends TTransport
             }
             throw new TException($error);
         }
+
+        $this->handle_->setOption(SOL_TCP, TCP_NODELAY, 1);
     }
 
     /**
