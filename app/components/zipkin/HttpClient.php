@@ -23,10 +23,11 @@ class HttpClient
      * @param SaberRequest $saberRequest
      * @param SwfRequest $swfRequest
      * @param string $spanName
+     * @param bool $injectSpanCtx
      * @return mixed|\Psr\Http\Message\ResponseInterface|null
      * @throws \Throwable
      */
-    public function send(SaberRequest $saberRequest, $swfRequest = null, $spanName = null)
+    public function send(SaberRequest $saberRequest, $swfRequest = null, $spanName = null, $injectSpanCtx = true)
     {
         $swfRequest = $swfRequest ?? request();
         /** @var Tracer $swfTracer */
@@ -36,9 +37,11 @@ class HttpClient
 
         return $swfTracer->span(
             isset($spanName) ? $spanName : $swfTracer->formatRoutePath($path),
-            function (Span $span) use ($request, $swfTracer, $path) {
+            function (Span $span) use ($request, $swfTracer, $path, $injectSpanCtx) {
                 //Inject trace context to api psr request
-                $swfTracer->injectContextToRequest($span->getContext(), $request);
+                if ($injectSpanCtx) {
+                    $swfTracer->injectContextToRequest($span->getContext(), $request);
+                }
 
                 if ($span->getContext()->isSampled()) {
                     $swfTracer->addTag($span, HTTP_HOST, $request->getUri()->getHost());
