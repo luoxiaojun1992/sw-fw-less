@@ -26,9 +26,7 @@ Swoole http server without framework
 
 >## Installation
 ```shell
-git clone git@github.com:luoxiaojun1992/sw-fw-less.git
-cp .env.example .env
-composer install -vvv
+composer create-project luoxiaojun/sw-fw-less-app=dev-master sw-fw-less --prefer-dist -vvv
 ```
 
 >## Deployment
