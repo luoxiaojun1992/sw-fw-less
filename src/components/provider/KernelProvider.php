@@ -2,8 +2,6 @@
 
 namespace SwFwLess\components\provider;
 
-use SwFwLess\facades\File;
-
 class KernelProvider extends AbstractProvider
 {
     private static $providers = [];
@@ -18,7 +16,7 @@ class KernelProvider extends AbstractProvider
 
     private static function mergeComposerProviders($providers)
     {
-        $composerInstalled = File::prepare()->read(File::path('vendor/composer/installed.json'));
+        $composerInstalled = file_get_contents(APP_BASE_PATH . 'vendor/composer/installed.json');
         if ($composerInstalled) {
             $packages = json_decode($composerInstalled, true);
             foreach ($packages as $package) {
