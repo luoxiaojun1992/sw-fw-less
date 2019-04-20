@@ -3,7 +3,6 @@
 namespace SwFwLess\components\di;
 
 use SwFwLess\components\traits\Singleton;
-use SwFwLess\facades\File;
 use DI\ContainerBuilder;
 
 class Container
@@ -19,11 +18,7 @@ class Container
      */
     public function __construct()
     {
-        $containerBuilder = new ContainerBuilder();
-        if (config('storage.switch')) {
-            $containerBuilder->enableCompilation(File::path('runtime/compiled'));
-        }
-        $this->diContainer = $containerBuilder->build();
+        $this->diContainer = (new ContainerBuilder())->build();
     }
 
     public function __call($name, $arguments)
