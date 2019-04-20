@@ -2,6 +2,8 @@
 
 namespace SwFwLess\bootstrap;
 
+use SwFwLess\components\provider\KernelProvider;
+
 class App
 {
     use \SwFwLess\middlewares\traits\Parser;
@@ -128,7 +130,8 @@ class App
         \SwFwLess\components\Config::init(require_once APP_BASE_PATH . 'config/app.php');
 
         //Boot providers
-        \SwFwLess\components\provider\KernelProvider::bootApp();
+        KernelProvider::init(config('providers'));
+        KernelProvider::bootApp();
     }
 
     private function getRequestHandler($request)
@@ -195,7 +198,8 @@ class App
         \SwFwLess\facades\Container::set('swoole.server', $server);
 
         //Boot providers
-        \SwFwLess\components\provider\KernelProvider::bootRequest();
+        KernelProvider::init(config('providers'));
+        KernelProvider::bootRequest();
     }
 
     public function swHttpRequest(\Swoole\Http\Request $request, \Swoole\Http\Response $response)
@@ -243,7 +247,7 @@ class App
             $swResponse->end($swfResponse->getContent());
         }, $swfResponse);
 
-        \SwFwLess\components\provider\KernelProvider::shutdown();
+        KernelProvider::shutdown();
     }
 
     private function swResponseWithEvents($callback, \SwFwLess\components\http\Response $swfResponse)

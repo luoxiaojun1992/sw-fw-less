@@ -11,7 +11,7 @@ class Config
      */
     public static function init($config)
     {
-        self::$config = self::mergeSpecConfigs($config);
+        static::$config = self::mergeSpecConfigs($config);
     }
 
     private static function mergeSpecConfigs($appConfig)
@@ -46,6 +46,6 @@ class Config
             return $default;
         }
 
-        return Helper::nestedArrGet(self::$config, $key, $default);
+        return Helper::nestedArrGet(static::$config, $key, $default);
     }
 }
