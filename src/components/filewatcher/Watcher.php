@@ -2,16 +2,11 @@
 
 namespace SwFwLess\components\filewatcher;
 
-use Kwf\FileWatcher\Backend\BackendAbstract;
-use Kwf\FileWatcher\Event\Create;
-use Kwf\FileWatcher\Event\Delete;
-use Kwf\FileWatcher\Event\Modify;
-use Kwf\FileWatcher\Event\Move;
-
 class Watcher
 {
     private $driverClass;
 
+    /** @var WatcherWrapperContract */
     private $driver;
 
     private $watchDirs;
@@ -28,17 +23,6 @@ class Watcher
     const EVENT_MOVE_SELF = 5;
     const EVENT_MOVED_FROM = 6;
     const EVENT_MOVED_TO = 7;
-
-    const KWF_WATCHER_EVENTS = [
-        self::EVENT_MODIFY => Modify::NAME,
-        self::EVENT_CREATE => Create::NAME,
-        self::EVENT_DELETE => Delete::NAME,
-        self::EVENT_DELETE_SELF => Delete::NAME,
-        self::EVENT_MOVE => Move::NAME,
-        self::EVENT_MOVE_SELF => Move::NAME,
-        self::EVENT_MOVED_FROM => Move::NAME,
-        self::EVENT_MOVED_TO => Move::NAME,
-    ];
 
     /**
      * Watcher constructor.
@@ -83,41 +67,6 @@ class Watcher
         );
     }
 
-    private function swWatcherEvents($events)
-    {
-        $swEvents = [];
-        foreach ($events as $event) {
-            switch ($event) {
-                case static::EVENT_MODIFY:
-                    $swEvents[] = IN_MODIFY;
-                    break;
-                case static::EVENT_CREATE:
-                    $swEvents[] = IN_CREATE;
-                    break;
-                case static::EVENT_DELETE:
-                    $swEvents[] = IN_DELETE;
-                    break;
-                case static::EVENT_DELETE_SELF:
-                    $swEvents[] = IN_DELETE_SELF;
-                    break;
-                case static::EVENT_MOVE:
-                    $swEvents[] = IN_MOVE;
-                    break;
-                case static::EVENT_MOVE_SELF:
-                    $swEvents[] = IN_MOVE_SELF;
-                    break;
-                case static::EVENT_MOVED_FROM:
-                    $swEvents[] = IN_MOVED_FROM;
-                    break;
-                case static::EVENT_MOVED_TO:
-                    $swEvents[] = IN_MOVED_TO;
-                    break;
-            }
-        }
-
-        return $swEvents;
-    }
-
     /**
      * @param $events
      * @param $callback
@@ -125,17 +74,6 @@ class Watcher
      */
     public function watch($events, $callback, $priority = 0)
     {
-        if ($this->driver instanceof \HuangYi\Watcher\Watcher) {
-            if (!is_array($events)) {
-                $events = [$events];
-            }
-            $this->driver->setHandler(function ($watcher, $event) use ($callback) {
-                call_user_func_array($callback, [$event]);
-            })->setMasks($this->swWatcherEvents($events))->watch();
-        } elseif ($this->driver instanceof BackendAbstract) {
-            $this->driver->addListener(static::KWF_WATCHER_EVENTS[$events], function ($event) use ($callback) {
-                call_user_func_array($callback, [$event]);
-            }, $priority)->start();
-        }
+        $this->driver->watch($events, $callback, $priority);
     }
 }
