@@ -4,3 +4,4 @@
 /.env
 /runtime
 /runtime/
+/composer.lock
