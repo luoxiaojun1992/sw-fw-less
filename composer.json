@@ -1,7 +1,7 @@
 {
     "name": "luoxiaojun/sw-fw-less",
     "description": "Swoole Http Server without framework",
-    "type": "project",
+    "type": "library",
     "keywords": [
         "swoole",
         "framework",
@@ -44,17 +44,10 @@
         }
     ],
     "autoload": {
-        "psr-4": {"App\\": "app/"}
-    },
-    "scripts": {
-        "post-root-package-install": [
-            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
-        ]
+        "psr-4": {"SwFwLess\\": "src/"}
     },
     "config": {
-        "sort-packages": true,
-        "optimize-autoloader": true,
-        "preferred-install": "dist"
+        "sort-packages": true
     },
     "minimum-stability": "dev",
     "prefer-stable": true
