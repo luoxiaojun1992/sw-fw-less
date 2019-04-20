@@ -2,6 +2,8 @@
 
 namespace SwFwLess\components;
 
+use SwFwLess\bootstrap\App;
+
 class Helper
 {
     /**
@@ -181,7 +183,7 @@ class Helper
      */
     public static function appVersion()
     {
-        return \App::VERSION;
+        return App::VERSION;
     }
 
     /**
@@ -189,7 +191,7 @@ class Helper
      */
     public static function sapi()
     {
-        return \App::SAPI === 'swoole' ? \App::SAPI : php_sapi_name();
+        return App::SAPI === 'swoole' ? App::SAPI : php_sapi_name();
     }
 
     /**
