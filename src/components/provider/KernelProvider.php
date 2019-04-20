@@ -18,7 +18,7 @@ class KernelProvider extends AbstractProvider
 
     private static function mergeComposerProviders($providers)
     {
-        $composerInstalled = File::prepare()->read('vendor/composer/installed.json');
+        $composerInstalled = File::prepare()->read(File::path('vendor/composer/installed.json'));
         if ($composerInstalled) {
             $packages = json_decode($composerInstalled, true);
             foreach ($packages as $package) {
