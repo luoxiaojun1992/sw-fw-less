@@ -3,7 +3,6 @@
 namespace SwFwLess\components\hbase;
 
 use SwFwLess\components\Config;
-use SwFwLess\components\thrift\TCoroutineSocket;
 use SwFwLess\facades\File;
 use Cake\Event\Event as CakeEvent;
 use Hbase\HbaseClient;
@@ -121,8 +120,8 @@ class HbasePool
      */
     public function getConnect($needRelease = true)
     {
-        require_once File::path('/app/components/hbase/thrift/Hbase.php');
-        require_once File::path('/app/components/hbase/thrift/Types.php');
+        require_once __DIR__ . '/thrift/Hbase.php';
+        require_once __DIR__ . '/thrift/Types.php';
 
         $socketClass = $this->config['socket_driver'];
         /** @var TSocket $socket */
