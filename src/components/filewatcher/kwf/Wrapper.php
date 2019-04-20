@@ -7,7 +7,6 @@ use Kwf\FileWatcher\Event\Create;
 use Kwf\FileWatcher\Event\Delete;
 use Kwf\FileWatcher\Event\Modify;
 use Kwf\FileWatcher\Event\Move;
-use Kwf\FileWatcher\Watcher as KwfWatcher;
 use SwFwLess\components\filewatcher\Watcher as SwfWatcher;
 use SwFwLess\components\filewatcher\WatcherWrapperContract;
 
