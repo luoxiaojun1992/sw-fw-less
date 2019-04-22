@@ -64,18 +64,20 @@ class RateLimit
         /** @var \Redis $redis */
         $redis = $this->redisPool->pick($this->config['connection']);
         try {
-            if ($redis->get($metric) >= $throttle) {
+            if (intval($redis->get($metric)) >= $throttle) {
                 return false;
             }
 
             $lua = <<<EOF
 local new_value=redis.call('incr', KEYS[1]);
+if(ARGV[1] > 0) then
 if(new_value == 1) then 
 redis.call('expire', KEYS[1], ARGV[1]) 
 end
+end
 return new_value
 EOF;
-            $passed = $redis->eval($lua, [$metric, $period], 1);
+            $passed = intval($redis->eval($lua, [$metric, $period], 1));
             $remaining = $throttle - $passed;
             return $passed <= $throttle;
         } catch (\Throwable $e) {

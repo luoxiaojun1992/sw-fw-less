@@ -2,7 +2,6 @@
 
 namespace SwFwLess\components\ratelimit;
 
-use SwFwLess\components\Config;
 use SwFwLess\components\http\Request;
 use SwFwLess\components\http\Response;
 use SwFwLess\middlewares\AbstractMiddleware;
@@ -18,7 +17,15 @@ class Middleware extends AbstractMiddleware
      */
     public function handle(Request $request)
     {
-        $this->config = array_merge(Config::get('throttle'), $this->parseOptions());
+        $options = $this->parseOptions();
+        $throttleConfig = config('throttle');
+        if (isset($options['period']) && $options['period'] !== '') {
+            $throttleConfig['period'] = intval($options['period']);
+        }
+        if (isset($options['throttle']) && $options['throttle'] !== '') {
+            $throttleConfig['throttle'] = intval($options['throttle']);
+        }
+        $this->config = $throttleConfig;
 
         list($metric, $period, $throttle) = $this->parseConfig($request);
 
@@ -51,11 +58,18 @@ class Middleware extends AbstractMiddleware
      */
     protected function parseOptions()
     {
+        $parsedOptions = [];
         if ($this->getOptions()) {
-            list($period, $throttle) = explode(',' , $this->getOptions());
-            return compact('period', 'throttle');
+            $options = explode(',' , $this->getOptions());
+
+            if (isset($options[0])) {
+                $parsedOptions['period'] = $options[0];
+            }
+            if (isset($options[1])) {
+                $parsedOptions['throttle'] = $options[1];
+            }
         }
 
-        return [];
+        return $parsedOptions;
     }
 }

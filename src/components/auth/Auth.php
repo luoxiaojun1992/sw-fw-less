@@ -55,14 +55,14 @@ class Auth
 
     /**
      * @param $credentialCarrier
-     * @param null $guard
+     * @param null $guardName
      * @param null $config
      * @return bool
      */
-    public static function verify($credentialCarrier, $guard = null, $config = null)
+    public static function verify($credentialCarrier, $guardName = null, $config = null)
     {
         $config = $config ?? config('auth');
-        $guardName = $guard ?? $config['guard'];
+        $guardName = $guardName ?? $config['guard'];
         $guardConfig = $config['guards'][$guardName];
         /** @var GuardContract $guard */
         $guard = new $guardConfig['guard'];

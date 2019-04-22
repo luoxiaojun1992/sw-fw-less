@@ -11,9 +11,13 @@ trait Parser
     private function parseMiddlewareName($middlewareName)
     {
         if (strpos($middlewareName, ':') > 0) {
-            return explode(':', $middlewareName);
+            $result = explode(':', $middlewareName);
+        } else {
+            $result = [$middlewareName, null];
         }
 
-        return [$middlewareName, null];
+        $result[0] = config('middleware.aliases')[$result[0]] ?? $result[0];
+
+        return $result;
     }
 }

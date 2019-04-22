@@ -12,10 +12,17 @@ class Middleware extends AbstractMiddleware
     {
         $config = config('auth');
 
-        $guardName = $config['guard'];
-        $config['guards'][$guardName] = array_merge($config['guards'][$guardName], $this->parseOptions());
+        $options = $this->parseOptions();
+        $guardName = !empty($options['guardName']) ? $options['guardName'] : $config['guard'];
 
-        if (!Auth::verify($request, null, $config)) {
+        if (!empty($options['userProvider'])) {
+            $config['guards'][$guardName]['user_provider'] = $options['userProvider'];
+        }
+        if (!empty($options['credentialKey'])) {
+            $config['guards'][$guardName]['credential_key'] = $options['credentialKey'];
+        }
+
+        if (!Auth::verify($request, $guardName, $config)) {
             $response = Response::output('', 401)
                 ->header('X-Auth-Guard', $guardName)
                 ->header('X-Auth-Key', $config['guards'][$guardName]['credential_key']);
@@ -35,11 +42,21 @@ class Middleware extends AbstractMiddleware
      */
     protected function parseOptions()
     {
+        $parsedOptions = [];
         if ($this->getOptions()) {
-            list($user_provider, $credential_key) = explode(',' , $this->getOptions());
-            return compact('user_provider', 'credential_key');
+            $options = explode(',' , $this->getOptions());
+
+            if (isset($options[0])) {
+                $parsedOptions['guardName'] = $options[0];
+            }
+            if (isset($options[1])) {
+                $parsedOptions['userProvider'] = $options[1];
+            }
+            if (isset($options[2])) {
+                $parsedOptions['credentialKey'] = $options[2];
+            }
         }
 
-        return [];
+        return $parsedOptions;
     }
 }
