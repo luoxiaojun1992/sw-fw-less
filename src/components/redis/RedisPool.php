@@ -27,7 +27,7 @@ class RedisPool
             return self::$instance;
         }
 
-        if ($redisConfig['switch']) {
+        if (is_array($redisConfig) && !empty($redisConfig['switch'])) {
             return self::$instance = new self($redisConfig);
         } else {
             return null;

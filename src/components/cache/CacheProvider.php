@@ -11,8 +11,6 @@ class CacheProvider extends AbstractProvider implements RequestProvider
     {
         parent::bootRequest();
 
-        if (config('redis.switch')) {
-            Cache::create(\SwFwLess\components\redis\RedisPool::create(), config('cache'));
-        }
+        Cache::create(\SwFwLess\components\redis\RedisPool::create(), config('cache'));
     }
 }

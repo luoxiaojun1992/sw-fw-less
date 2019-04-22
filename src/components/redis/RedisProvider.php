@@ -11,8 +11,6 @@ class RedisProvider extends AbstractProvider implements RequestProvider
     {
         parent::bootRequest();
 
-        if (config('redis.switch')) {
-            RedisPool::create(config('redis'));
-        }
+        RedisPool::create(config('redis'));
     }
 }

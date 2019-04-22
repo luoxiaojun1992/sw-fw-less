@@ -29,7 +29,11 @@ class RedLock
      */
     public static function create(RedisPool $redisPool = null, $config = [])
     {
-        return new self($redisPool, $config);
+        if (!is_null($redisPool)) {
+            return new self($redisPool, $config);
+        }
+
+        return null;
     }
 
     /**

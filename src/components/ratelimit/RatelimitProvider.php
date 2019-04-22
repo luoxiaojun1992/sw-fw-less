@@ -11,12 +11,10 @@ class RatelimitProvider extends AbstractProvider implements RequestProvider
     {
         parent::bootRequest();
 
-        if (config('redis.switch')) {
-            //Rate limiter
-            RateLimit::create(
-                \SwFwLess\components\redis\RedisPool::create(),
-                config('rate_limit')
-            );
-        }
+        //Rate limiter
+        RateLimit::create(
+            \SwFwLess\components\redis\RedisPool::create(),
+            config('rate_limit')
+        );
     }
 }

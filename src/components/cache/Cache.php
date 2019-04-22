@@ -35,7 +35,11 @@ class Cache
             return self::$instance;
         }
 
-        return self::$instance = new self($redisPool, $config);
+        if (!is_null($redisPool)) {
+            return self::$instance = new self($redisPool, $config);
+        }
+
+        return null;
     }
 
     /**
