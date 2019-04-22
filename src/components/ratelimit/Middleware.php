@@ -35,7 +35,7 @@ class Middleware extends AbstractMiddleware
                 ->header('X-RateLimit-Remaining', $remaining);
         }
 
-        return $this->next();
+        return $this->next()->header('X-RateLimit-Throttle', $throttle)->header('X-RateLimit-Remaining', $remaining);
     }
 
     /**
