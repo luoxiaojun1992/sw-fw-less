@@ -5,9 +5,12 @@ namespace SwFwLess\components\ratelimit;
 use SwFwLess\components\http\Request;
 use SwFwLess\components\http\Response;
 use SwFwLess\middlewares\AbstractMiddleware;
+use SwFwLess\middlewares\traits\Parser;
 
 class Middleware extends AbstractMiddleware
 {
+    use Parser;
+    
     private $config = [];
 
     /**
@@ -17,7 +20,7 @@ class Middleware extends AbstractMiddleware
      */
     public function handle(Request $request)
     {
-        $options = $this->parseOptions();
+        $options = $this->parseOptions(['period', 'throttle']);
         $throttleConfig = config('throttle');
         if (isset($options['period']) && $options['period'] !== '') {
             $throttleConfig['period'] = intval($options['period']);
@@ -51,25 +54,5 @@ class Middleware extends AbstractMiddleware
         }
 
         return [$metric ?: $request->uri(), $this->config['period'], $this->config['throttle']];
-    }
-
-    /**
-     * @return array
-     */
-    protected function parseOptions()
-    {
-        $parsedOptions = [];
-        if ($this->getOptions()) {
-            $options = explode(',' , $this->getOptions());
-
-            if (isset($options[0])) {
-                $parsedOptions['period'] = $options[0];
-            }
-            if (isset($options[1])) {
-                $parsedOptions['throttle'] = $options[1];
-            }
-        }
-
-        return $parsedOptions;
     }
 }

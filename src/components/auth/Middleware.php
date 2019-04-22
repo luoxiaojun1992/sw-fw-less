@@ -5,14 +5,17 @@ namespace SwFwLess\components\auth;
 use SwFwLess\components\http\Request;
 use SwFwLess\components\http\Response;
 use SwFwLess\middlewares\AbstractMiddleware;
+use SwFwLess\middlewares\traits\Parser;
 
 class Middleware extends AbstractMiddleware
 {
+    use Parser;
+
     public function handle(Request $request)
     {
         $config = config('auth');
 
-        $options = $this->parseOptions();
+        $options = $this->parseOptions(['guardName', 'userProvider', 'credentialKey']);
         $guardName = !empty($options['guardName']) ? $options['guardName'] : $config['guard'];
 
         if (!empty($options['userProvider'])) {
@@ -35,28 +38,5 @@ class Middleware extends AbstractMiddleware
         }
 
         return $this->next();
-    }
-
-    /**
-     * @return array
-     */
-    protected function parseOptions()
-    {
-        $parsedOptions = [];
-        if ($this->getOptions()) {
-            $options = explode(',' , $this->getOptions());
-
-            if (isset($options[0])) {
-                $parsedOptions['guardName'] = $options[0];
-            }
-            if (isset($options[1])) {
-                $parsedOptions['userProvider'] = $options[1];
-            }
-            if (isset($options[2])) {
-                $parsedOptions['credentialKey'] = $options[2];
-            }
-        }
-
-        return $parsedOptions;
     }
 }
