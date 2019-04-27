@@ -20,8 +20,8 @@ class Middleware extends AbstractMiddleware
      */
     public function handle(Request $request)
     {
-        $options = $this->parseOptions(['period', 'throttle']);
         $throttleConfig = config('throttle');
+        $options = $this->parseOptions(['period', 'throttle']);
         if (isset($options['period']) && $options['period'] !== '') {
             $throttleConfig['period'] = intval($options['period']);
         }
