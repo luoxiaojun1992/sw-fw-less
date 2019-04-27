@@ -26,7 +26,7 @@ class IpRestriction extends AbstractMiddleware
             $ips =  array_merge($ips, explode(',', $options));
         }
 
-        $requestIp = $this->requestIp($request);
+        $requestIp = (string)$this->requestIp($request);
         if (!Ip::checkIp($requestIp, $ips)) {
             return Response::output('', 403)->header('X-Request-Ip', $requestIp);
         }
