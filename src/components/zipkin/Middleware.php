@@ -21,11 +21,32 @@ class Middleware extends AbstractMiddleware
 {
     /**
      * @param Request $request
+     * @return bool
+     */
+    private function needSample(Request $request)
+    {
+        $path = $request->uri();
+        $apiPrefix = explode(',', config('zipkin.api_prefix', '/'));
+        foreach ($apiPrefix as $prefix) {
+            if (stripos($path, $prefix) === 0) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @param Request $request
      * @return \SwFwLess\components\http\Response
      * @throws \Throwable
      */
     public function handle(Request $request)
     {
+        if (!$this->needSample($request)) {
+            return $this->next();
+        }
+
         /** @var Tracer $swfTracer */
         $swfTracer = $request->getTracer();
         $psrRequest = $request->convertToPsr7();
