@@ -20,13 +20,13 @@ class IpRestriction extends AbstractMiddleware
             return $this->next();
         }
 
-        $ips = $ipRestrictionConfig['ips'];
+        $ips = explode(',', $ipRestrictionConfig['ips']);
 
         if ($options = $this->getOptions()) {
             $ips =  array_merge($ips, explode(',', $options));
         }
 
-        foreach ($ipRestrictionConfig['api_prefix'] as $prefix) {
+        foreach (explode(',', $ipRestrictionConfig['api_prefix']) as $prefix) {
             if (stripos($request->uri(), $prefix) === 0) {
                 $requestIp = (string)$this->requestIp($request);
                 if (!Ip::checkIp($requestIp, $ips)) {
