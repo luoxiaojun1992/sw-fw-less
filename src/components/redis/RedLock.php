@@ -53,10 +53,11 @@ class RedLock
      * @param     $key
      * @param     int $ttl
      * @param     bool $guard
+     * @param     callable|null $callback
      * @return    bool
      * @throws \Throwable
      */
-    public function lock($key, $ttl = 0, $guard = false)
+    public function lock($key, $ttl = 0, $guard = false, $callback = null)
     {
         /** @var \Redis $redis */
         $redis = $this->redisPool->pick($this->config['connection']);
@@ -76,6 +77,13 @@ EOF;
             }
             if ($result > 0) {
                 $this->addLockedKey($key, $guard);
+
+                if (is_callable($callback)) {
+                    $callbackRes = call_user_func($callback);
+                    $this->unlock($key);
+                    return $callbackRes;
+                }
+
                 return true;
             }
         } catch (\Throwable $e) {
