@@ -109,7 +109,7 @@ EOF;
 
         try {
             if ($redis->get($key . ':ttl') === false) {
-                if (RedLock::lock('lock:update:cache:' . $key, $this->config['update_lock_ttl'])) {
+                if (RedLock::lock('update:cache:' . $key, $this->config['update_lock_ttl'])) {
                     if ($redis->get($key . ':ttl') === false) {
                         return false;
                     }

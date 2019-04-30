@@ -104,6 +104,10 @@ EOF;
      */
     public function unlock($key)
     {
+        if (!empty($this->locked_keys[$key]['guard'])) {
+            return false;
+        }
+
         /** @var \Redis $redis */
         $redis = $this->redisPool->pick($this->config['connection']);
         try {

@@ -64,7 +64,7 @@ class RateLimit
         /** @var \Redis $redis */
         $redis = $this->redisPool->pick($this->config['connection']);
         try {
-            if (intval($redis->get('ratelimit:' . $metric)) >= $throttle) {
+            if (intval($redis->get($metric)) >= $throttle) {
                 return false;
             }
 
@@ -77,7 +77,7 @@ redis.call('expire', KEYS[1], ARGV[1])
 end
 return new_value
 EOF;
-                $passed = intval($redis->eval($lua, ['ratelimit:' . $metric, $period], 1));
+                $passed = intval($redis->eval($lua, [$metric, $period], 1));
             } else {
                 $lua = <<<EOF
 local new_value=redis.call('incr', KEYS[1]);
@@ -87,7 +87,7 @@ redis.call('persist', KEYS[1])
 end
 return new_value
 EOF;
-                $passed = intval($redis->eval($lua, ['ratelimit:' . $metric], 1));
+                $passed = intval($redis->eval($lua, [$metric], 1));
             }
 
             $remaining = $throttle - $passed;
@@ -108,7 +108,7 @@ EOF;
         /** @var \Redis $redis */
         $redis = $this->redisPool->pick($this->config['connection']);
         try {
-            $redis->del('ratelimit:' . $metric);
+            $redis->del($metric);
         } catch (\Throwable $e) {
             throw $e;
         } finally {
