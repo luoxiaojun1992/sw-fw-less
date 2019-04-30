@@ -54,7 +54,7 @@ class RedLock
      * @param     int $ttl
      * @param     bool $guard
      * @param     callable|null $callback
-     * @return    bool
+     * @return    mixed
      * @throws \Throwable
      */
     public function lock($key, $ttl = 0, $guard = false, $callback = null)
