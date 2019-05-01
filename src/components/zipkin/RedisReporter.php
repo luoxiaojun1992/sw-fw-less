@@ -42,6 +42,10 @@ final class RedisReporter implements Reporter
      */
     public function report(array $spans)
     {
+        if (!$spans) {
+            return;
+        }
+
         $payload = json_encode(array_map(function (Span $span) {
             return $span->toArray();
         }, $spans));
