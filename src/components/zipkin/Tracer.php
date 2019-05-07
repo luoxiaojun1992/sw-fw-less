@@ -37,6 +37,7 @@ class Tracer
     const RUNTIME_FINISH_SYSTEM_LOAD = 'runtime.finish_system_load';
     const RUNTIME_MEMORY = 'runtime.memory';
     const RUNTIME_PHP_VERSION = 'runtime.php.version';
+    const RUNTIME_PHP_SAPI = 'runtime.php.sapi';
     const DB_EXEC_TIMES = 'db.exec.times';
     const DB_EXEC_TOTAL_DURATION = 'db.exec.total.duration';
     const REDIS_EXEC_TIMES = 'redis.exec.times';
@@ -525,6 +526,7 @@ class Tracer
     {
         $this->addTag($span, self::FRAMEWORK_VERSION, 'Sw-Fw-Less-' . appVersion());
         $this->addTag($span, self::RUNTIME_PHP_VERSION, PHP_VERSION);
+        $this->addTag($span, self::RUNTIME_PHP_SAPI, sapi());
 
         $this->startSysLoadTag($span);
     }
