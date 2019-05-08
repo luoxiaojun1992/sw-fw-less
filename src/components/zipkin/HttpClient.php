@@ -89,6 +89,6 @@ class HttpClient
                         }
                     }
                 }
-            }, null, \Zipkin\Kind\CLIENT);
+            }, \Zipkin\Kind\CLIENT);
     }
 }
