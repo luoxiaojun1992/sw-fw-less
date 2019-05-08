@@ -3,9 +3,6 @@
 namespace SwFwLess\components\zipkin;
 
 use SwFwLess\components\http\Request;
-use SwFwLess\components\mysql\Query;
-use SwFwLess\components\redis\RedisWrapper;
-use SwFwLess\facades\Event;
 use SwFwLess\facades\Log;
 use Psr\Http\Message\RequestInterface;
 use Zipkin\Endpoint;
@@ -38,10 +35,6 @@ class Tracer
     const RUNTIME_MEMORY = 'runtime.memory';
     const RUNTIME_PHP_VERSION = 'runtime.php.version';
     const RUNTIME_PHP_SAPI = 'runtime.php.sapi';
-    const DB_EXEC_TIMES = 'db.exec.times';
-    const DB_EXEC_TOTAL_DURATION = 'db.exec.total.duration';
-    const REDIS_EXEC_TIMES = 'redis.exec.times';
-    const REDIS_EXEC_TOTAL_DURATION = 'redis.exec.total.duration';
     const FRAMEWORK_VERSION = 'framework.version';
     const HTTP_QUERY_STRING = 'http.query_string';
 
@@ -65,14 +58,6 @@ class Tracer
     /** @var array TraceContext[] */
     private $contextStack = [];
 
-    //DB metrics
-    private $dbExecTimes = [];
-    private $totalDbExecDuration = [];
-
-    //Redis metrics
-    private $redisExecTimes = [];
-    private $totalRedisExecDuration = [];
-
     /** @var Request */
     private $request;
 
@@ -90,10 +75,6 @@ class Tracer
         $this->reportType = config('zipkin.report_type', 'http');
 
         $this->createTracer();
-
-        $this->listenDbExec();
-
-        $this->listenRedisExec();
     }
 
     /**
@@ -125,46 +106,6 @@ class Tracer
         }
 
         return new HttpReporter(['endpoint_url' => $this->endpointUrl, 'timeout' => $this->curlTimeout]);
-    }
-
-    /**
-     * Listen db exec events
-     */
-    private function listenDbExec()
-    {
-        Event::on(Query::EVENT_EXECUTED, [], function (\Cake\Event\Event $event) {
-            $identify = $event->getData('db') . '.' . $event->getData('connection');
-            if (isset($this->dbExecTimes[$identify])) {
-                $this->dbExecTimes[$identify]++;
-            } else {
-                $this->dbExecTimes[$identify] = 1;
-            }
-            if (isset($this->totalDbExecDuration[$identify])) {
-                $this->totalDbExecDuration[$identify] += $event->getData('time');
-            } else {
-                $this->totalDbExecDuration[$identify] = $event->getData('time');
-            }
-        });
-    }
-
-    /**
-     * Listen redis exec events
-     */
-    private function listenRedisExec()
-    {
-        Event::on(RedisWrapper::EVENT_EXECUTED, [], function (\Cake\Event\Event $event) {
-            $identify = $event->getData('connection');
-            if (isset($this->redisExecTimes[$identify])) {
-                $this->redisExecTimes[$identify]++;
-            } else {
-                $this->redisExecTimes[$identify] = 1;
-            }
-            if (isset($this->totalRedisExecDuration[$identify])) {
-                $this->totalRedisExecDuration[$identify] += $event->getData('time');
-            } else {
-                $this->totalRedisExecDuration[$identify] = $event->getData('time');
-            }
-        });
     }
 
     /**
@@ -225,14 +166,6 @@ class Tracer
         $spanContext = $span->getContext();
         array_push($this->contextStack, $spanContext);
 
-        //Db metrics tags
-        $startDbExecTimes = $this->dbExecTimes;
-        $startDbExecDuration = $this->totalDbExecDuration;
-
-        //Redis metrics tags
-        $startRedisExecTimes = $this->redisExecTimes;
-        $startRedisExecDuration = $this->totalRedisExecDuration;
-
         //Memory tags
         $startMemory = 0;
         if ($span->getContext()->isSampled()) {
@@ -249,22 +182,6 @@ class Tracer
             throw $e;
         } finally {
             if ($span->getContext()->isSampled()) {
-                //Db metrics tags
-                foreach ($this->dbExecTimes as $identify => $value) {
-                    $this->addTag($span, self::DB_EXEC_TIMES . '.' . $identify, $value - (isset($startDbExecTimes[$identify]) ? $startDbExecTimes[$identify] : 0));
-                }
-                foreach ($this->totalDbExecDuration as $identify => $value) {
-                    $this->addTag($span, self::DB_EXEC_TOTAL_DURATION . '.' . $identify, ($value - (isset($startDbExecDuration[$identify]) ? $startDbExecDuration[$identify] : 0)) . 'ms');
-                }
-
-                //Redis metrics tags
-                foreach ($this->redisExecTimes as $identify => $value) {
-                    $this->addTag($span, self::REDIS_EXEC_TIMES . '.' . $identify, $value - (isset($startRedisExecTimes[$identify]) ? $startRedisExecTimes[$identify] : 0));
-                }
-                foreach ($this->totalRedisExecDuration as $identify => $value) {
-                    $this->addTag($span, self::REDIS_EXEC_TOTAL_DURATION . '.' . $identify, ($value - (isset($startRedisExecDuration[$identify]) ? $startRedisExecDuration[$identify] : 0)) . 'ms');
-                }
-
                 //Memory tags
                 $this->addTag($span, static::RUNTIME_MEMORY, round((memory_get_usage() - $startMemory) / 1000000, 2) . 'MB');
 
