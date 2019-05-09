@@ -51,7 +51,7 @@ class Middleware extends AbstractMiddleware
         $swfTracer = $request->getTracer();
         $psrRequest = $request->convertToPsr7();
         $path = $psrRequest->getUri()->getPath();
-        return $swfTracer->span($this->getSpanName($swfTracer, $request, $psrRequest), function (Span $span) use ($request, $psrRequest, $swfTracer, $path) {
+        return $swfTracer->serverSpan($this->getSpanName($swfTracer, $request, $psrRequest), function (Span $span) use ($request, $psrRequest, $swfTracer, $path) {
             if ($span->getContext()->isSampled()) {
                 $swfTracer->addTag($span, HTTP_HOST, $psrRequest->getUri()->getHost());
                 $swfTracer->addTag($span, HTTP_PATH, $path);
@@ -114,7 +114,7 @@ class Middleware extends AbstractMiddleware
                     }
                 }
             }
-        }, \Zipkin\Kind\SERVER, true);
+        }, true);
     }
 
     /**

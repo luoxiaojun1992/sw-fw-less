@@ -6,6 +6,8 @@ use SwFwLess\components\http\Request;
 use SwFwLess\facades\Log;
 use Psr\Http\Message\RequestInterface;
 use Zipkin\Endpoint;
+use const Zipkin\Kind\CLIENT;
+use const Zipkin\Kind\SERVER;
 use Zipkin\Propagation\DefaultSamplingFlags;
 use Zipkin\Propagation\RequestHeaders;
 use Zipkin\Propagation\TraceContext;
@@ -140,6 +142,34 @@ class Tracer
     {
         $this->request = $request;
         return $this;
+    }
+
+    /**
+     * Create a server trace
+     *
+     * @param $name
+     * @param $callback
+     * @param bool $flush
+     * @return mixed
+     * @throws \Throwable
+     */
+    public function serverSpan($name, $callback, $flush = false)
+    {
+        return $this->span($name, $callback, SERVER, $flush);
+    }
+
+    /**
+     * Create a client trace
+     *
+     * @param $name
+     * @param $callback
+     * @param bool $flush
+     * @return mixed
+     * @throws \Throwable
+     */
+    public function clientSpan($name, $callback, $flush = false)
+    {
+        return $this->span($name, $callback, CLIENT, $flush);
     }
 
     /**

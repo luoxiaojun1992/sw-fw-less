@@ -35,7 +35,7 @@ class HttpClient
         $request = $saberRequest;
         $path = $request->getUri()->getPath();
 
-        return $swfTracer->span(
+        return $swfTracer->clientSpan(
             isset($spanName) ? $spanName : $swfTracer->formatRoutePath($path),
             function (Span $span) use ($request, $swfTracer, $path, $injectSpanCtx) {
                 //Inject trace context to api psr request
@@ -89,6 +89,6 @@ class HttpClient
                         }
                     }
                 }
-            }, \Zipkin\Kind\CLIENT);
+            });
     }
 }
