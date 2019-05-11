@@ -19,6 +19,7 @@ Swoole http server without framework
 13. Zipkin Trace
 14. Dynamic Fault Injection
 15. Hot Reload(biz code、config、router)
+16. Experimental Grpc
 
 >## Requirements
 * PHP 7.1+
