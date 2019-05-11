@@ -26,7 +26,7 @@ class Route extends AbstractMiddleware
             $reflectionHandler = new \ReflectionMethod($controller, $action);
             $handlerParameters = $reflectionHandler->getParameters();
             foreach ($handlerParameters as $handlerParameter) {
-                if ($declaringClass = $handlerParameter->getDeclaringClass()) {
+                if ($declaringClass = $handlerParameter->getClass()) {
                     if ($declaringClass->isSubclassOf(\Google\Protobuf\Internal\Message::class)) {
                         $protoRequest = $declaringClass->newInstance();
                         $protoRequest->mergeFromString(substr($appRequest->body(), 5));

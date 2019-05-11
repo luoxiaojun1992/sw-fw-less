@@ -41,6 +41,7 @@ class App
             'backlog' => config('server.backlog'),
             'max_request' => config('server.max_request'),
             'dispatch_mode' => config('server.dispatch_mode'),
+            'open_http2_protocol' => true, //todo add config
         ];
         if (!empty($pidFile = config('server.pid_file'))) {
             $serverConfig['pid_file'] = $pidFile;
