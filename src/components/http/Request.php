@@ -211,6 +211,14 @@ class Request
         return $this->getSwRequest()->rawcontent();
     }
 
+    /**
+     * @return bool
+     */
+    public function isGrpc()
+    {
+        return in_array($this->header('content-type'), ['application/grpc', 'application/grpc+proto']);
+    }
+
     public function convertToPsr7()
     {
         $rawBody = $this->getSwRequest()->rawcontent();

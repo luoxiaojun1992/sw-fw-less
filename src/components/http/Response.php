@@ -159,14 +159,19 @@ class Response
      * @param $reply
      * @param int $status
      * @param array $headers
+     * @param bool $toJson
      * @return Response
      */
-    public static function grpc($reply, $status = 200, $headers = [])
+    public static function grpc($reply, $status = 200, $headers = [], $toJson = false)
     {
         $headers['Content-Type'] = 'application/grpc+proto';
         //todo grpc status
-        $message = $reply->serializeToString();
-        return static::output("\x00" . pack('N', strlen($message)) . $message, $status, $headers);
+        if ($toJson) {
+            return static::output($reply->serializeToJsonString(), $status, $headers);
+        } else {
+            $message = $reply->serializeToString();
+            return static::output(pack('CN', 0, strlen($message)) . $message, $status, $headers);
+        }
     }
 
     /**
