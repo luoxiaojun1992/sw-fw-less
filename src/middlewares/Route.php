@@ -22,19 +22,6 @@ class Route extends AbstractMiddleware
         if ($controller instanceof \SwFwLess\services\BaseService) {
             $controller->setRequest($appRequest);
         }
-        if (extension_loaded('protobuf')) {
-            $reflectionHandler = new \ReflectionMethod($controller, $action);
-            $handlerParameters = $reflectionHandler->getParameters();
-            foreach ($handlerParameters as $handlerParameter) {
-                if ($declaringClass = $handlerParameter->getClass()) {
-                    if ($declaringClass->isSubclassOf(\Google\Protobuf\Internal\Message::class)) {
-                        $protoRequest = $declaringClass->newInstance();
-                        $protoRequest->mergeFromString(substr($appRequest->body(), 5));
-                        $parameters[$handlerParameter->getName()] = $protoRequest;
-                    }
-                }
-            }
-        }
         $controller->setHandler($action)->setParameters($parameters);
 
         //Middleware

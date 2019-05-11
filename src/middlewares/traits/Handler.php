@@ -54,12 +54,6 @@ trait Handler
     {
         $response = Container::call([$this, $this->getHandler()], $this->getParameters());
 
-        if (extension_loaded('protobuf')) {
-            if ($response instanceof \Google\Protobuf\Internal\Message) {
-                return Response::grpc($response);
-            }
-        }
-
         if (is_array($response)) {
             return Response::json($response);
         }
