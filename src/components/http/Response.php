@@ -13,6 +13,7 @@ class Response
     private $reasonPhrase = '';
     private $protocolVersion = '1.1'; //Swoole not supported
     private $headers = [];
+    private $trailers = [];
 
     /**
      * @param mixed $content
@@ -76,6 +77,17 @@ class Response
     }
 
     /**
+     * @param $key
+     * @param $value
+     * @return $this
+     */
+    public function trailer($key, $value)
+    {
+        $this->trailers[$key] = $value;
+        return $this;
+    }
+
+    /**
      * @return mixed
      */
     public function getContent()
@@ -97,6 +109,14 @@ class Response
     public function getHeaders()
     {
         return $this->headers;
+    }
+
+    /**
+     * @return array
+     */
+    public function getTrailers()
+    {
+        return $this->trailers;
     }
 
     /**
@@ -164,11 +184,10 @@ class Response
      */
     public static function grpc($reply, $status = 200, $headers = [], $toJson = false)
     {
-        $headers['Content-Type'] = 'application/grpc+proto';
-        //todo grpc status
         if ($toJson) {
-            return static::output($reply->serializeToJsonString(), $status, $headers);
+            return static::json($reply->serializeToJsonString(), $status, $headers);
         } else {
+            $headers['Content-Type'] = 'application/grpc+proto';
             $message = $reply->serializeToString();
             return static::output(pack('CN', 0, strlen($message)) . $message, $status, $headers);
         }

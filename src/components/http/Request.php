@@ -216,7 +216,7 @@ class Request
      */
     public function isGrpc()
     {
-        return in_array($this->header('content-type'), ['application/grpc', 'application/grpc+proto']);
+        return substr($this->header('content-type'), 0, 16) === 'application/grpc';
     }
 
     public function convertToPsr7()
@@ -224,17 +224,20 @@ class Request
         $rawBody = $this->getSwRequest()->rawcontent();
         $contentType = $this->header('content-type');
 
-        if (in_array($contentType, ['application/x-www-form-urlencoded', 'multipart/form-data']) && $this->method() === 'POST') {
+        if ((substr($contentType, 0, 33) === 'application/x-www-form-urlencoded' ||
+                substr($contentType, 0, 19) === 'multipart/form-data') &&
+            $this->method() === 'POST'
+        ) {
             $parsedBody = $this->getSwRequest()->post;
         } else {
-            if ($contentType === 'application/x-www-form-urlencoded') {
+            if (substr($contentType, 0, 33) === 'application/x-www-form-urlencoded') {
                 parse_str((string) $rawBody, $parsedBody);
             } else {
                 $parsedBody = null;
             }
         }
 
-        if (in_array($contentType, ['application/grpc', 'application/grpc+proto'])) {
+        if (substr($contentType, 0, 16) === 'application/grpc') {
             $rawBody = null;
         }
 

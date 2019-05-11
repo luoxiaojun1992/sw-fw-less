@@ -2,10 +2,11 @@
 
 namespace SwFwLess\services;
 
+use SwFwLess\components\grpc\Status;
 use SwFwLess\components\http\Response;
-use SwFwLess\exceptions\ValidationException;
+use SwFwLess\exceptions\HttpException;
 
-class GrpcService extends BaseService
+class GrpcUnaryService extends BaseService
 {
     public function call()
     {
@@ -18,7 +19,23 @@ class GrpcService extends BaseService
                     $protoRequest = $declaringClass->newInstance();
                     if ($this->getRequest()->isGrpc()) {
                         $body = $this->getRequest()->body();
-                        $this->verifyBody($body);
+
+                        if (strlen($body) < 5) {
+                            return Response::output('', 400)
+                                ->trailer('grpc-status', Status::INVALID_ARGUMENT)
+                                ->trailer('grpc-message', Status::msg(Status::INVALID_ARGUMENT));
+                        }
+
+                        $options = unpack('CflagNlength', substr($body, 0, 5));
+                        if ($options['flag']) {
+                            throw new HttpException('Grpc message flag error', 404);
+                        }
+                        if ($options['length'] != (strlen($body) - 5)) {
+                            return Response::output('', 400)
+                                ->trailer('grpc-status', Status::INVALID_ARGUMENT)
+                                ->trailer('grpc-message', Status::msg(Status::INVALID_ARGUMENT));
+                        }
+
                         $protoRequest->mergeFromString(substr($body, 5));
                     } else {
                         $protoRequest->mergeFromJsonString($this->getRequest()->body());
@@ -29,30 +46,6 @@ class GrpcService extends BaseService
         }
         $this->setParameters($parameters);
 
-        $response = parent::call();
-
-        if ($response instanceof \Google\Protobuf\Internal\Message) {
-            return Response::grpc($response, 200, [], !$this->getRequest()->isGrpc());
-        }
-
-        return $response;
-    }
-
-    /**
-     * @param $body
-     */
-    private function verifyBody($body)
-    {
-        //todo grpc status
-        if (strlen($body) < 5) {
-            throw new ValidationException(['Grpc body length error']);
-        }
-        $options = unpack('CflagNlength', substr($body, 0, 5));
-        if ($options['flag']) {
-            throw new ValidationException(['Grpc message flag error']);
-        }
-        if ($options['length'] != (strlen($body) - 5)) {
-            throw new ValidationException(['Grpc message length error']);
-        }
+        return Response::grpc(parent::call(), 200, [], !$this->getRequest()->isGrpc());
     }
 }

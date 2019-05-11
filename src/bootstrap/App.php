@@ -2,6 +2,7 @@
 
 namespace SwFwLess\bootstrap;
 
+use SwFwLess\components\grpc\Status;
 use SwFwLess\components\provider\KernelProvider;
 
 class App
@@ -235,13 +236,30 @@ class App
         return $swfResponse;
     }
 
-    private function swResponse(\SwFwLess\components\http\Response $swfResponse, \Swoole\Http\Response $swResponse)
+    private function swResponse(
+        \SwFwLess\components\http\Response $swfResponse,
+        \Swoole\Http\Response $swResponse,
+        \Swoole\Http\Request $swRequest
+    )
     {
-        $swResponse->status($swfResponse->getStatus());
-        if ($headers = $swfResponse->getHeaders()) {
-            foreach ($headers as $key => $value) {
-                $swResponse->header($key, $value);
+        $httpCode = $swfResponse->getStatus();
+
+        $swResponse->status($httpCode);
+
+        if (isset($swRequest->header['content-type'])) {
+            if (substr($swRequest->header['content-type'], 0, 16) === 'application/grpc') {
+                $grpcStatus = Status::status($httpCode);
+                $swResponse->trailer('grpc-status', $grpcStatus);
+                $swResponse->trailer('grpc-message', Status::msg($grpcStatus));
             }
+        }
+
+        foreach ($swfResponse->getHeaders() as $key => $value) {
+            $swResponse->header($key, $value);
+        }
+
+        foreach ($swfResponse->getTrailers() as $key => $value) {
+            $swResponse->trailer($key, $value);
         }
 
         $this->swResponseWithEvents(function () use ($swResponse, $swfResponse) {
