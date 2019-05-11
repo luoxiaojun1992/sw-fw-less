@@ -226,6 +226,10 @@ class Request
             }
         }
 
+        if (in_array($contentType, ['application/grpc', 'application/grpc+proto'])) {
+            $rawBody = null;
+        }
+
         return ServerRequestFactory::fromGlobals(
             $this->getSwRequest()->server ?? [],
             $this->getSwRequest()->get ?? [],

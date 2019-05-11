@@ -156,6 +156,20 @@ class Response
     }
 
     /**
+     * @param $reply
+     * @param int $status
+     * @param array $headers
+     * @return Response
+     */
+    public static function grpc($reply, $status = 200, $headers = [])
+    {
+        $headers['Content-Type'] = 'application/grpc+proto';
+        //todo grpc status
+        $message = $reply->serializeToString();
+        return static::output("\x00" . pack('N', strlen($message)) . $message, $status, $headers);
+    }
+
+    /**
      * @param $arr
      * @param int $status
      * @param array $headers

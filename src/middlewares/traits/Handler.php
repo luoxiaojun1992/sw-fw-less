@@ -2,6 +2,7 @@
 
 namespace SwFwLess\middlewares\traits;
 
+use SwFwLess\components\http\Response;
 use SwFwLess\facades\Container;
 
 trait Handler
@@ -51,6 +52,18 @@ trait Handler
      */
     public function call()
     {
-        return Container::call([$this, $this->getHandler()], $this->getParameters());
+        $response = Container::call([$this, $this->getHandler()], $this->getParameters());
+
+        if (extension_loaded('protobuf')) {
+            if ($response instanceof \Google\Protobuf\Internal\Message) {
+                return Response::grpc($response);
+            }
+        }
+
+        if (is_array($response)) {
+            return Response::json($response);
+        }
+
+        return $response;
     }
 }
