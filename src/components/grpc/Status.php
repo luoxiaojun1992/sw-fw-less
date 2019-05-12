@@ -141,6 +141,7 @@ class Status
     ];
 
     const HTTP_CODE_STATUS_MAPPING = [
+        200 => self::OK,
         400 => self::INTERNAL,
         401 => self::UNAUTHENTICATED,
         403 => self::PERMISSION_DENIED,

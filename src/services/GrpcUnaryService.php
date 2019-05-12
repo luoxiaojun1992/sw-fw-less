@@ -23,18 +23,20 @@ class GrpcUnaryService extends BaseService
                         if (strlen($body) < 5) {
                             return Response::output('', 400, [], [
                                 'grpc-status' => Status::INVALID_ARGUMENT,
-                                'grpc-message' => Status::msg(Status::INVALID_ARGUMENT),
+                                'grpc-message' => '',
+//                                'grpc-message' => Status::msg(Status::INVALID_ARGUMENT),
                             ]);
                         }
 
-                        $options = unpack('CflagNlength', substr($body, 0, 5));
+                        $options = unpack('Cflag/Nlength', substr($body, 0, 5));
                         if ($options['flag']) {
                             throw new HttpException('Grpc message flag error', 404);
                         }
                         if ($options['length'] != (strlen($body) - 5)) {
                             return Response::output('', 400, [], [
                                 'grpc-status' => Status::INVALID_ARGUMENT,
-                                'grpc-message' => Status::msg(Status::INVALID_ARGUMENT),
+                                'grpc-message' => '',
+//                                'grpc-message' => Status::msg(Status::INVALID_ARGUMENT),
                             ]);
                         }
 
