@@ -109,7 +109,7 @@ class Middleware extends AbstractMiddleware
                         $swfTracer->addTag(
                             $span,
                             Tracer::HTTP_RESPONSE_PROTOCOL_VERSION,
-                            $swfTracer->formatHttpProtocolVersion($response->getProtocolVersion())
+                            $swfTracer->formatHttpProtocolVersion($psrRequest->getProtocolVersion())
                         );
                     }
                 }

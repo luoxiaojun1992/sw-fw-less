@@ -46,6 +46,16 @@ class Response
     }
 
     /**
+     * @param $trailers
+     * @return $this
+     */
+    public function setTrailers($trailers)
+    {
+        $this->trailers = $trailers;
+        return $this;
+    }
+
+    /**
      * @param $protocolVersion
      * @return $this
      */
@@ -177,28 +187,30 @@ class Response
      * @param $content
      * @param int $status
      * @param array $headers
+     * @param array $trailers
      * @return Response
      */
-    public static function output($content, $status = 200, $headers = [])
+    public static function output($content, $status = 200, $headers = [], $trailers = [])
     {
-        return (new self)->setContent($content)->setStatus($status)->setHeaders($headers);
+        return (new self)->setContent($content)->setStatus($status)->setHeaders($headers)->setTrailers($trailers);
     }
 
     /**
      * @param $reply
      * @param int $status
      * @param array $headers
+     * @param array $trailers
      * @param bool $toJson
      * @return Response
      */
-    public static function grpc($reply, $status = 200, $headers = [], $toJson = false)
+    public static function grpc($reply, $status = 200, $headers = [], $trailers = [], $toJson = false)
     {
         if ($toJson) {
-            return static::json($reply->serializeToJsonString(), $status, $headers);
+            return static::json($reply->serializeToJsonString(), $status, $headers, $trailers);
         } else {
             $headers['Content-Type'] = 'application/grpc+proto';
             $message = $reply->serializeToString();
-            return static::output(pack('CN', 0, strlen($message)) . $message, $status, $headers);
+            return static::output(pack('CN', 0, strlen($message)) . $message, $status, $headers, $trailers);
         }
     }
 
@@ -206,12 +218,13 @@ class Response
      * @param $arr
      * @param int $status
      * @param array $headers
+     * @param array $trailers
      * @return Response
      */
-    public static function json($arr, $status = 200, $headers = [])
+    public static function json($arr, $status = 200, $headers = [], $trailers = [])
     {
         $headers['Content-Type'] = 'application/json';
         $content = is_string($arr) ? $arr : Helper::jsonEncode($arr);
-        return self::output($content, $status, $headers);
+        return self::output($content, $status, $headers, $trailers);
     }
 }

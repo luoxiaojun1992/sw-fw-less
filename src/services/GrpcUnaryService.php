@@ -21,9 +21,10 @@ class GrpcUnaryService extends BaseService
                         $body = $this->getRequest()->body();
 
                         if (strlen($body) < 5) {
-                            return Response::output('', 400)
-                                ->trailer('grpc-status', Status::INVALID_ARGUMENT)
-                                ->trailer('grpc-message', Status::msg(Status::INVALID_ARGUMENT));
+                            return Response::output('', 400, [], [
+                                'grpc-status' => Status::INVALID_ARGUMENT,
+                                'grpc-message' => Status::msg(Status::INVALID_ARGUMENT),
+                            ]);
                         }
 
                         $options = unpack('CflagNlength', substr($body, 0, 5));
@@ -31,9 +32,10 @@ class GrpcUnaryService extends BaseService
                             throw new HttpException('Grpc message flag error', 404);
                         }
                         if ($options['length'] != (strlen($body) - 5)) {
-                            return Response::output('', 400)
-                                ->trailer('grpc-status', Status::INVALID_ARGUMENT)
-                                ->trailer('grpc-message', Status::msg(Status::INVALID_ARGUMENT));
+                            return Response::output('', 400, [], [
+                                'grpc-status' => Status::INVALID_ARGUMENT,
+                                'grpc-message' => Status::msg(Status::INVALID_ARGUMENT),
+                            ]);
                         }
 
                         $protoRequest->mergeFromString(substr($body, 5));
@@ -46,6 +48,6 @@ class GrpcUnaryService extends BaseService
         }
         $this->setParameters($parameters);
 
-        return Response::grpc(parent::call(), 200, [], !$this->getRequest()->isGrpc());
+        return Response::grpc(parent::call(), 200, [], [], !$this->getRequest()->isGrpc());
     }
 }
