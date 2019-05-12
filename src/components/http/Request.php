@@ -221,24 +221,23 @@ class Request
 
     public function convertToPsr7()
     {
-        $rawBody = $this->getSwRequest()->rawcontent();
-        $contentType = $this->header('content-type');
+        $rawBody = null;
+        $parsedBody = null;
 
-        if ((substr($contentType, 0, 33) === 'application/x-www-form-urlencoded' ||
-                substr($contentType, 0, 19) === 'multipart/form-data') &&
-            $this->method() === 'POST'
-        ) {
-            $parsedBody = $this->getSwRequest()->post;
-        } else {
-            if (substr($contentType, 0, 33) === 'application/x-www-form-urlencoded') {
-                parse_str((string) $rawBody, $parsedBody);
+        if (!$this->isGrpc()) {
+            $rawBody = $this->getSwRequest()->rawcontent();
+            $contentType = $this->header('content-type');
+
+            if ((substr($contentType, 0, 33) === 'application/x-www-form-urlencoded' ||
+                    substr($contentType, 0, 19) === 'multipart/form-data') &&
+                $this->method() === 'POST'
+            ) {
+                $parsedBody = $this->getSwRequest()->post;
             } else {
-                $parsedBody = null;
+                if (substr($contentType, 0, 33) === 'application/x-www-form-urlencoded') {
+                    parse_str((string)$rawBody, $parsedBody);
+                }
             }
-        }
-
-        if (substr($contentType, 0, 16) === 'application/grpc') {
-            $rawBody = null;
         }
 
         return ServerRequestFactory::fromGlobals(

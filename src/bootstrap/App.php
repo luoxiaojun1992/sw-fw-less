@@ -211,11 +211,11 @@ class App
 
             $this->swResponse($this->swfRequest(function () use ($request) {
                 return $this->getRequestHandler($request)->call();
-            }), $response);
+            }), $response, $request);
         } catch (\Throwable $e) {
             $this->swResponse($this->swfRequest(function () use ($e) {
                 return \SwFwLess\components\ErrorHandler::handle($e);
-            }), $response);
+            }), $response, $request);
         }
     }
 
@@ -258,8 +258,12 @@ class App
             $swResponse->header($key, $value);
         }
 
-        foreach ($swfResponse->getTrailers() as $key => $value) {
-            $swResponse->trailer($key, $value);
+        if (isset($swRequest->header['te'])) {
+            if (substr($swRequest->header['te'], 0, 8) === 'trailers') {
+                foreach ($swfResponse->getTrailers() as $key => $value) {
+                    $swResponse->trailer($key, $value);
+                }
+            }
         }
 
         $this->swResponseWithEvents(function () use ($swResponse, $swfResponse) {

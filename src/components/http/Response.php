@@ -141,13 +141,22 @@ class Response
     public function convertToPsr7()
     {
         $psrResponse = (new ResponseFactory())->createResponse($this->getStatus(), $this->getReasonPhrase())
-            ->withProtocolVersion($this->getProtocolVersion())
-            ->withBody((new StreamFactory())->createStream($this->getContent()));
+            ->withProtocolVersion($this->getProtocolVersion());
 
         $headers = $this->getHeaders();
         foreach ($headers as $name => $value) {
-            $psrResponse->withAddedHeader($name, $value);
+            $psrResponse = $psrResponse->withAddedHeader($name, $value);
         }
+
+        $body = $this->getContent();
+        foreach ($psrResponse->getHeader('content-type') as $value) {
+            if (substr($value, 0, 16) === 'application/grpc') {
+                $body = '';
+                break;
+            }
+        }
+
+        $psrResponse->withBody((new StreamFactory())->createStream($body));
 
         return $psrResponse;
     }
