@@ -219,6 +219,30 @@ class Request
         return substr($this->header('content-type'), 0, 16) === 'application/grpc';
     }
 
+    /**
+     * @return bool
+     */
+    public function isGrpcJson()
+    {
+        return substr($this->header('content-type'), 0, 21) === 'application/grpc+json';
+    }
+
+    /**
+     * @return bool
+     */
+    public function isJson()
+    {
+        return substr($this->getRequest()->header('content-type'), 0, 16) === 'application/json';
+    }
+
+    /**
+     * @return bool
+     */
+    public function isHttp2()
+    {
+        return substr($this->server('server_protocol'), 0, 6) === 'HTTP/2';
+    }
+
     public function convertToPsr7()
     {
         $rawBody = null;

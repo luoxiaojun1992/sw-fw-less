@@ -203,14 +203,20 @@ class Response
      * @param bool $toJson
      * @return Response
      */
-    public static function grpc($reply, $status = 200, $headers = [], $trailers = [], $toJson = false)
+    public static function grpc($reply, $status = 200, $headers = [], $trailers = [], $toJson = false, $isGrpc = true)
     {
-        if ($toJson) {
-            return static::json($reply->serializeToJsonString(), $status, $headers, $trailers);
-        } else {
-            $headers['Content-Type'] = 'application/grpc+proto';
-            $message = $reply->serializeToString();
+        if ($isGrpc) {
+            if ($toJson) {
+                $headers['Content-Type'] = 'application/grpc+json';
+                $message = $reply->serializeToJsonString();
+            } else {
+                $headers['Content-Type'] = 'application/grpc+proto';
+                $message = $reply->serializeToString();
+            }
+
             return static::output(pack('CN', 0, strlen($message)) . $message, $status, $headers, $trailers);
+        } else {
+            return static::json($reply->serializeToJsonString(), $status, $headers, $trailers);
         }
     }
 
