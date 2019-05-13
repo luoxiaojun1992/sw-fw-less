@@ -50,7 +50,7 @@ class GrpcUnaryService extends BaseService
             if ($declaringClass = $handlerParameter->getClass()) {
                 if ($declaringClass->isSubclassOf(\Google\Protobuf\Internal\Message::class)) {
                     $protoRequest = $declaringClass->newInstance();
-                    Serializer::unpack($protoRequest, $body, $isGrpc, (!$isGrpc) || $this->getRequest()->isGrpcJson());
+                    Serializer::unpack($protoRequest, $body, $isGrpc, (!$isGrpc) || $isGrpcJson);
                     $parameters[$handlerParameter->getName()] = $protoRequest;
                 }
             }
