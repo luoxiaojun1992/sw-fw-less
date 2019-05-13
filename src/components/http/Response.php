@@ -2,6 +2,7 @@
 
 namespace SwFwLess\components\http;
 
+use SwFwLess\components\grpc\Serializer;
 use SwFwLess\components\Helper;
 use Zend\Diactoros\ResponseFactory;
 use Zend\Diactoros\StreamFactory;
@@ -10,7 +11,7 @@ class Response
 {
     private $content;
     private $status = 200;
-    private $reasonPhrase = '';
+    private $reasonPhrase = 'OK';
     private $protocolVersion = '1.1'; //Swoole not supported
     private $headers = [];
     private $trailers = [];
@@ -32,6 +33,7 @@ class Response
     public function setStatus($status)
     {
         $this->status = $status;
+        $this->setReasonPhrase(Code::phrase($status));
         return $this;
     }
 
@@ -201,20 +203,14 @@ class Response
      * @param array $headers
      * @param array $trailers
      * @param bool $toJson
+     * @param bool $isGrpc
      * @return Response
      */
     public static function grpc($reply, $status = 200, $headers = [], $trailers = [], $toJson = false, $isGrpc = true)
     {
         if ($isGrpc) {
-            if ($toJson) {
-                $headers['Content-Type'] = 'application/grpc+json';
-                $message = $reply->serializeToJsonString();
-            } else {
-                $headers['Content-Type'] = 'application/grpc+proto';
-                $message = $reply->serializeToString();
-            }
-
-            return static::output(pack('CN', 0, strlen($message)) . $message, $status, $headers, $trailers);
+            $headers['Content-Type'] = $toJson ? 'application/grpc+json' : 'application/grpc+proto';
+            return static::output(Serializer::pack($reply, $toJson), $status, $headers, $trailers);
         } else {
             return static::json($reply->serializeToJsonString(), $status, $headers, $trailers);
         }

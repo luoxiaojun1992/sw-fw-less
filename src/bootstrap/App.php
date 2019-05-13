@@ -244,7 +244,7 @@ class App
     {
         $httpCode = $swfResponse->getStatus();
 
-        $swResponse->status($httpCode);
+        $swResponse->status($httpCode, $swfResponse->getReasonPhrase());
 
         foreach ($swfResponse->getHeaders() as $key => $value) {
             $swResponse->header($key, $value);
@@ -254,8 +254,8 @@ class App
             if (substr($swRequest->header['content-type'], 0, 16) === 'application/grpc') {
                 $grpcStatus = Status::status($httpCode);
                 $swfResponse->trailer('grpc-status', $grpcStatus);
-                $swfResponse->trailer('grpc-message', '');
-//                $swfResponse->trailer('grpc-message', Status::msg($grpcStatus));
+                $swfResponse->trailer('grpc-message', urlencode(''));
+//                $swfResponse->trailer('grpc-message', urlencode(Status::msg($grpcStatus)));
             }
         }
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace SwFwLess;
+namespace SwFwLess\components\http;
 
 class Code
 {
