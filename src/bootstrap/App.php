@@ -244,19 +244,21 @@ class App
     {
         $httpCode = $swfResponse->getStatus();
 
-        $swResponse->status($httpCode, $swfResponse->getReasonPhrase());
-
-        foreach ($swfResponse->getHeaders() as $key => $value) {
-            $swResponse->header($key, $value);
-        }
-
         if (isset($swRequest->header['content-type'])) {
             if (substr($swRequest->header['content-type'], 0, 16) === 'application/grpc') {
                 $grpcStatus = Status::status($httpCode);
                 $swfResponse->trailer('grpc-status', $grpcStatus);
                 $swfResponse->trailer('grpc-message', urlencode(''));
+                $swfResponse->header('grpc-status', $grpcStatus);
+                $swfResponse->header('grpc-message', urlencode(urlencode(Status::msg($grpcStatus))));
 //                $swfResponse->trailer('grpc-message', urlencode(Status::msg($grpcStatus)));
             }
+        }
+
+        $swResponse->status($httpCode, $swfResponse->getReasonPhrase());
+
+        foreach ($swfResponse->getHeaders() as $key => $value) {
+            $swResponse->header($key, $value);
         }
 
         if (isset($swRequest->header['te'])) {
@@ -265,6 +267,10 @@ class App
                     $trailerHeader = implode(', ', array_keys($trailers));
                     $swfResponse->header('trailer', $trailerHeader);
                     $swResponse->header('trailer', $trailerHeader);
+                    foreach ($trailers as $key => $value) {
+                        $swfResponse->header($key, $value);
+                        $swResponse->header($key, $value);
+                    }
                     foreach ($trailers as $key => $value) {
                         $swResponse->trailer($key, $value);
                     }
