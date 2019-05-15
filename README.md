@@ -18,8 +18,8 @@ Swoole http server without framework
 12. AMQP-0-9-1
 13. Zipkin Trace
 14. Dynamic Fault Injection
-15. Hot Reload(biz code、config、router)
-16. Experimental Grpc
+15. Hot Reload(including biz code、config、router, recommended for dev only)
+16. Experimental Grpc(must open http2)
 
 >## Requirements
 * PHP 7.1+
@@ -60,6 +60,12 @@ php start.php
 Demo Api
 ```shell
 curl -i 'http://127.0.0.1:9501/ping'
+```
+
+>### Grpc Generator
+
+```shell
+cd tools && ./generate_grpc.sh path/to/grpc/bins/opt/grpc_php_plugin
 ```
 
 >## Performance
