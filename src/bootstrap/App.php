@@ -255,7 +255,7 @@ class App
             }
         }
 
-        $swResponse->status($httpCode, $swfResponse->getReasonPhrase());
+        $swResponse->status($httpCode);
 
         foreach ($swfResponse->getHeaders() as $key => $value) {
             $swResponse->header($key, $value);
@@ -311,16 +311,18 @@ class App
 
     private function hotReload(\Swoole\Http\Server $server)
     {
-        go(function () use ($server) {
-            \SwFwLess\components\filewatcher\Watcher::create(
-                config('hot_reload.driver'),
-                config('hot_reload.watch_dirs'),
-                config('hot_reload.excluded_dirs'),
-                config('hot_reload.watch_suffixes')
-            )->watch(\SwFwLess\components\filewatcher\Watcher::EVENT_MODIFY, function ($event) use ($server) {
-                $server->reload();
+        if (config('hot_reload.switch')) {
+            go(function () use ($server) {
+                \SwFwLess\components\filewatcher\Watcher::create(
+                    config('hot_reload.driver'),
+                    config('hot_reload.watch_dirs'),
+                    config('hot_reload.excluded_dirs'),
+                    config('hot_reload.watch_suffixes')
+                )->watch(\SwFwLess\components\filewatcher\Watcher::EVENT_MODIFY, function ($event) use ($server) {
+                    $server->reload();
+                });
             });
-        });
+        }
     }
 
     public function run()
