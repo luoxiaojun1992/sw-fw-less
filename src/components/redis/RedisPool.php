@@ -164,7 +164,7 @@ class RedisPool
      * @return RedisWrapper
      * @throws \RedisException
      */
-    public function handleRollbackException($redis, \RedisException $e)
+    private function handleRollbackException($redis, \RedisException $e)
     {
         if (Helper::causedByLostConnection($e)) {
             if ($redis->isNeedRelease()) {

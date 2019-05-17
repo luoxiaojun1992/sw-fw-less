@@ -141,7 +141,7 @@ class MysqlPool
      * @param MysqlWrapper $pdo
      * @param \PDOException $e
      */
-    public function handleRollbackException($pdo, \PDOException $e)
+    private function handleRollbackException($pdo, \PDOException $e)
     {
         if (Helper::causedByLostConnection($e)) {
             if ($pdo->isNeedRelease()) {

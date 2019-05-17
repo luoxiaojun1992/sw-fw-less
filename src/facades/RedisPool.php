@@ -10,7 +10,6 @@ use SwFwLess\components\redis\RedisWrapper;
  * @method static RedisWrapper pick($connectionName = null)
  * @method static release($redis)
  * @method static RedisWrapper getConnect($needRelease = true, $connectionName = null)
- * @method static RedisWrapper handleRollbackException($redis, \RedisException $e)
  * @method static int countPool()
  * @package SwFwLess\facades
  */
