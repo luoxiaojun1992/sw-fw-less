@@ -22,7 +22,7 @@ class MysqlPool
             return self::$instance;
         }
 
-        if ($mysqlConfig['switch']) {
+        if (is_array($mysqlConfig) && !empty($mysqlConfig['switch'])) {
             return self::$instance = new self($mysqlConfig);
         } else {
             return null;
