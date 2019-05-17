@@ -137,11 +137,11 @@ class Query
                     if ($result) {
                         $queryResult = $pdoStatement->fetchAll(\PDO::FETCH_ASSOC);
 
-                        //Reset connection after big query
-                        if (!$pdo->inTransaction()) {
-                            if (stripos($this->getSql(), 'order')) {
-                                if ($this->getAffectedRows() > 10000) {
-                                    if ($pdo->incrBigQueryTimes()->getBigQueryTimes() > 100) {
+                        //Reset connection after big query if not in transaction
+                        if (stripos($this->getSql(), 'order')) {
+                            if ($this->getAffectedRows() > 10000) {
+                                if ($pdo->incrBigQueryTimes()->getBigQueryTimes() > 100) {
+                                    if (!$pdo->inTransaction()) {
                                         $pdo->reconnect();
                                     }
                                 }
