@@ -65,7 +65,7 @@ class DemoService extends BaseService
     {
         $queryResult = Member::select()
             ->cols(['*'])
-            ->where('id in (111426517, 111426518)')
+            ->where('id in (1, 2)')
             ->limit(2)
             ->first();
 
