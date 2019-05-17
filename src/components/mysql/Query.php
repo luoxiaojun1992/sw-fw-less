@@ -2,6 +2,7 @@
 
 namespace SwFwLess\components\mysql;
 
+use SwFwLess\components\Helper;
 use SwFwLess\facades\MysqlPool;
 use Aura\SqlQuery\QueryFactory;
 use Aura\SqlQuery\QueryInterface;
@@ -30,6 +31,8 @@ class Query
     private $sql;
 
     private $bindValues;
+
+    private $affectedRows = 0;
 
     /**
      * @param string $db
@@ -114,11 +117,56 @@ class Query
     }
 
     /**
+     * @param null $pdo
+     * @param int $mode
+     * @return array|mixed|null
+     */
+    private function _doMysqlExecute($pdo = null, $mode = self::QUERY_TYPE_FETCH)
+    {
+        /** @var \PDOStatement $pdoStatement */
+        $pdoStatement = $pdo->prepare($this->setSql($this->auraQuery->getStatement())->getSql());
+        if ($pdoStatement) {
+            $result = $pdoStatement->execute($this->setBindValues($this->auraQuery->getBindValues())->getBindValues());
+            if ($result) {
+                $this->setAffectedRows($pdoStatement->rowCount());
+            }
+            switch ($mode) {
+                case static::QUERY_TYPE_FETCH:
+                    return $result ? $pdoStatement->fetch(\PDO::FETCH_ASSOC) : [];
+                case static::QUERY_TYPE_FETCH_ALL:
+                    if ($result) {
+                        $queryResult = $pdoStatement->fetchAll(\PDO::FETCH_ASSOC);
+
+                        //Reset connection after big query
+                        if (!$pdo->inTransaction()) {
+                            if (stripos($this->getSql(), 'order')) {
+                                if ($this->getAffectedRows() > 10000) {
+                                    if ($pdo->incrBigQueryTimes()->getBigQueryTimes() > 100) {
+                                        $pdo->reconnect();
+                                    }
+                                }
+                            }
+                        }
+
+                        return $queryResult;
+                    }
+
+                    return [];
+                case static::QUERY_TYPE_WRITE:
+                    $this->setLastInsertId($pdo->lastInsertId());
+                    return $this->getAffectedRows();
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * @param MysqlWrapper|null|\PDO $pdo
      * @param $mode
      * @return mixed
      */
-    private function mysqlExecute($pdo = null, $mode = 0)
+    private function mysqlExecute($pdo = null, $mode = self::QUERY_TYPE_FETCH)
     {
         if ($pdo) {
             $this->needRelease = false;
@@ -128,24 +176,13 @@ class Query
             /** @var MysqlWrapper|\PDO $pdo $pdo */
             $pdo = $pdo ?: MysqlPool::pick($this->connectionName);
 
-            /** @var \PDOStatement $pdoStatement */
-            $pdoStatement = $pdo->prepare($this->setSql($this->auraQuery->getStatement())->getSql());
-            if ($pdoStatement) {
-                $result = $pdoStatement->execute($this->setBindValues($this->auraQuery->getBindValues())->getBindValues());
-                switch ($mode) {
-                    case static::QUERY_TYPE_FETCH:
-                        return $result ? $pdoStatement->fetch(\PDO::FETCH_ASSOC) : [];
-                    case static::QUERY_TYPE_FETCH_ALL:
-                        return $result ? $pdoStatement->fetchAll(\PDO::FETCH_ASSOC) : [];
-                    case static::QUERY_TYPE_WRITE:
-                        $res = $result ? $pdoStatement->rowCount() : 0;
-                        $this->setLastInsertId($pdo->lastInsertId());
-                        return $res;
-                }
+            return $this->_doMysqlExecute($pdo, $mode);
+        } catch (\PDOException $e) {
+            if (!$pdo->inTransaction() && Helper::causedByLostConnection($e)) {
+                $pdo->handleMysqlExecuteException($e);
+                return $this->_doMysqlExecute($pdo, $mode);
             }
 
-            return null;
-        } catch (\PDOException $e) {
             throw $e;
         } finally {
             $this->releasePDO($pdo);
@@ -293,6 +330,24 @@ class Query
     public function setBindValues($bindValues)
     {
         $this->bindValues = $bindValues;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAffectedRows()
+    {
+        return $this->affectedRows;
+    }
+
+    /**
+     * @param mixed $affectedRows
+     * @return $this
+     */
+    public function setAffectedRows($affectedRows)
+    {
+        $this->affectedRows = $affectedRows;
         return $this;
     }
 }
