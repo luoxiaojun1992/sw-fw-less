@@ -112,7 +112,8 @@ class MysqlWrapper
 
     public function reconnect()
     {
-        $this->setPDO(\SwFwLess\facades\MysqlPool::getConnect(false, $this->getConnectionName())->getPDO());
+        $this->setPDO(\SwFwLess\facades\MysqlPool::getConnect(false, $this->getConnectionName())->getPDO())
+            ->setBigQueryTimes(0);
     }
 
     /**
@@ -124,11 +125,22 @@ class MysqlWrapper
     }
 
     /**
+     * @param int $times
      * @return $this
      */
-    public function incrBigQueryTimes()
+    public function incrBigQueryTimes(int $times = 1)
     {
-        $this->bigQueryTimes++;
+        $this->bigQueryTimes += $times;
+        return $this;
+    }
+
+    /**
+     * @param int $times
+     * @return $this
+     */
+    public function setBigQueryTimes(int $times)
+    {
+        $this->bigQueryTimes = $times;
         return $this;
     }
 }

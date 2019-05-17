@@ -95,7 +95,7 @@ class MysqlPool
                 try {
                     $pdo->rollBack();
                 } catch (\PDOException $rollbackException) {
-                    $pdo = $this->handleRollbackException($pdo, $rollbackException);
+                    $this->handleRollbackException($pdo, $rollbackException);
                 }
             }
             if ($pdo->isNeedRelease()) {
@@ -145,19 +145,16 @@ class MysqlPool
     /**
      * @param MysqlWrapper $pdo
      * @param \PDOException $e
-     * @return MysqlWrapper
      */
     public function handleRollbackException($pdo, \PDOException $e)
     {
         if (Helper::causedByLostConnection($e)) {
             if ($pdo->isNeedRelease()) {
-                $pdo = $this->getConnect(true, $pdo->getConnectionName());
+                $pdo->reconnect();
             }
         } else {
             throw $e;
         }
-
-        return $pdo;
     }
 
     /**

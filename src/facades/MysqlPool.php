@@ -10,7 +10,7 @@ use SwFwLess\components\mysql\MysqlWrapper;
  * @method static MysqlWrapper pick($connectionName = null)
  * @method static release($pdo)
  * @method static MysqlWrapper getConnect($needRelease = true, $connectionName = null)
- * @method static MysqlWrapper handleRollbackException($pdo, \PDOException $e)
+ * @method static handleRollbackException($pdo, \PDOException $e)
  * @method static int countPool()
  * @package SwFwLess\facades
  */
