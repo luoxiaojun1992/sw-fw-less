@@ -2,7 +2,6 @@
 
 namespace SwFwLess\components\redis;
 
-use SwFwLess\components\Config;
 use SwFwLess\components\Helper;
 use Cake\Event\Event as CakeEvent;
 

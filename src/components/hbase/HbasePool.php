@@ -3,7 +3,6 @@
 namespace SwFwLess\components\hbase;
 
 use SwFwLess\components\Config;
-use SwFwLess\facades\File;
 use Cake\Event\Event as CakeEvent;
 use Hbase\HbaseClient;
 use Thrift\Protocol\TBinaryProtocol;
