@@ -112,11 +112,6 @@ class MysqlPool
         }
     }
 
-    public function __destruct()
-    {
-        //
-    }
-
     /**
      * @param bool $needRelease
      * @param string $connectionName
