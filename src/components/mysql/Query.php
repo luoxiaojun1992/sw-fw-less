@@ -117,11 +117,11 @@ class Query
     }
 
     /**
-     * @param null $pdo
+     * @param MysqlWrapper|\PDO $pdo
      * @param int $mode
      * @return array|mixed|null
      */
-    private function _doMysqlExecute($pdo = null, $mode = self::QUERY_TYPE_FETCH)
+    private function _doMysqlExecute($pdo, $mode = self::QUERY_TYPE_FETCH)
     {
         /** @var \PDOStatement $pdoStatement */
         $pdoStatement = $pdo->prepare($this->setSql($this->auraQuery->getStatement())->getSql());
@@ -178,14 +178,18 @@ class Query
 
             return $this->_doMysqlExecute($pdo, $mode);
         } catch (\PDOException $e) {
-            if (!$pdo->inTransaction() && Helper::causedByLostConnection($e)) {
-                $pdo->handleMysqlExecuteException($e);
-                return $this->_doMysqlExecute($pdo, $mode);
+            if ($pdo) {
+                if (!$pdo->inTransaction() && Helper::causedByLostConnection($e)) {
+                    $pdo->handleMysqlExecuteException($e);
+                    return $this->_doMysqlExecute($pdo, $mode);
+                }
             }
 
             throw $e;
         } finally {
-            $this->releasePDO($pdo);
+            if ($pdo) {
+                $this->releasePDO($pdo);
+            }
         }
     }
 
