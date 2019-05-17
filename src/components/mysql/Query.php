@@ -131,7 +131,7 @@ class Query
                         return $result ? $pdoStatement->fetchAll(\PDO::FETCH_ASSOC) : [];
                     case 2:
                         $res = $result ? $pdoStatement->rowCount() : 0;
-                        $this->setLastInsetId($pdo->lastInsertId());
+                        $this->setLastInsertId($pdo->lastInsertId());
                         return $res;
                 }
             }
@@ -238,7 +238,7 @@ class Query
      * @param $id
      * @return $this
      */
-    private function setLastInsetId($id)
+    private function setLastInsertId($id)
     {
         $this->lastInsertId = $id;
         return $this;
