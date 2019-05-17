@@ -12,6 +12,10 @@ class Query
     const EVENT_EXECUTING = 'query.executing';
     const EVENT_EXECUTED = 'query.executed';
 
+    const QUERY_TYPE_FETCH = 0;
+    const QUERY_TYPE_FETCH_ALL = 1;
+    const QUERY_TYPE_WRITE = 2;
+
     /** @var QueryInterface|QueryFactory */
     private $auraQuery;
 
@@ -22,6 +26,10 @@ class Query
     private $needRelease = true;
 
     private $lastInsertId;
+
+    private $sql;
+
+    private $bindValues;
 
     /**
      * @param string $db
@@ -121,15 +129,15 @@ class Query
             $pdo = $pdo ?: MysqlPool::pick($this->connectionName);
 
             /** @var \PDOStatement $pdoStatement */
-            $pdoStatement = $pdo->prepare($this->auraQuery->getStatement());
+            $pdoStatement = $pdo->prepare($this->setSql($this->auraQuery->getStatement())->getSql());
             if ($pdoStatement) {
-                $result = $pdoStatement->execute($this->auraQuery->getBindValues());
+                $result = $pdoStatement->execute($this->setBindValues($this->auraQuery->getBindValues())->getBindValues());
                 switch ($mode) {
-                    case 0:
+                    case static::QUERY_TYPE_FETCH:
                         return $result ? $pdoStatement->fetch(\PDO::FETCH_ASSOC) : [];
-                    case 1:
+                    case static::QUERY_TYPE_FETCH_ALL:
                         return $result ? $pdoStatement->fetchAll(\PDO::FETCH_ASSOC) : [];
-                    case 2:
+                    case static::QUERY_TYPE_WRITE:
                         $res = $result ? $pdoStatement->rowCount() : 0;
                         $this->setLastInsertId($pdo->lastInsertId());
                         return $res;
@@ -213,7 +221,7 @@ class Query
     public function first($pdo = null)
     {
         $this->limit(1);
-        return $this->execute($pdo, 0);
+        return $this->execute($pdo, static::QUERY_TYPE_FETCH);
     }
 
     /**
@@ -222,7 +230,7 @@ class Query
      */
     public function get($pdo = null)
     {
-        return $this->execute($pdo, 1);
+        return $this->execute($pdo, static::QUERY_TYPE_FETCH_ALL);
     }
 
     /**
@@ -231,7 +239,7 @@ class Query
      */
     public function write($pdo = null)
     {
-        return $this->execute($pdo, 2);
+        return $this->execute($pdo, static::QUERY_TYPE_WRITE);
     }
 
     /**
@@ -250,5 +258,41 @@ class Query
     public function getLastInsertId()
     {
         return $this->lastInsertId;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getSql()
+    {
+        return $this->sql;
+    }
+
+    /**
+     * @param mixed $sql
+     * @return $this
+     */
+    public function setSql($sql)
+    {
+        $this->sql = $sql;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getBindValues()
+    {
+        return $this->bindValues;
+    }
+
+    /**
+     * @param mixed $bindValues
+     * @return $this
+     */
+    public function setBindValues($bindValues)
+    {
+        $this->bindValues = $bindValues;
+        return $this;
     }
 }

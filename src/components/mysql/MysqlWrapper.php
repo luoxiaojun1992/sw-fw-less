@@ -11,6 +11,8 @@ class MysqlWrapper
     private $needRelease = true;
     private $connectionName;
 
+    public $bigQueryTimes = 0;
+
     /**
      * @return \PDO
      */
@@ -104,7 +106,12 @@ class MysqlWrapper
     private function handleMysqlExecuteException(\PDOException $e)
     {
         if (!$this->pdo->inTransaction() && Helper::causedByLostConnection($e)) {
-            $this->setPDO(\SwFwLess\facades\MysqlPool::getConnect(false, $this->getConnectionName())->getPDO());
+            $this->reconnect();
         }
+    }
+
+    public function reconnect()
+    {
+        $this->setPDO(\SwFwLess\facades\MysqlPool::getConnect(false, $this->getConnectionName())->getPDO());
     }
 }
