@@ -13,14 +13,14 @@ class Jsonnet
     {
         $appConfig = \Jsonnet::evaluateFile($configPath);
 
-        $configPathInfo = pathinfo($configPath, PATHINFO_BASENAME | PATHINFO_DIRNAME);
+        $configPathInfo = pathinfo($configPath);
         $configFileName = $configPathInfo['basename'];
         $configDir = $configPathInfo['dirname'];
         $fd = opendir($configDir);
         while($file = readdir($fd)) {
             if (!in_array($file, ['.', '..', $configFileName])) {
                 $subConfigPath = $configDir . '/' . $file;
-                $subConfigPathInfo = pathinfo($subConfigPath, PATHINFO_EXTENSION | PATHINFO_FILENAME);
+                $subConfigPathInfo = pathinfo($subConfigPath);
                 $subConfigSuffix = $subConfigPathInfo['extension'];
                 if ($subConfigSuffix === 'jsonnet') {
                     $subConfig = \Jsonnet::evaluateFile($subConfigPath);
