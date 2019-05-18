@@ -98,8 +98,8 @@ class MysqlPool
                 }
             }
             if ($pdo->isNeedRelease()) {
-                //Reset connection if big query times is greater than 100
-                if ($pdo->getBigQueryTimes() > 100) {
+                //Reset connection if big query times is greater than 1000000
+                if ($pdo->getBigQueryTimes() > 1000000) {
                     $pdo->reconnect();
                 }
 

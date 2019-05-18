@@ -139,11 +139,9 @@ class Query
 
                         //Reset connection after big query if not in transaction
                         if (stripos($this->getSql(), 'order')) {
-                            if ($this->getAffectedRows() > 10000) {
-                                if ($pdo->incrBigQueryTimes()->getBigQueryTimes() > 100) {
-                                    if (!$pdo->inTransaction()) {
-                                        $pdo->reconnect();
-                                    }
+                            if ($pdo->incrBigQueryTimes($this->getAffectedRows())->getBigQueryTimes() > 1000000) {
+                                if (!$pdo->inTransaction()) {
+                                    $pdo->reconnect();
                                 }
                             }
                         }
