@@ -129,7 +129,10 @@ class App
         }
 
         //Init Config
-        \SwFwLess\components\Config::init(require_once APP_BASE_PATH . 'config/app.php');
+        \SwFwLess\components\Config::init(
+            APP_BASE_PATH . 'config/app',
+            defined('CONFIG_FORMAT') ? CONFIG_FORMAT : 'array'
+        );
 
         //Boot providers
         KernelProvider::init(config('providers'));
@@ -192,7 +195,10 @@ class App
         }
 
         //Init Config
-        \SwFwLess\components\Config::init(require APP_BASE_PATH . 'config/app.php');
+        \SwFwLess\components\Config::init(
+            APP_BASE_PATH . 'config/app',
+            defined('CONFIG_FORMAT') ? CONFIG_FORMAT : 'array'
+        );
 
         $this->loadRouter();
 
