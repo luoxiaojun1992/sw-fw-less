@@ -11,7 +11,13 @@ class Jsonnet
 
     protected static function mergeSpecConfigs($configPath)
     {
-        $appConfig = \Jsonnet::evaluateFile($configPath);
+        $configPath .= '.jsonnet';
+
+        if (file_exists($configPath)) {
+            $appConfig = \Jsonnet::evaluateFile($configPath);
+        } else {
+            $appConfig = [];
+        }
 
         $configPathInfo = pathinfo($configPath);
         $configFileName = $configPathInfo['basename'];

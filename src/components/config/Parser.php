@@ -12,16 +12,22 @@ class Parser
         'jsonnet' => Jsonnet::class,
     ];
 
-    const CONFIG_SUFFIX = [
-        'array' => 'php',
-        'jsonnet' => 'jsonnet',
-    ];
-
     public static function getArrConfig($configPath, $format = 'array')
     {
-        $configPath = $configPath . '.' . (static::CONFIG_SUFFIX[$format] ?? 'php');
-        $parser = static::PARSER_MAPPING[$format] ?? Arr::class;
+        $formatParts = explode(',' , $format);
 
-        return call_user_func_array([$parser, 'parse'], [$configPath]);
+        $appConfig = [];
+        foreach ($formatParts as $formatPart) {
+            $parser = static::PARSER_MAPPING[$formatPart] ?? Arr::class;
+            foreach (call_user_func_array([$parser, 'parse'], [$configPath]) as $key => $value) {
+                if (isset($appConfig[$key])) {
+                    $appConfig[$key] = array_merge($appConfig[$key], $value);
+                } else {
+                    $appConfig[$key] = $value;
+                }
+            }
+        }
+
+        return $appConfig;
     }
 }

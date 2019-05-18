@@ -11,7 +11,13 @@ class Arr
 
     protected static function mergeSpecConfigs($configPath)
     {
-        $appConfig = include $configPath;
+        $configPath .= '.php';
+
+        if (file_exists($configPath)) {
+            $appConfig = include $configPath;
+        } else {
+            $appConfig = [];
+        }
 
         $configPathInfo = pathinfo($configPath);
         $configFileName = $configPathInfo['basename'];
