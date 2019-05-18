@@ -134,9 +134,27 @@ class RequestTest extends \PHPUnit\Framework\TestCase
             $swfRequest->header('content-type'),
             $swfRequest->header('Content-Type'),
         ]);
+
+        $this->assertEquals(null, $swfRequest->header('x-foo'));
+        $this->assertEquals('bar', $swfRequest->header('x-foo', 'bar'));
     }
 
     public function testHasHeader()
+    {
+        $swRequest = $this->createSwRequest();
+        $swfRequest = $this->createSwfRequest($swRequest);
+
+        $swRequest->header['content-type'] = 'application/json';
+
+        $this->assertMultiEquals(true, [
+            $swfRequest->hasHeader('content-type'),
+            $swfRequest->hasHeader('Content-Type'),
+        ]);
+
+        $this->assertEquals(false, $swfRequest->hasHeader('x-foo'));
+    }
+
+    public function testRealIp()
     {
         //todo
     }
