@@ -19,12 +19,17 @@ class Jsonnet
         $fd = opendir($configDir);
         while($file = readdir($fd)) {
             if (!in_array($file, ['.', '..', $configFileName])) {
-                $subConfigName = substr($file, 0, -8);
-                $subConfig = \Jsonnet::evaluateFile($configDir . '/' . $file);
-                if (isset($appConfig[$subConfigName])) {
-                    $appConfig[$subConfigName] = array_merge($appConfig[$subConfigName], $subConfig);
-                } else {
-                    $appConfig[$subConfigName] = $subConfig;
+                $subConfigPath = $configDir . '/' . $file;
+                $subConfigPathInfo = pathinfo($subConfigPath, PATHINFO_EXTENSION | PATHINFO_FILENAME);
+                $subConfigSuffix = $subConfigPathInfo['extension'];
+                if ($subConfigSuffix === 'jsonnet') {
+                    $subConfig = \Jsonnet::evaluateFile($subConfigPath);
+                    $subConfigName = $subConfigPathInfo['filename'];
+                    if (isset($appConfig[$subConfigName])) {
+                        $appConfig[$subConfigName] = array_merge($appConfig[$subConfigName], $subConfig);
+                    } else {
+                        $appConfig[$subConfigName] = $subConfig;
+                    }
                 }
             }
         }
