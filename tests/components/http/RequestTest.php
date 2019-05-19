@@ -156,6 +156,47 @@ class RequestTest extends \PHPUnit\Framework\TestCase
 
     public function testRealIp()
     {
-        //todo
+        $swRequest = $this->createSwRequest();
+        $swfRequest = $this->createSwfRequest($swRequest);
+
+        $swRequest->header['x-real-ip'] = '172.17.0.0';
+
+        $this->assertEquals('172.17.0.0', $swfRequest->realIp());
+
+        $swRequest = $this->createSwRequest();
+        $swfRequest = $this->createSwfRequest($swRequest);
+
+        $swRequest->header['x-forwarded-for'] = '172.17.0.0';
+
+        $this->assertEquals('172.17.0.0', $swfRequest->realIp());
+
+        $swRequest = $this->createSwRequest();
+        $swfRequest = $this->createSwfRequest($swRequest);
+
+        $swRequest->server['remote_addr'] = '172.17.0.0';
+
+        $this->assertEquals('172.17.0.0', $swfRequest->realIp());
+
+        $swRequest = $this->createSwRequest();
+        $swfRequest = $this->createSwfRequest($swRequest);
+
+        $swRequest->header['x-real-ip'] = '172.17.0.0';
+        $swRequest->header['x-forwarded-for'] = '10.0.0.0';
+        $swRequest->server['remote_addr'] = '10.0.0.0';
+
+        $this->assertEquals('172.17.0.0', $swfRequest->realIp());
+
+        $swRequest = $this->createSwRequest();
+        $swfRequest = $this->createSwfRequest($swRequest);
+
+        $swRequest->header['x-forwarded-for'] = '172.17.0.0';
+        $swRequest->server['remote_addr'] = '10.0.0.0';
+
+        $this->assertEquals('172.17.0.0', $swfRequest->realIp());
+
+        $swRequest = $this->createSwRequest();
+        $swfRequest = $this->createSwfRequest($swRequest);
+
+        $this->assertEquals(null, $swfRequest->realIp());
     }
 }
