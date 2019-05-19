@@ -46,8 +46,10 @@ class RequestTest extends \PHPUnit\Framework\TestCase
         $swfRequest = $this->createSwfRequest($swRequest);
 
         $swRequest->{$paramType}['foo'] = 'bar';
+        $swRequest->{$paramType}['FOO'] = 'BAR';
 
         $this->assertEquals('bar', $swfRequest->{$paramType}('foo'));
+        $this->assertEquals('BAR', $swfRequest->{$paramType}('FOO'));
 
         $swfRequest = $this->createSwfRequest();
 
@@ -74,8 +76,10 @@ class RequestTest extends \PHPUnit\Framework\TestCase
         $swfRequest = $this->createSwfRequest($swRequest);
 
         $swRequest->files['foo'] = 'bar';
+        $swRequest->files['FOO'] = 'BAR';
 
         $this->assertEquals('bar', $swfRequest->file('foo'));
+        $this->assertEquals('BAR', $swfRequest->file('FOO'));
 
         $swfRequest = $this->createSwfRequest();
 
@@ -198,5 +202,36 @@ class RequestTest extends \PHPUnit\Framework\TestCase
         $swfRequest = $this->createSwfRequest($swRequest);
 
         $this->assertEquals(null, $swfRequest->realIp());
+    }
+
+    public function testServer()
+    {
+        $swRequest = $this->createSwRequest();
+        $swfRequest = $this->createSwfRequest($swRequest);
+
+        $swRequest->server['remote_addr'] = '10.0.0.0';
+
+        $this->assertMultiEquals('10.0.0.0', [
+            $swfRequest->server('remote_addr'),
+            $swfRequest->server('REMOTE_ADDR'),
+        ]);
+
+        $this->assertEquals(null, $swfRequest->server('server_protocol'));
+        $this->assertEquals('bar', $swfRequest->server('server_protocol', 'bar'));
+    }
+
+    public function testHasServer()
+    {
+        $swRequest = $this->createSwRequest();
+        $swfRequest = $this->createSwfRequest($swRequest);
+
+        $swRequest->server['remote_addr'] = '10.0.0.0';
+
+        $this->assertMultiEquals(true, [
+            $swfRequest->hasServer('remote_addr'),
+            $swfRequest->hasServer('REMOTE_ADDR'),
+        ]);
+
+        $this->assertEquals(false, $swfRequest->hasServer('server_protocol'));
     }
 }
