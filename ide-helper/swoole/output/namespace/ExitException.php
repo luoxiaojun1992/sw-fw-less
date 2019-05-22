@@ -8,6 +8,8 @@ class ExitException extends \Swoole\Exception
     protected $code;
     protected $file;
     protected $line;
+    private $flags;
+    private $status;
 
     /**
      * @return mixed

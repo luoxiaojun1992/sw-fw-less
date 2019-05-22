@@ -7,8 +7,8 @@ class MySQL
     public $serverInfo;
     public $sock;
     public $connected;
-    public $connect_error;
     public $connect_errno;
+    public $connect_error;
     public $affected_rows;
     public $insert_id;
     public $error;
@@ -25,10 +25,21 @@ class MySQL
     public function __destruct(){}
 
     /**
-     * @param $server_config[required]
      * @return mixed
      */
-    public function connect($server_config){}
+    public function getDefer(){}
+
+    /**
+     * @param $defer[optional]
+     * @return mixed
+     */
+    public function setDefer($defer=null){}
+
+    /**
+     * @param $server_config[optional]
+     * @return mixed
+     */
+    public function connect($server_config=null){}
 
     /**
      * @param $sql[required]
@@ -40,12 +51,29 @@ class MySQL
     /**
      * @return mixed
      */
-    public function recv(){}
+    public function fetch(){}
+
+    /**
+     * @return mixed
+     */
+    public function fetchAll(){}
 
     /**
      * @return mixed
      */
     public function nextResult(){}
+
+    /**
+     * @param $query[required]
+     * @param $timeout[optional]
+     * @return mixed
+     */
+    public function prepare($query, $timeout=null){}
+
+    /**
+     * @return mixed
+     */
+    public function recv(){}
 
     /**
      * @param $timeout[optional]
@@ -64,24 +92,6 @@ class MySQL
      * @return mixed
      */
     public function rollback($timeout=null){}
-
-    /**
-     * @param $statement[required]
-     * @param $timeout[optional]
-     * @return mixed
-     */
-    public function prepare($statement, $timeout=null){}
-
-    /**
-     * @param $defer[optional]
-     * @return mixed
-     */
-    public function setDefer($defer=null){}
-
-    /**
-     * @return mixed
-     */
-    public function getDefer(){}
 
     /**
      * @return mixed

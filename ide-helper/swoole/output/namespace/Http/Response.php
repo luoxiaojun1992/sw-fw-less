@@ -56,10 +56,14 @@ class Response
     /**
      * @param $key[required]
      * @param $value[required]
-     * @param $ucwords[optional]
      * @return mixed
      */
-    public function trailer($key, $value, $ucwords=null){}
+    public function trailer($key, $value){}
+
+    /**
+     * @return mixed
+     */
+    public function ping(){}
 
     /**
      * @param $content[required]
@@ -98,6 +102,21 @@ class Response
      * @return mixed
      */
     public static function create($fd){}
+
+    /**
+     * @return mixed
+     */
+    public function upgrade(){}
+
+    /**
+     * @return mixed
+     */
+    public function push(){}
+
+    /**
+     * @return mixed
+     */
+    public function recv(){}
 
     /**
      * @return mixed

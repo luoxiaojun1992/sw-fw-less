@@ -1,6 +1,6 @@
 <?php
 /**
- * @since 4.3.2
+ * @since 4.4.0-alpha
  */
 
 function swoole_version(){}
@@ -65,34 +65,6 @@ function swoole_event_dispatch(){}
  * @return mixed
  */
 function swoole_event_isset($fd, $events=null){}
-
-/**
- * @param $ms[required]
- * @param $callback[required]
- * @param $params[optional]
- * @return mixed
- */
-function swoole_timer_after($ms, $callback, $params=null){}
-
-/**
- * @param $ms[required]
- * @param $callback[required]
- * @param $params[optional]
- * @return mixed
- */
-function swoole_timer_tick($ms, $callback, $params=null){}
-
-/**
- * @param $timer_id[required]
- * @return mixed
- */
-function swoole_timer_exists($timer_id){}
-
-/**
- * @param $timer_id[required]
- * @return mixed
- */
-function swoole_timer_clear($timer_id){}
 
 /**
  * @param $domain_name[required]
@@ -192,4 +164,42 @@ function swoole_get_mime_type($filename){}
 function swoole_clear_dns_cache(){}
 
 function swoole_internal_call_user_shutdown_begin(){}
+
+/**
+ * @param $ms[required]
+ * @param $callback[required]
+ * @return mixed
+ */
+function swoole_timer_after($ms, $callback){}
+
+/**
+ * @param $ms[required]
+ * @param $callback[required]
+ * @return mixed
+ */
+function swoole_timer_tick($ms, $callback){}
+
+/**
+ * @param $timer_id[required]
+ * @return mixed
+ */
+function swoole_timer_exists($timer_id){}
+
+/**
+ * @param $timer_id[required]
+ * @return mixed
+ */
+function swoole_timer_info($timer_id){}
+
+function swoole_timer_stats(){}
+
+function swoole_timer_list(){}
+
+/**
+ * @param $timer_id[required]
+ * @return mixed
+ */
+function swoole_timer_clear($timer_id){}
+
+function swoole_timer_clear_all(){}
 

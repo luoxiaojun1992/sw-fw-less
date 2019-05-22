@@ -39,7 +39,7 @@
         "zendframework/zend-diactoros": "~2.1"
     },
     "suggest": {
-        "ext-swoole": ">=4.3.2",
+        "ext-swoole": ">=4.4.0",
         "ext-phalcon": "*",
         "ext-jsonnet": "*"
     },

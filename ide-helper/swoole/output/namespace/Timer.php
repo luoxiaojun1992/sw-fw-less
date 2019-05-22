@@ -31,7 +31,28 @@ class Timer
      * @param $timer_id[required]
      * @return mixed
      */
+    public static function info($timer_id){}
+
+    /**
+     * @return mixed
+     */
+    public static function stats(){}
+
+    /**
+     * @return mixed
+     */
+    public static function list(){}
+
+    /**
+     * @param $timer_id[required]
+     * @return mixed
+     */
     public static function clear($timer_id){}
+
+    /**
+     * @return mixed
+     */
+    public static function clearAll(){}
 
 
 }

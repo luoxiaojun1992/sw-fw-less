@@ -66,6 +66,13 @@ class Client
     public function setHeaders($headers){}
 
     /**
+     * @param $username[required]
+     * @param $password[required]
+     * @return mixed
+     */
+    public function setBasicAuth($username, $password){}
+
+    /**
      * @param $cookies[required]
      * @return mixed
      */

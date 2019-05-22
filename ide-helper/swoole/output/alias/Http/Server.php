@@ -1,5 +1,5 @@
 <?php
 namespace Co\Http 
 {
-     class Server extends \Swoole\Http\Server {}
+     class Server extends \Swoole\Coroutine\Http\Server {}
 }

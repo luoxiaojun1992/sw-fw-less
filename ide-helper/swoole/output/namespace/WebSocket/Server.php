@@ -278,27 +278,6 @@ class Server extends \Swoole\Http\Server
     public function getClientList($start_fd, $find_count=null){}
 
     /**
-     * @param $ms[required]
-     * @param $callback[required]
-     * @param $param[optional]
-     * @return mixed
-     */
-    public function after($ms, $callback, $param=null){}
-
-    /**
-     * @param $ms[required]
-     * @param $callback[required]
-     * @return mixed
-     */
-    public function tick($ms, $callback){}
-
-    /**
-     * @param $timer_id[required]
-     * @return mixed
-     */
-    public function clearTimer($timer_id){}
-
-    /**
      * @param $callback[required]
      * @return mixed
      */
@@ -328,6 +307,26 @@ class Server extends \Swoole\Http\Server
      * @return mixed
      */
     public function bind($fd, $uid){}
+
+    /**
+     * @param $ms[required]
+     * @param $callback[required]
+     * @return mixed
+     */
+    public function after($ms, $callback){}
+
+    /**
+     * @param $ms[required]
+     * @param $callback[required]
+     * @return mixed
+     */
+    public function tick($ms, $callback){}
+
+    /**
+     * @param $timer_id[required]
+     * @return mixed
+     */
+    public function clearTimer($timer_id){}
 
 
 }
