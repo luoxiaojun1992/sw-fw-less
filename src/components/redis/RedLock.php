@@ -124,6 +124,28 @@ EOF;
         }
     }
 
+    /**
+     * Defer a lock
+     *
+     * @param $key
+     * @param $ttl
+     * @return bool
+     * @throws \RedisException
+     * @throws \Throwable
+     */
+    public function defer($key, $ttl)
+    {
+        /** @var \Redis $redis */
+        $redis = $this->redisPool->pick($this->config['connection']);
+        try {
+            return $redis->expire($key, $ttl);
+        } catch (\Throwable $e) {
+            throw $e;
+        } finally {
+            $this->redisPool->release($redis);
+        }
+    }
+
     private function addLockedKey($key, $guard = false)
     {
         $this->locked_keys[$key] = [
