@@ -3,9 +3,12 @@
 namespace SwFwLess\components\mysql;
 
 use SwFwLess\components\Helper;
+use SwFwLess\components\mysql\traits\MysqlTransaction;
 
 class MysqlWrapper
 {
+    use MysqlTransaction;
+
     /** @var \PDO */
     private $pdo;
     private $needRelease = true;
@@ -88,8 +91,8 @@ class MysqlWrapper
             try {
                 return $this->callPdo($name, $arguments);
             } catch (\PDOException $e) {
-                if (!$this->pdo->inTransaction() && Helper::causedByLostConnection($e)) {
-                    $this->handleMysqlExecuteException($e);
+                if (!$this->inTransaction() && Helper::causedByLostConnection($e)) {
+                    $this->handleExecuteException($e);
                     return $this->callPdo($name, $arguments);
                 }
 
@@ -103,9 +106,9 @@ class MysqlWrapper
     /**
      * @param \PDOException $e
      */
-    public function handleMysqlExecuteException(\PDOException $e)
+    public function handleExecuteException(\PDOException $e)
     {
-        if (!$this->pdo->inTransaction() && Helper::causedByLostConnection($e)) {
+        if (!$this->inTransaction() && Helper::causedByLostConnection($e)) {
             $this->reconnect();
         }
     }

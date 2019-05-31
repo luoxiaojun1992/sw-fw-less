@@ -178,7 +178,7 @@ class Query
         } catch (\PDOException $e) {
             if ($pdo) {
                 if (!$pdo->inTransaction() && Helper::causedByLostConnection($e)) {
-                    $pdo->handleMysqlExecuteException($e);
+                    $pdo->handleExecuteException($e);
                     return $this->_doMysqlExecute($pdo, $mode);
                 }
             }
