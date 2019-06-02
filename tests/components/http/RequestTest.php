@@ -1,5 +1,7 @@
 <?php
 
+use Mockery as M;
+
 class RequestTest extends \PHPUnit\Framework\TestCase
 {
     private function assertMultiEquals($expected, $actualValues)
@@ -233,5 +235,63 @@ class RequestTest extends \PHPUnit\Framework\TestCase
         ]);
 
         $this->assertEquals(false, $swfRequest->hasServer('server_protocol'));
+    }
+
+    public function testMethod()
+    {
+        $swRequest = $this->createSwRequest();
+        $swfRequest = $this->createSwfRequest($swRequest);
+
+        $swRequest->server['request_method'] = 'GET';
+
+        $this->assertEquals('GET', $swfRequest->method());
+
+        $swRequest = $this->createSwRequest();
+        $swfRequest = $this->createSwfRequest($swRequest);
+
+        $this->assertEquals(null, $swfRequest->method());
+    }
+
+    public function testUri()
+    {
+        $swRequest = $this->createSwRequest();
+        $swfRequest = $this->createSwfRequest($swRequest);
+
+        $swRequest->server['request_uri'] = '/foo/bar';
+
+        $this->assertEquals('/foo/bar', $swfRequest->uri());
+
+        $swRequest = $this->createSwRequest();
+        $swfRequest = $this->createSwfRequest($swRequest);
+
+        $this->assertEquals(null, $swfRequest->uri());
+    }
+
+    public function testQueryString()
+    {
+        $swRequest = $this->createSwRequest();
+        $swfRequest = $this->createSwfRequest($swRequest);
+
+        $swRequest->server['query_string'] = 'foo=bar';
+
+        $this->assertEquals('foo=bar', $swfRequest->queryString());
+
+        $swRequest = $this->createSwRequest();
+        $swfRequest = $this->createSwfRequest($swRequest);
+
+        $this->assertEquals(null, $swfRequest->queryString());
+    }
+
+    public function testBody()
+    {
+        //Mock Swoole Request
+        $swRequest = M::mock(\Swoole\Http\Request::class);
+        $swRequest->shouldReceive('rawContent')
+            ->withNoArgs()
+            ->andReturn('test');
+
+        $swfRequest = $this->createSwfRequest($swRequest);
+
+        $this->assertEquals('test', $swfRequest->body());
     }
 }
