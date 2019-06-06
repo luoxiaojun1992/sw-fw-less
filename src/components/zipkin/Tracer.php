@@ -469,7 +469,9 @@ class Tracer
     private function flushTracer()
     {
         try {
-            $this->getTracer()->flush();
+            if ($tracer = $this->getTracer()) {
+                $tracer->flush();
+            }
         } catch (\Throwable $e) {
             Log::error('Zipkin report error ' . $e->getMessage());
         }
