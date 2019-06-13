@@ -256,8 +256,6 @@ class App
                 $grpcMessage = urlencode(urlencode(Status::msg($grpcStatus)));
                 $swfResponse->trailer('grpc-status', $grpcStatus);
                 $swfResponse->trailer('grpc-message', $grpcMessage);
-                $swfResponse->header('grpc-status', $grpcStatus);
-                $swfResponse->header('grpc-message', $grpcMessage);
             }
         }
 

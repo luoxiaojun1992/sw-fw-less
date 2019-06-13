@@ -19,8 +19,7 @@ class GrpcUnaryService extends BaseService
             if (strlen($body) < 5) {
                 return Response::output('', 400, [], [
                     'grpc-status' => Status::INVALID_ARGUMENT,
-                    'grpc-message' => urlencode(''),
-//                'grpc-message' => urlencode(Status::msg(Status::INVALID_ARGUMENT)),
+                    'grpc-message' => urlencode(Status::msg(Status::INVALID_ARGUMENT)),
                 ]);
             }
 
@@ -31,8 +30,7 @@ class GrpcUnaryService extends BaseService
             if ($options['length'] != (strlen($body) - 5)) {
                 return Response::output('', 400, [], [
                     'grpc-status' => Status::INVALID_ARGUMENT,
-                    'grpc-message' => urlencode(''),
-//                'grpc-message' => urlencode(Status::msg(Status::INVALID_ARGUMENT)),
+                    'grpc-message' => urlencode(Status::msg(Status::INVALID_ARGUMENT)),
                 ]);
             }
         } else {
