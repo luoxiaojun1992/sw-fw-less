@@ -272,10 +272,6 @@ class App
                     $swfResponse->header('trailer', $trailerHeader);
                     $swResponse->header('trailer', $trailerHeader);
                     foreach ($trailers as $key => $value) {
-                        $swfResponse->header($key, $value);
-                        $swResponse->header($key, $value);
-                    }
-                    foreach ($trailers as $key => $value) {
                         $swResponse->trailer($key, $value);
                     }
                 }
