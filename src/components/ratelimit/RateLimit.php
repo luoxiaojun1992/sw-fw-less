@@ -72,7 +72,7 @@ class RateLimit
                 $lua = <<<EOF
 local new_value=redis.call('incr', KEYS[1]);
 local ttl_value=redis.call('ttl', KEYS[1]);
-if(ttl_value <= -1) then 
+if(ttl_value == -1) then 
 redis.call('expire', KEYS[1], ARGV[1]) 
 end
 return new_value
