@@ -84,11 +84,12 @@ class Tracer
      */
     private function createTracer()
     {
+        $request = $this->getRequest();
         $endpoint = Endpoint::create(
             $this->serviceName,
-            array_key_exists('REMOTE_ADDR', $_SERVER) ? $_SERVER['REMOTE_ADDR'] : null,
+            $request->realIp(),
             null,
-            array_key_exists('REMOTE_PORT', $_SERVER) ? (int)$_SERVER['REMOTE_PORT'] : null
+            $request->server('REMOTE_PORT')
         );
         $sampler = BinarySampler::createAsAlwaysSample();
         $this->tracing = TracingBuilder::create()
