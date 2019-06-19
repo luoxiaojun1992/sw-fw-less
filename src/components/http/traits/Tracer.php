@@ -15,6 +15,6 @@ trait Tracer
             return $this->tracer;
         }
 
-        return $this->tracer = (new \SwFwLess\components\zipkin\Tracer())->setRequest($this);
+        return $this->tracer = new \SwFwLess\components\zipkin\Tracer($this);
     }
 }

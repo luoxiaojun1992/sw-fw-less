@@ -65,9 +65,12 @@ class Tracer
 
     /**
      * Tracer constructor.
+     * @param Request $request
      */
-    public function __construct()
+    public function __construct(Request $request)
     {
+        $this->setRequest($request);
+
         $this->serviceName = config('zipkin.service_name', 'Sw-Fw-Less');
         $this->endpointUrl = config('zipkin.endpoint_url', 'http://localhost:9411/api/v2/spans');
         $this->sampleRate = config('zipkin.sample_rate', 0);
