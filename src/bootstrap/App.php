@@ -2,8 +2,12 @@
 
 namespace SwFwLess\bootstrap;
 
+use Cron\CronExpression;
+use Opis\Closure\SerializableClosure;
 use SwFwLess\components\grpc\Status;
 use SwFwLess\components\provider\KernelProvider;
+use Swoole\Http\Server;
+use Swoole\Server\Task;
 
 class App
 {
@@ -43,6 +47,8 @@ class App
             'max_request' => config('server.max_request'),
             'dispatch_mode' => config('server.dispatch_mode'),
             'open_http2_protocol' => config('server.open_http2_protocol'),
+            'task_worker_num' => config('server.task_worker_num'),
+            'task_enable_coroutine' => config('server.task_enable_coroutine'),
         ];
         if (!empty($pidFile = config('server.pid_file'))) {
             $serverConfig['pid_file'] = $pidFile;
@@ -53,6 +59,7 @@ class App
         $this->swHttpServer->on('workerStart', [$this, 'swHttpWorkerStart']);
         $this->swHttpServer->on('request', [$this, 'swHttpRequest']);
         $this->swHttpServer->on('shutdown', [$this, 'swHttpShutdown']);
+        $this->swHttpServer->on('task', [$this, 'swTask']);
     }
 
     /**
@@ -174,7 +181,8 @@ class App
         echo 'Server started.', PHP_EOL;
         echo 'Listening ' . $server->ports[0]->host . ':' . $server->ports[0]->port, PHP_EOL;
 
-        $this->hotReload($server);
+        $this->hotReload();
+        $this->registerScheduler();
     }
 
     public function swHttpShutdown(\Swoole\Http\Server $server)
@@ -187,7 +195,7 @@ class App
      * @param $id
      * @throws \Exception
      */
-    public function swHttpWorkerStart($server, $id)
+    public function swHttpWorkerStart(Server $server, $id)
     {
         //Overload Env
         if (file_exists(APP_BASE_PATH . '.env')) {
@@ -200,14 +208,18 @@ class App
             defined('CONFIG_FORMAT') ? CONFIG_FORMAT : 'array'
         );
 
-        $this->loadRouter();
+        $this->loadRouter(); //todo move to server start
 
         //Inject Swoole Server
         \SwFwLess\facades\Container::set('swoole.server', $server);
 
         //Boot providers
         KernelProvider::init(config('providers'));
-        KernelProvider::bootRequest();
+        if ($server->taskworker) {
+            //todo bootTask
+        } else {
+            KernelProvider::bootRequest(); //todo rename to bootWorker
+        }
     }
 
     public function swHttpRequest(\Swoole\Http\Request $request, \Swoole\Http\Response $response)
@@ -309,20 +321,55 @@ class App
         ));
     }
 
-    private function hotReload(\Swoole\Http\Server $server)
+    public function swTask(Server $server, Task $task)
+    {
+        $data = $task->data;
+        if ($data['type'] === 'job') {
+            $job = $data['data']['job'];
+            if (is_callable($job)) {
+                call_user_func($job);
+            } elseif (is_string($job)) {
+                shell_exec($job);
+            }
+        }
+    }
+
+    private function hotReload()
     {
         if (config('hot_reload.switch')) {
-            go(function () use ($server) {
+            go(function () {
                 \SwFwLess\components\filewatcher\Watcher::create(
                     config('hot_reload.driver'),
                     config('hot_reload.watch_dirs'),
                     config('hot_reload.excluded_dirs'),
                     config('hot_reload.watch_suffixes')
                 )->watch(\SwFwLess\components\filewatcher\Watcher::EVENT_MODIFY, function ($event) use ($server) {
-                    $server->reload();
+                    $this->swHttpServer->reload();
                 });
             });
         }
+    }
+
+    private function registerScheduler()
+    {
+        swoole_timer_tick(60000, function () {
+            $schedules = config('scheduler');
+            foreach ($schedules as $schedule) {
+                if (CronExpression::factory($schedule['schedule'])->isDue()) {
+                    if (!is_array($schedule['jobs'])) {
+                        $schedule['jobs'] = [$schedule['jobs']];
+                    }
+                    foreach ($schedule['jobs'] as $job) {
+                        $this->swHttpServer->task([
+                            'type' => 'job',
+                            'data' => [
+                                'job' => ($job instanceof \Closure) ? new SerializableClosure($job) : $job,
+                            ],
+                        ]);
+                    }
+                }
+            }
+        });
     }
 
     public function run()
