@@ -141,6 +141,8 @@ class App
             defined('CONFIG_FORMAT') ? CONFIG_FORMAT : 'array'
         );
 
+        $this->loadRouter();
+
         //Boot providers
         KernelProvider::init(config('providers'));
         KernelProvider::bootApp();
@@ -208,18 +210,12 @@ class App
             defined('CONFIG_FORMAT') ? CONFIG_FORMAT : 'array'
         );
 
-        $this->loadRouter(); //todo move to server start
-
         //Inject Swoole Server
         \SwFwLess\facades\Container::set('swoole.server', $server);
 
         //Boot providers
         KernelProvider::init(config('providers'));
-        if ($server->taskworker) {
-            //todo bootTask
-        } else {
-            KernelProvider::bootRequest(); //todo rename to bootWorker
-        }
+        KernelProvider::bootRequest();
     }
 
     public function swHttpRequest(\Swoole\Http\Request $request, \Swoole\Http\Response $response)
