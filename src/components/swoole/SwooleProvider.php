@@ -7,10 +7,17 @@ use SwFwLess\components\provider\AppProvider;
 
 class SwooleProvider extends AbstractProvider implements AppProvider
 {
+    /**
+     * @throws \Exception
+     */
     public static function bootApp()
     {
         parent::bootApp();
 
-        \Co::set(config('coroutine'));
+        $coroutineConfig = config('coroutine');
+        if ($coroutineConfig['enable_preemptive_scheduler']) {
+            throw new \Exception('Preemptive coroutine scheduler has not been supported.');
+        }
+        \Co::set($coroutineConfig);
     }
 }
