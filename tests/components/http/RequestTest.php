@@ -318,4 +318,25 @@ class RequestTest extends \PHPUnit\Framework\TestCase
         $swRequest->header['content-type'] = 'application/json';
         $this->assertFalse($swfRequest->isGrpcJson());
     }
+
+    public function testIsJson()
+    {
+        $swRequest = $this->createSwRequest();
+        $swfRequest = $this->createSwfRequest($swRequest);
+        $swRequest->header = [];
+        $swRequest->header['content-type'] = 'application/grpc';
+        $this->assertFalse($swfRequest->isJson());
+
+        $swRequest = $this->createSwRequest();
+        $swfRequest = $this->createSwfRequest($swRequest);
+        $swRequest->header = [];
+        $swRequest->header['content-type'] = 'application/grpc+json';
+        $this->assertFalse($swfRequest->isJson());
+
+        $swRequest = $this->createSwRequest();
+        $swfRequest = $this->createSwfRequest($swRequest);
+        $swRequest->header = [];
+        $swRequest->header['content-type'] = 'application/json';
+        $this->assertTrue($swfRequest->isJson());
+    }
 }

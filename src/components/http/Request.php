@@ -232,7 +232,7 @@ class Request
      */
     public function isJson()
     {
-        return substr($this->getRequest()->header('content-type'), 0, 16) === 'application/json';
+        return substr($this->header('content-type'), 0, 16) === 'application/json';
     }
 
     /**
