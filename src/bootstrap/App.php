@@ -339,7 +339,7 @@ class App
                     config('hot_reload.watch_dirs'),
                     config('hot_reload.excluded_dirs'),
                     config('hot_reload.watch_suffixes')
-                )->watch(\SwFwLess\components\filewatcher\Watcher::EVENT_MODIFY, function ($event) use ($server) {
+                )->watch(\SwFwLess\components\filewatcher\Watcher::EVENT_MODIFY, function ($event) {
                     $this->swHttpServer->reload();
                 });
             });
