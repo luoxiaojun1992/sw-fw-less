@@ -211,7 +211,7 @@ class Log
         $handlers = $this->logger->getHandlers();
         if (count($handlers) > 0) {
             if ($handlers[0] instanceof Handler) {
-                $handlers[0]->getStreamPool()->closeStream();
+                $handlers[0]->flush();
             }
         }
     }

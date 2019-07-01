@@ -8,6 +8,7 @@ use SwFwLess\components\http\Response;
 use SwFwLess\facades\Cache;
 use SwFwLess\facades\HbasePool;
 use SwFwLess\facades\Jwt;
+use SwFwLess\facades\Log;
 use SwFwLess\models\Member;
 use SwFwLess\models\Test;
 use Cake\Validation\Validator;
@@ -170,5 +171,14 @@ class DemoService extends BaseService
         $token = Jwt::issue(request(), ['id' => 1]);
 
         return Response::json(['data' => ['token' => (string)$token], 'code' => 0, 'msg' => 'ok']);
+    }
+
+    public function log()
+    {
+        for ($i = 0; $i < 10; ++$i) {
+            Log::info('test log');
+        }
+
+        return Response::json(['code' => 0]);
     }
 }
