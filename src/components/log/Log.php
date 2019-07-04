@@ -143,7 +143,7 @@ class Log
 
     private function removeLogs()
     {
-        for ($i = 0; $i < 3; ++$i) {
+        for ($i = 0; $i < $this->reserveDays; ++$i) {
             $loggerDate = date('Ymd', strtotime('-' . (string)($this->reserveDays + $i) . ' days'));
             @unlink($this->getLogPath($loggerDate));
         }
@@ -181,14 +181,15 @@ class Log
      */
     public function countRecordBuffer()
     {
-        $handlers = $this->logger->getHandlers();
-        if (count($handlers) > 0) {
-            if ($handlers[0] instanceof Handler) {
-                return $handlers[0]->countRecordBuffer();
-            }
-        }
+        $count = 0;
 
-        return null;
+        array_map(function ($handler) use (&$count) {
+            if ($handler instanceof Handler) {
+                $count += $handler->countRecordBuffer();
+            }
+        }, $this->logger->getHandlers());
+
+        return $count;
     }
 
     /**
@@ -196,23 +197,23 @@ class Log
      */
     public function countPool()
     {
-        $handlers = $this->logger->getHandlers();
-        if (count($handlers) > 0) {
-            if ($handlers[0] instanceof Handler) {
-                return $handlers[0]->getStreamPool()->countPool();
-            }
-        }
+        $count = 0;
 
-        return null;
+        array_map(function ($handler) use (&$count) {
+            if ($handler instanceof Handler) {
+                $count += $handler->getStreamPool()->countPool();
+            }
+        }, $this->logger->getHandlers());
+
+        return $count;
     }
 
     public function flush()
     {
-        $handlers = $this->logger->getHandlers();
-        if (count($handlers) > 0) {
-            if ($handlers[0] instanceof Handler) {
-                $handlers[0]->flush();
+        array_map(function ($handler) {
+            if ($handler instanceof Handler) {
+                $handler->flush();
             }
-        }
+        }, $this->logger->getHandlers());
     }
 }
