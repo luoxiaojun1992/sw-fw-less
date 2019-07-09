@@ -339,4 +339,13 @@ class RequestTest extends \PHPUnit\Framework\TestCase
         $swRequest->header['content-type'] = 'application/json';
         $this->assertTrue($swfRequest->isJson());
     }
+
+    public function testIsHttp2()
+    {
+        $swRequest = $this->createSwRequest();
+        $swfRequest = $this->createSwfRequest($swRequest);
+        $swRequest->server = [];
+        $swRequest->server['server_protocol'] = 'HTTP/2';
+        $this->assertTrue($swfRequest->isHttp2());
+    }
 }
