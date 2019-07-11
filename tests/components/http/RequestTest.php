@@ -351,6 +351,12 @@ class RequestTest extends \PHPUnit\Framework\TestCase
         $swRequest = $this->createSwRequest();
         $swfRequest = $this->createSwfRequest($swRequest);
         $swRequest->server = [];
+        $swRequest->server['server_protocol'] = 'HTTP/2.0';
+        $this->assertTrue($swfRequest->isHttp2());
+
+        $swRequest = $this->createSwRequest();
+        $swfRequest = $this->createSwfRequest($swRequest);
+        $swRequest->server = [];
         $swRequest->server['server_protocol'] = 'HTTP';
         $this->assertFalse($swfRequest->isHttp2());
     }
