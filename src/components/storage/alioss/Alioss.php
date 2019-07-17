@@ -5,7 +5,6 @@ namespace SwFwLess\components\storage\alioss;
 use SwFwLess\components\Config;
 use League\Flysystem\Filesystem;
 use OSS\Http\RequestCore;
-use Xxtime\Flysystem\Aliyun\OssAdapter;
 
 class Alioss
 {

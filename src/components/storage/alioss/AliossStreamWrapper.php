@@ -185,8 +185,9 @@ class AliossStreamWrapper
             }
             $fileSystem->write($this->path, $data);
         } else {
-            //todo bugfix append
-            $fileSystem->put($this->path, $data);
+            /** @var OssAdapter $adapter */
+            $adapter = $fileSystem->getAdapter();
+            $adapter->oss->appendObject($adapter->bucket, $this->path, $data, $this->writePosition);
         }
 
         $dataLen = strlen($data);
