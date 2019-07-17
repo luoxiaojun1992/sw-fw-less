@@ -8,7 +8,8 @@ class QiniuStreamWrapper
     private $path;
     private $mode;
     private $data;
-    private $position;
+    private $readPosition;
+    private $writePosition;
 
     public static function register()
     {
@@ -28,7 +29,7 @@ class QiniuStreamWrapper
         $this->host = $url['host'];
         $this->path = $url['path'];
         $this->mode = $mode;
-        $this->position = 0;
+        $this->readPosition = 0;
 
         return true;
     }
@@ -44,8 +45,8 @@ class QiniuStreamWrapper
             $this->data = \SwFwLess\facades\Qiniu::prepare($this->host)->read($this->path);
         }
 
-        $ret = substr($this->data, $this->position, $count);
-        $this->position += strlen($ret);
+        $ret = substr($this->data, $this->readPosition, $count);
+        $this->readPosition += strlen($ret);
         return $ret;
     }
 
@@ -54,7 +55,7 @@ class QiniuStreamWrapper
      */
     function stream_tell()
     {
-        return $this->position;
+        return $this->readPosition;
     }
 
     /**
@@ -62,7 +63,7 @@ class QiniuStreamWrapper
      */
     function stream_eof()
     {
-        return is_null($this->data) ? false : ($this->position >= strlen($this->data));
+        return is_null($this->data) ? false : ($this->readPosition >= strlen($this->data));
     }
 
     /**
@@ -176,9 +177,20 @@ class QiniuStreamWrapper
      */
     function stream_write($data)
     {
-        \SwFwLess\facades\Qiniu::prepare($this->host)->put($this->path, $data);
+        $fileSystem = \SwFwLess\facades\Qiniu::prepare($this->host);
+        if ($this->writePosition === 0) {
+            if ($fileSystem->has($this->path)) {
+                $fileSystem->delete($this->path);
+            }
+            $fileSystem->write($this->path, $data);
+        } else {
+            //todo bugfix append
+            $fileSystem->put($this->path, $data);
+        }
 
-        $this->data = $data;
+        $dataLen = strlen($data);
+        $this->data .= $data;
+        $this->writePosition += $dataLen;
 
         return strlen($data);
     }

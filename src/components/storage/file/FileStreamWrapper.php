@@ -7,7 +7,8 @@ class FileStreamWrapper
     private $path;
     private $mode;
     private $data;
-    private $position;
+    private $readPosition;
+    private $writePosition;
 
     public static function register()
     {
@@ -26,7 +27,8 @@ class FileStreamWrapper
         $url = parse_url($path);
         $this->path = $url['host'] . (isset($url['path']) ? $url['path'] : '');
         $this->mode = $mode;
-        $this->position = 0;
+        $this->readPosition = 0;
+        $this->writePosition = 0;
 
         return true;
     }
@@ -42,8 +44,8 @@ class FileStreamWrapper
             $this->data = \SwFwLess\facades\File::prepare()->read($this->path);
         }
 
-        $ret = substr($this->data, $this->position, $count);
-        $this->position += strlen($ret);
+        $ret = substr($this->data, $this->readPosition, $count);
+        $this->readPosition += strlen($ret);
         return $ret;
     }
 
@@ -52,7 +54,7 @@ class FileStreamWrapper
      */
     function stream_tell()
     {
-        return $this->position;
+        return $this->readPosition;
     }
 
     /**
@@ -60,7 +62,7 @@ class FileStreamWrapper
      */
     function stream_eof()
     {
-        return is_null($this->data) ? false : ($this->position >= strlen($this->data));
+        return is_null($this->data) ? false : ($this->readPosition >= strlen($this->data));
     }
 
     /**
@@ -173,9 +175,19 @@ class FileStreamWrapper
      */
     function stream_write($data)
     {
-        \SwFwLess\facades\File::prepare()->put($this->path, $data);
+        if ($this->writePosition === 0) {
+            $fileSystem = \SwFwLess\facades\File::prepare();
+            if ($fileSystem->has($this->path)) {
+                $fileSystem->delete($this->path);
+            }
+            $fileSystem->put($this->path, $data);
+        } else {
+            \SwFwLess\facades\File::prepare(FILE_APPEND)->put($this->path, $data);
+        }
 
-        $this->data = $data;
+        $dataLen = strlen($data);
+        $this->data .= $data;
+        $this->writePosition += $dataLen;
 
         return strlen($data);
     }
