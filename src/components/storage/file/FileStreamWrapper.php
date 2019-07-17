@@ -173,7 +173,7 @@ class FileStreamWrapper
      */
     function stream_write($data)
     {
-        \SwFwLess\facades\File::prepare()->write($this->path, $data);
+        \SwFwLess\facades\File::prepare()->put($this->path, $data);
 
         $this->data = $data;
 

@@ -176,7 +176,7 @@ class QiniuStreamWrapper
      */
     function stream_write($data)
     {
-        \SwFwLess\facades\Qiniu::prepare($this->host)->write($this->path, $data);
+        \SwFwLess\facades\Qiniu::prepare($this->host)->put($this->path, $data);
 
         $this->data = $data;
 

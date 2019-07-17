@@ -176,7 +176,7 @@ class AliossStreamWrapper
      */
     function stream_write($data)
     {
-        \SwFwLess\facades\Alioss::prepare($this->host)->write($this->path, $data);
+        \SwFwLess\facades\Alioss::prepare($this->host)->put($this->path, $data);
 
         $this->data = $data;
 
