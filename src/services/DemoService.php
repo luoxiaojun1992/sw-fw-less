@@ -111,15 +111,15 @@ class DemoService extends BaseService
         return Response::output(file_get_contents('storage://test.txt'));
     }
 
-    public function qiniu()
-    {
-        if (file_exists('qiniu://musics/test2.txt')) {
-            unlink('qiniu://musics/test2.txt');
-        }
-        file_put_contents('qiniu://musics/test2.txt', 'test111111111111111111111111111');
-
-        return Response::output(file_get_contents('qiniu://musics/test2.txt'));
-    }
+//    public function qiniu()
+//    {
+//        if (file_exists('qiniu://musics/test2.txt')) {
+//            unlink('qiniu://musics/test2.txt');
+//        }
+//        file_put_contents('qiniu://musics/test2.txt', 'test111111111111111111111111111');
+//
+//        return Response::output(file_get_contents('qiniu://musics/test2.txt'));
+//    }
 
     public function rabbitmq()
     {

@@ -22,7 +22,7 @@ class Qiniu
 
         class_alias(QiniuCoHttpClient::class, Client::class);
 
-        QiniuStreamWrapper::register();
+//        QiniuStreamWrapper::register();
     }
 
     /**
