@@ -41,7 +41,7 @@ class RateLimit
     }
 
     /**
-     * RedLock constructor.
+     * RateLimit constructor.
      * @param RedisPool|null $redisPool
      * @param array $config
      */
