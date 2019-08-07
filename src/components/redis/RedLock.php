@@ -64,18 +64,11 @@ class RedLock
         try {
             //因为redis整数对象有缓存，此处value使用1
             if ($ttl > 0) {
-                $lua = <<<EOF
-local new_value=redis.call('setnx', KEYS[1], ARGV[1]);
-if(new_value > 0) then 
-redis.call('expire', KEYS[1], ARGV[2]) 
-end
-return new_value
-EOF;
-                $result = $redis->eval($lua, [$key, 1, $ttl], 1);
+                $result = $redis->set($key, 1, ['NX', 'EX' => $ttl]);
             } else {
                 $result = $redis->setnx($key, 1);
             }
-            if ($result > 0) {
+            if ($result) {
                 $this->addLockedKey($key, $guard);
 
                 if (is_callable($callback)) {
