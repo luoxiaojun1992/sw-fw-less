@@ -3,6 +3,7 @@
 namespace SwFwLess\components\http;
 
 use SwFwLess\components\zipkin\HttpClient;
+use SwFwLess\exceptions\HttpException;
 use Swlib\Http\BufferStream;
 use Swlib\Http\Uri;
 use Swlib\SaberGM;
@@ -67,34 +68,41 @@ class Client
         $chan = new Channel($requestCount);
 
         $aggResult = [];
+        $exceptions = [];
         foreach ($urls as $id => $url) {
             go(
-                function () use (&$aggResult, $id, $url, $chan, $method, $headers, $body, $bodyType, $swfRequest) {
-                    $request = SaberGM::psr()->withMethod($method)
-                        ->withUri(new Uri($url));
+            //todo exceptions handler
+                function () use (&$aggResult, $id, $url, $chan, $method, $headers, $body, $bodyType, $swfRequest, &$exceptions) {
+                    try {
+                        $request = SaberGM::psr()->withMethod($method)
+                            ->withUri(new Uri($url));
 
-                    if (!is_null($body)) {
-                        switch ($bodyType) {
-                            case self::JSON_BODY:
-                                $headers['Content-Type'] = 'application/json';
-                                $body = json_encode($body);
-                                break;
-                            case self::FORM_BODY:
-                                $headers['Content-Type'] = 'application/x-www-form-urlencoded';
-                                $body = http_build_query($bodyType);
-                                break;
-                            case self::STRING_BODY:
-                                $body = (string)$body;
-                                break;
+                        if (!is_null($body)) {
+                            switch ($bodyType) {
+                                case self::JSON_BODY:
+                                    $headers['Content-Type'] = 'application/json';
+                                    $body = json_encode($body);
+                                    break;
+                                case self::FORM_BODY:
+                                    $headers['Content-Type'] = 'application/x-www-form-urlencoded';
+                                    $body = http_build_query($bodyType);
+                                    break;
+                                case self::STRING_BODY:
+                                    $body = (string)$body;
+                                    break;
+                            }
+                            $request->withBody(new BufferStream($body));
                         }
-                        $request->withBody(new BufferStream($body));
-                    }
 
-                    foreach ($headers as $name => $value) {
-                        $request->withAddedHeader($name, $value);
-                    }
+                        foreach ($headers as $name => $value) {
+                            $request->withAddedHeader($name, $value);
+                        }
 
-                    $aggResult[$id] = (new HttpClient())->send($request, $swfRequest);
+                        $aggResult[$id] = (new HttpClient())->send($request, $swfRequest);
+                        throw new \Exception('test');
+                    } catch (\Throwable $e) {
+                        array_push($exceptions, $e);
+                    }
 
                     $chan->push(1);
                 }
@@ -105,6 +113,14 @@ class Client
             $chan->pop();
         }
         $chan->close();
+
+        if (count($exceptions) > 0) {
+            $messages = [];
+            foreach ($exceptions as $exception) {
+                array_push($messages, $exception->getMessage());
+            }
+            throw new HttpException(implode(',', $messages));
+        }
 
         return $aggResult;
     }
