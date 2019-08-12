@@ -71,7 +71,6 @@ class Client
         $exceptions = [];
         foreach ($urls as $id => $url) {
             go(
-            //todo exceptions handler
                 function () use (&$aggResult, $id, $url, $chan, $method, $headers, $body, $bodyType, $swfRequest, &$exceptions) {
                     try {
                         $request = SaberGM::psr()->withMethod($method)
