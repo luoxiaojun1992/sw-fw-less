@@ -254,20 +254,6 @@ class Server extends \Swoole\Http\Server
      * @param $reactor_id[optional]
      * @return mixed
      */
-    public function connection_info($fd, $reactor_id=null){}
-
-    /**
-     * @param $start_fd[required]
-     * @param $find_count[optional]
-     * @return mixed
-     */
-    public function connection_list($start_fd, $find_count=null){}
-
-    /**
-     * @param $fd[required]
-     * @param $reactor_id[optional]
-     * @return mixed
-     */
     public function getClientInfo($fd, $reactor_id=null){}
 
     /**
@@ -278,10 +264,18 @@ class Server extends \Swoole\Http\Server
     public function getClientList($start_fd, $find_count=null){}
 
     /**
-     * @param $callback[required]
+     * @param $fd[required]
+     * @param $reactor_id[optional]
      * @return mixed
      */
-    public function defer($callback){}
+    public function connection_info($fd, $reactor_id=null){}
+
+    /**
+     * @param $start_fd[required]
+     * @param $find_count[optional]
+     * @return mixed
+     */
+    public function connection_list($start_fd, $find_count=null){}
 
     /**
      * @param $message[required]
@@ -327,6 +321,12 @@ class Server extends \Swoole\Http\Server
      * @return mixed
      */
     public function clearTimer($timer_id){}
+
+    /**
+     * @param $callback[required]
+     * @return mixed
+     */
+    public function defer($callback){}
 
 
 }

@@ -29,9 +29,10 @@ class Pool
     public function on($event_name, $callback){}
 
     /**
+     * @param $worker_id[optional]
      * @return mixed
      */
-    public function getProcess(){}
+    public function getProcess($worker_id=null){}
 
     /**
      * @param $host[required]

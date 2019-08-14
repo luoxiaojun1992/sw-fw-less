@@ -10,7 +10,8 @@ class Client
 
     public $errCode;
     public $errMsg;
-    public $sock;
+    public $fd;
+    private $socket;
     public $type;
     public $setting;
     public $connected;
@@ -117,6 +118,11 @@ class Client
      * @return mixed
      */
     public function close(){}
+
+    /**
+     * @return mixed
+     */
+    public function exportSocket(){}
 
 
 }

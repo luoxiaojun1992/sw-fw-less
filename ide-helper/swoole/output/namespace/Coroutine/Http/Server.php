@@ -4,6 +4,13 @@ namespace Swoole\Coroutine\Http;
 class Server
 {
 
+    public $fd;
+    public $host;
+    public $port;
+    public $ssl;
+    public $settings;
+    public $errCode;
+    public $errMsg;
 
     /**
      * @return mixed
@@ -16,9 +23,17 @@ class Server
     public function __destruct(){}
 
     /**
+     * @param $settings[required]
      * @return mixed
      */
-    public function handle(){}
+    public function set($settings){}
+
+    /**
+     * @param $pattern[required]
+     * @param $callback[required]
+     * @return mixed
+     */
+    public function handle($pattern, $callback){}
 
     /**
      * @return mixed

@@ -5,6 +5,7 @@ class Response
 {
 
     public $fd;
+    public $socket;
     public $header;
     public $cookie;
     public $trailer;
@@ -36,6 +37,18 @@ class Response
      * @param $httponly[optional]
      * @return mixed
      */
+    public function setCookie($name, $value=null, $expires=null, $path=null, $domain=null, $secure=null, $httponly=null){}
+
+    /**
+     * @param $name[required]
+     * @param $value[optional]
+     * @param $expires[optional]
+     * @param $path[optional]
+     * @param $domain[optional]
+     * @param $secure[optional]
+     * @param $httponly[optional]
+     * @return mixed
+     */
     public function rawcookie($name, $value=null, $expires=null, $path=null, $domain=null, $secure=null, $httponly=null){}
 
     /**
@@ -46,12 +59,27 @@ class Response
     public function status($http_code, $reason=null){}
 
     /**
+     * @param $http_code[required]
+     * @param $reason[optional]
+     * @return mixed
+     */
+    public function setStatusCode($http_code, $reason=null){}
+
+    /**
      * @param $key[required]
      * @param $value[required]
      * @param $ucwords[optional]
      * @return mixed
      */
     public function header($key, $value, $ucwords=null){}
+
+    /**
+     * @param $key[required]
+     * @param $value[required]
+     * @param $ucwords[optional]
+     * @return mixed
+     */
+    public function setHeader($key, $value, $ucwords=null){}
 
     /**
      * @param $key[required]
