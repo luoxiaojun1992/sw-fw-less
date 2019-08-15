@@ -72,7 +72,7 @@ abstract class AbstractMysqlModel extends AbstractModel
 
         $insertBuilder = static::insert();
         foreach ($this->attributes as $attributeName => $attribute) {
-            $insertBuilder->col($attributeName)->bindValue($attributeName, $this->{$attributeName});
+            $insertBuilder->col($attributeName)->bindValue(':' . $attributeName, $this->{$attributeName});
         }
 
         $res = $insertBuilder->write() > 0;
@@ -114,7 +114,7 @@ abstract class AbstractMysqlModel extends AbstractModel
                 continue;
             }
 
-            $updateBuilder->col($attributeName)->bindValue($attributeName, $this->{$attributeName});
+            $updateBuilder->col($attributeName)->bindValue(':' . $attributeName, $this->{$attributeName});
         }
         $updateBuilder->write();
         $this->fireEvent('updated');
