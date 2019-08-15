@@ -128,8 +128,6 @@ class App
 
         require_once __DIR__ . '/../components/functions.php';
 
-        \Swoole\Runtime::enableCoroutine();
-
         //Load Env
         if (file_exists(APP_BASE_PATH . '.env')) {
             (new \Dotenv\Dotenv(APP_BASE_PATH))->load();
