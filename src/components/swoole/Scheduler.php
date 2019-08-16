@@ -15,4 +15,16 @@ class Scheduler
         \Co::enableScheduler();
         return $result;
     }
+
+    /**
+     * @param $callback
+     * @return mixed
+     */
+    public static function withPreemptive($callback)
+    {
+        \Co::enableScheduler();
+        $result = call_user_func($callback);
+        \Co::disableScheduler();
+        return $result;
+    }
 }
