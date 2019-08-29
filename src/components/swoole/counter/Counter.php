@@ -2,6 +2,7 @@
 
 namespace SwFwLess\components\swoole\counter;
 
+use SwfwLess\components\swoole\Server;
 use SwFwLess\facades\Container;
 use Swoole\Table;
 
@@ -23,7 +24,7 @@ class Counter
     public static function reload()
     {
         foreach (self::$swTable as $key => $row) {
-            $workerId = Container::get('swoole.server')->worker_id;
+            $workerId = Server::getInstance()->worker_id;
             if ($row['worker_id'] == $workerId) {
                 self::$swTable->set($key, ['count' => 0, 'worker_id' => $workerId]);
             }
@@ -32,14 +33,14 @@ class Counter
 
     public static function incr($key, $incrBy = 1)
     {
-        $workerId = Container::get('swoole.server')->worker_id;
+        $workerId = Server::getInstance()->worker_id;
         self::$swTable->incr($key . ':' . $workerId, 'count', $incrBy);
         self::$swTable->set($key . ':' . $workerId, ['worker_id' => $workerId]);
     }
 
     public static function decr($key, $decrBy = 1)
     {
-        $workerId = Container::get('swoole.server')->worker_id;
+        $workerId = Server::getInstance()->worker_id;
         self::$swTable->decr($key . ':' . $workerId, 'count', $decrBy);
         self::$swTable->set($key . ':' . $workerId, ['worker_id' => $workerId]);
     }
