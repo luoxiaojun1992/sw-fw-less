@@ -98,7 +98,6 @@ class Client
                         }
 
                         $aggResult[$id] = (new HttpClient())->send($request, $swfRequest);
-                        throw new \Exception('test');
                     } catch (\Throwable $e) {
                         array_push($exceptions, $e);
                     }
