@@ -2,6 +2,8 @@
 
 namespace SwFwLess\components\redis;
 
+use SwFwLess\components\swoole\coresource\traits\CoroutineRes;
+
 /**
  * Class RedLock
  *
@@ -13,6 +15,8 @@ namespace SwFwLess\components\redis;
  */
 class RedLock
 {
+    use CoroutineRes;
+
     private $locked_keys = [];
 
     /**
@@ -29,6 +33,10 @@ class RedLock
      */
     public static function create(RedisPool $redisPool = null, $config = [])
     {
+        if ($instance = self::fetch()) {
+            return $instance;
+        }
+
         if (!is_null($redisPool)) {
             return new self($redisPool, $config);
         }
@@ -45,6 +53,7 @@ class RedLock
     {
         $this->redisPool = $redisPool;
         $this->config = array_merge($this->config, $config);
+        self::register($this);
     }
 
     /**
@@ -59,6 +68,7 @@ class RedLock
      */
     public function lock($key, $ttl = 0, $guard = false, $callback = null)
     {
+        $deferTimerId = null;
         /** @var \Redis $redis */
         $redis = $this->redisPool->pick($this->config['connection']);
         try {
@@ -72,6 +82,30 @@ class RedLock
                 $this->addLockedKey($key, $guard);
 
                 if (is_callable($callback)) {
+                    //Defer
+                    if ($ttl >= 2) {
+                        $deferTimerId = swoole_timer_tick(1000, function () use ($key, $ttl) {
+                            /** @var \Redis $redis */
+                            $redis = $this->redisPool->pick($this->config['connection']);
+                            try {
+                                $lua = <<<EOF
+local existed=redis.call('exists', KEYS[1]);
+if(existed >= 1) then
+local remainTtl=redis.call('ttl', KEYS[1]);
+if(remainTtl <= 1) then
+redis.call('expire', KEYS[1], ARGV[1]);
+end
+end
+EOF;
+                                $redis->eval($lua, [$key, $ttl], 1);
+                            } catch (\Throwable $e) {
+                                throw $e;
+                            } finally {
+                                $this->redisPool->release($redis);
+                            }
+                        });
+                    }
+
                     $callbackRes = call_user_func($callback);
                     $this->unlock($key);
                     return $callbackRes;
@@ -83,6 +117,9 @@ class RedLock
             throw $e;
         } finally {
             $this->redisPool->release($redis);
+            if (!is_null($deferTimerId)) {
+                swoole_timer_clear($deferTimerId);
+            }
         }
 
         return false;

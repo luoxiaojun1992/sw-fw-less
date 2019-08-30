@@ -6,6 +6,7 @@ use Cron\CronExpression;
 use Opis\Closure\SerializableClosure;
 use SwFwLess\components\grpc\Status;
 use SwFwLess\components\provider\KernelProvider;
+use SwFwLess\components\redis\RedLock;
 use Swoole\Http\Server;
 use Swoole\Server\Task;
 
@@ -220,6 +221,8 @@ class App
     {
         try {
             clearstatcache();
+
+            RedLock::create(\SwFwLess\components\redis\RedisPool::create(), config('red_lock'));
 
             $this->swResponse($this->swfRequest(function () use ($request) {
                 return $this->getRequestHandler($request)->call();
