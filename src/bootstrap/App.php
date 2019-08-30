@@ -222,6 +222,7 @@ class App
         try {
             clearstatcache();
 
+            //todo rename bootRequest to bootWorker, use bootRequest here
             RedLock::create(\SwFwLess\components\redis\RedisPool::create(), config('red_lock'));
 
             $this->swResponse($this->swfRequest(function () use ($request) {
