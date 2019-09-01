@@ -210,7 +210,7 @@ class App
         );
 
         //Inject Swoole Server
-        \SwfwLess\components\swoole\Server::setInstance($server);
+        \SwFwLess\components\swoole\Server::setInstance($server);
 
         //Boot providers
         KernelProvider::init(config('providers'));

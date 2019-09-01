@@ -1,6 +1,6 @@
 <?php
 
-namespace SwfwLess\components\swoole;
+namespace SwFwLess\components\swoole;
 
 use SwFwLess\facades\Container;
 
