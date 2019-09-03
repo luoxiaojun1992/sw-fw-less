@@ -2,6 +2,7 @@
 
 namespace SwFwLess\components\di;
 
+use SwFwLess\components\swoole\Scheduler;
 use SwFwLess\components\traits\Singleton;
 use DI\ContainerBuilder;
 
@@ -23,6 +24,14 @@ class Container
 
     public function __call($name, $arguments)
     {
-        return call_user_func_array([$this->diContainer, $name], $arguments);
+        $callback = function () use ($name, $arguments) {
+            return call_user_func_array([$this->diContainer, $name], $arguments);
+        };
+
+        if (in_array($name, ['get', 'make'])) {
+            return Scheduler::withoutPreemptive($callback);
+        }
+
+        return call_user_func($callback);
     }
 }
