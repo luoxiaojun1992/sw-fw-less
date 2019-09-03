@@ -21,6 +21,9 @@ Swoole http server without framework
 15. Hot Reload(including biz code、config、router, recommended for dev only)
 16. Experimental Grpc(must open http2)
 
+>## Notice
+* Don't include io operation in controller or middleware constructor
+
 >## Requirements
 * PHP 7.1+
 * Swoole 4.2.10+
