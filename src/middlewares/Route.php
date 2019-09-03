@@ -18,7 +18,7 @@ class Route extends AbstractMiddleware
         $controllerName = $controllerAction[1];
         $action = $controllerAction[2];
         $parameters = $routeInfo[2];
-        $controller = \SwFwLess\facades\Container::get($controllerName);
+        $controller = \SwFwLess\facades\Container::make($controllerName);
         if ($controller instanceof \SwFwLess\services\BaseService) {
             $controller->setRequest($appRequest);
         }
@@ -35,7 +35,7 @@ class Route extends AbstractMiddleware
             list($middlewareClass, $middlewareOptions) = $this->parseMiddlewareName($middlewareName);
 
             /** @var \SwFwLess\middlewares\AbstractMiddleware $middlewareConcrete */
-            $middlewareConcrete = \SwFwLess\facades\Container::get($middlewareClass);
+            $middlewareConcrete = \SwFwLess\facades\Container::make($middlewareClass);
             $middlewareConcrete->setParameters([$appRequest])->setOptions($middlewareOptions);
             if (isset($middlewareConcretes[$i - 1])) {
                 $middlewareConcretes[$i - 1]->setNext($middlewareConcrete);

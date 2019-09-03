@@ -160,7 +160,7 @@ class App
             list($middlewareClass, $middlewareOptions) = $this->parseMiddlewareName($middlewareName);
 
             /** @var \SwFwLess\middlewares\AbstractMiddleware $middlewareConcrete */
-            $middlewareConcrete = \SwFwLess\facades\Container::get($middlewareClass);
+            $middlewareConcrete = \SwFwLess\facades\Container::make($middlewareClass);
             $middlewareConcrete->setParameters([$appRequest]);
             if ($middlewareConcrete instanceof \SwFwLess\middlewares\Route) {
                 $middlewareConcrete->setOptions($this->httpRouteDispatcher);
