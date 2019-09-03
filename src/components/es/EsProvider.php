@@ -3,13 +3,13 @@
 namespace SwFwLess\components\es;
 
 use SwFwLess\components\provider\AbstractProvider;
-use SwFwLess\components\provider\RequestProvider;
+use SwFwLess\components\provider\WorkerProvider;
 
-class EsProvider extends AbstractProvider implements RequestProvider
+class EsProvider extends AbstractProvider implements WorkerProvider
 {
-    public static function bootRequest()
+    public static function bootWorker()
     {
-        parent::bootRequest();
+        parent::bootWorker();
 
         if (config('elasticsearch.switch')) {
             Manager::create();

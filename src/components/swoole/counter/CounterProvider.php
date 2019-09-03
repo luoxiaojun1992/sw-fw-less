@@ -4,9 +4,9 @@ namespace SwFwLess\components\swoole\counter;
 
 use SwFwLess\components\provider\AbstractProvider;
 use SwFwLess\components\provider\AppProvider;
-use SwFwLess\components\provider\RequestProvider;
+use SwFwLess\components\provider\WorkerProvider;
 
-class CounterProvider extends AbstractProvider implements AppProvider, RequestProvider
+class CounterProvider extends AbstractProvider implements AppProvider, WorkerProvider
 {
     public static function bootApp()
     {
@@ -15,9 +15,9 @@ class CounterProvider extends AbstractProvider implements AppProvider, RequestPr
         Counter::init();
     }
 
-    public static function bootRequest()
+    public static function bootWorker()
     {
-        parent::bootRequest();
+        parent::bootWorker();
 
         Counter::reload();
     }

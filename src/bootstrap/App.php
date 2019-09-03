@@ -214,7 +214,7 @@ class App
 
         //Boot providers
         KernelProvider::init(config('providers'));
-        KernelProvider::bootRequest();
+        KernelProvider::bootWorker();
     }
 
     public function swHttpRequest(\Swoole\Http\Request $request, \Swoole\Http\Response $response)

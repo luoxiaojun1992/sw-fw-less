@@ -3,13 +3,13 @@
 namespace SwFwLess\components\mysql;
 
 use SwFwLess\components\provider\AbstractProvider;
-use SwFwLess\components\provider\RequestProvider;
+use SwFwLess\components\provider\WorkerProvider;
 
-class MysqlProvider extends AbstractProvider implements RequestProvider
+class MysqlProvider extends AbstractProvider implements WorkerProvider
 {
-    public static function bootRequest()
+    public static function bootWorker()
     {
-        parent::bootRequest();
+        parent::bootWorker();
 
         MysqlPool::create(config('mysql'));
     }

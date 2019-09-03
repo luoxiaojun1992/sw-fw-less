@@ -3,16 +3,16 @@
 namespace SwFwLess\components\log;
 
 use SwFwLess\components\provider\AbstractProvider;
-use SwFwLess\components\provider\RequestProvider;
+use SwFwLess\components\provider\WorkerProvider;
 
-class LogProvider extends AbstractProvider implements RequestProvider
+class LogProvider extends AbstractProvider implements WorkerProvider
 {
     /**
      * @throws \Exception
      */
-    public static function bootRequest()
+    public static function bootWorker()
     {
-        parent::bootRequest();
+        parent::bootWorker();
         if (config('log.switch')) {
             Log::create(
                 config('log.path'),

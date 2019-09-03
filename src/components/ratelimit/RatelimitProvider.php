@@ -3,13 +3,13 @@
 namespace SwFwLess\components\ratelimit;
 
 use SwFwLess\components\provider\AbstractProvider;
-use SwFwLess\components\provider\RequestProvider;
+use SwFwLess\components\provider\WorkerProvider;
 
-class RatelimitProvider extends AbstractProvider implements RequestProvider
+class RatelimitProvider extends AbstractProvider implements WorkerProvider
 {
-    public static function bootRequest()
+    public static function bootWorker()
     {
-        parent::bootRequest();
+        parent::bootWorker();
 
         //Rate limiter
         RateLimit::create(

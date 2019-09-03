@@ -3,16 +3,16 @@
 namespace SwFwLess\components\event;
 
 use SwFwLess\components\provider\AbstractProvider;
-use SwFwLess\components\provider\RequestProvider;
+use SwFwLess\components\provider\WorkerProvider;
 
-class EventProvider extends AbstractProvider implements RequestProvider
+class EventProvider extends AbstractProvider implements WorkerProvider
 {
     /**
      * @throws \Exception
      */
-    public static function bootRequest()
+    public static function bootWorker()
     {
-        parent::bootRequest();
+        parent::bootWorker();
 
         Event::create();
     }

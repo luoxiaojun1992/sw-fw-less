@@ -3,13 +3,13 @@
 namespace SwFwLess\components\datetime;
 
 use SwFwLess\components\provider\AbstractProvider;
-use SwFwLess\components\provider\RequestProvider;
+use SwFwLess\components\provider\WorkerProvider;
 
-class DatetimeProvider extends AbstractProvider implements RequestProvider
+class DatetimeProvider extends AbstractProvider implements WorkerProvider
 {
-    public static function bootRequest()
+    public static function bootWorker()
     {
-        parent::bootRequest();
+        parent::bootWorker();
 
         $timezone = config('timezone');
         if (date_default_timezone_get() != $timezone) {

@@ -3,13 +3,13 @@
 namespace SwFwLess\components\redis;
 
 use SwFwLess\components\provider\AbstractProvider;
-use SwFwLess\components\provider\RequestProvider;
+use SwFwLess\components\provider\WorkerProvider;
 
-class RedisProvider extends AbstractProvider implements RequestProvider
+class RedisProvider extends AbstractProvider implements WorkerProvider
 {
-    public static function bootRequest()
+    public static function bootWorker()
     {
-        parent::bootRequest();
+        parent::bootWorker();
 
         RedisPool::create(config('redis'));
     }

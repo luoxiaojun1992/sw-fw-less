@@ -46,6 +46,20 @@ class KernelProvider extends AbstractProvider
     /**
      * @throws \ReflectionException
      */
+    public static function bootWorker()
+    {
+        parent::bootWorker();
+
+        foreach (static::$providers as $provider) {
+            if ((new \ReflectionClass($provider))->implementsInterface(WorkerProvider::class)) {
+                call_user_func([$provider, 'bootWorker']);
+            }
+        }
+    }
+
+    /**
+     * @throws \ReflectionException
+     */
     public static function bootRequest()
     {
         parent::bootRequest();

@@ -3,13 +3,13 @@
 namespace SwFwLess\components\auth\jwt;
 
 use SwFwLess\components\provider\AbstractProvider;
-use SwFwLess\components\provider\RequestProvider;
+use SwFwLess\components\provider\WorkerProvider;
 
-class JwtProvider extends AbstractProvider implements RequestProvider
+class JwtProvider extends AbstractProvider implements WorkerProvider
 {
-    public static function bootRequest()
+    public static function bootWorker()
     {
-        parent::bootRequest();
+        parent::bootWorker();
 
         Jwt::create(config('auth.guards.jwt'));
     }

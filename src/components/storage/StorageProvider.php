@@ -3,13 +3,13 @@
 namespace SwFwLess\components\storage;
 
 use SwFwLess\components\provider\AbstractProvider;
-use SwFwLess\components\provider\RequestProvider;
+use SwFwLess\components\provider\WorkerProvider;
 
-class StorageProvider extends AbstractProvider implements RequestProvider
+class StorageProvider extends AbstractProvider implements WorkerProvider
 {
-    public static function bootRequest()
+    public static function bootWorker()
     {
-        parent::bootRequest();
+        parent::bootWorker();
 
         Storage::init();
     }

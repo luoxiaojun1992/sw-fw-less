@@ -3,13 +3,13 @@
 namespace SwFwLess\components\cache;
 
 use SwFwLess\components\provider\AbstractProvider;
-use SwFwLess\components\provider\RequestProvider;
+use SwFwLess\components\provider\WorkerProvider;
 
-class CacheProvider extends AbstractProvider implements RequestProvider
+class CacheProvider extends AbstractProvider implements WorkerProvider
 {
-    public static function bootRequest()
+    public static function bootWorker()
     {
-        parent::bootRequest();
+        parent::bootWorker();
 
         Cache::create(\SwFwLess\components\redis\RedisPool::create(), config('cache'));
     }

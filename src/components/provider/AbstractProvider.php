@@ -9,6 +9,11 @@ abstract class AbstractProvider implements ProviderContract
         //
     }
 
+    public static function bootWorker()
+    {
+        //
+    }
+
     public static function bootRequest()
     {
         //
