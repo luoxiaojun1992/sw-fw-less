@@ -13,4 +13,11 @@ class RedisProvider extends AbstractProvider implements WorkerProvider
 
         RedisPool::create(config('redis'));
     }
+
+    public static function bootRequest()
+    {
+        parent::bootRequest();
+
+        RedLock::create(RedisPool::create(), config('red_lock'));
+    }
 }

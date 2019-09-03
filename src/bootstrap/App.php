@@ -220,10 +220,9 @@ class App
     public function swHttpRequest(\Swoole\Http\Request $request, \Swoole\Http\Response $response)
     {
         try {
-            clearstatcache();
+            KernelProvider::bootRequest();
 
-            //todo rename bootRequest to bootWorker, use bootRequest here
-            RedLock::create(\SwFwLess\components\redis\RedisPool::create(), config('red_lock'));
+            clearstatcache();
 
             $this->swResponse($this->swfRequest(function () use ($request) {
                 return $this->getRequestHandler($request)->call();
