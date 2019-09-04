@@ -2,6 +2,7 @@
 
 namespace SwFwLess\models;
 
+use SwFwLess\components\swoole\Scheduler;
 use SwFwLess\models\traits\ModelArray;
 use SwFwLess\models\traits\ModelAttributes;
 use SwFwLess\models\traits\ModelEvents;
@@ -29,13 +30,15 @@ abstract class AbstractModel implements \JsonSerializable, \ArrayAccess
 
     protected static function bootOnce()
     {
-        if (array_pop(static::$bootedLock)) {
-            static::setFilter();
+        Scheduler::withoutPreemptive(function () {
+            if (array_pop(static::$bootedLock)) {
+                static::setFilter();
 
-            if (method_exists(static::class, 'boot')) {
-                call_user_func([static::class, 'boot']);
+                if (method_exists(static::class, 'boot')) {
+                    call_user_func([static::class, 'boot']);
+                }
             }
-        }
+        });
     }
 
     /**
