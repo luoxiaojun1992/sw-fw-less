@@ -6,8 +6,10 @@ use SwFwLess\components\Config;
 use Cake\Event\Event as CakeEvent;
 use PhpAmqpLib\Connection\AMQPSocketConnection;
 use PhpAmqpLib\Wire\IO\SocketIO;
+use SwFwLess\components\pool\AbstractPool;
+use SwFwLess\components\swoole\Scheduler;
 
-class ConnectionPool
+class ConnectionPool extends AbstractPool
 {
     const EVENT_AMQP_POOL_CHANGE = 'amqp.pool.change';
 
@@ -76,7 +78,7 @@ class ConnectionPool
      */
     public function pick()
     {
-        $connection = array_pop($this->connectionPool);
+        $connection = $this->pickFromPool($this->connectionPool);
         if (!$connection) {
             $connection = $this->getConnect(false);
         } else {

@@ -28,17 +28,22 @@ abstract class AbstractModel implements \JsonSerializable, \ArrayAccess
         static::bootOnce();
     }
 
+    protected static function bootedLock()
+    {
+        return Scheduler::withoutPreemptive(function () {
+            return array_pop(static::$bootedLock);
+        });
+    }
+
     protected static function bootOnce()
     {
-        Scheduler::withoutPreemptive(function () {
-            if (array_pop(static::$bootedLock)) {
-                static::setFilter();
+        if (static::bootedLock()) {
+            static::setFilter();
 
-                if (method_exists(static::class, 'boot')) {
-                    call_user_func([static::class, 'boot']);
-                }
+            if (method_exists(static::class, 'boot')) {
+                call_user_func([static::class, 'boot']);
             }
-        });
+        }
     }
 
     /**

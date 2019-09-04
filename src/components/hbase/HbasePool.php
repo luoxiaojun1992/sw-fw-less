@@ -5,11 +5,12 @@ namespace SwFwLess\components\hbase;
 use SwFwLess\components\Config;
 use Cake\Event\Event as CakeEvent;
 use Hbase\HbaseClient;
+use SwFwLess\components\pool\AbstractPool;
 use Thrift\Protocol\TBinaryProtocol;
 use Thrift\Transport\TBufferedTransport;
 use Thrift\Transport\TSocket;
 
-class HbasePool
+class HbasePool extends AbstractPool
 {
     const EVENT_HBASE_POOL_CHANGE = 'hbase.pool.change';
 
@@ -63,7 +64,7 @@ class HbasePool
      */
     public function pick()
     {
-        $connection = array_pop($this->connectionPool);
+        $connection = $this->pickFromPool($this->connectionPool);
         if (!$connection) {
             $connection = $this->getConnect(false);
         } else {

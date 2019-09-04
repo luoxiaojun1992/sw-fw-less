@@ -4,8 +4,9 @@ namespace SwFwLess\components\mysql;
 
 use SwFwLess\components\Helper;
 use Cake\Event\Event as CakeEvent;
+use SwFwLess\components\pool\AbstractPool;
 
-class MysqlPool
+class MysqlPool extends AbstractPool
 {
     const EVENT_MYSQL_POOL_CHANGE = 'mysql.pool.change';
 
@@ -67,7 +68,7 @@ class MysqlPool
         if (!isset($this->pdoPool[$connectionName])) {
             return null;
         }
-        $pdo = array_pop($this->pdoPool[$connectionName]);
+        $pdo = $this->pickFromPool($this->pdoPool[$connectionName]);
         if (!$pdo) {
             $pdo = $this->getConnect(false, $connectionName);
         } else {

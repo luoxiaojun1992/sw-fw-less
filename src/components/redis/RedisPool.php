@@ -4,8 +4,9 @@ namespace SwFwLess\components\redis;
 
 use SwFwLess\components\Helper;
 use Cake\Event\Event as CakeEvent;
+use SwFwLess\components\pool\AbstractPool;
 
-class RedisPool
+class RedisPool extends AbstractPool
 {
     const EVENT_REDIS_POOL_CHANGE = 'redis.pool.change';
 
@@ -73,7 +74,7 @@ class RedisPool
         if (!isset($this->redisPool[$connectionName])) {
             return null;
         }
-        $redis = array_pop($this->redisPool[$connectionName]);
+        $redis = $this->pickFromPool($this->redisPool[$connectionName]);
         if (!$redis) {
             $redis = $this->getConnect(false, $connectionName);
         } else {

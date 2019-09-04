@@ -5,6 +5,7 @@ namespace SwFwLess\components\log;
 use SwFwLess\components\Config;
 use Lxj\Monolog\Co\Stream\Handler;
 use Monolog\Logger;
+use SwFwLess\components\swoole\Scheduler;
 
 class Log
 {
@@ -121,13 +122,20 @@ class Log
         return str_replace('{date}', $loggerDate, $this->logPath);
     }
 
+    private function rotateLock()
+    {
+        return Scheduler::withoutPreemptive(function () {
+            return array_pop($this->rotateLock);
+        });
+    }
+
     /**
      * @throws \Throwable
      */
     private function rotate()
     {
         if (date('Ymd') != $this->loggerDate) {
-            if (array_pop($this->rotateLock)) {
+            if ($this->rotateLock()) {
                 try {
                     if (date('Ymd') != $this->loggerDate) {
                         $this->logger = $this->createLogger();
