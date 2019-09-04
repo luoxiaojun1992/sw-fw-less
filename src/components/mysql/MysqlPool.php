@@ -99,8 +99,7 @@ class MysqlPool extends AbstractPool
                 }
             }
             if ($pdo->isNeedRelease()) {
-                //Reset connection if big query times is greater than 1000000
-                if ($pdo->getBigQueryTimes() > 1000000) {
+                if ($pdo->exceedMaxBigQueryTimes()) {
                     $pdo->reconnect();
                 }
 

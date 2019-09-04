@@ -9,6 +9,8 @@ class MysqlWrapper
 {
     use MysqlTransaction;
 
+    const MAX_BIG_QUERY_TIMES = 1000000;
+
     /** @var \PDO */
     private $pdo;
     private $needRelease = true;
@@ -145,5 +147,13 @@ class MysqlWrapper
     {
         $this->bigQueryTimes = $times;
         return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function exceedMaxBigQueryTimes()
+    {
+        return $this->getBigQueryTimes() > self::MAX_BIG_QUERY_TIMES;
     }
 }
