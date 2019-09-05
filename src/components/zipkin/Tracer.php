@@ -88,11 +88,13 @@ class Tracer
     private function createTracer()
     {
         $request = $this->getRequest();
+        $realIp = $request->realIp();
+        $isIpV6 = $request->isIpV6();
         $endpoint = Endpoint::create(
             $this->serviceName,
-            $request->realIp(),
-            null,
-            $request->server('REMOTE_PORT')
+            (!$isIpV6) ? $realIp : null,
+            $isIpV6 ? $realIp : null,
+            $request->userPort()
         );
         $sampler = BinarySampler::createAsAlwaysSample();
         $this->tracing = TracingBuilder::create()

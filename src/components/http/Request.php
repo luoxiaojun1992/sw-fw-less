@@ -157,6 +157,17 @@ class Request
         }
     }
 
+    public function isIpV6()
+    {
+        return substr_count($this->realIp(), ':') > 1;
+    }
+
+    public function userPort()
+    {
+        $remotePort = $this->server('REMOTE_PORT');
+        return (!is_null($remotePort)) ? ((int)$remotePort) : null;
+    }
+
     /**
      * @param $name
      * @param null $default
