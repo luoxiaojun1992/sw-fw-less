@@ -6,7 +6,6 @@ use Cron\CronExpression;
 use Opis\Closure\SerializableClosure;
 use SwFwLess\components\grpc\Status;
 use SwFwLess\components\provider\KernelProvider;
-use SwFwLess\components\redis\RedLock;
 use Swoole\Http\Server;
 use Swoole\Server\Task;
 
