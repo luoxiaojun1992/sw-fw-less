@@ -3,6 +3,7 @@
 namespace SwFwLess\components\zipkin;
 
 use SwFwLess\components\http\Request;
+use SwFwLess\components\swoole\Scheduler;
 use SwFwLess\facades\Log;
 use Psr\Http\Message\RequestInterface;
 use Zipkin\Endpoint;
@@ -200,7 +201,9 @@ class Tracer
         $span->start();
 
         $spanContext = $span->getContext();
-        array_push($this->contextStack, $spanContext);
+        Scheduler::withoutPreemptive(function () use ($spanContext) {
+            array_push($this->contextStack, $spanContext);
+        });
 
         //Memory tags
         $startMemory = 0;
