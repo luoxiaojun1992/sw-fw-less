@@ -4,10 +4,9 @@ namespace SwFwLess\components\redis;
 
 use SwFwLess\components\Helper;
 use Cake\Event\Event as CakeEvent;
-use SwFwLess\components\pool\AbstractPool;
 use SwFwLess\components\swoole\Scheduler;
 
-class RedisPool extends AbstractPool
+class RedisPool
 {
     const EVENT_REDIS_POOL_CHANGE = 'redis.pool.change';
 

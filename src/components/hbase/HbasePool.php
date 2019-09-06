@@ -5,13 +5,12 @@ namespace SwFwLess\components\hbase;
 use SwFwLess\components\Config;
 use Cake\Event\Event as CakeEvent;
 use Hbase\HbaseClient;
-use SwFwLess\components\pool\AbstractPool;
 use SwFwLess\components\swoole\Scheduler;
 use Thrift\Protocol\TBinaryProtocol;
 use Thrift\Transport\TBufferedTransport;
 use Thrift\Transport\TSocket;
 
-class HbasePool extends AbstractPool
+class HbasePool
 {
     const EVENT_HBASE_POOL_CHANGE = 'hbase.pool.change';
 

@@ -4,10 +4,9 @@ namespace SwFwLess\components\mysql;
 
 use SwFwLess\components\Helper;
 use Cake\Event\Event as CakeEvent;
-use SwFwLess\components\pool\AbstractPool;
 use SwFwLess\components\swoole\Scheduler;
 
-class MysqlPool extends AbstractPool
+class MysqlPool
 {
     const EVENT_MYSQL_POOL_CHANGE = 'mysql.pool.change';
 
