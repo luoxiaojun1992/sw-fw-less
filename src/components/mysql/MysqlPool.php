@@ -105,7 +105,9 @@ class MysqlPool
                     $pdo->reconnect();
                 }
 
-                $this->pdoPool[$pdo->getConnectionName()][] = $pdo;
+                Scheduler::withoutPreemptive(function () use ($pdo) {
+                    $this->pdoPool[$pdo->getConnectionName()][] = $pdo;
+                });
                 if ($this->config['pool_change_event']) {
                     event(
                         new CakeEvent(static::EVENT_MYSQL_POOL_CHANGE,

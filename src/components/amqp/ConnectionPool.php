@@ -103,7 +103,9 @@ class ConnectionPool
     {
         if ($connection) {
             if ($connection->isNeedRelease()) {
-                $this->connectionPool[] = $connection;
+                Scheduler::withoutPreemptive(function () use ($connection) {
+                    $this->connectionPool[] = $connection;
+                });
                 if (Config::get('amqp.pool_change_event')) {
                     event(
                         new CakeEvent(static::EVENT_AMQP_POOL_CHANGE,

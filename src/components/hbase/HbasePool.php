@@ -94,7 +94,9 @@ class HbasePool
                 if ($connection->getTransport()->isOpen()) {
                     $connection->getTransport()->close();
                 }
-                $this->connectionPool[] = $connection;
+                Scheduler::withoutPreemptive(function () use ($connection) {
+                    $this->connectionPool[] = $connection;
+                });
                 if (Config::get('hbase.pool_change_event')) {
                     event(
                         new CakeEvent(static::EVENT_HBASE_POOL_CHANGE,

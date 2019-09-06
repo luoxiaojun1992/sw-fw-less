@@ -108,7 +108,9 @@ class RedisPool
                 }
             }
             if ($redis->isNeedRelease()) {
-                $this->redisPool[$redis->getConnectionName()][] = $redis;
+                Scheduler::withoutPreemptive(function () use ($redis) {
+                    $this->redisPool[$redis->getConnectionName()][] = $redis;
+                });
                 if ($this->config['pool_change_event']) {
                     event(
                         new CakeEvent(static::EVENT_REDIS_POOL_CHANGE,
