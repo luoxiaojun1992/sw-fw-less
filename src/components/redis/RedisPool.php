@@ -58,8 +58,6 @@ class RedisPool
                 );
             }
         }
-
-        RedisStreamWrapper::register();
     }
 
     /**

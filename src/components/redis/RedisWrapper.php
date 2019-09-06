@@ -6,6 +6,11 @@ use SwFwLess\components\Helper;
 use SwFwLess\facades\RedisPool;
 use Cake\Event\Event;
 
+/**
+ * Class RedisWrapper
+ * @package SwFwLess\components\redis
+ * @mixin \Redis
+ */
 class RedisWrapper
 {
     const EVENT_EXECUTING = 'redis.executing';

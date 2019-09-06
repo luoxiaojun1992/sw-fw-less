@@ -11,6 +11,11 @@ use PhpAmqpLib\Exception\AMQPProtocolChannelException;
 use PhpAmqpLib\Exception\AMQPProtocolConnectionException;
 use PhpAmqpLib\Exception\AMQPProtocolException;
 
+/**
+ * Class ConnectionWrapper
+ * @package SwFwLess\components\amqp
+ * @mixin AMQPSocketConnection
+ */
 class ConnectionWrapper
 {
     /** @var AMQPSocketConnection */

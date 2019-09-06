@@ -59,8 +59,6 @@ class ConnectionPool
                 )
             );
         }
-
-        AMQPStreamWrapper::register();
     }
 
     /**

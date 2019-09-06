@@ -21,8 +21,6 @@ class Qiniu
         $this->config = Config::get('storage');
 
         class_alias(QiniuCoHttpClient::class, Client::class);
-
-//        QiniuStreamWrapper::register();
     }
 
     /**

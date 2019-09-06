@@ -2,13 +2,22 @@
 
 namespace SwFwLess\services;
 
+use PhpAmqpLib\Connection\AMQPSocketConnection;
+use PhpAmqpLib\Message\AMQPMessage;
+use SwFwLess\components\amqp\ConnectionWrapper;
+use SwFwLess\components\Config;
 use SwFwLess\components\Helper;
 use SwFwLess\components\http\Client;
 use SwFwLess\components\http\Response;
+use SwFwLess\facades\Alioss;
+use SwFwLess\facades\AMQPConnectionPool;
 use SwFwLess\facades\Cache;
+use SwFwLess\facades\File;
 use SwFwLess\facades\HbasePool;
 use SwFwLess\facades\Jwt;
 use SwFwLess\facades\Log;
+use SwFwLess\facades\Qiniu;
+use SwFwLess\facades\RedisPool;
 use SwFwLess\models\Member;
 use SwFwLess\models\Test;
 use Cake\Validation\Validator;
@@ -52,14 +61,16 @@ class DemoService extends BaseService
             return Response::json(['code' => 1, 'msg' => Helper::jsonEncode($errors), 'data' => []]);
         }
 
-//        unlink('redis://' . $params['key']);
-//        file_put_contents('redis://' . $params['key'], 'value2');
-
-        $result = file_get_contents('redis://' . $params['key']);
-
-        file_put_contents('log://info', 'test error');
-
-        return Response::json(['code' => 0, 'msg' => 'ok', 'data' => $result]);
+        $redis = RedisPool::pick();
+        try {
+            $result = $redis->get($params['key']);
+            Log::info('test error');
+            return Response::json(['code' => 0, 'msg' => 'ok', 'data' => $result]);
+        } catch (\Throwable $e) {
+            throw $e;
+        } finally {
+            RedisPool::release($redis);
+        }
     }
 
     public function mysql()
@@ -103,39 +114,62 @@ class DemoService extends BaseService
 
     public function file()
     {
-        if (file_exists('storage://test.txt')) {
-            unlink('storage://test.txt');
-        }
-        file_put_contents('storage://test.txt', 'test1111111111111');
-
-        return Response::output(file_get_contents('storage://test.txt'));
+        $storage = File::prepare();
+        $storage->put('test.txt', 'test1111111111111');
+        return Response::output($storage->read('test.txt'));
     }
 
-//    public function qiniu()
-//    {
-//        if (file_exists('qiniu://musics/test2.txt')) {
-//            unlink('qiniu://musics/test2.txt');
-//        }
-//        file_put_contents('qiniu://musics/test2.txt', 'test111111111111111111111111111');
-//
-//        return Response::output(file_get_contents('qiniu://musics/test2.txt'));
-//    }
+    public function qiniu()
+    {
+        $storage = Qiniu::prepare();
+        $storage->put('musics/test2.txt', 'test111111111111111111111111111');
+        return Response::output($storage->read('musics/test2.txt'));
+    }
 
     public function rabbitmq()
     {
-        file_put_contents('amqp://hello', 'Hello World!');
+        $data = 'Hello World!';
 
-        return Response::output("Sent 'Hello World!'");
+        $queueName = AMQPConnectionPool::getQueue('hello');
+        $do = function ($channel) use ($queueName, $data) {
+            $channel->queue_declare(
+                $queueName,
+                false,
+                true,
+                false,
+                false
+            );
+            $msg = new AMQPMessage($data);
+            $channel->basic_publish($msg, '', $queueName);
+        };
+
+        $channel = null;
+        $channel_id = Config::get('amqp.channel_id');
+        /** @var AMQPSocketConnection|ConnectionWrapper $connection */
+        $connection = AMQPConnectionPool::pick();
+        try {
+            $channel = $connection->channel($channel_id);
+            $do($channel);
+        } catch (\Throwable $e) {
+            if ($connection->causedByLostConnection($e)) {
+                $realConnection = $connection->getConnection();
+                $realConnection->reconnect();
+                $channel = $realConnection->channel($channel_id);
+                $do($channel);
+            }
+            throw $e;
+        } finally {
+            AMQPConnectionPool::release($connection);
+        }
+
+        return Response::output("Sent '" . $data . "'");
     }
 
     public function alioss()
     {
-        if (file_exists('alioss://sw-fw-less/test2.txt')) {
-            unlink('alioss://sw-fw-less/test2.txt');
-        }
-        file_put_contents('alioss://sw-fw-less/test2.txt', 'test111111111111111111111111111');
-
-        return Response::output(file_get_contents('alioss://sw-fw-less/test2.txt'));
+        $storage = Alioss::prepare();
+        $storage->write('sw-fw-less/test2.txt', 'test111111111111111111111111111');
+        return Response::output($storage->read('sw-fw-less/test2.txt'));
     }
 
     /**

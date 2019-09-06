@@ -6,6 +6,11 @@ use SwFwLess\components\Helper;
 use Hbase\HbaseClient;
 use Thrift\Transport\TBufferedTransport;
 
+/**
+ * Class HbaseWrapper
+ * @package SwFwLess\components\hbase
+ * @mixin HbaseClient
+ */
 class HbaseWrapper
 {
     /** @var HbaseClient */

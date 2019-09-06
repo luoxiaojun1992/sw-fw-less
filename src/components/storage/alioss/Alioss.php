@@ -20,8 +20,6 @@ class Alioss
         $this->config = Config::get('storage');
 
         class_alias(AliossCoRequest::class, RequestCore::class);
-
-        AliossStreamWrapper::register();
     }
 
     /**

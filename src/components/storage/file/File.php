@@ -18,8 +18,6 @@ class File
     public function __construct()
     {
         $this->config = Config::get('storage');
-
-        FileStreamWrapper::register();
     }
 
     /**
@@ -80,11 +78,17 @@ class File
      * @param int $writeFlags
      * @param int $linkHandling
      * @param array $permissions
+     * @param null $root
      * @return Filesystem
      */
-    public function prepare($writeFlags = LOCK_EX, $linkHandling = Local::DISALLOW_LINKS, $permissions = [])
+    public function prepare(
+        $writeFlags = LOCK_EX,
+        $linkHandling = Local::DISALLOW_LINKS,
+        $permissions = [],
+        $root = null
+    )
     {
-        $local = new Local($this->storagePath(), $writeFlags, $linkHandling, $permissions);
+        $local = new Local($root ?: $this->storagePath(), $writeFlags, $linkHandling, $permissions);
         return new Filesystem($local);
     }
 }
