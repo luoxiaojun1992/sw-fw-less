@@ -228,7 +228,9 @@ class Tracer
             }
 
             $span->finish();
-            array_pop($this->contextStack);
+            Scheduler::withoutPreemptive(function () {
+                array_pop($this->contextStack);
+            });
 
             if ($flush) {
                 $this->flushTracer();
