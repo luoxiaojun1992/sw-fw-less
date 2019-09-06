@@ -6,6 +6,7 @@ use SwFwLess\components\Config;
 use Cake\Event\Event as CakeEvent;
 use Hbase\HbaseClient;
 use SwFwLess\components\pool\AbstractPool;
+use SwFwLess\components\swoole\Scheduler;
 use Thrift\Protocol\TBinaryProtocol;
 use Thrift\Transport\TBufferedTransport;
 use Thrift\Transport\TSocket;
@@ -64,7 +65,9 @@ class HbasePool extends AbstractPool
      */
     public function pick()
     {
-        $connection = $this->pickFromPool($this->connectionPool);
+        $connection = Scheduler::withoutPreemptive(function () {
+            return array_pop($this->connectionPool);
+        });
         if (!$connection) {
             $connection = $this->getConnect(false);
         } else {

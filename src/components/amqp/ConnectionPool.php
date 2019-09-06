@@ -78,7 +78,9 @@ class ConnectionPool extends AbstractPool
      */
     public function pick()
     {
-        $connection = $this->pickFromPool($this->connectionPool);
+        $connection = Scheduler::withoutPreemptive(function () {
+            return array_pop($this->connectionPool);
+        });
         if (!$connection) {
             $connection = $this->getConnect(false);
         } else {

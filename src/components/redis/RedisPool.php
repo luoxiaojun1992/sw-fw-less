@@ -5,6 +5,7 @@ namespace SwFwLess\components\redis;
 use SwFwLess\components\Helper;
 use Cake\Event\Event as CakeEvent;
 use SwFwLess\components\pool\AbstractPool;
+use SwFwLess\components\swoole\Scheduler;
 
 class RedisPool extends AbstractPool
 {
@@ -74,7 +75,9 @@ class RedisPool extends AbstractPool
         if (!isset($this->redisPool[$connectionName])) {
             return null;
         }
-        $redis = $this->pickFromPool($this->redisPool[$connectionName]);
+        $redis = Scheduler::withoutPreemptive(function () use ($connectionName) {
+            return array_pop($this->redisPool[$connectionName]);
+        });
         if (!$redis) {
             $redis = $this->getConnect(false, $connectionName);
         } else {

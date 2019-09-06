@@ -5,6 +5,7 @@ namespace SwFwLess\components\mysql;
 use SwFwLess\components\Helper;
 use Cake\Event\Event as CakeEvent;
 use SwFwLess\components\pool\AbstractPool;
+use SwFwLess\components\swoole\Scheduler;
 
 class MysqlPool extends AbstractPool
 {
@@ -68,7 +69,9 @@ class MysqlPool extends AbstractPool
         if (!isset($this->pdoPool[$connectionName])) {
             return null;
         }
-        $pdo = $this->pickFromPool($this->pdoPool[$connectionName]);
+        $pdo = Scheduler::withoutPreemptive(function () use ($connectionName) {
+            return array_pop($this->pdoPool[$connectionName]);
+        });
         if (!$pdo) {
             $pdo = $this->getConnect(false, $connectionName);
         } else {
