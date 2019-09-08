@@ -3,6 +3,7 @@
 namespace SwFwLess\middlewares;
 
 use SwFwLess\components\http\Request;
+use SwFwLess\facades\Container;
 use SwFwLess\middlewares\traits\Parser;
 use FastRoute\Dispatcher;
 
@@ -18,7 +19,7 @@ class Route extends AbstractMiddleware
         $controllerName = $controllerAction[1];
         $action = $controllerAction[2];
         $parameters = $routeInfo[2];
-        $controller = \SwFwLess\facades\Container::make($controllerName);
+        $controller = config('route_di_switch') ? Container::make($controllerName) : new $controllerName;
         if ($controller instanceof \SwFwLess\services\BaseService) {
             $controller->setRequest($appRequest);
         }
@@ -35,7 +36,9 @@ class Route extends AbstractMiddleware
             list($middlewareClass, $middlewareOptions) = $this->parseMiddlewareName($middlewareName);
 
             /** @var \SwFwLess\middlewares\AbstractMiddleware $middlewareConcrete */
-            $middlewareConcrete = \SwFwLess\facades\Container::make($middlewareClass);
+            $middlewareConcrete = config('route_di_switch') ?
+                Container::make($middlewareClass) :
+                new $middlewareClass;
             $middlewareConcrete->setParameters([$appRequest])->setOptions($middlewareOptions);
             if (isset($middlewareConcretes[$i - 1])) {
                 $middlewareConcretes[$i - 1]->setNext($middlewareConcrete);

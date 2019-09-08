@@ -6,6 +6,7 @@ use Cron\CronExpression;
 use Opis\Closure\SerializableClosure;
 use SwFwLess\components\grpc\Status;
 use SwFwLess\components\provider\KernelProvider;
+use SwFwLess\facades\Container;
 use Swoole\Http\Server;
 use Swoole\Server\Task;
 
@@ -159,7 +160,9 @@ class App
             list($middlewareClass, $middlewareOptions) = $this->parseMiddlewareName($middlewareName);
 
             /** @var \SwFwLess\middlewares\AbstractMiddleware $middlewareConcrete */
-            $middlewareConcrete = \SwFwLess\facades\Container::make($middlewareClass);
+            $middlewareConcrete = config('route_di_switch') ?
+                Container::make($middlewareClass) :
+                new $middlewareClass;
             $middlewareConcrete->setParameters([$appRequest]);
             if ($middlewareConcrete instanceof \SwFwLess\middlewares\Route) {
                 $middlewareConcrete->setOptions($this->httpRouteDispatcher);

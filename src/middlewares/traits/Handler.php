@@ -52,7 +52,9 @@ trait Handler
      */
     public function call()
     {
-        $response = Container::call([$this, $this->getHandler()], $this->getParameters());
+        $response = config('route_di_switch') ?
+            Container::call([$this, $this->getHandler()], $this->getParameters()) :
+            call_user_func_array([$this, $this->getHandler()], $this->getParameters());
 
         if (is_array($response)) {
             return Response::json($response);
