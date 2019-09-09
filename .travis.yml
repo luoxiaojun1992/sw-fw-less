@@ -2,5 +2,23 @@ language: php
 php:
       - '7.1'
 before_script:
+      - wget https://github.com/swoole/swoole-src/archive/v4.4.0.tar.gz
+      - tar -zxvf v4.4.0.tar.gz
+      - cd swoole-src-4.4.0
+      - phpize
+      - ./configure
+      - make -j 2
+      - make install
+      - echo "extension=swoole.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+      - cd ..
+      - wget http://pecl.php.net/get/redis-4.0.0.tgz
+      - tar -zxvf redis-4.0.0.tgz
+      - cd redis-4.0.0
+      - phpize
+      - ./configure
+      - make -j 2
+      - make install
+      - echo "extension=redis.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+      - cd ..
       - composer install -vvv
 script: ./vendor/bin/phpunit tests
