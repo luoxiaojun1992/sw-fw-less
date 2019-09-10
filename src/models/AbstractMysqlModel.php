@@ -108,7 +108,8 @@ abstract class AbstractMysqlModel extends AbstractModel
         $attributes = $this->toArray();
         $updateBuilder = static::update();
         $primaryKey = static::$primaryKey;
-        $updateBuilder->where("`{$primaryKey}` = :primaryValue", ['primaryValue' => $this->getPrimaryValue()]);
+        $updateBuilder->where("`{$primaryKey}` = :primaryValue");
+        $updateBuilder->bindValue(':primaryValue', $this->getPrimaryValue());
         foreach ($attributes as $attributeName => $attribute) {
             if ($attributeName == $primaryKey) {
                 continue;
@@ -136,7 +137,8 @@ abstract class AbstractMysqlModel extends AbstractModel
         }
 
         $primaryKey = static::$primaryKey;
-        static::delete()->where("`{$primaryKey}` = :primaryValue", ['primaryValue' => $this->getPrimaryValue()])
+        static::delete()->where("`{$primaryKey}` = :primaryValue")
+            ->bindValue(':primaryValue', $this->getPrimaryValue())
             ->write();
 
         $this->fireEvent('deleted');
