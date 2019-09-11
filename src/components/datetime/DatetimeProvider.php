@@ -12,7 +12,7 @@ class DatetimeProvider extends AbstractProvider implements WorkerProvider
         parent::bootWorker();
 
         $timezone = config('timezone');
-        if (date_default_timezone_get() != $timezone) {
+        if ((!is_null($timezone)) && (date_default_timezone_get() != $timezone)) {
             date_default_timezone_set($timezone);
         }
     }
