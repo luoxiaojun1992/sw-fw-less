@@ -12,8 +12,7 @@
         "php": ">=7.1",
         "ext-json": "*",
         "ext-pdo": "*",
-        "ext-redis": "*",
-        "ext-swoole": ">=4.0",
+        "ext-swoole": ">=4.4.0",
         "apache/thrift": "0.11.0",
         "aura/sqlquery": "^2",
         "cakephp/event": "3.7.1",
@@ -41,9 +40,9 @@
         "zendframework/zend-diactoros": "~2.1"
     },
     "suggest": {
-        "ext-swoole": ">=4.4.0",
         "ext-phalcon": "*",
-        "ext-jsonnet": "*"
+        "ext-jsonnet": "*",
+        "ext-redis": "*"
     },
     "license": "apache-2.0",
     "authors": [
