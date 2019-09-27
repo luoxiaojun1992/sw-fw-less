@@ -95,26 +95,37 @@ class App
             }
             if (config('monitor.switch')) {
                 $r->addGroup('/internal', function (\FastRoute\RouteCollector $r) {
-                    $r->addRoute(
-                        'GET',
-                        '/monitor/pool',
-                        ['/internal/monitor/pool', \SwFwLess\services\internals\MonitorService::class, 'pool']
-                    );
+                    $r->addGroup('/monitor', function (\FastRoute\RouteCollector $r) {
+                        $r->addRoute(
+                            'GET',
+                            '/pool',
+                            ['/internal/monitor/pool', \SwFwLess\services\internals\MonitorService::class, 'pool']
+                        );
+                        $r->addRoute(
+                            'GET',
+                            '/swoole',
+                            ['/internal/monitor/swoole', \SwFwLess\services\internals\MonitorService::class, 'swoole']
+                        );
+                    });
                     $r->addRoute(
                         'GET',
                         '/log/flush',
                         ['/internal/log/flush', \SwFwLess\services\internals\LogService::class, 'flush']
                     );
-                    $r->addRoute(
-                        'POST',
-                        '/chaos/fault/{id}',
-                        ['/internal/chaos/fault/{id}', \SwFwLess\services\internals\ChaosService::class, 'injectFault']
-                    );
-                    $r->addRoute(
-                        'GET',
-                        '/chaos/fault/{id}',
-                        ['/internal/chaos/fault/{id}', \SwFwLess\services\internals\ChaosService::class, 'fetchFault']
-                    );
+                    $r->addGroup('/chaos', function (\FastRoute\RouteCollector $r) {
+                        $r->addGroup('/fault', function (\FastRoute\RouteCollector $r) {
+                            $r->addRoute(
+                                'POST',
+                                '/{id}',
+                                ['/internal/chaos/fault/{id}', \SwFwLess\services\internals\ChaosService::class, 'injectFault']
+                            );
+                            $r->addRoute(
+                                'GET',
+                                '/{id}',
+                                ['/internal/chaos/fault/{id}', \SwFwLess\services\internals\ChaosService::class, 'fetchFault']
+                            );
+                        });
+                    });
                 });
             }
         });

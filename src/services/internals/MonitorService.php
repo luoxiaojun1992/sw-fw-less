@@ -10,6 +10,7 @@ use SwFwLess\facades\Log;
 use SwFwLess\facades\MysqlPool;
 use SwFwLess\facades\RedisPool;
 use SwFwLess\services\BaseService;
+use Swoole\Coroutine;
 
 class MonitorService extends BaseService
 {
@@ -28,6 +29,13 @@ class MonitorService extends BaseService
                 Counter::get('monitor:pool:amqp') : AMQPConnectionPool::countPool(),
             'hbase' => config('hbase.pool_change_event') && config('hbase.report_pool_change') ?
                 Counter::get('monitor:pool:hbase') : HbasePool::countPool(),
+        ]);
+    }
+
+    public function swoole()
+    {
+        return Response::json([
+            'coroutine' => Coroutine::stats(),
         ]);
     }
 }
