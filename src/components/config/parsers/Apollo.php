@@ -17,6 +17,7 @@ class Apollo
             ->setNamespace($config['namespace'])
             ->setReleaseKey($config['release_key']);
         $apolloClient = $apolloClientBuilder->build();
-        return $apolloClient->pullConfig();
+        $config = $apolloClient->pullConfig();
+        return $config['configurations'] ?? [];
     }
 }

@@ -27,8 +27,7 @@ class Client
         $port = $serverInfo['port'] ?? ($ssl ? 443 : 80);
         $httpClient = new \Swoole\Coroutine\Http\Client($host, $port, $ssl);
 
-        $path = '/configs/' . $this->appId . '/' . $this->cluster . '/';
-        $path = $path . $this->namespace;
+        $path = '/configs/' . $this->appId . '/' . $this->cluster . '/' . $this->namespace;
         $args = [];
         $args['ip'] = $this->clientIp;
         $args['releaseKey'] = $this->releaseKey;
@@ -38,6 +37,9 @@ class Client
         $httpClient->get($path);
         if ($httpClient->getStatusCode() === 200) {
             $config = json_decode($httpClient->getBody(), true);
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                $config = [];
+            }
         }
         $httpClient->close();
 
