@@ -14,7 +14,8 @@ class Apollo
             ->setCluster($config['cluster'])
             ->setClientIp($config['client_ip'])
             ->setPullTimeout($config['pull_timeout'])
-            ->setNamespace($config['namespace']);
+            ->setNamespace($config['namespace'])
+            ->setReleaseKey($config['release_key']);
         $apolloClient = $apolloClientBuilder->build();
         return $apolloClient->pullConfig();
     }

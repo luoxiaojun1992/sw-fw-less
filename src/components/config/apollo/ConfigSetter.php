@@ -16,6 +16,8 @@ trait ConfigSetter
 
     protected $namespace;
 
+    protected $releaseKey = '';
+
     /**
      * @param $configServer
      * @return $this
@@ -73,6 +75,16 @@ trait ConfigSetter
     public function setNamespace($namespace)
     {
         $this->namespace = $namespace;
+        return $this;
+    }
+
+    /**
+     * @param string $releaseKey
+     * @return $this
+     */
+    public function setReleaseKey(string $releaseKey)
+    {
+        $this->releaseKey = $releaseKey;
         return $this;
     }
 }
