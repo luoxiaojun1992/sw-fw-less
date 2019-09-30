@@ -8,16 +8,17 @@ class Apollo
 {
     public static function parse($config)
     {
+        $apolloConfig = $config['apollo'];
         $apolloClientBuilder = ClientBuilder::create()
-            ->setConfigServer($config['config_server'])
-            ->setAppId($config['app_id'])
-            ->setCluster($config['cluster'])
-            ->setClientIp($config['client_ip'])
-            ->setPullTimeout($config['pull_timeout'])
-            ->setNamespace($config['namespace'])
-            ->setReleaseKey($config['release_key']);
+            ->setConfigServer($apolloConfig['config_server'])
+            ->setAppId($apolloConfig['app_id'])
+            ->setCluster($apolloConfig['cluster'])
+            ->setClientIp($apolloConfig['client_ip'])
+            ->setPullTimeout($apolloConfig['pull_timeout'])
+            ->setNamespace($apolloConfig['namespace'])
+            ->setReleaseKey($apolloConfig['release_key']);
         $apolloClient = $apolloClientBuilder->build();
-        $config = $apolloClient->pullConfig();
-        return $config['configurations'] ?? [];
+        $remoteConfig = $apolloClient->pullConfig();
+        return $remoteConfig['configurations'] ?? [];
     }
 }

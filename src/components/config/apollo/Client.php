@@ -20,28 +20,27 @@ class Client
     {
         $config = [];
 
-        $serverInfo = parse_url($this->configServer);
-        $schema = $serverInfo['scheme'] ?? 'http';
-        $ssl = $schema === 'https';
-        $host = $serverInfo['host'] ?? $this->configServer;
-        $port = $serverInfo['port'] ?? ($ssl ? 443 : 80);
-        $httpClient = new \Swoole\Coroutine\Http\Client($host, $port, $ssl);
-
-        $path = '/configs/' . $this->appId . '/' . $this->cluster . '/' . $this->namespace;
+        $api = rtrim($this->configServer, '/') . '/configs/' . $this->appId . '/' . $this->cluster . '/' .
+            $this->namespace;
         $args = [];
         $args['ip'] = $this->clientIp;
         $args['releaseKey'] = $this->releaseKey;
-        $path .= ('?' . http_build_query($args));
+        $api .= ('?' . http_build_query($args));
 
-        $httpClient->setMethod(['timeout' => $this->pullTimeout]);
-        $httpClient->get($path);
-        if ($httpClient->getStatusCode() === 200) {
-            $config = json_decode($httpClient->getBody(), true);
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $api);
+        curl_setopt($ch, CURLOPT_VERBOSE, false);
+        curl_setopt($ch, CURLOPT_HEADER, false);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_TIMEOUT, $this->pullTimeout);
+        $body = curl_exec($ch);
+        if (curl_getinfo($ch, CURLINFO_HTTP_CODE) === 200) {
+            $config = json_decode($body, true);
             if (json_last_error() !== JSON_ERROR_NONE) {
                 $config = [];
             }
         }
-        $httpClient->close();
+        curl_close($ch);
 
         return $config;
     }

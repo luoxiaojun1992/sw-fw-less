@@ -42,7 +42,8 @@
     "suggest": {
         "ext-phalcon": "*",
         "ext-jsonnet": "*",
-        "ext-redis": "*"
+        "ext-redis": "*",
+        "ext-curl": "*"
     },
     "license": "apache-2.0",
     "authors": [
