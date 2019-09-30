@@ -20,6 +20,7 @@ Swoole http server without framework
 14. Dynamic Fault Injection
 15. Hot Reload(including biz code、config、router, recommended for dev only)
 16. Experimental Grpc(must open http2)
+17. Apollo Config Center
 
 >## Notice
 * Don't include io operation in controller or middleware constructor
