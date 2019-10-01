@@ -132,9 +132,10 @@ class App
     }
 
     /**
+     * @param bool $reboot
      * @throws \Exception
      */
-    private function bootstrap()
+    private function bootstrap($reboot = false)
     {
         $this->checkEnvironment();
 
@@ -142,7 +143,12 @@ class App
 
         //Load Env
         if (file_exists(APP_BASE_PATH . '.env')) {
-            (new \Dotenv\Dotenv(APP_BASE_PATH))->load();
+            $dotEnv = (new \Dotenv\Dotenv(APP_BASE_PATH));
+            if ($reboot) {
+                $dotEnv->overload();
+            } else {
+                $dotEnv->load();
+            }
         }
 
         //Init Config
@@ -354,6 +360,7 @@ class App
                     config('hot_reload.excluded_dirs'),
                     config('hot_reload.watch_suffixes')
                 )->watch(\SwFwLess\components\filewatcher\Watcher::EVENT_MODIFY, function ($event) {
+                    $this->bootstrap(true);
                     $this->swHttpServer->reload();
                 });
             });
