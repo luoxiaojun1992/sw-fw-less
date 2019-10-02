@@ -18,6 +18,8 @@ trait ConfigSetter
 
     protected $releaseKey = '';
 
+    protected $notificationInterval = 120;
+
     /**
      * @param $configServer
      * @return $this
@@ -85,6 +87,16 @@ trait ConfigSetter
     public function setReleaseKey(string $releaseKey)
     {
         $this->releaseKey = $releaseKey;
+        return $this;
+    }
+
+    /**
+     * @param int $notificationInterval
+     * @return $this
+     */
+    public function setNotificationInterval(int $notificationInterval)
+    {
+        $this->notificationInterval = $notificationInterval;
         return $this;
     }
 }

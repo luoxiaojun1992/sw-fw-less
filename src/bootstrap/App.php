@@ -4,6 +4,7 @@ namespace SwFwLess\bootstrap;
 
 use Cron\CronExpression;
 use Opis\Closure\SerializableClosure;
+use SwFwLess\components\config\apollo\ClientBuilder;
 use SwFwLess\components\grpc\Status;
 use SwFwLess\components\provider\KernelProvider;
 use SwFwLess\facades\Container;
@@ -203,6 +204,7 @@ class App
 
         $this->hotReload();
         $this->registerScheduler();
+        $this->pullApolloConfig();
     }
 
     public function swHttpShutdown(\Swoole\Http\Server $server)
@@ -352,19 +354,21 @@ class App
 
     private function hotReload()
     {
-        if (config('hot_reload.switch')) {
-            go(function () {
-                \SwFwLess\components\filewatcher\Watcher::create(
-                    config('hot_reload.driver'),
-                    config('hot_reload.watch_dirs'),
-                    config('hot_reload.excluded_dirs'),
-                    config('hot_reload.watch_suffixes')
-                )->watch(\SwFwLess\components\filewatcher\Watcher::EVENT_MODIFY, function ($event) {
-                    $this->bootstrap(true);
-                    $this->swHttpServer->reload();
-                });
-            });
+        if (!config('hot_reload.switch')) {
+            return;
         }
+
+        go(function () {
+            \SwFwLess\components\filewatcher\Watcher::create(
+                config('hot_reload.driver'),
+                config('hot_reload.watch_dirs'),
+                config('hot_reload.excluded_dirs'),
+                config('hot_reload.watch_suffixes')
+            )->watch(\SwFwLess\components\filewatcher\Watcher::EVENT_MODIFY, function ($event) {
+                $this->bootstrap(true);
+                $this->swHttpServer->reload();
+            });
+        });
     }
 
     private function registerScheduler()
@@ -384,6 +388,33 @@ class App
                             ],
                         ]);
                     }
+                }
+            }
+        });
+    }
+
+    private function pullApolloConfig()
+    {
+        if (!config('apollo.enable', false)) {
+            return;
+        }
+
+        go(function () {
+            $notificationId = -1;
+            $apolloConfig = config('apollo');
+
+            while (true) {
+                if (ClientBuilder::create()
+                    ->setNamespace($apolloConfig['namespace'])
+                    ->setCluster($apolloConfig['cluster'])
+                    ->setAppId($apolloConfig['app_id'])
+                    ->setConfigServer($apolloConfig['config_server'])
+                    ->setNotificationInterval($apolloConfig['notification_interval'])
+                    ->build()
+                    ->notification($notificationId)
+                ) {
+                    $this->bootstrap(true);
+                    $this->swHttpServer->reload();
                 }
             }
         });

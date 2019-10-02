@@ -44,4 +44,10 @@ class Client
 
         return $config;
     }
+
+    public function notification(&$notificationId)
+    {
+        //todo
+        return false;
+    }
 }
