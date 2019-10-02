@@ -399,23 +399,21 @@ class App
             return;
         }
 
-        go(function () {
-            $notificationId = -1;
-            $apolloConfig = config('apollo');
+        $notificationId = -1;
+        $apolloConfig = config('apollo');
 
-            while (true) {
-                if (ClientBuilder::create()
-                    ->setNamespace($apolloConfig['namespace'])
-                    ->setCluster($apolloConfig['cluster'])
-                    ->setAppId($apolloConfig['app_id'])
-                    ->setConfigServer($apolloConfig['config_server'])
-                    ->setNotificationInterval($apolloConfig['notification_interval'])
-                    ->build()
-                    ->notification($notificationId)
-                ) {
-                    $this->bootstrap(true);
-                    $this->swHttpServer->reload();
-                }
+        swoole_timer_tick(60000, function () use (&$notificationId, $apolloConfig) {
+            if (ClientBuilder::create()
+                ->setNamespace($apolloConfig['namespace'])
+                ->setCluster($apolloConfig['cluster'])
+                ->setAppId($apolloConfig['app_id'])
+                ->setConfigServer($apolloConfig['config_server'])
+                ->setNotificationInterval($apolloConfig['notification_interval'])
+                ->build()
+                ->notification($notificationId)
+            ) {
+                $this->bootstrap(true);
+                $this->swHttpServer->reload();
             }
         });
     }

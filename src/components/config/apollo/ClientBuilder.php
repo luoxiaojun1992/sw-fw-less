@@ -18,6 +18,7 @@ class ClientBuilder
             ->setCluster($this->cluster)
             ->setClientIp($this->clientIp)
             ->setPullTimeout($this->pullTimeout)
+            ->setNotificationInterval($this->notificationInterval)
             ->setNamespace($this->namespace)
             ->setReleaseKey($this->releaseKey);
     }

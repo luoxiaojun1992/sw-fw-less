@@ -2,6 +2,8 @@
 
 namespace SwFwLess\components\config\apollo;
 
+use SwFwLess\components\swoole\Scheduler;
+
 class Client
 {
     use ConfigSetter;
@@ -47,7 +49,49 @@ class Client
 
     public function notification(&$notificationId)
     {
-        //todo
-        return false;
+        $hasNotification = false;
+
+        $hostInfo = parse_url($this->configServer);
+        $schema = $hostInfo['scheme'] ?? 'http';
+        $ssl = $schema === 'https';
+        $host = $hostInfo['host'] ?? $this->configServer;
+        $port = $hostInfo['port'] ?? ($ssl ? 443 : 80);
+
+        $path = '/notifications/v2';
+        $args = [];
+        $args['appId'] = $this->appId;
+        $args['cluster'] = $this->cluster;
+        $args['notifications'] = json_encode([
+            [
+                'namespaceName' => $this->namespace,
+                'notificationId' => $notificationId,
+            ]
+        ], JSON_UNESCAPED_UNICODE);
+        $path .= ('?' . http_build_query($args));
+
+        $httpClient = new \Swoole\Coroutine\Http\Client($host, $port, $ssl);
+        $httpClient->set(['timeout' => $this->notificationInterval]);
+        $httpClient->get($path);
+        $statusCode = $httpClient->getStatusCode();
+        $body = $statusCode === 200 ? $httpClient->getBody() : null;
+        $httpClient->close();
+
+        if ($statusCode === 200) {
+            $result = json_decode($body, true);
+            if (json_last_error() === JSON_ERROR_NONE) {
+                if (isset($result[0]['notificationId'])) {
+                    $newNotificationId = $result[0]['notificationId'];
+                    $hasNotification = Scheduler::withoutPreemptive(function () use (&$notificationId, $newNotificationId) {
+                        $hasNotification = ($notificationId !== -1) && ($newNotificationId !== $notificationId);
+                        if ($newNotificationId !== $notificationId) {
+                            $notificationId = $newNotificationId;
+                        }
+                        return $hasNotification;
+                    });
+                }
+            }
+        }
+
+        return $hasNotification;
     }
 }
