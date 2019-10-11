@@ -12,6 +12,7 @@ use SwFwLess\components\http\Response;
 use SwFwLess\facades\Alioss;
 use SwFwLess\facades\AMQPConnectionPool;
 use SwFwLess\facades\Cache;
+use SwFwLess\facades\Container;
 use SwFwLess\facades\File;
 use SwFwLess\facades\HbasePool;
 use SwFwLess\facades\Jwt;
@@ -29,6 +30,11 @@ class DemoService extends BaseService
     public function ping()
     {
         return Response::output('pong');
+    }
+
+    public function zipkin()
+    {
+        return Container::callWithTrace([Response::class, 'output'], ['pong']);
     }
 
     public function redis()
