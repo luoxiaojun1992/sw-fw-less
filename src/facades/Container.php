@@ -10,6 +10,7 @@ namespace SwFwLess\facades;
  * @method static bool has($name)
  * @method static object injectOn($instance)
  * @method static mixed call($callable, array $parameters = [])
+ * @method static mixed callWithTrace($callable, $parameters = [], $swfRequest = null)
  * @method static set(string $name, $value)
  * @package SwFwLess\facades
  */

@@ -28,10 +28,51 @@ class Container
             return call_user_func_array([$this->diContainer, $name], $arguments);
         };
 
-        if (in_array($name, ['get', 'make'])) {
+        if (in_array($name, ['get', 'make', 'call'])) {
             return Scheduler::withoutPreemptive($callback);
         }
 
         return call_user_func($callback);
+    }
+
+    /**
+     * @param $callable
+     * @param array $parameters
+     * @param null $swfRequest
+     * @return mixed
+     * @throws \Throwable
+     */
+    public function callWithTrace($callable, $parameters = [], $swfRequest = null)
+    {
+        $swfRequest = $swfRequest ?? request();
+        $spanName = $this->callableToSpanName($callable);
+
+        return $swfRequest->getTracer()->span($spanName, function () use ($callable, $parameters) {
+            //todo add metrics
+            return $this->call($callable, $parameters);
+        }, 'CALL');
+    }
+
+    /**
+     * @param $callable
+     * @return mixed|string
+     */
+    protected function callableToSpanName($callable)
+    {
+        $spanName = 'callable';
+        if (is_array($callable)) {
+            $objectOrClass = $callable[0];
+            if (is_object($objectOrClass)) {
+                $spanName = get_class($objectOrClass);
+            } else {
+                $spanName = $objectOrClass;
+            }
+        } elseif (is_string($callable)) {
+            $spanName = $callable;
+        } elseif (is_object($callable)) {
+            $spanName = get_class($callable);
+        }
+
+        return $spanName;
     }
 }

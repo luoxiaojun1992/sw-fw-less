@@ -198,7 +198,9 @@ class Tracer
             $span->setKind($kind);
         }
 
-        $span->start();
+        Scheduler::withoutPreemptive(function () use ($span) {
+            $span->start();
+        });
 
         $spanContext = $span->getContext();
         Scheduler::withoutPreemptive(function () use ($spanContext) {
@@ -413,7 +415,7 @@ class Tracer
             $samplingFlags = DefaultSamplingFlags::createAsNotSampled();
         } else {
             mt_srand(time());
-            if (mt_rand() / mt_getrandmax() <= $sampleRate) {
+            if ((mt_rand() / mt_getrandmax()) <= $sampleRate) {
                 $samplingFlags = DefaultSamplingFlags::createAsEmpty(); //Sample config determined by sampler
             } else {
                 $samplingFlags = DefaultSamplingFlags::createAsNotSampled();

@@ -7,7 +7,7 @@ trait Tracer
     protected $tracer;
 
     /**
-     * @return mixed
+     * @return \SwFwLess\components\zipkin\Tracer
      */
     public function getTracer()
     {
