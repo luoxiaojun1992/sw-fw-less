@@ -73,6 +73,6 @@ class Container
             $spanName = get_class($callable);
         }
 
-        return $spanName;
+        return str_replace('\\', '/', $spanName);
     }
 }
