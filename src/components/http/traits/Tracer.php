@@ -2,19 +2,15 @@
 
 namespace SwFwLess\components\http\traits;
 
+use SwFwLess\components\swoole\Scheduler;
+
 trait Tracer
 {
-    protected $tracer;
-
     /**
      * @return \SwFwLess\components\zipkin\Tracer
      */
     public function getTracer()
     {
-        if (!is_null($this->tracer)) {
-            return $this->tracer;
-        }
-
-        return $this->tracer = new \SwFwLess\components\zipkin\Tracer($this);
+        return \SwFwLess\components\zipkin\Tracer::create($this);
     }
 }

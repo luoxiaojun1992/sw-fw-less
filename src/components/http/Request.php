@@ -5,6 +5,7 @@ namespace SwFwLess\components\http;
 use SwFwLess\components\Helper;
 use SwFwLess\components\http\traits\Tracer;
 use SwFwLess\components\swoole\coresource\traits\CoroutineRes;
+use Swoole\Coroutine;
 
 class Request
 {
@@ -16,9 +17,13 @@ class Request
 
     private $route;
 
+    private $cid;
+
     public function __construct()
     {
         static::register($this);
+
+        $this->cid = Coroutine::getCid();
     }
 
     /**
@@ -55,6 +60,14 @@ class Request
     public function getRoute()
     {
         return $this->route;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCid()
+    {
+        return $this->cid;
     }
 
     /**

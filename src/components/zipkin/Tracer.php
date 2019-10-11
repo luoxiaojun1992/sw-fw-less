@@ -3,6 +3,7 @@
 namespace SwFwLess\components\zipkin;
 
 use SwFwLess\components\http\Request;
+use SwFwLess\components\swoole\coresource\traits\CoroutineRes;
 use SwFwLess\components\swoole\Scheduler;
 use SwFwLess\facades\Log;
 use Psr\Http\Message\RequestInterface;
@@ -24,6 +25,8 @@ use Zipkin\TracingBuilder;
  */
 class Tracer
 {
+    use CoroutineRes;
+
     const HTTP_REQUEST_BODY = 'http.request.body';
     const HTTP_REQUEST_BODY_SIZE = 'http.request.body.size';
     const HTTP_REQUEST_HEADERS = 'http.request.headers';
@@ -64,12 +67,24 @@ class Tracer
     /** @var Request */
     private $request;
 
+    public static function create(?Request $request = null)
+    {
+        $request = $request ?? request();
+        if ($instance = self::fetch($request->getCid())) {
+            return $instance;
+        }
+
+        return new self($request);
+    }
+
     /**
      * Tracer constructor.
      * @param Request $request
      */
     public function __construct(Request $request)
     {
+        self::register($this);
+
         $this->setRequest($request);
 
         $this->serviceName = config('zipkin.service_name', 'Sw-Fw-Less');

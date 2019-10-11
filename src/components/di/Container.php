@@ -47,10 +47,10 @@ class Container
         $swfRequest = $swfRequest ?? request();
         $spanName = $this->callableToSpanName($callable);
 
-        return $swfRequest->getTracer()->span($spanName, function () use ($callable, $parameters) {
+        return $swfRequest->getTracer()->clientSpan($spanName, function () use ($callable, $parameters) {
             //todo add metrics
             return $this->call($callable, $parameters);
-        }, 'CALL');
+        });
     }
 
     /**
