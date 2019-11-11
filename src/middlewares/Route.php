@@ -3,12 +3,15 @@
 namespace SwFwLess\middlewares;
 
 use SwFwLess\components\http\Request;
+use SwFwLess\components\swoole\Scheduler;
 use SwFwLess\facades\Container;
 use SwFwLess\middlewares\traits\Parser;
 use FastRoute\Dispatcher;
 
 class Route extends AbstractMiddleware
 {
+    static $cachedRouteInfo = [];
+
     use Parser;
 
     private function getRequestHandler(Request $appRequest, $routeInfo)
@@ -63,9 +66,19 @@ class Route extends AbstractMiddleware
         }
         $requestUri = rawurldecode($requestUri);
 
-        /** @var Dispatcher $httpRouteDispatcher */
-        $httpRouteDispatcher = $this->getOptions();
-        $routeInfo = $httpRouteDispatcher->dispatch($request->method(), $requestUri);
+        $routeInfo = Scheduler::withoutPreemptive(function () use ($request, $requestUri) {
+            $cacheKey = json_encode(['method' => $request->method(), 'uri' => $requestUri]);
+            if (isset(self::$cachedRouteInfo[$cacheKey])) {
+                $routeInfo = self::$cachedRouteInfo[$cacheKey];
+            } else {
+                /** @var Dispatcher $httpRouteDispatcher */
+                $httpRouteDispatcher = $this->getOptions();
+                self::$cachedRouteInfo[$cacheKey] = $routeInfo = $httpRouteDispatcher->dispatch(
+                    $request->method(), $requestUri
+                );
+            }
+            return $routeInfo;
+        });
         $routeResult = $routeInfo[0];
         switch ($routeResult) {
             case Dispatcher::NOT_FOUND:
