@@ -76,6 +76,9 @@ class Route extends AbstractMiddleware
                 self::$cachedRouteInfo[$cacheKey] = $routeInfo = $httpRouteDispatcher->dispatch(
                     $request->method(), $requestUri
                 );
+                if (count(self::$cachedRouteInfo) > 100) {
+                    self::$cachedRouteInfo = array_slice(self::$cachedRouteInfo, 0, 100, true);
+                }
             }
             return $routeInfo;
         });
