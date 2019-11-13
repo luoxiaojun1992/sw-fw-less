@@ -201,10 +201,6 @@ class App
     {
         echo 'Server started.', PHP_EOL;
         echo 'Listening ' . $server->ports[0]->host . ':' . $server->ports[0]->port, PHP_EOL;
-
-        $this->hotReload();
-        $this->registerScheduler();
-        $this->pullApolloConfig();
     }
 
     public function swHttpShutdown(\Swoole\Http\Server $server)
@@ -219,23 +215,31 @@ class App
      */
     public function swHttpWorkerStart(Server $server, $id)
     {
-        //Overload Env
-        if (file_exists(APP_BASE_PATH . '.env')) {
-            (new \Dotenv\Dotenv(APP_BASE_PATH))->overload();
+        if ($server->taskworker) {
+            if ($server->worker_id == 0) {
+                $this->hotReload();
+                $this->registerScheduler();
+                $this->pullApolloConfig();
+            }
+        } else {
+            //Overload Env
+            if (file_exists(APP_BASE_PATH . '.env')) {
+                (new \Dotenv\Dotenv(APP_BASE_PATH))->overload();
+            }
+
+            //Init Config
+            \SwFwLess\components\Config::init(
+                APP_BASE_PATH . 'config/app',
+                defined('CONFIG_FORMAT') ? CONFIG_FORMAT : 'array'
+            );
+
+            //Inject Swoole Server
+            \SwFwLess\components\swoole\Server::setInstance($server);
+
+            //Boot providers
+            KernelProvider::init(config('providers'));
+            KernelProvider::bootWorker();
         }
-
-        //Init Config
-        \SwFwLess\components\Config::init(
-            APP_BASE_PATH . 'config/app',
-            defined('CONFIG_FORMAT') ? CONFIG_FORMAT : 'array'
-        );
-
-        //Inject Swoole Server
-        \SwFwLess\components\swoole\Server::setInstance($server);
-
-        //Boot providers
-        KernelProvider::init(config('providers'));
-        KernelProvider::bootWorker();
     }
 
     public function swHttpRequest(\Swoole\Http\Request $request, \Swoole\Http\Response $response)
