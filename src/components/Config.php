@@ -3,10 +3,13 @@
 namespace SwFwLess\components;
 
 use SwFwLess\components\config\Parser;
+use SwFwLess\components\swoole\Scheduler;
 
 class Config
 {
     private static $config = [];
+
+    private static $configCache = [];
 
     /**
      * @param $configPath
@@ -24,13 +27,25 @@ class Config
      */
     public static function get($key, $default = null)
     {
-        if (!$key) {
-            return $default;
-        }
-        if (!is_string($key) && !is_array($key)) {
-            return $default;
-        }
+        return Scheduler::withoutPreemptive(function () use ($key, $default) {
+            if (array_key_exists($key, self::$configCache)) {
+                return self::$configCache[$key];
+            }
 
-        return Helper::nestedArrGet(static::$config, $key, $default);
+            if (!$key) {
+                return $default;
+            }
+            if (!is_string($key) && !is_array($key)) {
+                return $default;
+            }
+
+            $config = Helper::nestedArrGet(static::$config, $key, $default);
+
+            if ($config !== $default) {
+                self::$configCache[$key] = $config;
+            }
+
+            return $config;
+        });
     }
 }
