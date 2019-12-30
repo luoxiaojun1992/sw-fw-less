@@ -2,8 +2,6 @@
 
 namespace SwFwLess\components\http\traits;
 
-use SwFwLess\components\swoole\Scheduler;
-
 trait Tracer
 {
     /**
