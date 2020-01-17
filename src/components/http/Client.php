@@ -94,7 +94,7 @@ class Client
                         }
 
                         foreach ($headers as $name => $value) {
-                            $request->withAddedHeader($name, $value);
+                            $request->withHeader($name, $value);
                         }
 
                         $aggResult[$id] = (new HttpClient())->send($request, $swfRequest);
