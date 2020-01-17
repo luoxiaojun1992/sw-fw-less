@@ -2,9 +2,11 @@
 
 namespace SwFwLess\components\http;
 
+use SwFwLess\components\swoole\Scheduler;
 use SwFwLess\components\zipkin\HttpClient;
 use SwFwLess\exceptions\HttpException;
 use Swlib\Http\BufferStream;
+use Swlib\Http\ContentType;
 use Swlib\Http\Uri;
 use Swlib\SaberGM;
 use Swoole\Coroutine\Channel;
@@ -72,35 +74,37 @@ class Client
         foreach ($urls as $id => $url) {
             go(
                 function () use (&$aggResult, $id, $url, $chan, $method, $headers, $body, $bodyType, $swfRequest, &$exceptions) {
-                    try {
-                        $request = SaberGM::psr()->withMethod($method)
-                            ->withUri(new Uri($url));
+                    Scheduler::withoutPreemptive(function () use (
+                        &$aggResult, $id, $url, $method, $headers, $body, $bodyType, $swfRequest, &$exceptions
+                    ) {
+                        try {
+                            $request = SaberGM::psr()->withMethod($method)
+                                ->withUri(new Uri($url));
 
-                        if (!is_null($body)) {
-                            switch ($bodyType) {
-                                case self::JSON_BODY:
-                                    $headers['Content-Type'] = 'application/json';
-                                    $body = json_encode($body);
-                                    break;
-                                case self::FORM_BODY:
-                                    $headers['Content-Type'] = 'application/x-www-form-urlencoded';
-                                    $body = http_build_query($bodyType);
-                                    break;
-                                case self::STRING_BODY:
-                                    $body = (string)$body;
-                                    break;
+                            if (!is_null($body)) {
+                                switch ($bodyType) {
+                                    case self::JSON_BODY:
+                                        $headers['Content-Type'] = ContentType::JSON;
+                                        $body = json_encode($body);
+                                        break;
+                                    case self::FORM_BODY:
+                                        $headers['Content-Type'] = ContentType::URLENCODE;
+                                        $body = http_build_query($bodyType);
+                                        break;
+                                    case self::STRING_BODY:
+                                        $body = (string)$body;
+                                        break;
+                                }
+                                $request->withBody(new BufferStream($body));
                             }
-                            $request->withBody(new BufferStream($body));
-                        }
 
-                        foreach ($headers as $name => $value) {
-                            $request->withHeader($name, $value);
-                        }
+                            $request->withHeaders($headers);
 
-                        $aggResult[$id] = (new HttpClient())->send($request, $swfRequest);
-                    } catch (\Throwable $e) {
-                        array_push($exceptions, $e);
-                    }
+                            $aggResult[$id] = (new HttpClient())->send($request, $swfRequest);
+                        } catch (\Throwable $e) {
+                            array_push($exceptions, $e);
+                        }
+                    });
 
                     $chan->push(1);
                 }

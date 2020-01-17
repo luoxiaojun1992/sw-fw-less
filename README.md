@@ -24,6 +24,7 @@ Swoole http server without framework
 
 >## Notice
 * Don't include io operation in controller or middleware constructor
+* Don't open preemptive scheduler
 
 >## Requirements
 * PHP 7.1+
