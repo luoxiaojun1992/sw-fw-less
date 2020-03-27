@@ -313,7 +313,7 @@ class App
             $swResponse->end($swfResponse->getContent());
         }, $swfResponse);
 
-        KernelProvider::shutdown();
+        KernelProvider::shutdownResponse();
     }
 
     private function swResponseWithEvents($callback, \SwFwLess\components\http\Response $swfResponse)
