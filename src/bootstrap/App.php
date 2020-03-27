@@ -459,6 +459,9 @@ class App
             ) {
                 $this->bootstrap(true);
                 $this->swHttpServer->reload();
+                $this->swHttpServer->task([
+                    'type' => 'boot',
+                ]);
             }
         });
     }
