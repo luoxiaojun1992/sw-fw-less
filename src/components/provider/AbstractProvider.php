@@ -19,7 +19,17 @@ abstract class AbstractProvider implements ProviderContract
         //
     }
 
-    public static function shutdown()
+    public static function shutdownApp()
+    {
+        //
+    }
+
+    public static function shutdownWorker()
+    {
+        //
+    }
+
+    public static function shutdownResponse()
     {
         //
     }

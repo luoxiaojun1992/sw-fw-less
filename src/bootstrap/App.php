@@ -372,12 +372,29 @@ class App
             )->watch(\SwFwLess\components\filewatcher\Watcher::EVENT_MODIFY, function ($event) {
                 $this->bootstrap(true);
                 $this->swHttpServer->reload();
+                $this->swHttpServer->task([
+                    'type' => 'boot',
+                ]);
             });
         });
     }
 
+    private function clearSchedulerRateLimit()
+    {
+        $schedules = config('scheduler');
+        foreach ($schedules as $i => $schedule) {
+            $replica = $schedule['replica'] ?? 0;
+            $jobName = $schedule['name'] ?? ('job_' . ((string)$i));
+            if ($replica > 0) {
+                RateLimit::clear('rate_limit:kernel:scheduler:' . $jobName);
+            }
+        }
+    }
+
     private function registerScheduler()
     {
+        $this->clearSchedulerRateLimit();
+
         swoole_timer_tick(60000, function () {
             $schedules = config('scheduler');
             foreach ($schedules as $i => $schedule) {
@@ -398,7 +415,7 @@ class App
                     }
 
                     foreach ($schedule['jobs'] as $job) {
-                        go(function () use ($job, $jobName) {
+                        go(function () use ($job, $jobName, $replica) {
                             try {
                                 if (is_callable($job)) {
                                     call_user_func($job);
@@ -410,7 +427,9 @@ class App
                                     'Internal scheduler error:' . $e->getMessage() . '|' . $e->getTraceAsString()
                                 );
                             } finally {
-                                RateLimit::clear('rate_limit:kernel:scheduler:' . $jobName);
+                                if ($replica > 0) {
+                                    RateLimit::clear('rate_limit:kernel:scheduler:' . $jobName);
+                                }
                             }
                         });
                     }
