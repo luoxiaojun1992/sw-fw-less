@@ -3,11 +3,12 @@
 namespace SwFwLess\bootstrap;
 
 use Cron\CronExpression;
-use Opis\Closure\SerializableClosure;
 use SwFwLess\components\config\apollo\ClientBuilder;
 use SwFwLess\components\grpc\Status;
 use SwFwLess\components\provider\KernelProvider;
 use SwFwLess\facades\Container;
+use SwFwLess\facades\Log;
+use SwFwLess\facades\RateLimit;
 use Swoole\Http\Server;
 use Swoole\Server\Task;
 
@@ -379,17 +380,37 @@ class App
     {
         swoole_timer_tick(60000, function () {
             $schedules = config('scheduler');
-            foreach ($schedules as $schedule) {
+            foreach ($schedules as $i => $schedule) {
                 if (CronExpression::factory($schedule['schedule'])->isDue()) {
+                    $replica = $schedule['replica'] ?? 0;
+                    $jobName = $schedule['name'] ?? ('job_' . ((string)$i));
                     if (!is_array($schedule['jobs'])) {
                         $schedule['jobs'] = [$schedule['jobs']];
                     }
+                    if ($replica > 0) {
+                        if (!RateLimit::pass(
+                            'rate_limit:kernel:scheduler:' . $jobName,
+                            0,
+                            $replica
+                        )) {
+                            continue;
+                        }
+                    }
+
                     foreach ($schedule['jobs'] as $job) {
-                        go(function () use ($job) {
-                            if (is_callable($job)) {
-                                call_user_func($job);
-                            } elseif (is_string($job)) {
-                                shell_exec($job);
+                        go(function () use ($job, $jobName) {
+                            try {
+                                if (is_callable($job)) {
+                                    call_user_func($job);
+                                } elseif (is_string($job)) {
+                                    shell_exec($job);
+                                }
+                            } catch (\Throwable $e) {
+                                Log::error(
+                                    'Internal scheduler error:' . $e->getMessage() . '|' . $e->getTraceAsString()
+                                );
+                            } finally {
+                                RateLimit::clear('rate_limit:kernel:scheduler:' . $jobName);
                             }
                         });
                     }
