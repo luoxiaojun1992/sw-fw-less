@@ -3,9 +3,8 @@
 namespace SwFwLess\components\mysql;
 
 use SwFwLess\components\provider\AbstractProvider;
-use SwFwLess\components\provider\WorkerProvider;
 
-class MysqlProvider extends AbstractProvider implements WorkerProvider
+class MysqlProvider extends AbstractProvider
 {
     public static function bootWorker()
     {

@@ -3,9 +3,8 @@
 namespace SwFwLess\components\chaos;
 
 use SwFwLess\components\provider\AbstractProvider;
-use SwFwLess\components\provider\AppProvider;
 
-class ChaosProvider extends AbstractProvider implements AppProvider
+class ChaosProvider extends AbstractProvider
 {
     public static function bootApp()
     {

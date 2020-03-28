@@ -3,10 +3,21 @@
 namespace SwFwLess\components\swoole;
 
 use SwFwLess\components\provider\AbstractProvider;
-use SwFwLess\components\provider\AppProvider;
 
-class SwooleProvider extends AbstractProvider implements AppProvider
+class SwooleProvider extends AbstractProvider
 {
+    /**
+     * @throws \Exception
+     */
+    protected static function setCoroutineConfig()
+    {
+        $coroutineConfig = config('coroutine');
+        if ($coroutineConfig['enable_preemptive_scheduler']) {
+            throw new \Exception('Preemptive coroutine scheduler has not been supported.');
+        }
+        \Co::set($coroutineConfig);
+    }
+
     /**
      * @throws \Exception
      */
@@ -14,10 +25,16 @@ class SwooleProvider extends AbstractProvider implements AppProvider
     {
         parent::bootApp();
 
-        $coroutineConfig = config('coroutine');
-        if ($coroutineConfig['enable_preemptive_scheduler']) {
-            throw new \Exception('Preemptive coroutine scheduler has not been supported.');
-        }
-        \Co::set($coroutineConfig);
+        self::setCoroutineConfig();
+    }
+
+    /**
+     * @throws \Exception
+     */
+    public static function bootWorker()
+    {
+        parent::bootWorker();
+
+        self::setCoroutineConfig();
     }
 }

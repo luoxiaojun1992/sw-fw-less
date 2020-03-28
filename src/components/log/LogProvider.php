@@ -3,9 +3,8 @@
 namespace SwFwLess\components\log;
 
 use SwFwLess\components\provider\AbstractProvider;
-use SwFwLess\components\provider\WorkerProvider;
 
-class LogProvider extends AbstractProvider implements WorkerProvider
+class LogProvider extends AbstractProvider
 {
     /**
      * @throws \Exception

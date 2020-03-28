@@ -3,9 +3,8 @@
 namespace SwFwLess\components\redis;
 
 use SwFwLess\components\provider\AbstractProvider;
-use SwFwLess\components\provider\WorkerProvider;
 
-class RedisProvider extends AbstractProvider implements WorkerProvider
+class RedisProvider extends AbstractProvider
 {
     public static function bootWorker()
     {

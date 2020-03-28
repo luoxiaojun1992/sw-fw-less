@@ -3,9 +3,8 @@
 namespace SwFwLess\components\storage;
 
 use SwFwLess\components\provider\AbstractProvider;
-use SwFwLess\components\provider\WorkerProvider;
 
-class StorageProvider extends AbstractProvider implements WorkerProvider
+class StorageProvider extends AbstractProvider
 {
     public static function bootWorker()
     {

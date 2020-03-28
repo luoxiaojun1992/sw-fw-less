@@ -7,5 +7,7 @@ interface ProviderContract
     public static function bootApp();
     public static function bootWorker();
     public static function bootRequest();
-    public static function shutdown();
+    public static function shutdownApp();
+    public static function shutdownWorker();
+    public static function shutdownResponse();
 }

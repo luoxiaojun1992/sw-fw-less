@@ -3,9 +3,8 @@
 namespace SwFwLess\components\hbase;
 
 use SwFwLess\components\provider\AbstractProvider;
-use SwFwLess\components\provider\WorkerProvider;
 
-class HbaseProvider extends AbstractProvider implements WorkerProvider
+class HbaseProvider extends AbstractProvider
 {
     public static function bootWorker()
     {

@@ -3,10 +3,8 @@
 namespace SwFwLess\components\swoole\counter;
 
 use SwFwLess\components\provider\AbstractProvider;
-use SwFwLess\components\provider\AppProvider;
-use SwFwLess\components\provider\WorkerProvider;
 
-class CounterProvider extends AbstractProvider implements AppProvider, WorkerProvider
+class CounterProvider extends AbstractProvider
 {
     public static function bootApp()
     {

@@ -3,9 +3,8 @@
 namespace SwFwLess\components\event;
 
 use SwFwLess\components\provider\AbstractProvider;
-use SwFwLess\components\provider\WorkerProvider;
 
-class EventProvider extends AbstractProvider implements WorkerProvider
+class EventProvider extends AbstractProvider
 {
     /**
      * @throws \Exception

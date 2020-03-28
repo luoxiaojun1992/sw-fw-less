@@ -3,9 +3,8 @@
 namespace SwFwLess\components\ratelimit;
 
 use SwFwLess\components\provider\AbstractProvider;
-use SwFwLess\components\provider\WorkerProvider;
 
-class RatelimitProvider extends AbstractProvider implements WorkerProvider
+class RatelimitProvider extends AbstractProvider
 {
     public static function bootWorker()
     {

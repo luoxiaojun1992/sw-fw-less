@@ -3,9 +3,8 @@
 namespace SwFwLess\components\cache;
 
 use SwFwLess\components\provider\AbstractProvider;
-use SwFwLess\components\provider\WorkerProvider;
 
-class CacheProvider extends AbstractProvider implements WorkerProvider
+class CacheProvider extends AbstractProvider
 {
     public static function bootWorker()
     {

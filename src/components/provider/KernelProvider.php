@@ -37,9 +37,7 @@ class KernelProvider extends AbstractProvider
         parent::bootApp();
 
         foreach (static::$providers as $provider) {
-            if ((new \ReflectionClass($provider))->implementsInterface(AppProvider::class)) {
-                call_user_func([$provider, 'bootApp']);
-            }
+            call_user_func([$provider, 'bootApp']);
         }
     }
 
@@ -51,9 +49,7 @@ class KernelProvider extends AbstractProvider
         parent::bootWorker();
 
         foreach (static::$providers as $provider) {
-            if ((new \ReflectionClass($provider))->implementsInterface(WorkerProvider::class)) {
-                call_user_func([$provider, 'bootWorker']);
-            }
+            call_user_func([$provider, 'bootWorker']);
         }
     }
 
@@ -65,9 +61,25 @@ class KernelProvider extends AbstractProvider
         parent::bootRequest();
 
         foreach (static::$providers as $provider) {
-            if ((new \ReflectionClass($provider))->implementsInterface(RequestProvider::class)) {
-                call_user_func([$provider, 'bootRequest']);
-            }
+            call_user_func([$provider, 'bootRequest']);
+        }
+    }
+
+    public static function shutdownApp()
+    {
+        parent::shutdownApp();
+
+        foreach (static::$providers as $provider) {
+            call_user_func([$provider, 'shutdownApp']);
+        }
+    }
+
+    public static function shutdownWorker()
+    {
+        parent::shutdownWorker();
+
+        foreach (static::$providers as $provider) {
+            call_user_func([$provider, 'shutdownWorker']);
         }
     }
 

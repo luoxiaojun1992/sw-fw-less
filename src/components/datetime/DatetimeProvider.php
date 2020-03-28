@@ -3,9 +3,8 @@
 namespace SwFwLess\components\datetime;
 
 use SwFwLess\components\provider\AbstractProvider;
-use SwFwLess\components\provider\WorkerProvider;
 
-class DatetimeProvider extends AbstractProvider implements WorkerProvider
+class DatetimeProvider extends AbstractProvider
 {
     public static function bootWorker()
     {

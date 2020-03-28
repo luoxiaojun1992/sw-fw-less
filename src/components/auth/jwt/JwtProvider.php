@@ -3,9 +3,8 @@
 namespace SwFwLess\components\auth\jwt;
 
 use SwFwLess\components\provider\AbstractProvider;
-use SwFwLess\components\provider\WorkerProvider;
 
-class JwtProvider extends AbstractProvider implements WorkerProvider
+class JwtProvider extends AbstractProvider
 {
     public static function bootWorker()
     {

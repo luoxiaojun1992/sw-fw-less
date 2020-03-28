@@ -60,6 +60,7 @@ class App
 
         $this->swHttpServer->on('start', [$this, 'swHttpStart']);
         $this->swHttpServer->on('workerStart', [$this, 'swHttpWorkerStart']);
+        $this->swHttpServer->on('workerStop', [$this, 'swHttpWorkerStop']);
         $this->swHttpServer->on('request', [$this, 'swHttpRequest']);
         $this->swHttpServer->on('shutdown', [$this, 'swHttpShutdown']);
         $this->swHttpServer->on('task', [$this, 'swTask']);
@@ -202,15 +203,12 @@ class App
     {
         echo 'Server started.', PHP_EOL;
         echo 'Listening ' . $server->ports[0]->host . ':' . $server->ports[0]->port, PHP_EOL;
-
-        $server->task([
-            'type' => 'boot',
-        ]);
     }
 
     public function swHttpShutdown(\Swoole\Http\Server $server)
     {
         echo 'Server shutdown.', PHP_EOL;
+        KernelProvider::shutdownApp();
     }
 
     /**
@@ -231,12 +229,27 @@ class App
             defined('CONFIG_FORMAT') ? CONFIG_FORMAT : 'array'
         );
 
+        $this->loadRouter();
+
         //Inject Swoole Server
         \SwFwLess\components\swoole\Server::setInstance($server);
 
         //Boot providers
         KernelProvider::init(config('providers'));
         KernelProvider::bootWorker();
+
+        if (!$server->taskworker) {
+            if ($id === 0) {
+                $server->task([
+                    'type' => 'boot',
+                ]);
+            }
+        }
+    }
+
+    public function swHttpWorkerStop(Server $server, $id)
+    {
+        KernelProvider::shutdownWorker();
     }
 
     public function swHttpRequest(\Swoole\Http\Request $request, \Swoole\Http\Response $response)
@@ -370,11 +383,11 @@ class App
                 config('hot_reload.excluded_dirs'),
                 config('hot_reload.watch_suffixes')
             )->watch(\SwFwLess\components\filewatcher\Watcher::EVENT_MODIFY, function ($event) {
-                $this->bootstrap(true);
+                if (!config('hot_reload.switch')) {
+                    return;
+                }
+
                 $this->swHttpServer->reload();
-                $this->swHttpServer->task([
-                    'type' => 'boot',
-                ]);
             });
         });
     }
@@ -445,9 +458,13 @@ class App
         }
 
         $notificationId = -1;
-        $apolloConfig = config('apollo');
 
-        swoole_timer_tick(60000, function () use (&$notificationId, $apolloConfig) {
+        swoole_timer_tick(60000, function () use (&$notificationId) {
+            if (!config('apollo.enable', false)) {
+                return;
+            }
+
+            $apolloConfig = config('apollo');
             if (ClientBuilder::create()
                 ->setNamespace($apolloConfig['namespace'])
                 ->setCluster($apolloConfig['cluster'])
@@ -457,11 +474,7 @@ class App
                 ->build()
                 ->notification($notificationId)
             ) {
-                $this->bootstrap(true);
                 $this->swHttpServer->reload();
-                $this->swHttpServer->task([
-                    'type' => 'boot',
-                ]);
             }
         });
     }

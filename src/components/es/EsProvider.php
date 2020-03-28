@@ -3,9 +3,8 @@
 namespace SwFwLess\components\es;
 
 use SwFwLess\components\provider\AbstractProvider;
-use SwFwLess\components\provider\WorkerProvider;
 
-class EsProvider extends AbstractProvider implements WorkerProvider
+class EsProvider extends AbstractProvider
 {
     public static function bootWorker()
     {

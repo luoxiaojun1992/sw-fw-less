@@ -3,9 +3,8 @@
 namespace SwFwLess\components\amqp;
 
 use SwFwLess\components\provider\AbstractProvider;
-use SwFwLess\components\provider\WorkerProvider;
 
-class AmqpProvider extends AbstractProvider implements WorkerProvider
+class AmqpProvider extends AbstractProvider
 {
     public static function bootWorker()
     {
