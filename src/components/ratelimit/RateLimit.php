@@ -91,7 +91,7 @@ EOF;
             }
 
             $remaining = $throttle - $passed;
-            return $passed <= $throttle;
+            return ($passed > 0) && ($passed <= $throttle);
         } catch (\Throwable $e) {
             throw $e;
         } finally {
