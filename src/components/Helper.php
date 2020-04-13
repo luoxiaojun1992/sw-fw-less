@@ -38,6 +38,7 @@ class Helper
                 $arr = $arr[$key];
             } else {
                 $arr = $default;
+                break;
             }
         }
 
