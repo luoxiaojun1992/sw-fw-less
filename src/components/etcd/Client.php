@@ -2,6 +2,7 @@
 
 namespace SwFWLess\components\etcd\;
 
+use Etcdserverpb\DeleteRangeRequest;
 use Etcdserverpb\KVClient;
 use Etcdserverpb\LeaseClient;
 use Etcdserverpb\LeaseGrantRequest;
@@ -77,6 +78,20 @@ class Client
         }
 
         return null;
+    }
+
+    public function del($key)
+    {
+        list($deleteRangeResponse, $status) = $this->getKvClient()->DeleteRange(
+            (new DeleteRangeRequest())->setKey($key)
+                ->setRangeEnd('\0')
+        );
+
+        if ($status === 0) {
+            return $deleteRangeResponse->getDeleted() === 1;
+        }
+
+        return false;
     }
 
     public function lock($key, $ttl = 0)

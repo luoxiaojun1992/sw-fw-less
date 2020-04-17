@@ -2,16 +2,11 @@
 
 namespace SwFwLess\components\utils;
 
+use SwFwLess\components\swoole\Scheduler;
+
 class Ip
 {
     private static $checkedIps = [];
-
-    /**
-     * This class should not be instantiated.
-     */
-    private function __construct()
-    {
-    }
 
     /**
      * Checks if an IPv4 or IPv6 address is contained in the list of given IPs or subnets.
@@ -50,8 +45,15 @@ class Ip
     public static function checkIp4($requestIp, $ip)
     {
         $cacheKey = $requestIp.'-'.$ip;
-        if (isset(self::$checkedIps[$cacheKey])) {
-            return self::$checkedIps[$cacheKey];
+        $cachedResult = Scheduler::withoutPreemptive(function () use ($cacheKey) {
+            if (isset(self::$checkedIps[$cacheKey])) {
+                return self::$checkedIps[$cacheKey];
+            }
+
+            return null;
+        });
+        if (!is_null($cachedResult)) {
+            return $cachedResult;
         }
 
         if (!filter_var($requestIp, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
@@ -62,11 +64,15 @@ class Ip
             list($address, $netmask) = explode('/', $ip, 2);
 
             if ('0' === $netmask) {
-                return self::$checkedIps[$cacheKey] = filter_var($address, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4);
+                return Scheduler::withoutPreemptive(function () use ($cacheKey, $address) {
+                    return self::$checkedIps[$cacheKey] = filter_var($address, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4);
+                });
             }
 
             if ($netmask < 0 || $netmask > 32) {
-                return self::$checkedIps[$cacheKey] = false;
+                return Scheduler::withoutPreemptive(function () use ($cacheKey) {
+                    return self::$checkedIps[$cacheKey] = false;
+                });
             }
         } else {
             $address = $ip;
@@ -74,10 +80,14 @@ class Ip
         }
 
         if (false === ip2long($address)) {
-            return self::$checkedIps[$cacheKey] = false;
+            return Scheduler::withoutPreemptive(function () use ($cacheKey) {
+                return self::$checkedIps[$cacheKey] = false;
+            });
         }
 
-        return self::$checkedIps[$cacheKey] = 0 === substr_compare(sprintf('%032b', ip2long($requestIp)), sprintf('%032b', ip2long($address)), 0, $netmask);
+        return Scheduler::withoutPreemptive(function () use ($cacheKey, $requestIp, $address, $netmask) {
+            return self::$checkedIps[$cacheKey] = 0 === substr_compare(sprintf('%032b', ip2long($requestIp)), sprintf('%032b', ip2long($address)), 0, $netmask);
+        });
     }
 
     /**
@@ -98,12 +108,18 @@ class Ip
     public static function checkIp6($requestIp, $ip)
     {
         $cacheKey = $requestIp.'-'.$ip;
-        if (isset(self::$checkedIps[$cacheKey])) {
-            return self::$checkedIps[$cacheKey];
+        $cachedResult = Scheduler::withoutPreemptive(function () use ($cacheKey) {
+            if (isset(self::$checkedIps[$cacheKey])) {
+                return self::$checkedIps[$cacheKey];
+            }
+            return null;
+        });
+        if (!is_null($cachedResult)) {
+            return $cachedResult;
         }
 
         if (!((extension_loaded('sockets') && defined('AF_INET6')) || @inet_pton('::1'))) {
-            throw new RuntimeException('Unable to check Ipv6. Check that PHP was not compiled with option "disable-ipv6".');
+            throw new \RuntimeException('Unable to check Ipv6. Check that PHP was not compiled with option "disable-ipv6".');
         }
 
         if (false !== strpos($ip, '/')) {
@@ -114,7 +130,9 @@ class Ip
             }
 
             if ($netmask < 1 || $netmask > 128) {
-                return self::$checkedIps[$cacheKey] = false;
+                return Scheduler::withoutPreemptive(function () use ($cacheKey) {
+                    return self::$checkedIps[$cacheKey] = false;
+                });
             }
         } else {
             $address = $ip;
@@ -125,7 +143,9 @@ class Ip
         $bytesTest = unpack('n*', @inet_pton($requestIp));
 
         if (!$bytesAddr || !$bytesTest) {
-            return self::$checkedIps[$cacheKey] = false;
+            return Scheduler::withoutPreemptive(function () use ($cacheKey) {
+                return self::$checkedIps[$cacheKey] = false;
+            });
         }
 
         for ($i = 1, $ceil = ceil($netmask / 16); $i <= $ceil; ++$i) {
@@ -133,10 +153,14 @@ class Ip
             $left = ($left <= 16) ? $left : 16;
             $mask = ~(0xffff >> $left) & 0xffff;
             if (($bytesAddr[$i] & $mask) != ($bytesTest[$i] & $mask)) {
-                return self::$checkedIps[$cacheKey] = false;
+                return Scheduler::withoutPreemptive(function () use ($cacheKey) {
+                    return self::$checkedIps[$cacheKey] = false;
+                });
             }
         }
 
-        return self::$checkedIps[$cacheKey] = true;
+        return Scheduler::withoutPreemptive(function () use ($cacheKey) {
+            return self::$checkedIps[$cacheKey] = true;
+        });
     }
 }

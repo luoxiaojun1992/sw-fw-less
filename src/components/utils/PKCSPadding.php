@@ -4,8 +4,6 @@ namespace SwFwLess\components\utils;
 
 class PKCSPadding
 {
-    const PKCS5_BLOCK_SIZE = 8;
-
     /**
      * @param $data
      * @param int $blockSize Example: AES-128-CBC, 128 / 8 = 16, AES-256-CBC, 256 / 8 = 32
