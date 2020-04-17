@@ -15,7 +15,7 @@ class BitIntArr
 
     protected function getSlotIndex($number)
     {
-        return ceil($number / $this->slotStorage());
+        return ceil($number / $this->slotStorage()) - 1;
     }
 
     protected function getFractionalAmount($number)
