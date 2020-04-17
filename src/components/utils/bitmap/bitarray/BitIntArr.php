@@ -2,6 +2,17 @@
 
 namespace SwFwLess\components\utils;
 
+/**
+ * Class BitIntArr
+ *
+ * {@inheritDoc}
+ *
+ * Slot index starts from 0.
+ *
+ * Bit index starts from 1.
+ *
+ * @package SwFwLess\components\utils
+ */
 class BitIntArr
 {
     protected $slots;
@@ -13,6 +24,14 @@ class BitIntArr
         return intval(log(PHP_INT_MAX - 1, 2));
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * Slot index starts from 0.
+     *
+     * @param $number
+     * @return false|float|int
+     */
     protected function getSlotIndex($number)
     {
         return ceil($number / $this->slotStorage()) - 1;
@@ -30,6 +49,11 @@ class BitIntArr
         return $fractionalAmount;
     }
 
+    protected function getBitMapIndex($number)
+    {
+        return 1 << ($this->getFractionalAmount($number) - 1);
+    }
+
     public function set($number)
     {
         $slotIndex = $this->getSlotIndex($number);
@@ -37,10 +61,8 @@ class BitIntArr
             $this->slots[$slotIndex] = 0;
         }
 
-        $fractionalAmount = $this->getFractionalAmount($number);
-
-        $bitNumber = 1 << ($fractionalAmount - 1);
-        $this->slots[$slotIndex] = $this->slots[$slotIndex] | $bitNumber;
+        $bitMapIndex = $this->getBitMapIndex($number);
+        $this->slots[$slotIndex] = $this->slots[$slotIndex] | $bitMapIndex;
     }
 
     public function has($number)
@@ -50,10 +72,7 @@ class BitIntArr
             return false;
         }
 
-        $fractionalAmount = $this->getFractionalAmount($number);
-
-        $bitNumber = 1 << ($fractionalAmount - 1);
-
-        return ($this->slots[$slotIndex] & $bitNumber) === $bitNumber;
+        $bitMapIndex = $this->getBitMapIndex($number);
+        return ($this->slots[$slotIndex] & $bitMapIndex) === $bitMapIndex;
     }
 }
