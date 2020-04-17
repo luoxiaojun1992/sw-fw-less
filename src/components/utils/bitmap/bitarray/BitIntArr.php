@@ -9,7 +9,7 @@ namespace SwFwLess\components\utils;
  *
  * Slot index starts from 0.
  *
- * Bit index starts from 1.
+ * Bitmap index starts from 1.
  *
  * @package SwFwLess\components\utils
  */
@@ -49,11 +49,22 @@ class BitIntArr
         return $fractionalAmount;
     }
 
-    protected function getBitMapIndex($number)
+    /**
+     * {@inheritDoc}
+     *
+     * Bitmap index starts from 1.
+     *
+     * @param $number
+     * @return int
+     */
+    protected function getBitmapIndex($number)
     {
         return 1 << ($this->getFractionalAmount($number) - 1);
     }
 
+    /**
+     * @param $number
+     */
     public function set($number)
     {
         $slotIndex = $this->getSlotIndex($number);
@@ -61,10 +72,14 @@ class BitIntArr
             $this->slots[$slotIndex] = 0;
         }
 
-        $bitMapIndex = $this->getBitMapIndex($number);
+        $bitMapIndex = $this->getBitmapIndex($number);
         $this->slots[$slotIndex] = $this->slots[$slotIndex] | $bitMapIndex;
     }
 
+    /**
+     * @param $number
+     * @return bool
+     */
     public function has($number)
     {
         $slotIndex = $this->getSlotIndex($number);
@@ -72,7 +87,7 @@ class BitIntArr
             return false;
         }
 
-        $bitMapIndex = $this->getBitMapIndex($number);
+        $bitMapIndex = $this->getBitmapIndex($number);
         return ($this->slots[$slotIndex] & $bitMapIndex) === $bitMapIndex;
     }
 }
