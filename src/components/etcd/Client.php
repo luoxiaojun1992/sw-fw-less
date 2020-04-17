@@ -98,11 +98,39 @@ class Client
                 ->setValue('lock')
                 ->setPrevKv(true)
                 ->setLease($leaseId)
-
         );
 
         if ($status === 0) {
             return $putResponse->getPrevKv() === null;
+        }
+
+        return false;
+    }
+
+    public function incr($key, $ttl = 0)
+    {
+        if (!is_null($this->get($key))) {
+            $ttl = 0;
+        }
+
+        $leaseId = 0;
+        if ($ttl > 0) {
+            $leaseId = $this->createLease($ttl);
+            if (is_null($leaseId)) {
+                return false;
+            }
+        }
+
+        list($putResponse, $status) = $this->getKvClient()->Put(
+            (new PutRequest())->setKey($key)
+                ->setValue('lock')
+                ->setPrevKv(true)
+                ->setLease($leaseId)
+        );
+
+        if ($status === 0) {
+            $prevKey = $putResponse->getPrevKv();
+            return ($prevKey === null) ? 1 : ($prevKey->getVersion() + 1);
         }
 
         return false;
