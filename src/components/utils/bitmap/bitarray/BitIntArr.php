@@ -90,4 +90,9 @@ class BitIntArr
         $bitMapIndex = $this->getBitmapIndex($number);
         return ($this->slots[$slotIndex] & $bitMapIndex) === $bitMapIndex;
     }
+
+    public function iterator()
+    {
+        //todo
+    }
 }
