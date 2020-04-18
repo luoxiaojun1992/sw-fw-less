@@ -103,8 +103,19 @@ class BitIntArr
         return ($this->slots[$slotIndex] & $bitMapIndex) === $bitMapIndex;
     }
 
+    /**
+     * @return \Generator
+     */
     public function iterator()
     {
-        //todo
+        $slotStorage = $this->slotStorage();
+        foreach ($this->slots as $slotIndex => $slot) {
+            for ($i = 1; $i <= $slotStorage; ++$i) {
+                $bitMapIndex = (1 << ($i - 1));
+                if (($bitMapIndex & $slot) === $bitMapIndex) {
+                    yield (($slotIndex * $slotStorage) + $i);
+                }
+            }
+        }
     }
 }
