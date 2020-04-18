@@ -1,6 +1,6 @@
 <?php
 
-namespace SwFwLess\components\utils;
+namespace SwFwLess\components\utils\bitmap\bitarray;
 
 /**
  * Class BitIntArr
@@ -15,9 +15,18 @@ namespace SwFwLess\components\utils;
  */
 class BitIntArr
 {
-    protected $slots;
+    /** @var array  */
+    protected $slots = [];
 
-    //todo unit test
+    /**
+     * @param array $slots
+     * @return $this
+     */
+    public function setSlots(array $slots): self
+    {
+        $this->slots = $slots;
+        return $this;
+    }
 
     protected function slotStorage()
     {
