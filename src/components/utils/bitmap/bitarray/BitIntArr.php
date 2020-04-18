@@ -65,7 +65,7 @@ class BitIntArr
     /**
      * @param $number
      */
-    public function set($number)
+    public function put($number)
     {
         $slotIndex = $this->getSlotIndex($number);
         if (!isset($this->slots[$slotIndex])) {
@@ -74,6 +74,18 @@ class BitIntArr
 
         $bitMapIndex = $this->getBitmapIndex($number);
         $this->slots[$slotIndex] = $this->slots[$slotIndex] | $bitMapIndex;
+    }
+
+    /**
+     * @param $number
+     */
+    public function add($number)
+    {
+        if ($this->has($number)) {
+            throw new \RuntimeException(((string)$number) . ' existed');
+        }
+
+        $this->put($number);
     }
 
     /**
