@@ -73,7 +73,7 @@ class BitIntArr
         }
 
         $bitMapIndex = $this->getBitmapIndex($number);
-        $this->slots[$slotIndex] = $this->slots[$slotIndex] | $bitMapIndex;
+        $this->slots[$slotIndex] = ($this->slots[$slotIndex] | $bitMapIndex);
     }
 
     /**
@@ -86,6 +86,24 @@ class BitIntArr
         }
 
         $this->put($number);
+    }
+
+    /**
+     * @param $number
+     */
+    public function del($number)
+    {
+        if (!$this->has($number)) {
+            throw new \RuntimeException(((string)$number) . ' not existed');
+        }
+
+        $slotIndex = $this->getSlotIndex($number);
+        if (!isset($this->slots[$slotIndex])) {
+            throw new \RuntimeException(('Slot of ' . (string)$number) . ' not existed');
+        }
+
+        $bitMapIndex = $this->getBitmapIndex($number);
+        $this->slots[$slotIndex] = ($this->slots[$slotIndex] & (~$bitMapIndex));
     }
 
     /**
