@@ -20,6 +20,23 @@ class BitIntArr
 
     /**
      * @param array $slots
+     * @return BitIntArr
+     */
+    public static function createFromSlots(array $slots = [])
+    {
+        return (new static())->setSlots($slots);
+    }
+
+    /**
+     * @return array
+     */
+    public function getSlots(): array
+    {
+        return $this->slots;
+    }
+
+    /**
+     * @param array $slots
      * @return $this
      */
     public function setSlots(array $slots): self
