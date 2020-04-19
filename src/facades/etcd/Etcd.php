@@ -1,8 +1,9 @@
 <?php
 
-namespace SwFwLess\facades;
+namespace SwFwLess\facades\etcd;
 
 use SwFWLess\components\etcd\Client;
+use SwFwLess\facades\AbstractFacade;
 
 class Etcd extends AbstractFacade
 {
