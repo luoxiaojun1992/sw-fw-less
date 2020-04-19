@@ -13,6 +13,11 @@ class Client
 {
     protected $endpoint;
 
+    public static function create($config)
+    {
+        return new static($config);
+    }
+
     public function __construct($config)
     {
         $this->endpoint = $config['endpoint'];
@@ -122,6 +127,11 @@ class Client
         return false;
     }
 
+    /**
+     * @param $key
+     * @param int $ttl
+     * @return bool|int
+     */
     public function incr($key, $ttl = 0)
     {
         if (!is_null($this->get($key))) {

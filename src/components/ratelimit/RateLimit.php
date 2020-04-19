@@ -101,6 +101,8 @@ EOF;
 
     /**
      * @param $metric
+     * @return int
+     * @throws \RedisException
      * @throws \Throwable
      */
     public function clear($metric)
@@ -108,7 +110,7 @@ EOF;
         /** @var \Redis $redis */
         $redis = $this->redisPool->pick($this->config['connection']);
         try {
-            $redis->del($metric);
+            return $redis->del($metric);
         } catch (\Throwable $e) {
             throw $e;
         } finally {
