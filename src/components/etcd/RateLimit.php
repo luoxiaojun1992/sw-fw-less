@@ -22,11 +22,12 @@ class RateLimit
 
     /**
      * @param Client $etcd
+     * @param array $config
      * @return static
      */
-    public static function create(Client $etcd)
+    public static function create(Client $etcd, $config = [])
     {
-        return new static($etcd);
+        return new static($etcd, $config);
     }
 
     /**
