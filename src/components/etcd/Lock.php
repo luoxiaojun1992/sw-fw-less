@@ -1,3 +1,8 @@
 <?php
 
-//todo
+namespace SwFwLess\components\etcd;
+
+class Lock
+{
+    //todo
+}
