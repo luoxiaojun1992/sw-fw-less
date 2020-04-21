@@ -1,21 +1,32 @@
 <?php
 
-namespace SwFWLess\components\etcd\;
+namespace SwFWLess\components\etcd;
 
 use Etcdserverpb\DeleteRangeRequest;
 use Etcdserverpb\KVClient;
 use Etcdserverpb\LeaseClient;
 use Etcdserverpb\LeaseGrantRequest;
+use Etcdserverpb\LeaseKeepAliveRequest;
 use Etcdserverpb\PutRequest;
 use Etcdserverpb\RangeRequest;
 
 class Client
 {
+    private static $instance;
+
     protected $endpoint;
 
-    public static function create($config)
+    public static function create($config = [])
     {
-        return new static($config);
+        if (self::$instance instanceof self) {
+            return self::$instance;
+        }
+
+        if (!empty($config)) {
+            return self::$instance = new self($config);
+        }
+
+        return null;
     }
 
     public function __construct($config)
@@ -43,6 +54,18 @@ class Client
         }
         
         return null;
+    }
+
+    protected function leaseKeepAlive($id)
+    {
+        list(, $status) = $this->getLeaseClient()->LeaseKeepAlive(
+            (new LeaseKeepAliveRequest())->setID($id)
+        );
+        if ($status === 0) {
+            return true;
+        }
+
+        return false;
     }
 
     public function put($key, $value, $ttl = 0)
@@ -83,6 +106,61 @@ class Client
         }
 
         return null;
+    }
+
+    /**
+     * @param $key
+     * @throws \Exception
+     */
+    public function ttl($key)
+    {
+        throw new \Exception('TTL method of etcd is not supported.');
+    }
+
+    /**
+     * @param $key
+     * @return bool|null
+     */
+    public function defer($key)
+    {
+        list($rangeResponse, $status) = $this->getKvClient()->Range(
+            (new RangeRequest())->setKey($key)
+                ->setRangeEnd('\0')
+                ->setLimit(1)
+        );
+
+        if ($status === 0) {
+            foreach($rangeResponse->getKvs() as $kv) {
+                $leaseId = $kv->getLease();
+                if ($leaseId > 0) {
+                    return $this->leaseKeepAlive($leaseId);
+                } else {
+                    return false;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public function expire($key, $ttl)
+    {
+        $leaseId = $this->createLease($ttl);
+        if (is_null($leaseId)) {
+            return false;
+        }
+
+        list(, $status) = $this->getKvClient()->Put(
+            (new PutRequest())->setKey($key)
+                ->setIgnoreValue(true)
+                ->setLease($leaseId)
+        );
+
+        if ($status === 0) {
+            return true;
+        }
+
+        return false;
     }
 
     public function del($key)

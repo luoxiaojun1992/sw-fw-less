@@ -46,10 +46,10 @@ class RedLock
 
     /**
      * RedLock constructor.
-     * @param RedisPool|null $redisPool
+     * @param RedisPool $redisPool
      * @param array $config
      */
-    public function __construct(RedisPool $redisPool = null, $config = [])
+    public function __construct(RedisPool $redisPool, $config = [])
     {
         $this->redisPool = $redisPool;
         $this->config = array_merge($this->config, $config);

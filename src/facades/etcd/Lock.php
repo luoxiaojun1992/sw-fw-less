@@ -2,7 +2,12 @@
 
 namespace SwFwLess\facades\etcd;
 
-class Lock
+use SwFwLess\facades\AbstractFacade;
+
+class Lock extends AbstractFacade
 {
-    //todo
+    protected static function getAccessor()
+    {
+        return \SwFwLess\components\etcd\Lock::create();
+    }
 }

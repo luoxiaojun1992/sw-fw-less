@@ -11,6 +11,8 @@ namespace SwFwLess\components\etcd;
  */
 class RateLimit
 {
+    private static $instance;
+
     /**
      * @var Client
      */
@@ -25,9 +27,17 @@ class RateLimit
      * @param array $config
      * @return static
      */
-    public static function create(Client $etcd, $config = [])
+    public static function create(Client $etcd = null, $config = [])
     {
-        return new static($etcd, $config);
+        if (self::$instance instanceof self) {
+            return self::$instance;
+        }
+
+        if (!is_null($etcd)) {
+            return self::$instance = new self($etcd, $config);
+        }
+
+        return null;
     }
 
     /**
