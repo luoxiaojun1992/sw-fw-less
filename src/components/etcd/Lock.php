@@ -80,7 +80,7 @@ class Lock
                 //Defer
                 if ($ttl >= 2) {
                     $deferTimerId = swoole_timer_tick(1000, function () use ($key) {
-                        $this->etcd->defer($key);
+                        $this->etcd->defer($this->lockKeyWithPrefix($key));
                     });
                 }
 
@@ -125,7 +125,7 @@ class Lock
      */
     public function defer($key)
     {
-        return $this->etcd->defer($key);
+        return $this->etcd->defer($this->lockKeyWithPrefix($key));
     }
 
     private function addLockedKey($key, $guard = false)
