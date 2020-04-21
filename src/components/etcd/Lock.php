@@ -121,11 +121,12 @@ class Lock
      * Defer a lock
      *
      * @param $key
-     * @return bool|null
+     * @param $ttl
+     * @return bool
      */
-    public function defer($key)
+    public function defer($key, $ttl)
     {
-        return $this->etcd->defer($this->lockKeyWithPrefix($key));
+        return $this->etcd->expire($this->lockKeyWithPrefix($key), $ttl);
     }
 
     private function addLockedKey($key, $guard = false)
