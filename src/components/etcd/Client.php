@@ -1,6 +1,6 @@
 <?php
 
-namespace SwFWLess\components\etcd;
+namespace SwFwLess\components\etcd;
 
 use Etcdserverpb\DeleteRangeRequest;
 use Etcdserverpb\KVClient;
@@ -46,25 +46,33 @@ class Client
 
     protected function createLease($ttl)
     {
-        list($leaseGrantResponse, $status) = $this->getLeaseClient()->LeaseGrant(
+        $leaseClient = $this->getLeaseClient();
+        $leaseClient->start();
+        list($leaseGrantResponse, $status) = $leaseClient->LeaseGrant(
             (new LeaseGrantRequest())->setTTL($ttl)
         );
         if ($status === 0) {
+            $leaseClient->close();
             return $leaseGrantResponse->getID();
         }
-        
+
+        $leaseClient->close();
         return null;
     }
 
     protected function leaseKeepAlive($id)
     {
-        list(, $status) = $this->getLeaseClient()->LeaseKeepAlive(
+        $leaseClient = $this->getLeaseClient();
+        $leaseClient->start();
+        list(, $status) = $leaseClient->LeaseKeepAlive(
             (new LeaseKeepAliveRequest())->setID($id)
         );
         if ($status === 0) {
+            $leaseClient->close();
             return true;
         }
 
+        $leaseClient->close();
         return false;
     }
 
@@ -77,23 +85,29 @@ class Client
                 return false;
             }
         }
-        
-        list(, $status) = $this->getKvClient()->Put(
+
+        $kvClient = $this->getKvClient();
+        $kvClient->start();
+        list(, $status) = $kvClient->Put(
             (new PutRequest())->setKey($key)
                 ->setValue($value)
                 ->setLease($leaseId)
         );
 
         if ($status === 0) {
+            $kvClient->close();
             return true;
         }
 
+        $kvClient->close();
         return false;
     }
 
     public function get($key)
     {
-        list($rangeResponse, $status) = $this->getKvClient()->Range(
+        $kvClient = $this->getKvClient();
+        $kvClient->start();
+        list($rangeResponse, $status) = $kvClient->Range(
             (new RangeRequest())->setKey($key)
                 ->setRangeEnd('\0')
                 ->setLimit(1)
@@ -101,10 +115,12 @@ class Client
 
         if ($status === 0) {
             foreach($rangeResponse->getKvs() as $kv) {
+                $kvClient->close();
                 return $kv->getValue();
             }
         }
 
+        $kvClient->close();
         return null;
     }
 
@@ -123,7 +139,9 @@ class Client
      */
     public function defer($key)
     {
-        list($rangeResponse, $status) = $this->getKvClient()->Range(
+        $kvClient = $this->getKvClient();
+        $kvClient->start();
+        list($rangeResponse, $status) = $kvClient->Range(
             (new RangeRequest())->setKey($key)
                 ->setRangeEnd('\0')
                 ->setLimit(1)
@@ -133,13 +151,16 @@ class Client
             foreach($rangeResponse->getKvs() as $kv) {
                 $leaseId = $kv->getLease();
                 if ($leaseId > 0) {
+                    $kvClient->close();
                     return $this->leaseKeepAlive($leaseId);
                 } else {
+                    $kvClient->close();
                     return false;
                 }
             }
         }
 
+        $kvClient->close();
         return false;
     }
 
@@ -150,30 +171,38 @@ class Client
             return false;
         }
 
-        list(, $status) = $this->getKvClient()->Put(
+        $kvClient = $this->getKvClient();
+        $kvClient->start();
+        list(, $status) = $kvClient->Put(
             (new PutRequest())->setKey($key)
                 ->setIgnoreValue(true)
                 ->setLease($leaseId)
         );
 
         if ($status === 0) {
+            $kvClient->close();
             return true;
         }
 
+        $kvClient->close();
         return false;
     }
 
     public function del($key)
     {
-        list($deleteRangeResponse, $status) = $this->getKvClient()->DeleteRange(
+        $kvClient = $this->getKvClient();
+        $kvClient->start();
+        list($deleteRangeResponse, $status) = $kvClient->DeleteRange(
             (new DeleteRangeRequest())->setKey($key)
                 ->setRangeEnd('\0')
         );
 
         if ($status === 0) {
+            $kvClient->close();
             return $deleteRangeResponse->getDeleted() === 1;
         }
 
+        $kvClient->close();
         return false;
     }
 
@@ -191,7 +220,9 @@ class Client
             }
         }
 
-        list($putResponse, $status) = $this->getKvClient()->Put(
+        $kvClient = $this->getKvClient();
+        $kvClient->start();
+        list($putResponse, $status) = $kvClient->Put(
             (new PutRequest())->setKey($key)
                 ->setValue('lock')
                 ->setPrevKv(true)
@@ -199,9 +230,11 @@ class Client
         );
 
         if ($status === 0) {
+            $kvClient->close();
             return $putResponse->getPrevKv() === null;
         }
 
+        $kvClient->close();
         return false;
     }
 
@@ -224,7 +257,9 @@ class Client
             }
         }
 
-        list($putResponse, $status) = $this->getKvClient()->Put(
+        $kvClient = $this->getKvClient();
+        $kvClient->start();
+        list($putResponse, $status) = $kvClient->Put(
             (new PutRequest())->setKey($key)
                 ->setValue('lock')
                 ->setPrevKv(true)
@@ -233,9 +268,11 @@ class Client
 
         if ($status === 0) {
             $prevKey = $putResponse->getPrevKv();
+            $kvClient->close();
             return ($prevKey === null) ? 1 : ($prevKey->getVersion() + 1);
         }
 
+        $kvClient->close();
         return false;
     }
 }

@@ -2,11 +2,13 @@
 
 namespace SwFwLess\facades\etcd;
 
-use SwFWLess\components\etcd\Client;
+use SwFwLess\components\etcd\Client;
 use SwFwLess\facades\AbstractFacade;
 
 /**
  * Class Etcd
+ *
+ * @mixin Client
  * @package SwFwLess\facades\etcd
  */
 class Etcd extends AbstractFacade
