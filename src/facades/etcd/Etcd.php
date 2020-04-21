@@ -7,8 +7,7 @@ use SwFwLess\facades\AbstractFacade;
 
 /**
  * Class Etcd
- *
- * @mixin Client
+ * @package SwFwLess\facades\etcd
  */
 class Etcd extends AbstractFacade
 {
