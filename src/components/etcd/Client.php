@@ -209,25 +209,34 @@ class Client
     public function lock($key, $ttl = 0)
     {
         if (!is_null($this->get($key))) {
-            $ttl = 0;
+            $ttl = -1;
         }
 
-        $leaseId = 0;
         if ($ttl > 0) {
             $leaseId = $this->createLease($ttl);
             if (is_null($leaseId)) {
                 return false;
             }
+        } elseif ($ttl < 0) {
+            $leaseId = -1;
+        } else {
+            $leaseId = 0;
         }
 
         $kvClient = $this->getKvClient();
         $kvClient->start();
-        list($putResponse, $status) = $kvClient->Put(
-            (new PutRequest())->setKey($key)
-                ->setValue('lock')
-                ->setPrevKv(true)
-                ->setLease($leaseId)
-        );
+
+        $putRequest = (new PutRequest())->setKey($key)
+            ->setValue($key)
+            ->setPrevKv(true);
+
+        if ($leaseId >= 0) {
+            $putRequest->setLease($leaseId);
+        } elseif ($leaseId < 0) {
+            $putRequest->setIgnoreLease(true);
+        }
+
+        list($putResponse, $status) = $kvClient->Put($putRequest);
 
         if ($status === 0) {
             $kvClient->close();
@@ -246,25 +255,34 @@ class Client
     public function incr($key, $ttl = 0)
     {
         if (!is_null($this->get($key))) {
-            $ttl = 0;
+            $ttl = -1;
         }
 
-        $leaseId = 0;
         if ($ttl > 0) {
             $leaseId = $this->createLease($ttl);
             if (is_null($leaseId)) {
                 return false;
             }
+        } elseif ($ttl < 0) {
+            $leaseId = -1;
+        } else {
+            $leaseId = 0;
         }
 
         $kvClient = $this->getKvClient();
         $kvClient->start();
-        list($putResponse, $status) = $kvClient->Put(
-            (new PutRequest())->setKey($key)
-                ->setValue('lock')
-                ->setPrevKv(true)
-                ->setLease($leaseId)
-        );
+
+        $putRequest = (new PutRequest())->setKey($key)
+            ->setValue($key)
+            ->setPrevKv(true);
+
+        if ($leaseId >= 0) {
+            $putRequest->setLease($leaseId);
+        } elseif ($leaseId < 0) {
+            $putRequest->setIgnoreLease(true);
+        }
+
+        list($putResponse, $status) = $kvClient->Put($putRequest);
 
         if ($status === 0) {
             $prevKey = $putResponse->getPrevKv();
