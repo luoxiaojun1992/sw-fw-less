@@ -67,10 +67,10 @@ class Tracer
     /** @var Request */
     private $request;
 
-    public static function create(?Request $request = null)
+    public static function create(?Request $request = null, $cid = null)
     {
         $request = $request ?? request();
-        if ($instance = self::fetch($request->getCid())) {
+        if ($instance = self::fetch($cid ?? ($request->getCid()))) {
             return $instance;
         }
 
