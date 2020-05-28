@@ -24,10 +24,17 @@ class HttpClient
      * @param SwfRequest $swfRequest
      * @param string $spanName
      * @param bool $injectSpanCtx
+     * @param bool $flushTracing
      * @return mixed|\Psr\Http\Message\ResponseInterface|null
      * @throws \Throwable
      */
-    public function send(SaberRequest $saberRequest, $swfRequest = null, $spanName = null, $injectSpanCtx = true)
+    public function send(
+        SaberRequest $saberRequest,
+        $swfRequest = null,
+        $spanName = null,
+        $injectSpanCtx = true,
+        $flushTracing = false
+    )
     {
         $swfRequest = $swfRequest ?? request();
         /** @var Tracer $swfTracer */
@@ -89,6 +96,6 @@ class HttpClient
                         }
                     }
                 }
-            });
+            }, $flushTracing);
     }
 }
