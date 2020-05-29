@@ -34,7 +34,7 @@ class Helper
         }
 
         foreach ($keys as $key) {
-            if (array_key_exists($key, $arr)) {
+            if (is_array($arr) && array_key_exists($key, $arr)) {
                 $arr = $arr[$key];
             } else {
                 $arr = $default;
