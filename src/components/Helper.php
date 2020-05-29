@@ -14,7 +14,7 @@ class Helper
      */
     public static function arrGet($arr, $key, $default = null)
     {
-        return isset($arr[$key]) ? $arr[$key] : $default;
+        return array_key_exists($key, $arr) ? $arr[$key] : $default;
     }
 
     /**
