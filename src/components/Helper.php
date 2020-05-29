@@ -14,14 +14,37 @@ class Helper
      */
     public static function arrGet($arr, $key, $default = null)
     {
+        if (is_null($arr)) {
+            return $default;
+        }
+
         return array_key_exists($key, $arr) ? $arr[$key] : $default;
+    }
+
+    /**
+     * @param $arr
+     * @param $key
+     * @param $value
+     */
+    public static function arrSet(&$arr, $key, $value)
+    {
+        $arr[$key] = $value;
+    }
+
+    /**
+     * @param $arr
+     * @param $key
+     */
+    public static function arrForget(&$arr, $key)
+    {
+        unset($arr[$key]);
     }
 
     /**
      * @param $arr
      * @param $keys
      * @param null $default
-     * @return null
+     * @return mixed
      */
     public static function nestedArrGet($arr, $keys, $default = null)
     {
@@ -43,6 +66,52 @@ class Helper
         }
 
         return $arr;
+    }
+
+    /**
+     * @param $arr
+     * @param $keys
+     * @param $value
+     */
+    public static function nestedArrSet(&$arr, $keys, $value)
+    {
+        if (is_null($keys)) {
+            $arr = $value;
+            return;
+        }
+
+        $keys = explode('.', $keys);
+
+        while (count($keys) > 1) {
+            $key = array_shift($keys);
+
+            if (!isset($arr[$key]) || !is_array($arr[$key])) {
+                $arr[$key] = [];
+            }
+
+            $arr = &$arr[$key];
+        }
+
+        $arr[array_shift($keys)] = $value;
+    }
+
+    /**
+     * @param $arr
+     * @param $keys
+     */
+    public static function nestedArrForget(&$arr, $keys)
+    {
+        $keys = explode('.', $keys);
+
+        while (count($keys) > 1) {
+            $key = array_shift($keys);
+
+            if (isset($arr[$key]) && is_array($arr[$key])) {
+                $arr = &$arr[$key];
+            }
+        }
+
+        unset($arr[array_shift($keys)]);
     }
 
     /**

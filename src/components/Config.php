@@ -48,4 +48,14 @@ class Config
             return $config;
         });
     }
+
+    public static function set($key, $value)
+    {
+        Helper::nestedArrSet(static::$config, $key, $value);
+    }
+
+    public static function forget($key)
+    {
+        Helper::nestedArrForget(static::$config, $key);
+    }
 }
