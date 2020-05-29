@@ -2,7 +2,9 @@
 
 class HelperTest extends \PHPUnit\Framework\TestCase
 {
-    protected static $arr;
+    protected static $testSetArr;
+
+    protected static $testForgetArr;
 
     public function testNestedArrGet()
     {
@@ -16,10 +18,10 @@ class HelperTest extends \PHPUnit\Framework\TestCase
         \SwFwLess\components\Helper::nestedArrSet($arr, 'a.k', 'l');
         $this->assertEquals(['a' => ['b' => 'c', 'g' => 'h', 'k' => 'l'], 'd' => ['e' => 'f', 'i' => 'j']], $arr);
 
-        static::$arr = ['a' => ['b' => 'c', 'g' => 'h'], 'd' => ['e' => 'f', 'i' => 'j']];
-        \SwFwLess\components\Helper::nestedArrSet(static::$arr, 'a.k', 'l');
-        $this->assertEquals(['a' => ['b' => 'c', 'g' => 'h', 'k' => 'l'], 'd' => ['e' => 'f', 'i' => 'j']], static::$arr);
-        static::$arr = null;
+        static::$testSetArr = ['a' => ['b' => 'c', 'g' => 'h'], 'd' => ['e' => 'f', 'i' => 'j']];
+        \SwFwLess\components\Helper::nestedArrSet(static::$testSetArr, 'a.k', 'l');
+        $this->assertEquals(['a' => ['b' => 'c', 'g' => 'h', 'k' => 'l'], 'd' => ['e' => 'f', 'i' => 'j']], static::$testSetArr);
+        static::$testSetArr = null;
     }
 
     public function testNestedArrForget()
@@ -28,9 +30,9 @@ class HelperTest extends \PHPUnit\Framework\TestCase
         \SwFwLess\components\Helper::nestedArrForget($arr, 'd.e');
         $this->assertEquals(['a' => ['b' => 'c', 'g' => 'h'], 'd' => ['i' => 'j']], $arr);
 
-        static::$arr = ['a' => ['b' => 'c', 'g' => 'h'], 'd' => ['e' => 'f', 'i' => 'j']];
-        \SwFwLess\components\Helper::nestedArrForget(static::$arr, 'd.e');
-        $this->assertEquals(['a' => ['b' => 'c', 'g' => 'h'], 'd' => ['i' => 'j']], static::$arr);
-        static::$arr = null;
+        static::$testForgetArr = ['a' => ['b' => 'c', 'g' => 'h'], 'd' => ['e' => 'f', 'i' => 'j']];
+        \SwFwLess\components\Helper::nestedArrForget(static::$testForgetArr, 'd.e');
+        $this->assertEquals(['a' => ['b' => 'c', 'g' => 'h'], 'd' => ['i' => 'j']], static::$testForgetArr);
+        static::$testForgetArr = null;
     }
 }
