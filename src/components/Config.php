@@ -59,4 +59,13 @@ class Config
     {
         Helper::nestedArrForget(static::$config, $key);
     }
+
+    /**
+     * @param mixed $key
+     * @return bool
+     */
+    public static function has($key)
+    {
+        return Helper::nestedArrHas(static::$config, $key);
+    }
 }
