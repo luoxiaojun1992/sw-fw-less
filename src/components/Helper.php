@@ -27,6 +27,9 @@ class Helper
         if (is_null($arr)) {
             return $default;
         }
+        if (!is_string($key)) {
+            return $default;
+        }
 
         return static::arrHas($arr, $key) ? $arr[$key] : $default;
     }
@@ -38,6 +41,13 @@ class Helper
      */
     public static function arrSet(&$arr, $key, $value)
     {
+        if (is_null($arr)) {
+            return;
+        }
+        if (!is_string($key)) {
+            return;
+        }
+
         $arr[$key] = $value;
     }
 
@@ -47,6 +57,13 @@ class Helper
      */
     public static function arrForget(&$arr, $key)
     {
+        if (is_null($arr)) {
+            return;
+        }
+        if (!is_string($key)) {
+            return;
+        }
+
         unset($arr[$key]);
     }
 
@@ -57,7 +74,15 @@ class Helper
      */
     public static function nestedArrHas($arr, $keys)
     {
+        if (is_null($arr)) {
+            return false;
+        }
+
         if (is_string($keys)) {
+            if (static::arrHas($arr, $keys)) {
+                return true;
+            }
+
             $keys = explode('.', $keys);
         } else {
             if (!is_array($keys)) {
@@ -90,7 +115,15 @@ class Helper
      */
     public static function nestedArrGet($arr, $keys, $default = null)
     {
+        if (is_null($arr)) {
+            return $default;
+        }
+
         if (is_string($keys)) {
+            if (static::arrHas($arr, $keys)) {
+                return static::arrGet($arr, $keys, $default);
+            }
+
             $keys = explode('.', $keys);
         } else {
             if (!is_array($keys)) {
@@ -119,12 +152,22 @@ class Helper
      */
     public static function nestedArrSet(&$arr, $keys, $value)
     {
-        if (is_null($keys)) {
-            $arr = $value;
+        if (is_null($arr)) {
             return;
         }
 
-        $keys = explode('.', $keys);
+        if (is_string($keys)) {
+            if (static::arrHas($arr, $keys)) {
+                static::arrSet($arr, $keys, $value);
+                return;
+            }
+
+            $keys = explode('.', $keys);
+        } else {
+            if (!is_array($keys)) {
+                return;
+            }
+        }
 
         while (count($keys) > 1) {
             $key = array_shift($keys);
@@ -145,7 +188,22 @@ class Helper
      */
     public static function nestedArrForget(&$arr, $keys)
     {
-        $keys = explode('.', $keys);
+        if (is_null($arr)) {
+            return;
+        }
+
+        if (is_string($keys)) {
+            if (static::arrHas($arr, $keys)) {
+                static::arrForget($arr, $keys);
+                return;
+            }
+
+            $keys = explode('.', $keys);
+        } else {
+            if (!is_array($keys)) {
+                return;
+            }
+        }
 
         while (count($keys) > 1) {
             $key = array_shift($keys);
