@@ -11,17 +11,37 @@ class KernelProvider extends AbstractProvider
      */
     public static function init($providers)
     {
-        static::$providers = self::mergeComposerProviders($providers);
+        static::$providers = static::mergeProviders(
+            $providers,
+            self::composerProviders()
+        );
     }
 
-    private static function mergeComposerProviders($providers)
+    /**
+     * 优先执行core providers，保证composer providers能使用核心资源
+     *
+     * @param $configProviders
+     * @param $composerProviders
+     * @return array
+     */
+    private static function mergeProviders($configProviders, $composerProviders)
     {
+        return [$configProviders, $composerProviders];
+    }
+
+    /**
+     * @return mixed
+     */
+    private static function composerProviders()
+    {
+        $providers = [];
+
         $composerInstalled = file_get_contents(APP_BASE_PATH . 'vendor/composer/installed.json');
         if ($composerInstalled) {
             $packages = json_decode($composerInstalled, true);
             foreach ($packages as $package) {
                 if (isset($package['extra']['sw-fw-less']['provider'])) {
-                    array_push($providers, $package['extra']['sw-fw-less']['provider']);
+                    array_merge($providers, $package['extra']['sw-fw-less']['provider']);
                 }
             }
         }
@@ -36,8 +56,10 @@ class KernelProvider extends AbstractProvider
     {
         parent::bootApp();
 
-        foreach (static::$providers as $provider) {
-            call_user_func([$provider, 'bootApp']);
+        foreach (static::$providers as $providers) {
+            foreach ($providers as $provider) {
+                call_user_func([$provider, 'bootApp']);
+            }
         }
     }
 
@@ -48,8 +70,10 @@ class KernelProvider extends AbstractProvider
     {
         parent::bootWorker();
 
-        foreach (static::$providers as $provider) {
-            call_user_func([$provider, 'bootWorker']);
+        foreach (static::$providers as $providers) {
+            foreach ($providers as $provider) {
+                call_user_func([$provider, 'bootWorker']);
+            }
         }
     }
 
@@ -60,8 +84,10 @@ class KernelProvider extends AbstractProvider
     {
         parent::bootRequest();
 
-        foreach (static::$providers as $provider) {
-            call_user_func([$provider, 'bootRequest']);
+        foreach (static::$providers as $providers) {
+            foreach ($providers as $provider) {
+                call_user_func([$provider, 'bootRequest']);
+            }
         }
     }
 
@@ -69,8 +95,10 @@ class KernelProvider extends AbstractProvider
     {
         parent::shutdownApp();
 
-        foreach (static::$providers as $provider) {
-            call_user_func([$provider, 'shutdownApp']);
+        foreach (static::$providers as $providers) {
+            foreach ($providers as $provider) {
+                call_user_func([$provider, 'shutdownApp']);
+            }
         }
     }
 
@@ -78,8 +106,10 @@ class KernelProvider extends AbstractProvider
     {
         parent::shutdownWorker();
 
-        foreach (static::$providers as $provider) {
-            call_user_func([$provider, 'shutdownWorker']);
+        foreach (static::$providers as $providers) {
+            foreach ($providers as $provider) {
+                call_user_func([$provider, 'shutdownWorker']);
+            }
         }
     }
 
@@ -87,8 +117,10 @@ class KernelProvider extends AbstractProvider
     {
         parent::shutdownResponse();
 
-        foreach (static::$providers as $provider) {
-            call_user_func([$provider, 'shutdownResponse']);
+        foreach (static::$providers as $providers) {
+            foreach ($providers as $provider) {
+                call_user_func([$provider, 'shutdownResponse']);
+            }
         }
     }
 }
