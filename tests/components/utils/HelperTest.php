@@ -6,6 +6,13 @@ class HelperTest extends \PHPUnit\Framework\TestCase
 
     protected static $testForgetArr;
 
+    public function testNestedArrHas()
+    {
+        $arr = ['a' => ['b' => 'c', 'g' => 'h'], 'd' => ['e' => 'f', 'i' => 'j']];
+        $this->assertTrue(\SwFwLess\components\Helper::nestedArrHas($arr, 'a.g'));
+        $this->assertFalse(\SwFwLess\components\Helper::nestedArrHas($arr, 'a.e'));
+    }
+
     public function testNestedArrGet()
     {
         $arr = ['a' => ['b' => 'c', 'g' => 'h'], 'd' => ['e' => 'f', 'i' => 'j']];

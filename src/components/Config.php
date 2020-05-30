@@ -39,10 +39,11 @@ class Config
                 return $default;
             }
 
-            $config = Helper::nestedArrGet(static::$config, $key, $default);
-
-            if ($config !== $default) {
+            if (Helper::nestedArrHas(static::$config, $key)) {
+                $config = Helper::nestedArrGet(static::$config, $key, $default);
                 self::$configCache[$key] = $config;
+            } else {
+                $config = $default;
             }
 
             return $config;

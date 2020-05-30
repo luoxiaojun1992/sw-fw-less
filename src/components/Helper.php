@@ -9,6 +9,16 @@ class Helper
     /**
      * @param $arr
      * @param $key
+     * @return bool
+     */
+    public static function arrHas($arr, $key)
+    {
+        return array_key_exists($key, $arr);
+    }
+
+    /**
+     * @param $arr
+     * @param $key
      * @param null $default
      * @return null
      */
@@ -18,7 +28,7 @@ class Helper
             return $default;
         }
 
-        return array_key_exists($key, $arr) ? $arr[$key] : $default;
+        return static::arrHas($arr, $key) ? $arr[$key] : $default;
     }
 
     /**
@@ -43,6 +53,38 @@ class Helper
     /**
      * @param $arr
      * @param $keys
+     * @return bool
+     */
+    public static function nestedArrHas($arr, $keys)
+    {
+        if (is_string($keys)) {
+            $keys = explode('.', $keys);
+        } else {
+            if (!is_array($keys)) {
+                return false;
+            }
+        }
+
+        $existed = false;
+
+        $subConfig = $arr;
+
+        foreach ($keys as $key) {
+            if (is_array($subConfig) && array_key_exists($key, $subConfig)) {
+                $subConfig = $subConfig[$key];
+                $existed = true;
+            } else {
+                $existed = false;
+                break;
+            }
+        }
+
+        return $existed;
+    }
+
+    /**
+     * @param $arr
+     * @param $keys
      * @param null $default
      * @return mixed
      */
@@ -56,16 +98,18 @@ class Helper
             }
         }
 
+        $subConfig = $arr;
+
         foreach ($keys as $key) {
-            if (is_array($arr) && array_key_exists($key, $arr)) {
-                $arr = $arr[$key];
+            if (is_array($subConfig) && array_key_exists($key, $subConfig)) {
+                $subConfig = $subConfig[$key];
             } else {
-                $arr = $default;
+                $subConfig = $default;
                 break;
             }
         }
 
-        return $arr;
+        return $subConfig;
     }
 
     /**
@@ -108,6 +152,8 @@ class Helper
 
             if (isset($arr[$key]) && is_array($arr[$key])) {
                 $arr = &$arr[$key];
+            } else {
+                return;
             }
         }
 
