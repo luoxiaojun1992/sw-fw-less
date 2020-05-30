@@ -33,6 +33,10 @@ class HelperTest extends \PHPUnit\Framework\TestCase
         \SwFwLess\components\Helper::nestedArrSet($arr3, 'c.k', 'l');
         $this->assertEquals(['a' => ['b' => 'c', 'g' => 'h'], 'd' => ['e' => 'f', 'i' => 'j'], 'c' => ['k' => 'l']], $arr3);
 
+        $arr4 = ['a' => ['b' => 'c', 'g' => 'h'], 'd' => ['e' => 'f', 'i' => 'j']];
+        \SwFwLess\components\Helper::nestedArrSet($arr4, 'c', 'l');
+        $this->assertEquals(['a' => ['b' => 'c', 'g' => 'h'], 'd' => ['e' => 'f', 'i' => 'j'], 'c' => 'l'], $arr4);
+
         static::$testSetArr = ['a' => ['b' => 'c', 'g' => 'h'], 'd' => ['e' => 'f', 'i' => 'j']];
         \SwFwLess\components\Helper::nestedArrSet(static::$testSetArr, 'a.k', 'l');
         $this->assertEquals(['a' => ['b' => 'c', 'g' => 'h', 'k' => 'l'], 'd' => ['e' => 'f', 'i' => 'j']], static::$testSetArr);
