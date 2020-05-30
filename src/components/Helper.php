@@ -185,7 +185,11 @@ class Helper
         while (count($keys) > 1) {
             $key = array_shift($keys);
 
-            if (!isset($arr[$key]) || !is_array($arr[$key])) {
+            if (array_key_exists($key, $arr)) {
+                if (!is_array($arr[$key])) {
+                    return;
+                }
+            } else {
                 $arr[$key] = [];
             }
 
