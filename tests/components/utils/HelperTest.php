@@ -25,6 +25,14 @@ class HelperTest extends \PHPUnit\Framework\TestCase
         \SwFwLess\components\Helper::nestedArrSet($arr, 'a.k', 'l');
         $this->assertEquals(['a' => ['b' => 'c', 'g' => 'h', 'k' => 'l'], 'd' => ['e' => 'f', 'i' => 'j']], $arr);
 
+        $arr2 = ['a' => ['b' => 'c', 'g' => 'h'], 'd' => ['e' => 'f', 'i' => 'j']];
+        \SwFwLess\components\Helper::nestedArrSet($arr2, 'a.b.d', 'l');
+        $this->assertEquals(['a' => ['b' => 'c', 'g' => 'h'], 'd' => ['e' => 'f', 'i' => 'j']], $arr2);
+
+        $arr3 = ['a' => ['b' => 'c', 'g' => 'h'], 'd' => ['e' => 'f', 'i' => 'j']];
+        \SwFwLess\components\Helper::nestedArrSet($arr3, 'c.k', 'l');
+        $this->assertEquals(['a' => ['b' => 'c', 'g' => 'h'], 'd' => ['e' => 'f', 'i' => 'j'], 'c' => ['k' => 'l']], $arr3);
+
         static::$testSetArr = ['a' => ['b' => 'c', 'g' => 'h'], 'd' => ['e' => 'f', 'i' => 'j']];
         \SwFwLess\components\Helper::nestedArrSet(static::$testSetArr, 'a.k', 'l');
         $this->assertEquals(['a' => ['b' => 'c', 'g' => 'h', 'k' => 'l'], 'd' => ['e' => 'f', 'i' => 'j']], static::$testSetArr);
