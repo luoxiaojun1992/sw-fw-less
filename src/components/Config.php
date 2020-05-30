@@ -21,9 +21,9 @@ class Config
     }
 
     /**
-     * @param $key
-     * @param null $default
-     * @return array|mixed|null
+     * @param mixed $key
+     * @param mixed $default
+     * @return mixed
      */
     public static function get($key, $default = null)
     {
@@ -32,10 +32,7 @@ class Config
                 return self::$configCache[$key];
             }
 
-            if (!$key) {
-                return $default;
-            }
-            if (!is_string($key) && !is_array($key)) {
+            if (!is_string($key) && !is_array($key) && !is_int($key)) {
                 return $default;
             }
 
@@ -52,11 +49,19 @@ class Config
 
     public static function set($key, $value)
     {
+        if (!is_string($key) && !is_array($key) && !is_int($key)) {
+            return;
+        }
+
         Helper::nestedArrSet(static::$config, $key, $value);
     }
 
     public static function forget($key)
     {
+        if (!is_string($key) && !is_array($key) && !is_int($key)) {
+            return;
+        }
+
         Helper::nestedArrForget(static::$config, $key);
     }
 
@@ -66,6 +71,10 @@ class Config
      */
     public static function has($key)
     {
+        if (!is_string($key) && !is_array($key) && !is_int($key)) {
+            return false;
+        }
+
         return Helper::nestedArrHas(static::$config, $key);
     }
 }

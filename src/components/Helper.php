@@ -13,6 +13,13 @@ class Helper
      */
     public static function arrHas($arr, $key)
     {
+        if (is_null($arr)) {
+            return false;
+        }
+        if (!is_string($key) && !is_int($key)) {
+            return false;
+        }
+
         return array_key_exists($key, $arr);
     }
 
@@ -27,7 +34,7 @@ class Helper
         if (is_null($arr)) {
             return $default;
         }
-        if (!is_string($key)) {
+        if (!is_string($key) && !is_int($key)) {
             return $default;
         }
 
@@ -44,7 +51,7 @@ class Helper
         if (is_null($arr)) {
             return;
         }
-        if (!is_string($key)) {
+        if (!is_string($key) && !is_int($key)) {
             return;
         }
 
@@ -60,7 +67,7 @@ class Helper
         if (is_null($arr)) {
             return;
         }
-        if (!is_string($key)) {
+        if (!is_string($key) && !is_int($key)) {
             return;
         }
 
@@ -84,6 +91,8 @@ class Helper
             }
 
             $keys = explode('.', $keys);
+        } elseif (is_int($keys)) {
+            $keys = [$keys];
         } else {
             if (!is_array($keys)) {
                 return false;
@@ -125,6 +134,8 @@ class Helper
             }
 
             $keys = explode('.', $keys);
+        } elseif (is_int($keys)) {
+            $keys = [$keys];
         } else {
             if (!is_array($keys)) {
                 return $default;
@@ -163,6 +174,8 @@ class Helper
             }
 
             $keys = explode('.', $keys);
+        } elseif (is_int($keys)) {
+            $keys = [$keys];
         } else {
             if (!is_array($keys)) {
                 return;
@@ -199,6 +212,8 @@ class Helper
             }
 
             $keys = explode('.', $keys);
+        } elseif (is_int($keys)) {
+            $keys = [$keys];
         } else {
             if (!is_array($keys)) {
                 return;
