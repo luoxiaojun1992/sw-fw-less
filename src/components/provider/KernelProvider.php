@@ -29,6 +29,22 @@ class KernelProvider extends AbstractProvider
         return [$configProviders, $composerProviders];
     }
 
+    protected static function excludedComposerProviders()
+    {
+        $composerJsonPath = APP_BASE_PATH . 'composer.json';
+        if (file_exists($composerJsonPath)) {
+            $composerJson = file_get_contents($composerJsonPath);
+            if ($composerJson) {
+                $composerConfig = json_decode($composerJson, true);
+                if (isset($composerConfig['extra']['sw-fw-less']['excluded'])) {
+                    return $composerConfig['extra']['sw-fw-less']['excluded'];
+                }
+            }
+        }
+
+        return [];
+    }
+
     /**
      * @return mixed
      */
@@ -39,9 +55,14 @@ class KernelProvider extends AbstractProvider
         $composerInstalled = file_get_contents(APP_BASE_PATH . 'vendor/composer/installed.json');
         if ($composerInstalled) {
             $packages = json_decode($composerInstalled, true);
+            $excludedProviders = static::excludedComposerProviders();
             foreach ($packages as $package) {
-                if (isset($package['extra']['sw-fw-less']['provider'])) {
-                    array_merge($providers, $package['extra']['sw-fw-less']['provider']);
+                if (isset($package['extra']['sw-fw-less']['providers'])) {
+                    $composerProviders = array_diff(
+                        $package['extra']['sw-fw-less']['providers'],
+                        $excludedProviders
+                    );
+                    $providers = array_merge($providers, $composerProviders);
                 }
             }
         }
