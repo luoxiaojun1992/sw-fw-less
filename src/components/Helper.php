@@ -13,7 +13,7 @@ class Helper
      */
     public static function arrHas($arr, $key)
     {
-        if (is_null($arr)) {
+        if (!is_array($arr)) {
             return false;
         }
         if (!is_string($key) && !is_int($key)) {
@@ -31,7 +31,7 @@ class Helper
      */
     public static function arrGet($arr, $key, $default = null)
     {
-        if (is_null($arr)) {
+        if (!is_array($arr)) {
             return $default;
         }
         if (!is_string($key) && !is_int($key)) {
@@ -48,7 +48,7 @@ class Helper
      */
     public static function arrSet(&$arr, $key, $value)
     {
-        if (is_null($arr)) {
+        if (!is_array($arr)) {
             return;
         }
         if (!is_string($key) && !is_int($key)) {
@@ -64,7 +64,7 @@ class Helper
      */
     public static function arrForget(&$arr, $key)
     {
-        if (is_null($arr)) {
+        if (!is_array($arr)) {
             return;
         }
         if (!is_string($key) && !is_int($key)) {
@@ -81,7 +81,7 @@ class Helper
      */
     public static function nestedArrHas($arr, $keys)
     {
-        if (is_null($arr)) {
+        if (!is_array($arr)) {
             return false;
         }
 
@@ -124,7 +124,7 @@ class Helper
      */
     public static function nestedArrGet($arr, $keys, $default = null)
     {
-        if (is_null($arr)) {
+        if (!is_array($arr)) {
             return $default;
         }
 
@@ -163,7 +163,7 @@ class Helper
      */
     public static function nestedArrSet(&$arr, $keys, $value)
     {
-        if (is_null($arr)) {
+        if (!is_array($arr)) {
             return;
         }
 
@@ -205,7 +205,7 @@ class Helper
      */
     public static function nestedArrForget(&$arr, $keys)
     {
-        if (is_null($arr)) {
+        if (!is_array($arr)) {
             return;
         }
 
