@@ -160,8 +160,6 @@ class App
             defined('CONFIG_FORMAT') ? CONFIG_FORMAT : 'array'
         );
 
-        $this->loadRouter();
-
         //Boot providers
         KernelProvider::init(config('providers'));
         KernelProvider::bootApp();
