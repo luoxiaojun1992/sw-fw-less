@@ -7,8 +7,10 @@ use SwFwLess\components\grpc\Status;
 use SwFwLess\components\http\Response;
 use SwFwLess\exceptions\HttpException;
 
-class GrpcUnaryService extends BaseService
+abstract class GrpcUnaryService extends BaseService
 {
+    abstract public function requestMessageClass($method);
+
     public function call()
     {
         //Verify protocol
@@ -42,17 +44,10 @@ class GrpcUnaryService extends BaseService
         $isGrpcJson = $this->getRequest()->isGrpcJson();
 
         $parameters = $this->getParameters();
-        $reflectionHandler = new \ReflectionMethod($this, $this->getHandler());
-        $handlerParameters = $reflectionHandler->getParameters();
-        foreach ($handlerParameters as $handlerParameter) {
-            if ($declaringClass = $handlerParameter->getClass()) {
-                if ($declaringClass->isSubclassOf(\Google\Protobuf\Internal\Message::class)) {
-                    $protoRequest = $declaringClass->newInstance();
-                    Serializer::unpack($protoRequest, $body, $isGrpc, (!$isGrpc) || $isGrpcJson);
-                    $parameters[$handlerParameter->getName()] = $protoRequest;
-                }
-            }
-        }
+        $requestMessageClass = $this->requestMessageClass($this->getHandler());
+        $protoRequest = new $requestMessageClass;
+        Serializer::unpack($protoRequest, $body, $isGrpc, (!$isGrpc) || $isGrpcJson);
+        $parameters['request'] = $protoRequest;
         $this->setParameters($parameters);
 
         return Response::grpc(parent::call(), 200, [], [], $isGrpcJson, $isGrpc);
