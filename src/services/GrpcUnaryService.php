@@ -2,6 +2,7 @@
 
 namespace SwFwLess\services;
 
+use Google\Protobuf\Internal\Message;
 use SwFwLess\components\grpc\Serializer;
 use SwFwLess\components\grpc\Status;
 use SwFwLess\components\http\Response;
@@ -44,10 +45,28 @@ abstract class GrpcUnaryService extends BaseService
         $isGrpcJson = $this->getRequest()->isGrpcJson();
 
         $parameters = $this->getParameters();
+
         $requestMessageClass = $this->requestMessageClass($this->getHandler());
-        $protoRequest = new $requestMessageClass;
-        Serializer::unpack($protoRequest, $body, $isGrpc, (!$isGrpc) || $isGrpcJson);
-        $parameters['request'] = $protoRequest;
+
+        if (is_null($requestMessageClass)) {
+            $reflectionHandler = new \ReflectionMethod($this, $this->getHandler());
+            $handlerParameters = $reflectionHandler->getParameters();
+            foreach ($handlerParameters as $handlerParameter) {
+                if ($declaringClass = $handlerParameter->getClass()) {
+                    if ($declaringClass->isSubclassOf(\Google\Protobuf\Internal\Message::class)) {
+                        /** @var Message $protoRequest */
+                        $protoRequest = $declaringClass->newInstance();
+                        Serializer::unpack($protoRequest, $body, $isGrpc, (!$isGrpc) || $isGrpcJson);
+                        $parameters[$handlerParameter->getName()] = $protoRequest;
+                    }
+                }
+            }
+        } else {
+            $protoRequest = new $requestMessageClass;
+            Serializer::unpack($protoRequest, $body, $isGrpc, (!$isGrpc) || $isGrpcJson);
+            $parameters['request'] = $protoRequest;
+        }
+
         $this->setParameters($parameters);
 
         return Response::grpc(parent::call(), 200, [], [], $isGrpcJson, $isGrpc);
