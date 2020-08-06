@@ -32,7 +32,7 @@ abstract class AbstractMysqlModel extends AbstractModel
         return config('mysql.connections.' . $connectionName . '.table_prefix', '');
     }
 
-    public static function tableName()
+    public static function tableName(): string
     {
         return (static::tablePrefix()) . (static::$table);
     }
