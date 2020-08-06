@@ -15,12 +15,34 @@ abstract class AbstractMysqlModel extends AbstractModel
 
     protected static $connectionName = null;
 
+    public static function connectionName(): string
+    {
+        $connectionName = static::$connectionName;
+
+        if (is_null($connectionName)) {
+            $connectionName = config('mysql.default', '');
+        }
+
+        return $connectionName;
+    }
+
+    public static function tablePrefix(): string
+    {
+        $connectionName = static::connectionName();
+        return config('mysql.connections.' . $connectionName . '.table_prefix', '');
+    }
+
+    public static function tableName()
+    {
+        return (static::tablePrefix()) . (static::$table);
+    }
+
     /**
      * @return ModelQuery|QueryInterface|SelectInterface|InsertInterface|DeleteInterface|UpdateInterface
      */
     public static function select()
     {
-        return ModelQuery::select('mysql', static::$connectionName)->from(static::$table)->setModelClass(static::class);
+        return ModelQuery::select('mysql', static::connectionName())->from(static::tableName())->setModelClass(static::class);
     }
 
     /**
@@ -28,7 +50,7 @@ abstract class AbstractMysqlModel extends AbstractModel
      */
     public static function update()
     {
-        return ModelQuery::update('mysql', static::$connectionName)->table(static::$table)->setModelClass(static::class);
+        return ModelQuery::update('mysql', static::connectionName())->table(static::tableName())->setModelClass(static::class);
     }
 
     /**
@@ -36,7 +58,7 @@ abstract class AbstractMysqlModel extends AbstractModel
      */
     public static function insert()
     {
-        return ModelQuery::insert('mysql', static::$connectionName)->into(static::$table)->setModelClass(static::class);
+        return ModelQuery::insert('mysql', static::connectionName())->into(static::tableName())->setModelClass(static::class);
     }
 
     /**
@@ -44,7 +66,7 @@ abstract class AbstractMysqlModel extends AbstractModel
      */
     public static function delete()
     {
-        return ModelQuery::delete('mysql', static::$connectionName)->from(static::$table)->setModelClass(static::class);
+        return ModelQuery::delete('mysql', static::connectionName())->from(static::tableName())->setModelClass(static::class);
     }
 
     /**
