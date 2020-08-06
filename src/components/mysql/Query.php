@@ -24,6 +24,8 @@ class Query
 
     private $connectionName;
 
+    private $tablePrefix;
+
     private $needRelease = true;
 
     private $lastInsertId;
@@ -47,7 +49,7 @@ class Query
     /**
      * @param string $db
      * @param string $connectionName
-     * @return \Aura\SqlQuery\Common\SelectInterface
+     * @return \Aura\SqlQuery\Common\SelectInterface|static
      */
     public static function select($db = 'mysql', $connectionName = null)
     {
@@ -57,7 +59,7 @@ class Query
     /**
      * @param string $db
      * @param string $connectionName
-     * @return \Aura\SqlQuery\Common\UpdateInterface
+     * @return \Aura\SqlQuery\Common\UpdateInterface|static
      */
     public static function update($db = 'mysql', $connectionName = null)
     {
@@ -67,7 +69,7 @@ class Query
     /**
      * @param string $db
      * @param string $connectionName
-     * @return \Aura\SqlQuery\Common\InsertInterface
+     * @return \Aura\SqlQuery\Common\InsertInterface|static
      */
     public static function insert($db = 'mysql', $connectionName = null)
     {
@@ -77,7 +79,7 @@ class Query
     /**
      * @param string $db
      * @param string $connectionName
-     * @return \Aura\SqlQuery\Common\DeleteInterface
+     * @return \Aura\SqlQuery\Common\DeleteInterface|static
      */
     public static function delete($db = 'mysql', $connectionName = null)
     {
@@ -87,11 +89,8 @@ class Query
     public function __construct($db, $connectionName)
     {
         $this->db = $db;
-
-        if (is_null($connectionName)) {
-            $connectionName = config($this->db . '.default');
-        }
-        $this->connectionName = $connectionName;
+        $this->connectionName = static::connectionName($this->db, $connectionName);
+        $this->tablePrefix = static::tablePrefix($this->db, $this->connectionName);
 
         $this->auraQuery = new QueryFactory($db);
     }
@@ -351,5 +350,52 @@ class Query
     {
         $this->affectedRows = $affectedRows;
         return $this;
+    }
+
+    public function fromWithPrefix($table, $alias = null)
+    {
+        $tableWithPrefix = $this->tablePrefix . $table;
+        $this->auraQuery->from(is_null($alias) ? $tableWithPrefix : ($tableWithPrefix . ' AS ' . $alias));
+        return $this;
+    }
+
+    public function tableWithPrefix($table, $alias = null)
+    {
+        $tableWithPrefix = $this->tablePrefix . $table;
+        $this->auraQuery->table(is_null($alias) ? $tableWithPrefix : ($tableWithPrefix . ' AS ' . $alias));
+        return $this;
+    }
+
+    public function intoWithPrefix($table, $alias = null)
+    {
+        $tableWithPrefix = $this->tablePrefix . $table;
+        $this->auraQuery->into(is_null($alias) ? $tableWithPrefix : ($tableWithPrefix . ' AS ' . $alias));
+        return $this;
+    }
+
+    public function joinWithPrefix($join, $table, $alias = null, $cond = null, array $bind = array())
+    {
+        $tableWithPrefix = $this->tablePrefix . $table;
+        $this->auraQuery->join(
+            $join,
+            is_null($alias) ? $tableWithPrefix : ($tableWithPrefix . ' AS ' . $alias),
+            $cond,
+            $bind
+        );
+        return $this;
+    }
+
+    public static function tablePrefix($db, $connectionName): string
+    {
+        return config($db . '.connections.' . $connectionName . '.table_prefix', '');
+    }
+
+    public static function connectionName($db, $connectionName = null): string
+    {
+        if (is_null($connectionName)) {
+            $connectionName = config($db . '.default', '');
+        }
+
+        return $connectionName;
     }
 }

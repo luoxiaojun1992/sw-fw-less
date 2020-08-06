@@ -8,6 +8,7 @@ use Aura\SqlQuery\Common\InsertInterface;
 use Aura\SqlQuery\Common\SelectInterface;
 use Aura\SqlQuery\Common\UpdateInterface;
 use Aura\SqlQuery\QueryInterface;
+use SwFwLess\components\mysql\Query;
 
 abstract class AbstractMysqlModel extends AbstractModel
 {
@@ -17,19 +18,12 @@ abstract class AbstractMysqlModel extends AbstractModel
 
     public static function connectionName(): string
     {
-        $connectionName = static::$connectionName;
-
-        if (is_null($connectionName)) {
-            $connectionName = config('mysql.default', '');
-        }
-
-        return $connectionName;
+        return Query::connectionName('mysql', static::$connectionName);
     }
 
     public static function tablePrefix(): string
     {
-        $connectionName = static::connectionName();
-        return config('mysql.connections.' . $connectionName . '.table_prefix', '');
+        return Query::tablePrefix('mysql', static::connectionName());
     }
 
     public static function tableName(): string
@@ -42,7 +36,7 @@ abstract class AbstractMysqlModel extends AbstractModel
      */
     public static function select()
     {
-        return ModelQuery::select('mysql', static::connectionName())->from(static::tableName())->setModelClass(static::class);
+        return ModelQuery::select('mysql', static::$connectionName)->fromWithPrefix(static::$table)->setModelClass(static::class);
     }
 
     /**
@@ -50,7 +44,7 @@ abstract class AbstractMysqlModel extends AbstractModel
      */
     public static function update()
     {
-        return ModelQuery::update('mysql', static::connectionName())->table(static::tableName())->setModelClass(static::class);
+        return ModelQuery::update('mysql', static::$connectionName)->tableWithPrefix(static::$table)->setModelClass(static::class);
     }
 
     /**
@@ -58,7 +52,7 @@ abstract class AbstractMysqlModel extends AbstractModel
      */
     public static function insert()
     {
-        return ModelQuery::insert('mysql', static::connectionName())->into(static::tableName())->setModelClass(static::class);
+        return ModelQuery::insert('mysql', static::$connectionName)->intoWithPrefix(static::$table)->setModelClass(static::class);
     }
 
     /**
@@ -66,7 +60,7 @@ abstract class AbstractMysqlModel extends AbstractModel
      */
     public static function delete()
     {
-        return ModelQuery::delete('mysql', static::connectionName())->from(static::tableName())->setModelClass(static::class);
+        return ModelQuery::delete('mysql', static::$connectionName)->fromWithPrefix(static::$table)->setModelClass(static::class);
     }
 
     /**
