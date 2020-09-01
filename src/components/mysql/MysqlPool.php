@@ -105,6 +105,8 @@ class MysqlPool
                     $pdo->reconnect();
                 }
 
+                $pdo->setRetry(false);
+
                 Scheduler::withoutPreemptive(function () use ($pdo) {
                     $this->pdoPool[$pdo->getConnectionName()][] = $pdo;
                 });

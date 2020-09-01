@@ -161,9 +161,10 @@ class Query
     /**
      * @param MysqlWrapper|null|\PDO $pdo
      * @param $mode
+     * @param bool $retry
      * @return mixed
      */
-    private function mysqlExecute($pdo = null, $mode = self::QUERY_TYPE_FETCH)
+    private function mysqlExecute($pdo = null, $mode = self::QUERY_TYPE_FETCH, $retry = false)
     {
         if ($pdo) {
             $this->needRelease = false;
@@ -176,9 +177,11 @@ class Query
             return $this->_doMysqlExecute($pdo, $mode);
         } catch (\PDOException $e) {
             if ($pdo) {
-                if (!$pdo->inTransaction() && Helper::causedByLostConnection($e)) {
+                if (Helper::causedByLostConnection($e)) {
                     $pdo->handleExecuteException($e);
-                    return $this->_doMysqlExecute($pdo, $mode);
+                    if ($retry && (!$pdo->inTransaction())) {
+                        return $this->_doMysqlExecute($pdo, $mode);
+                    }
                 }
             }
 
@@ -203,14 +206,15 @@ class Query
     /**
      * @param null $pdo
      * @param $mode
+     * @param bool $retry
      * @return mixed
      */
-    public function execute($pdo = null, $mode = 0)
+    public function execute($pdo = null, $mode = 0, $retry = false)
     {
         $method = $this->db . 'Execute';
         if (method_exists($this, $method)) {
-            return $this->executeWithEvents(function () use ($method, $pdo, $mode) {
-                return call_user_func_array([$this, $method], [$pdo, $mode]);
+            return $this->executeWithEvents(function () use ($method, $pdo, $mode, $retry) {
+                return call_user_func_array([$this, $method], [$pdo, $mode, $retry]);
             }, $mode);
         }
 

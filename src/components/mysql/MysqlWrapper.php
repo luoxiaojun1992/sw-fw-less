@@ -15,6 +15,7 @@ class MysqlWrapper
     private $pdo;
     private $needRelease = true;
     private $connectionName;
+    private $retry = false;
 
     public $bigQueryTimes = 0;
 
@@ -73,6 +74,24 @@ class MysqlWrapper
     }
 
     /**
+     * @return bool
+     */
+    public function isRetry(): bool
+    {
+        return $this->retry;
+    }
+
+    /**
+     * @param bool $retry
+     * @return $this
+     */
+    public function setRetry(bool $retry)
+    {
+        $this->retry = $retry;
+        return $this;
+    }
+
+    /**
      * @param $name
      * @param $arguments
      * @return mixed
@@ -93,9 +112,11 @@ class MysqlWrapper
             try {
                 return $this->callPdo($name, $arguments);
             } catch (\PDOException $e) {
-                if (!$this->inTransaction() && Helper::causedByLostConnection($e)) {
+                if (Helper::causedByLostConnection($e)) {
                     $this->handleExecuteException($e);
-                    return $this->callPdo($name, $arguments);
+                    if (($this->isRetry()) && (!$this->inTransaction())) {
+                        return $this->callPdo($name, $arguments);
+                    }
                 }
 
                 throw $e;
@@ -110,7 +131,7 @@ class MysqlWrapper
      */
     public function handleExecuteException(\PDOException $e)
     {
-        if (!$this->inTransaction() && Helper::causedByLostConnection($e)) {
+        if (Helper::causedByLostConnection($e)) {
             $this->reconnect();
         }
     }
