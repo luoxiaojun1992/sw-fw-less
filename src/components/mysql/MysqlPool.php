@@ -2,6 +2,7 @@
 
 namespace SwFwLess\components\mysql;
 
+use Carbon\Carbon;
 use SwFwLess\components\Helper;
 use Cake\Event\Event as CakeEvent;
 use SwFwLess\components\swoole\Scheduler;
@@ -68,12 +69,17 @@ class MysqlPool
         if (!isset($this->pdoPool[$connectionName])) {
             return null;
         }
+        /** @var MysqlWrapper $pdo */
         $pdo = Scheduler::withoutPreemptive(function () use ($connectionName) {
             return array_pop($this->pdoPool[$connectionName]);
         });
         if (!$pdo) {
             $pdo = $this->getConnect(false, $connectionName);
         } else {
+            if ($pdo->exceedIdleTimeout()) {
+                $pdo->reconnect();
+            }
+
             if ($this->config['pool_change_event']) {
                 event(
                     new CakeEvent(static::EVENT_MYSQL_POOL_CHANGE,
@@ -143,8 +149,11 @@ class MysqlPool
             $this->config['connections'][$connectionName]['options']
         );
         return (new MysqlWrapper())->setPDO($pdo)
+            ->setLastConnectedAt(Carbon::now())
+            ->setLastActivityAt()
             ->setNeedRelease($needRelease)
-            ->setConnectionName($connectionName);
+            ->setConnectionName($connectionName)
+            ->setIdleTimeout($this->config['connections'][$connectionName]['idle_timeout'] ?? 500);
     }
 
     /**

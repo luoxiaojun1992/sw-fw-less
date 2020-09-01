@@ -2,6 +2,8 @@
 
 namespace SwFwLess\components\mysql;
 
+use Carbon\Carbon;
+use Carbon\CarbonInterface;
 use SwFwLess\components\Helper;
 use SwFwLess\components\mysql\traits\MysqlTransaction;
 
@@ -16,6 +18,9 @@ class MysqlWrapper
     private $needRelease = true;
     private $connectionName;
     private $retry = false;
+    private $idleTimeout = 500; //seconds
+    private $lastConnectedAt;
+    private $lastActivityAt;
 
     public $bigQueryTimes = 0;
 
@@ -92,12 +97,72 @@ class MysqlWrapper
     }
 
     /**
+     * @return int
+     */
+    public function getIdleTimeout(): int
+    {
+        return $this->idleTimeout;
+    }
+
+    /**
+     * @param int $idleTimeout
+     * @return $this
+     */
+    public function setIdleTimeout(int $idleTimeout)
+    {
+        $this->idleTimeout = $idleTimeout;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getLastConnectedAt()
+    {
+        return $this->lastConnectedAt;
+    }
+
+    /**
+     * @param $lastConnectedAt
+     * @return $this
+     */
+    public function setLastConnectedAt($lastConnectedAt)
+    {
+        $this->lastConnectedAt = $lastConnectedAt;
+        return $this;
+    }
+
+    /**
+     * @return CarbonInterface
+     */
+    public function getLastActivityAt()
+    {
+        return $this->lastActivityAt;
+    }
+
+    /**
+     * @param null|CarbonInterface $lastActivityAt
+     * @return $this
+     */
+    public function setLastActivityAt($lastActivityAt = null)
+    {
+        $this->lastActivityAt = ($lastActivityAt ?: Carbon::now());
+        return $this;
+    }
+
+    public function exceedIdleTimeout()
+    {
+        return (Carbon::now()->diffInSeconds($this->getLastActivityAt())) > ($this->getIdleTimeout());
+    }
+
+    /**
      * @param $name
      * @param $arguments
      * @return mixed
      */
     private function callPdo($name, $arguments)
     {
+        $this->setLastActivityAt();
         return call_user_func_array([$this->pdo, $name], $arguments);
     }
 
@@ -139,6 +204,8 @@ class MysqlWrapper
     public function reconnect()
     {
         $this->setPDO(\SwFwLess\facades\MysqlPool::getConnect(false, $this->getConnectionName())->getPDO())
+            ->setLastConnectedAt(Carbon::now())
+            ->setLastActivityAt()
             ->setBigQueryTimes(0);
     }
 

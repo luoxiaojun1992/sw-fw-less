@@ -2,6 +2,7 @@
 
 namespace SwFwLess\components\mysql;
 
+use Carbon\Carbon;
 use SwFwLess\components\Helper;
 use SwFwLess\facades\MysqlPool;
 use Aura\SqlQuery\QueryFactory;
@@ -126,12 +127,15 @@ class Query
         $pdoStatement = $pdo->prepare($this->setSql($this->auraQuery->getStatement())->getSql());
         if ($pdoStatement) {
             $result = $pdoStatement->execute($this->setBindValues($this->auraQuery->getBindValues())->getBindValues());
+            $pdo->setLastActivityAt();
             if ($result) {
                 $this->setAffectedRows($pdoStatement->rowCount());
             }
             switch ($mode) {
                 case static::QUERY_TYPE_FETCH:
-                    return $result ? $pdoStatement->fetch(\PDO::FETCH_ASSOC) : [];
+                    $row = $result ? $pdoStatement->fetch(\PDO::FETCH_ASSOC) : [];
+                    $pdo->setLastActivityAt();
+                    return $row;
                 case static::QUERY_TYPE_FETCH_ALL:
                     if ($result) {
                         $queryResult = $pdoStatement->fetchAll(\PDO::FETCH_ASSOC);
@@ -145,13 +149,16 @@ class Query
                             }
                         }
 
+                        $pdo->setLastActivityAt();
                         return $queryResult;
                     }
 
                     return [];
                 case static::QUERY_TYPE_WRITE:
                     $this->setLastInsertId($pdo->lastInsertId());
-                    return $this->getAffectedRows();
+                    $affectedRows = $this->getAffectedRows();
+                    $pdo->setLastActivityAt();
+                    return $affectedRows;
             }
         }
 
