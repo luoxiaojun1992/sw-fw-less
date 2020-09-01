@@ -94,11 +94,11 @@ class RedisWrapper
         $result = $this->callRedisWithEvents(function () use ($name, $arguments) {
             return call_user_func_array([$this->redis, $name], $arguments);
         });
-        $lowerName = strtolower($name);
-        if ($lowerName == 'multi') {
+        $lowerCaseName = strtolower($name);
+        if ($lowerCaseName == 'multi') {
             $this->inTransaction = true;
         }
-        if (in_array($lowerName, ['exec', 'discard'])) {
+        if (in_array($lowerCaseName, ['exec', 'discard'])) {
             $this->inTransaction = false;
         }
         return $result;
