@@ -21,6 +21,9 @@ class RedisWrapper
     private $inTransaction = false;
     private $needRelease = true;
     private $connectionName;
+    private $idleTimeout = 500; //seconds
+    private $lastConnectedAt;
+    private $lastActivityAt;
 
     /**
      * @return \Redis
