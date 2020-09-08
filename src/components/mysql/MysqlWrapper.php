@@ -126,9 +126,9 @@ class MysqlWrapper
      * @param $lastConnectedAt
      * @return $this
      */
-    public function setLastConnectedAt($lastConnectedAt)
+    public function setLastConnectedAt($lastConnectedAt = null)
     {
-        $this->lastConnectedAt = $lastConnectedAt;
+        $this->lastConnectedAt = ($lastConnectedAt ?: Carbon::now());
         return $this;
     }
 

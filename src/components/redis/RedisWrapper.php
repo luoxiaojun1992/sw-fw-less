@@ -2,6 +2,8 @@
 
 namespace SwFwLess\components\redis;
 
+use Carbon\Carbon;
+use Carbon\CarbonInterface;
 use SwFwLess\components\Helper;
 use SwFwLess\facades\RedisPool;
 use Cake\Event\Event;
@@ -85,6 +87,60 @@ class RedisWrapper
     public function inTransaction()
     {
         return $this->inTransaction;
+    }
+
+    /**
+     * @return int
+     */
+    public function getIdleTimeout(): int
+    {
+        return $this->idleTimeout;
+    }
+
+    /**
+     * @param int $idleTimeout
+     * @return $this
+     */
+    public function setIdleTimeout(int $idleTimeout)
+    {
+        $this->idleTimeout = $idleTimeout;
+        return $this;
+    }
+
+    /**
+     * @return null|CarbonInterface
+     */
+    public function getLastConnectedAt()
+    {
+        return $this->lastConnectedAt;
+    }
+
+    /**
+     * @param null|CarbonInterface $lastConnectedAt
+     * @return $this
+     */
+    public function setLastConnectedAt($lastConnectedAt = null)
+    {
+        $this->lastConnectedAt = ($lastConnectedAt ?: Carbon::now());
+        return $this;
+    }
+
+    /**
+     * @return null|CarbonInterface
+     */
+    public function getLastActivityAt()
+    {
+        return $this->lastActivityAt;
+    }
+
+    /**
+     * @param null|CarbonInterface $lastActivityAt
+     * @return $this
+     */
+    public function setLastActivityAt($lastActivityAt = null)
+    {
+        $this->lastActivityAt = ($lastActivityAt ?: Carbon::now());
+        return $this;
     }
 
     /**
