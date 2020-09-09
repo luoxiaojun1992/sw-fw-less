@@ -149,7 +149,7 @@ class MysqlPool
             $this->config['connections'][$connectionName]['options']
         );
         return (new MysqlWrapper())->setPDO($pdo)
-            ->setLastConnectedAt(Carbon::now())
+            ->setLastConnectedAt()
             ->setLastActivityAt()
             ->setNeedRelease($needRelease)
             ->setConnectionName($connectionName)

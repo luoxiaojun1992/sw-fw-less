@@ -150,6 +150,9 @@ class MysqlWrapper
         return $this;
     }
 
+    /**
+     * @return bool
+     */
     public function exceedIdleTimeout()
     {
         return (Carbon::now()->diffInSeconds($this->getLastActivityAt())) > ($this->getIdleTimeout());
@@ -204,7 +207,7 @@ class MysqlWrapper
     public function reconnect()
     {
         $this->setPDO(\SwFwLess\facades\MysqlPool::getConnect(false, $this->getConnectionName())->getPDO())
-            ->setLastConnectedAt(Carbon::now())
+            ->setLastConnectedAt()
             ->setLastActivityAt()
             ->setBigQueryTimes(0);
     }

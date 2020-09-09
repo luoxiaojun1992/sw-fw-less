@@ -144,6 +144,14 @@ class RedisWrapper
     }
 
     /**
+     * @return bool
+     */
+    public function exceedIdleTimeout()
+    {
+        return (Carbon::now()->diffInSeconds($this->getLastActivityAt())) > ($this->getIdleTimeout());
+    }
+
+    /**
      * @param $name
      * @param $arguments
      * @return mixed
