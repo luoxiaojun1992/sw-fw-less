@@ -14,6 +14,6 @@ class RateLimit extends AbstractFacade
 {
     protected static function getAccessor()
     {
-        return \SwFwLess\components\etcd\RateLimit::create()
+        return \SwFwLess\components\etcd\RateLimit::create();
     }
 }
