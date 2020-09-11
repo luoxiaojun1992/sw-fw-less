@@ -7,6 +7,11 @@ class Math
     public static function sum($numbers, $numbersCount = null)
     {
         $numbersCount = $numbersCount ?? count($numbers);
+
+        if ($numbersCount < 100000) {
+            return array_sum($numbers);
+        }
+
         $udf = \FFI::cdef("double ArraySum(double numbers[], int size);", __DIR__ . '/ffi/c/libcmath.so');
         $arr = \FFI::new('double[' . ((string)$numbersCount) . ']');
         for ($i = 0; $i < $numbersCount; ++$i) {
