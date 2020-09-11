@@ -17,6 +17,7 @@ use SwFwLess\facades\File;
 use SwFwLess\facades\HbasePool;
 use SwFwLess\facades\Jwt;
 use SwFwLess\facades\Log;
+use SwFwLess\facades\Math;
 use SwFwLess\facades\Qiniu;
 use SwFwLess\facades\RedisPool;
 use SwFwLess\models\Member;
@@ -220,5 +221,14 @@ class DemoService extends BaseService
         }
 
         return Response::json(['code' => 0]);
+    }
+
+    public function math()
+    {
+        $cNumbers = Math::createCNumbers(100000);
+        for ($i = 1; $i <= 100000; ++$i) {
+            $cNumbers[$i - 1] = $i;
+        }
+        return Response::json(['sum' => Math::sum(null, 100000, $cNumbers)]);
     }
 }
