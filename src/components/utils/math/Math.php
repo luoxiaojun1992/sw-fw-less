@@ -8,6 +8,10 @@ class Math
 {
     public static function sum($numbers, $numbersCount = null)
     {
+        if (version_compare(PHP_VERSION, '7.4.0') < 0) {
+            return array_sum($numbers);
+        }
+
         $numbersCount = $numbersCount ?? count($numbers);
 
         if ($numbersCount < 100000) {
