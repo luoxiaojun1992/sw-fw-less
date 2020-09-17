@@ -7,14 +7,30 @@ use SwFwLess\components\utils\OS;
 
 class Math
 {
-    use Singleton;
-
+    protected $config = [];
     protected $udfPool = [];
-
     protected $ffiPath;
 
-    public function __construct()
+    /** @var static */
+    private static $instance;
+
+    /**
+     * @param array $config
+     * @return Math|static
+     */
+    public static function create($config = [])
     {
+        if (self::$instance instanceof self) {
+            return self::$instance;
+        }
+
+        return self::$instance = new self($config);
+    }
+
+    public function __construct($config = [])
+    {
+        $this->config = $config;
+
         $osType = OS::type();
         if ($osType === OS::OS_LINUX) {
             $this->ffiPath = __DIR__ . '/ffi/c/linux/libcmath.so';
@@ -23,8 +39,8 @@ class Math
         }
 
         if ($this->ffiPath) {
-            //TODO config
-            for ($i = 0; $i < 10; ++$i) {
+            $poolSize = $this->config['pool_size'] ?? 10;
+            for ($i = 0; $i < $poolSize; ++$i) {
                 $this->udfPool[] = $this->createUdf($this->ffiPath);
             }
         }
@@ -58,8 +74,7 @@ class Math
 
         $numbersCount = $numbersCount ?? count($numbers);
 
-        //TODO config
-        if ($numbersCount < 100000) {
+        if ($numbersCount < ($this->config['sum_ffi_min_count'] ?? 100000)) {
             return array_sum($numbers);
         }
 

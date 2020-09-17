@@ -11,6 +11,6 @@ class Provider extends AbstractProvider
      */
     public static function bootWorker()
     {
-        Math::create();
+        Math::create(config('util.math'));
     }
 }
