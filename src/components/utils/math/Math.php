@@ -2,7 +2,6 @@
 
 namespace SwFwLess\components\utils\math;
 
-use SwFwLess\components\traits\Singleton;
 use SwFwLess\components\utils\OS;
 
 class Math
