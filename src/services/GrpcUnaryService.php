@@ -10,7 +10,10 @@ use SwFwLess\exceptions\HttpException;
 
 abstract class GrpcUnaryService extends BaseService
 {
-    abstract public function requestMessageClass($method);
+    public function requestMessageClass($method)
+    {
+        return null;
+    }
 
     public function call()
     {
