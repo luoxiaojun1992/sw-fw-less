@@ -55,6 +55,9 @@ class KernelProvider extends AbstractProvider
         $composerInstalled = file_get_contents(APP_BASE_PATH . 'vendor/composer/installed.json');
         if ($composerInstalled) {
             $packages = json_decode($composerInstalled, true);
+            if (isset($packages['packages'])) {
+                $packages = $packages['packages'];
+            }
             $excludedProviders = static::excludedComposerProviders();
             foreach ($packages as $package) {
                 if (isset($package['extra']['sw-fw-less']['providers'])) {
