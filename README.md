@@ -27,6 +27,7 @@ Swoole http server without framework
 * Don't open preemptive scheduler
 
 >## Requirements
+* Composer 1.x
 * PHP 7.1+
 * Swoole 4.2.10+
 
