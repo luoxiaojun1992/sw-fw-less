@@ -56,9 +56,69 @@ class RedLock
         self::register($this);
     }
 
+    /**
+     * @param $key
+     * @param false $guard
+     * @param null $callback
+     * @return bool|mixed
+     * @throws \RedisException
+     * @throws \Throwable
+     */
     public function sharedLock($key, $guard = false, $callback = null)
     {
+        //todo guard
+
+        /** @var \Redis $redis */
+        $redis = $this->redisPool->pick($this->config['connection']);
+        try {
+            $lua = <<<EOF
+local existed=redis.call('exists', KEYS[1]);
+if(existed >= 1) then
+    local counter=redis.call('get', KEYS[1]);
+    if(counter > -1) then
+        local addCounterRes=redis.call('incr', KEYS[1]);
+        if(addCounterRes >= 1) then
+            return true;
+        else
+            return false;
+        end
+    else
+        return false;
+    end
+else
+    local initCounterRes=redis.call('set', KEYS[1], 1);
+    if(initCounterRes == 'ok') then
+        return true;
+    else
+        return false;
+    end
+end
+EOF;
+            $result = $redis->eval($lua, [$key], 1);
+            if ($result) {
+                if (is_callable($callback)) {
+                    $callbackRes = call_user_func($callback);
+                    $this->sharedUnLock($key);
+                    return $callbackRes;
+                } else {
+                    return true;
+                }
+            } else {
+                return false;
+            }
+        } catch (\Throwable $e) {
+            throw $e;
+        } finally {
+            $this->redisPool->release($redis);
+        }
+    }
+
+    public function sharedUnLock($key)
+    {
         //TODO
+
+        /** @var \Redis $redis */
+        $redis = $this->redisPool->pick($this->config['connection']);
     }
 
     /**
