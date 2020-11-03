@@ -19,12 +19,18 @@ class RedLock
 
     private $locked_keys = [];
 
+    private $shared_locked_keys = [];
+
     /**
      * @var RedisPool
      */
     private $redisPool;
 
-    private $config = ['connection' => 'red_lock'];
+    private $config = [
+        'connection' => 'red_lock',
+        'lock_prefix' => 'lock:',
+        'shared_lock_prefix' => 'shared:lock:',
+    ];
 
     /**
      * @param RedisPool|null $redisPool
@@ -56,6 +62,26 @@ class RedLock
         self::register($this);
     }
 
+    protected function lockPrefix()
+    {
+        return $this->config['lock_prefix'];
+    }
+
+    protected function lockKeyWithPrefix($lockKey)
+    {
+        return $this->lockPrefix() . $lockKey;
+    }
+
+    protected function sharedLockPrefix()
+    {
+        return $this->config['shared_lock_prefix'];
+    }
+
+    protected function sharedLockKeyWithPrefix($lockKey)
+    {
+        return $this->sharedLockPrefix() . $lockKey;
+    }
+
     /**
      * @param $key
      * @param false $guard
@@ -66,7 +92,7 @@ class RedLock
      */
     public function sharedLock($key, $guard = false, $callback = null)
     {
-        //todo guard
+        $keyWithPrefix = $this->sharedLockKeyWithPrefix($key);
 
         /** @var \Redis $redis */
         $redis = $this->redisPool->pick($this->config['connection']);
@@ -94,8 +120,10 @@ else
     end
 end
 EOF;
-            $result = $redis->eval($lua, [$key], 1);
+            $result = $redis->eval($lua, [$keyWithPrefix], 1);
             if ($result) {
+                $this->addSharedLockedKey($key, $guard);
+
                 if (is_callable($callback)) {
                     $callbackRes = call_user_func($callback);
                     $this->sharedUnLock($key);
@@ -121,6 +149,12 @@ EOF;
      */
     public function sharedUnLock($key)
     {
+        if (!empty($this->shared_locked_keys[$key]['guard'])) {
+            return false;
+        }
+
+        $keyWithPrefix = $this->sharedLockKeyWithPrefix($key);
+
         /** @var \Redis $redis */
         $redis = $this->redisPool->pick($this->config['connection']);
 
@@ -138,7 +172,11 @@ else
     return true;
 end
 EOF;
-            return $redis->eval($lua, [$key], 1) > 0;
+            $result = $redis->eval($lua, [$keyWithPrefix], 1) > 0;
+            if ($result) {
+                unset($this->shared_locked_keys[$key]);
+            }
+            return $result;
         } catch (\Throwable $e) {
             throw $e;
         } finally {
@@ -154,6 +192,8 @@ EOF;
      */
     protected function lockSharedLock($key)
     {
+        $keyWithPrefix = $this->sharedLockKeyWithPrefix($key);
+
         /** @var \Redis $redis */
         $redis = $this->redisPool->pick($this->config['connection']);
         try {
@@ -180,7 +220,7 @@ else
     end
 end
 EOF;
-            return $redis->eval($lua, [$key], 1);
+            return $redis->eval($lua, [$keyWithPrefix], 1);
         } catch (\Throwable $e) {
             throw $e;
         } finally {
@@ -196,10 +236,12 @@ EOF;
      */
     protected function unlockSharedLock($key)
     {
+        $keyWithPrefix = $this->sharedLockKeyWithPrefix($key);
+
         /** @var \Redis $redis */
         $redis = $this->redisPool->pick($this->config['connection']);
         try {
-            return $redis->del($key) >= 0;
+            return $redis->del($keyWithPrefix) >= 0;
         } catch (\Throwable $e) {
             throw $e;
         } finally {
@@ -223,15 +265,17 @@ EOF;
             return false;
         }
 
+        $keyWithPrefix = $this->lockKeyWithPrefix($key);
+
         $deferTimerId = null;
         /** @var \Redis $redis */
         $redis = $this->redisPool->pick($this->config['connection']);
         try {
             //因为redis整数对象有缓存，此处value使用1
             if ($ttl > 0) {
-                $result = $redis->set($key, 1, ['NX', 'EX' => $ttl]);
+                $result = $redis->set($keyWithPrefix, 1, ['NX', 'EX' => $ttl]);
             } else {
-                $result = $redis->setnx($key, 1);
+                $result = $redis->setnx($keyWithPrefix, 1);
             }
             if ($result) {
                 $this->addLockedKey($key, $guard);
@@ -239,7 +283,7 @@ EOF;
                 if (is_callable($callback)) {
                     //Defer
                     if ($ttl >= 2) {
-                        $deferTimerId = swoole_timer_tick(1000, function () use ($key, $ttl) {
+                        $deferTimerId = swoole_timer_tick(1000, function () use ($keyWithPrefix, $ttl) {
                             /** @var \Redis $redis */
                             $redis = $this->redisPool->pick($this->config['connection']);
                             try {
@@ -252,7 +296,7 @@ redis.call('expire', KEYS[1], ARGV[1]);
 end
 end
 EOF;
-                                $redis->eval($lua, [$key, $ttl], 1);
+                                $redis->eval($lua, [$keyWithPrefix, $ttl], 1);
                             } catch (\Throwable $e) {
                                 throw $e;
                             } finally {
@@ -263,7 +307,6 @@ EOF;
 
                     $callbackRes = call_user_func($callback);
                     $this->unlock($key);
-                    $this->unlockSharedLock($key);
                     return $callbackRes;
                 }
 
@@ -294,10 +337,16 @@ EOF;
             return false;
         }
 
+        if (!$this->unlockSharedLock($key)) {
+            return false;
+        }
+
+        $keyWithPrefix = $this->lockKeyWithPrefix($key);
+
         /** @var \Redis $redis */
         $redis = $this->redisPool->pick($this->config['connection']);
         try {
-            $result = $redis->del($key);
+            $result = $redis->del($keyWithPrefix);
             if ($result > 0) {
                 unset($this->locked_keys[$key]);
                 return true;
@@ -321,10 +370,12 @@ EOF;
      */
     public function defer($key, $ttl)
     {
+        $keyWithPrefix = $this->lockKeyWithPrefix($key);
+
         /** @var \Redis $redis */
         $redis = $this->redisPool->pick($this->config['connection']);
         try {
-            return $redis->expire($key, $ttl);
+            return $redis->expire($keyWithPrefix, $ttl);
         } catch (\Throwable $e) {
             throw $e;
         } finally {
@@ -340,15 +391,29 @@ EOF;
         ];
     }
 
+    private function addSharedLockedKey($key, $guard = false)
+    {
+        $this->shared_locked_keys[$key] = [
+            'key' => $key,
+            'guard' => $guard,
+        ];
+    }
+
     /**
      * Flush all locks
      * @throws \Throwable
      */
     public function flushAll()
     {
-        foreach ($this->locked_keys as $locked_key) {
-            if (!$locked_key['guard']) {
-                $this->unlock($locked_key['key']);
+        foreach ($this->locked_keys as $lockedKey) {
+            if (!$lockedKey['guard']) {
+                $this->unlock($lockedKey['key']);
+            }
+        }
+
+        foreach ($this->shared_locked_keys as $sharedLockedKey) {
+            if (!$sharedLockedKey['guard']) {
+                $this->sharedUnLock($sharedLockedKey['key']);
             }
         }
     }
