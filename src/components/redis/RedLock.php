@@ -113,12 +113,98 @@ EOF;
         }
     }
 
+    /**
+     * @param $key
+     * @return bool
+     * @throws \RedisException
+     * @throws \Throwable
+     */
     public function sharedUnLock($key)
     {
-        //TODO
-
         /** @var \Redis $redis */
         $redis = $this->redisPool->pick($this->config['connection']);
+
+        try {
+            $lua = <<<EOF
+local reduceCounterRes=redis.call('decr', KEYS[1]);
+if(reduceCounterRes == 0) then
+    local delRes=redis.call('del', KEYS[1]);
+    if(delRes >= 0) then
+        return true;
+    else
+        return false;
+    end
+else
+    return true;
+end
+EOF;
+            return $redis->eval($lua, [$key], 1) > 0;
+        } catch (\Throwable $e) {
+            throw $e;
+        } finally {
+            $this->redisPool->release($redis);
+        }
+    }
+
+    /**
+     * @param $key
+     * @return mixed
+     * @throws \RedisException
+     * @throws \Throwable
+     */
+    protected function lockSharedLock($key)
+    {
+        /** @var \Redis $redis */
+        $redis = $this->redisPool->pick($this->config['connection']);
+        try {
+            $lua = <<<EOF
+local existed=redis.call('exists', KEYS[1]);
+if(existed >= 1) then
+    local counter=redis.call('get', KEYS[1]);
+    if(counter <= 0) then
+        local lockRes=redis.call('set', KEYS[1], -1);
+        if(lockRes == 'ok') then
+            return true;
+        else
+            return false;
+        end
+    else
+        return false;
+    end
+else
+    local initCounterRes=redis.call('set', KEYS[1], -1);
+    if(initCounterRes == 'ok') then
+        return true;
+    else
+        return false;
+    end
+end
+EOF;
+            return $redis->eval($lua, [$key], 1);
+        } catch (\Throwable $e) {
+            throw $e;
+        } finally {
+            $this->redisPool->release($redis);
+        }
+    }
+
+    /**
+     * @param $key
+     * @return bool
+     * @throws \RedisException
+     * @throws \Throwable
+     */
+    protected function unlockSharedLock($key)
+    {
+        /** @var \Redis $redis */
+        $redis = $this->redisPool->pick($this->config['connection']);
+        try {
+            return $redis->del($key) >= 0;
+        } catch (\Throwable $e) {
+            throw $e;
+        } finally {
+            $this->redisPool->release($redis);
+        }
     }
 
     /**
@@ -133,6 +219,10 @@ EOF;
      */
     public function lock($key, $ttl = 0, $guard = false, $callback = null)
     {
+        if (!$this->lockSharedLock($key)) {
+            return false;
+        }
+
         $deferTimerId = null;
         /** @var \Redis $redis */
         $redis = $this->redisPool->pick($this->config['connection']);
@@ -173,6 +263,7 @@ EOF;
 
                     $callbackRes = call_user_func($callback);
                     $this->unlock($key);
+                    $this->unlockSharedLock($key);
                     return $callbackRes;
                 }
 
