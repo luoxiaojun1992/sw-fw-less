@@ -56,6 +56,11 @@ class RedLock
         self::register($this);
     }
 
+    public function sharedLock($key, $guard = false, $callback = null)
+    {
+        //TODO
+    }
+
     /**
      * Add a lock
      *
