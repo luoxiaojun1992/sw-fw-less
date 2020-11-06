@@ -348,4 +348,18 @@ class Datetime
 
         return false;
     }
+
+    public static function monthIterator(string $startDate, string $endDate, $format = 'Y_m')
+    {
+        $dateList = [];
+
+        $now = static::toDateObj($startDate)->startOfMonth();
+        $endDateObj = static::toDateObj($endDate)->endOfMonth();
+        while ($now->lessThanOrEqualTo($endDateObj)) {
+            $dateList[] = $now->format($format);
+            $now->addMonthsNoOverflow(1);
+        }
+
+        return $dateList;
+    }
 }
