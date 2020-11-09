@@ -132,6 +132,17 @@ class Datetime
         return intval(str_replace('-', '', $date));
     }
 
+    public static function toStrDate($intDate)
+    {
+        $year = (int)($intDate / 10000);
+        $month = ((int)($intDate / 100)) % 100;
+        $day = $intDate % 100;
+
+        return str_pad((string)$year, 4, '0', STR_PAD_LEFT) . '-' .
+            str_pad((string)$month, 2, '0', STR_PAD_LEFT) . '-' .
+            str_pad((string)$day, 2, '0', STR_PAD_LEFT);
+    }
+
     public static function validDate($date)
     {
         return static::toDateObj($date)->toDateString() === $date;
