@@ -111,6 +111,16 @@ class Datetime
         }
     }
 
+    public static function lastSevenDays($fromDate = null)
+    {
+        return static::lastDays(7, $fromDate);
+    }
+
+    public static function lastFifteenDays($fromDate = null)
+    {
+        return static::lastDays(15, $fromDate);
+    }
+
     public static function lastThirtyDays($fromDate = null)
     {
         return static::lastDays(30, $fromDate);
