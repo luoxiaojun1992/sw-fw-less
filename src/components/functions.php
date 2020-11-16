@@ -1,5 +1,8 @@
 <?php
 
+//You need to check the duplication of these functions.
+//Don't add an new function!!!
+
 if (!function_exists('config')) {
     function config($key, $default = null) {
         return \SwFwLess\components\Config::get($key, $default);
