@@ -91,3 +91,7 @@ Result:
 
 >## Document
 Please see [document](https://sw-fw-less.gitbook.io).
+
+>## Composer Package Review
+* Namespace conflicts
+* Duplication of functions without namespace
