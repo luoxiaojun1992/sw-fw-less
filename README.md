@@ -26,6 +26,10 @@ Swoole http server without framework
 * Don't include io operation in controller or middleware constructor
 * Don't open preemptive scheduler
 
+>## Composer Package Review Suggestion
+* Namespace conflicts
+* Duplication of functions without namespace
+
 >## Requirements
 * Composer 1.x
 * PHP 7.1+
@@ -91,7 +95,3 @@ Result:
 
 >## Document
 Please see [document](https://sw-fw-less.gitbook.io).
-
->## Composer Package Review
-* Namespace conflicts
-* Duplication of functions without namespace
