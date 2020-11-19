@@ -23,6 +23,10 @@ class App
     const EVENT_RESPONSING = 'app.responsing';
     const EVENT_RESPONSED = 'app.responsed';
 
+    const DEFAULT_CONFIG_FORMAT = 'array';
+
+    const RAW_FUNCTIONS_SWITCH = true;
+
     /** @var \Swoole\Http\Server */
     private $swHttpServer;
 
@@ -142,7 +146,10 @@ class App
     {
         $this->checkEnvironment();
 
-        require_once __DIR__ . '/../components/functions.php';
+        $functionsWithoutNamespace = defined('RAW_FUNCTIONS') ? RAW_FUNCTIONS : static::RAW_FUNCTIONS_SWITCH;
+        if ($functionsWithoutNamespace) {
+            include_once __DIR__ . '/../components/functions.php';
+        }
 
         //Load Env
         if (file_exists(APP_BASE_PATH . '.env')) {
@@ -155,9 +162,10 @@ class App
         }
 
         //Init Config
+        $configFormat = defined('CONFIG_FORMAT') ? CONFIG_FORMAT : static::DEFAULT_CONFIG_FORMAT;
         \SwFwLess\components\Config::init(
             APP_BASE_PATH . 'config/app',
-            defined('CONFIG_FORMAT') ? CONFIG_FORMAT : 'array'
+            $configFormat
         );
 
         //Boot providers
@@ -222,9 +230,10 @@ class App
         }
 
         //Init Config
+        $configFormat = defined('CONFIG_FORMAT') ? CONFIG_FORMAT : static::DEFAULT_CONFIG_FORMAT;
         \SwFwLess\components\Config::init(
             APP_BASE_PATH . 'config/app',
-            defined('CONFIG_FORMAT') ? CONFIG_FORMAT : 'array'
+            $configFormat
         );
 
         $this->loadRouter();
