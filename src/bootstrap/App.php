@@ -148,7 +148,7 @@ class App
 
         $functionsWithoutNamespace = defined('RAW_FUNCTIONS') ? RAW_FUNCTIONS : static::RAW_FUNCTIONS_SWITCH;
         if ($functionsWithoutNamespace) {
-            include_once __DIR__ . '/../components/functions.php';
+            include_once __DIR__ . '/../components/old_functions.php';
         }
 
         //Load Env
