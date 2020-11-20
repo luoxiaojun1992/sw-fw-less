@@ -87,6 +87,10 @@ class App
 
     private function loadRouter()
     {
+        /**
+         * Store the http router in the app instance.
+         * Use the app instance as a container instead of a di container.
+         */
         $this->httpRouteDispatcher = \FastRoute\simpleDispatcher(function (\FastRoute\RouteCollector $r) {
             $routerConfig = functions\config('router');
             foreach ($routerConfig['single'] as $router) {
