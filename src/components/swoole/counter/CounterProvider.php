@@ -2,6 +2,7 @@
 
 namespace SwFwLess\components\swoole\counter;
 
+use SwFwLess\components\di\Container;
 use SwFwLess\components\provider\AbstractProvider;
 
 class CounterProvider extends AbstractProvider
@@ -10,13 +11,17 @@ class CounterProvider extends AbstractProvider
     {
         parent::bootApp();
 
-        Counter::init();
+        if (Container::diSwitch()) {
+            Counter::init();
+        }
     }
 
     public static function bootWorker()
     {
         parent::bootWorker();
 
-        Counter::reload();
+        if (Container::diSwitch()) {
+            Counter::reload();
+        }
     }
 }

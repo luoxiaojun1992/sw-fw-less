@@ -28,6 +28,8 @@ class App
 
     const RAW_FUNCTIONS_SWITCH = true;
 
+    const DEFAULT_DI_SWITCH = true;
+
     /** @var \Swoole\Http\Server */
     private $swHttpServer;
 
@@ -191,7 +193,7 @@ class App
             list($middlewareClass, $middlewareOptions) = $this->parseMiddlewareName($middlewareName);
 
             /** @var \SwFwLess\middlewares\AbstractMiddleware $middlewareConcrete */
-            $middlewareConcrete = functions\config('route_di_switch') ?
+            $middlewareConcrete = \SwFwLess\components\di\Container::diSwitch() ?
                 Container::make($middlewareClass) :
                 new $middlewareClass;
             $middlewareConcrete->setParameters([$appRequest]);
@@ -244,7 +246,9 @@ class App
         $this->loadRouter();
 
         //Inject Swoole Server
-        \SwFwLess\components\swoole\Server::setInstance($server);
+        if (\SwFwLess\components\di\Container::diSwitch()) {
+            \SwFwLess\components\swoole\Server::setInstance($server);
+        }
 
         //Boot providers
         KernelProvider::init(functions\config('providers'));

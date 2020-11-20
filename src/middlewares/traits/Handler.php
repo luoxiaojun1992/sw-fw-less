@@ -52,7 +52,7 @@ trait Handler
      */
     public function call()
     {
-        $response = config('route_di_switch') ?
+        $response = \SwFwLess\components\di\Container::diSwitch() ?
             Container::call([$this, $this->getHandler()], $this->getParameters()) :
             call_user_func_array([$this, $this->getHandler()], $this->getParameters());
 

@@ -10,10 +10,15 @@ use SwFwLess\components\provider\AbstractProvider;
  */
 class ContainerProvider extends AbstractProvider
 {
+    /**
+     * @throws \Exception
+     */
     public static function bootWorker()
     {
         parent::bootWorker();
 
-        Container::create();
+        if (Container::diSwitch()) {
+            Container::create();
+        }
     }
 }
