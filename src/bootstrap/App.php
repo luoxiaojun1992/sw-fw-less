@@ -4,6 +4,7 @@ namespace SwFwLess\bootstrap;
 
 use Cron\CronExpression;
 use SwFwLess\components\config\apollo\ClientBuilder;
+use SwFwLess\components\functions;
 use SwFwLess\components\grpc\Status;
 use SwFwLess\components\provider\KernelProvider;
 use SwFwLess\facades\Container;
@@ -42,22 +43,22 @@ class App
         $this->bootstrap();
 
         $this->swHttpServer = new \Swoole\Http\Server(
-            config('server.host'),
-            config('server.port')
+            functions\config('server.host'),
+            functions\config('server.port')
         );
 
         $serverConfig = [
-            'reactor_num' => config('server.reactor_num'),
-            'worker_num' => config('server.worker_num'),
-            'daemonize' => config('server.daemonize'),
-            'backlog' => config('server.backlog'),
-            'max_request' => config('server.max_request'),
-            'dispatch_mode' => config('server.dispatch_mode'),
-            'open_http2_protocol' => config('server.open_http2_protocol'),
-            'task_worker_num' => config('server.task_worker_num'),
-            'task_enable_coroutine' => config('server.task_enable_coroutine'),
+            'reactor_num' => functions\config('server.reactor_num'),
+            'worker_num' => functions\config('server.worker_num'),
+            'daemonize' => functions\config('server.daemonize'),
+            'backlog' => functions\config('server.backlog'),
+            'max_request' => functions\config('server.max_request'),
+            'dispatch_mode' => functions\config('server.dispatch_mode'),
+            'open_http2_protocol' => functions\config('server.open_http2_protocol'),
+            'task_worker_num' => functions\config('server.task_worker_num'),
+            'task_enable_coroutine' => functions\config('server.task_enable_coroutine'),
         ];
-        if (!empty($pidFile = config('server.pid_file'))) {
+        if (!empty($pidFile = functions\config('server.pid_file'))) {
             $serverConfig['pid_file'] = $pidFile;
         }
         $this->swHttpServer->set($serverConfig);
@@ -87,7 +88,7 @@ class App
     private function loadRouter()
     {
         $this->httpRouteDispatcher = \FastRoute\simpleDispatcher(function (\FastRoute\RouteCollector $r) {
-            $routerConfig = config('router');
+            $routerConfig = functions\config('router');
             foreach ($routerConfig['single'] as $router) {
                 array_unshift($router[2], $router[1]);
                 $r->addRoute($router[0], $router[1], $router[2]);
@@ -100,7 +101,7 @@ class App
                     }
                 });
             }
-            if (config('monitor.switch')) {
+            if (functions\config('monitor.switch')) {
                 $r->addGroup('/internal', function (\FastRoute\RouteCollector $r) {
                     $r->addGroup('/monitor', function (\FastRoute\RouteCollector $r) {
                         $r->addRoute(
@@ -169,7 +170,7 @@ class App
         );
 
         //Boot providers
-        KernelProvider::init(config('providers'));
+        KernelProvider::init(functions\config('providers'));
         KernelProvider::bootApp();
     }
 
@@ -178,7 +179,7 @@ class App
         $appRequest = \SwFwLess\components\http\Request::fromSwRequest($request);
 
         //Middleware
-        $middlewareNames = config('middleware.middleware');
+        $middlewareNames = functions\config('middleware.middleware');
         array_push($middlewareNames, \SwFwLess\middlewares\Route::class);
         /** @var \SwFwLess\middlewares\MiddlewareContract[]|\SwFwLess\middlewares\AbstractMiddleware[] $middlewareConcretes */
         $middlewareConcretes = [];
@@ -186,7 +187,7 @@ class App
             list($middlewareClass, $middlewareOptions) = $this->parseMiddlewareName($middlewareName);
 
             /** @var \SwFwLess\middlewares\AbstractMiddleware $middlewareConcrete */
-            $middlewareConcrete = config('route_di_switch') ?
+            $middlewareConcrete = functions\config('route_di_switch') ?
                 Container::make($middlewareClass) :
                 new $middlewareClass;
             $middlewareConcrete->setParameters([$appRequest]);
@@ -242,7 +243,7 @@ class App
         \SwFwLess\components\swoole\Server::setInstance($server);
 
         //Boot providers
-        KernelProvider::init(config('providers'));
+        KernelProvider::init(functions\config('providers'));
         KernelProvider::bootWorker();
 
         if (!$server->taskworker) {
@@ -379,18 +380,18 @@ class App
 
     private function hotReload()
     {
-        if (!config('hot_reload.switch')) {
+        if (!functions\config('hot_reload.switch')) {
             return;
         }
 
         go(function () {
             \SwFwLess\components\filewatcher\Watcher::create(
-                config('hot_reload.driver'),
-                config('hot_reload.watch_dirs'),
-                config('hot_reload.excluded_dirs'),
-                config('hot_reload.watch_suffixes')
+                functions\config('hot_reload.driver'),
+                functions\config('hot_reload.watch_dirs'),
+                functions\config('hot_reload.excluded_dirs'),
+                functions\config('hot_reload.watch_suffixes')
             )->watch(\SwFwLess\components\filewatcher\Watcher::EVENT_MODIFY, function ($event) {
-                if (!config('hot_reload.switch')) {
+                if (!functions\config('hot_reload.switch')) {
                     return;
                 }
 
@@ -401,7 +402,7 @@ class App
 
     private function clearSchedulerRateLimit()
     {
-        $schedules = config('scheduler');
+        $schedules = functions\config('scheduler');
         foreach ($schedules as $i => $schedule) {
             $replica = $schedule['replica'] ?? 0;
             $jobName = $schedule['name'] ?? ('job_' . ((string)$i));
@@ -416,7 +417,7 @@ class App
         $this->clearSchedulerRateLimit();
 
         swoole_timer_tick(60000, function () {
-            $schedules = config('scheduler');
+            $schedules = functions\config('scheduler');
             foreach ($schedules as $i => $schedule) {
                 if (CronExpression::factory($schedule['schedule'])->isDue()) {
                     $replica = $schedule['replica'] ?? 0;
@@ -460,18 +461,18 @@ class App
 
     private function pullApolloConfig()
     {
-        if (!config('apollo.enable', false)) {
+        if (!functions\config('apollo.enable', false)) {
             return;
         }
 
         $notificationId = -1;
 
         swoole_timer_tick(60000, function () use (&$notificationId) {
-            if (!config('apollo.enable', false)) {
+            if (!functions\config('apollo.enable', false)) {
                 return;
             }
 
-            $apolloConfig = config('apollo');
+            $apolloConfig = functions\config('apollo');
             if (ClientBuilder::create()
                 ->setNamespace($apolloConfig['namespace'])
                 ->setCluster($apolloConfig['cluster'])
