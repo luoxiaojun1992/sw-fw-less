@@ -7,7 +7,7 @@ use SwFwLess\facades\Container;
 
 trait Handler
 {
-    private $handler = 'handle';
+    private $handler;
 
     private $parameters = [];
 
@@ -16,7 +16,7 @@ trait Handler
      */
     public function getHandler(): string
     {
-        return $this->handler;
+        return $this->handler ?? static::DEFAULT_HANDLER;
     }
 
     /**

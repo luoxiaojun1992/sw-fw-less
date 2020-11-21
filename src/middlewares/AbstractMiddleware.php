@@ -4,9 +4,10 @@ namespace SwFwLess\middlewares;
 
 use SwFwLess\components\http\Request;
 use SwFwLess\components\http\Response;
+use SwFwLess\components\pool\Poolable;
 use SwFwLess\middlewares\traits\Handler;
 
-abstract class AbstractMiddleware implements MiddlewareContract
+abstract class AbstractMiddleware implements MiddlewareContract, Poolable
 {
     use Handler;
 
@@ -57,5 +58,13 @@ abstract class AbstractMiddleware implements MiddlewareContract
     {
         $this->options = $options;
         return $this;
+    }
+
+    public function reset()
+    {
+        $this->next = null;
+        $this->setOptions(null);
+        $this->handler = null;
+        $this->setParameters([]);
     }
 }

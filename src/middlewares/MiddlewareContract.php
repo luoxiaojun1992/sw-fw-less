@@ -4,6 +4,8 @@ namespace SwFwLess\middlewares;
 
 interface MiddlewareContract
 {
+    const DEFAULT_HANDLER = 'handle';
+
     /**
      * @return string
      */
