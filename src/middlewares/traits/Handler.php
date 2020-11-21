@@ -4,6 +4,7 @@ namespace SwFwLess\middlewares\traits;
 
 use SwFwLess\components\http\Response;
 use SwFwLess\facades\Container;
+use SwFwLess\facades\ObjectPool;
 
 trait Handler
 {
@@ -48,18 +49,25 @@ trait Handler
     }
 
     /**
-     * @return mixed
+     * @return array|mixed|Response
+     * @throws \Throwable
      */
     public function call()
     {
-        $response = \SwFwLess\components\di\Container::routeDiSwitch() ?
-            Container::call([$this, $this->getHandler()], $this->getParameters()) :
-            call_user_func_array([$this, $this->getHandler()], $this->getParameters());
+        try {
+            $response = \SwFwLess\components\di\Container::routeDiSwitch() ?
+                Container::call([$this, $this->getHandler()], $this->getParameters()) :
+                call_user_func_array([$this, $this->getHandler()], $this->getParameters());
 
-        if (is_array($response)) {
-            return Response::json($response);
+            if (is_array($response)) {
+                return Response::json($response);
+            }
+
+            return $response;
+        } catch (\Throwable $e) {
+            throw $e;
+        } finally {
+            ObjectPool::release($this);
         }
-
-        return $response;
     }
 }

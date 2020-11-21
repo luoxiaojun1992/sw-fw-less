@@ -6,6 +6,7 @@ use SwFwLess\components\http\Request;
 use SwFwLess\components\http\Response;
 use SwFwLess\components\swoole\Scheduler;
 use SwFwLess\facades\Container;
+use SwFwLess\facades\ObjectPool;
 use SwFwLess\middlewares\traits\Parser;
 use FastRoute\Dispatcher;
 
@@ -41,9 +42,13 @@ class Route extends AbstractMiddleware
             list($middlewareClass, $middlewareOptions) = $this->parseMiddlewareName($middlewareName);
 
             /** @var \SwFwLess\middlewares\AbstractMiddleware $middlewareConcrete */
-            $middlewareConcrete = $routeDiSwitch ?
-                Container::make($middlewareClass) :
-                new $middlewareClass;
+            $middlewareConcrete = ObjectPool::pick($middlewareClass);
+            if (!$middlewareConcrete) {
+                $middlewareConcrete = $routeDiSwitch ?
+                    Container::make($middlewareClass) :
+                    new $middlewareClass;
+            }
+
             $middlewareConcrete->setParameters([$appRequest])->setOptions($middlewareOptions);
             if (isset($middlewareConcretes[$i - 1])) {
                 $middlewareConcretes[$i - 1]->setNext($middlewareConcrete);

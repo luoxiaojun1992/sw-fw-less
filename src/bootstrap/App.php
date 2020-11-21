@@ -9,6 +9,7 @@ use SwFwLess\components\grpc\Status;
 use SwFwLess\components\provider\KernelProvider;
 use SwFwLess\facades\Container;
 use SwFwLess\facades\Log;
+use SwFwLess\facades\ObjectPool;
 use SwFwLess\facades\RateLimit;
 use Swoole\Http\Server;
 use Swoole\Server\Task;
@@ -184,6 +185,8 @@ class App
     {
         $appRequest = \SwFwLess\components\http\Request::fromSwRequest($request);
 
+        $routeDiSwitch = \SwFwLess\components\di\Container::routeDiSwitch();
+
         //Middleware
         $middlewareNames = functions\config('middleware.middleware');
         array_push($middlewareNames, \SwFwLess\middlewares\Route::class);
@@ -193,9 +196,13 @@ class App
             list($middlewareClass, $middlewareOptions) = $this->parseMiddlewareName($middlewareName);
 
             /** @var \SwFwLess\middlewares\AbstractMiddleware $middlewareConcrete */
-            $middlewareConcrete = \SwFwLess\components\di\Container::routeDiSwitch() ?
-                Container::make($middlewareClass) :
-                new $middlewareClass;
+            $middlewareConcrete = ObjectPool::pick($middlewareClass);
+            if (!$middlewareConcrete) {
+                $middlewareConcrete = $routeDiSwitch ?
+                    Container::make($middlewareClass) :
+                    new $middlewareClass;
+            }
+
             $middlewareConcrete->setParameters([$appRequest]);
             if ($middlewareConcrete instanceof \SwFwLess\middlewares\Route) {
                 $middlewareConcrete->setOptions($this->httpRouteDispatcher);

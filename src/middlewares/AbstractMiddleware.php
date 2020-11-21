@@ -18,6 +18,8 @@ abstract class AbstractMiddleware implements MiddlewareContract, Poolable
 
     private $options;
 
+    private $releaseToPool = false;
+
     /**
      * @param Request $request
      * @return \SwFwLess\components\http\Response
@@ -66,5 +68,20 @@ abstract class AbstractMiddleware implements MiddlewareContract, Poolable
         $this->setOptions(null);
         $this->handler = null;
         $this->setParameters([]);
+    }
+
+    public function needRelease()
+    {
+        return $this->releaseToPool;
+    }
+
+    /**
+     * @param bool $releaseToPool
+     * @return $this
+     */
+    public function setReleaseToPool(bool $releaseToPool)
+    {
+        $this->releaseToPool = $releaseToPool;
+        return $this;
     }
 }

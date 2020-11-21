@@ -8,6 +8,6 @@ class Provider extends AbstractProvider
 {
     public static function bootWorker()
     {
-        //TODO
+        ObjectPool::create(config('pool'));
     }
 }

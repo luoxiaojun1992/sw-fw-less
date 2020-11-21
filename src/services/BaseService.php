@@ -3,15 +3,18 @@
 namespace SwFwLess\services;
 
 use SwFwLess\components\http\Request;
+use SwFwLess\components\pool\Poolable;
 use SwFwLess\middlewares\MiddlewareContract;
 use SwFwLess\middlewares\traits\Handler;
 
-abstract class BaseService implements MiddlewareContract
+abstract class BaseService implements MiddlewareContract, Poolable
 {
     use Handler;
 
     /** @var Request */
     protected $request;
+
+    private $releaseToPool = false;
 
     /**
      * @param $request
@@ -29,5 +32,27 @@ abstract class BaseService implements MiddlewareContract
     public function getRequest()
     {
         return $this->request;
+    }
+
+    public function reset()
+    {
+        $this->request = null;
+        $this->handler = null;
+        $this->setParameters([]);
+    }
+
+    public function needRelease()
+    {
+        return $this->releaseToPool;
+    }
+
+    /**
+     * @param bool $releaseToPool
+     * @return $this
+     */
+    public function setReleaseToPool(bool $releaseToPool)
+    {
+        $this->releaseToPool = $releaseToPool;
+        return $this;
     }
 }

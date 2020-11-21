@@ -2,6 +2,7 @@
 
 namespace SwFwLess\components\utils\math;
 
+use SwFwLess\components\swoole\Scheduler;
 use SwFwLess\components\utils\OS;
 use SwFwLess\components\utils\Runtime;
 
@@ -69,7 +70,10 @@ class Math
         }
 
         $newUdf = false;
-        if (!($udf = array_pop($this->udfPool))) {
+        $udf = Scheduler::withoutPreemptive(function () {
+            return array_pop($this->udfPool[]);
+        });
+        if (!$udf) {
             $newUdf = true;
             $udf = $this->createUdf($this->ffiPath);
         }
@@ -90,7 +94,9 @@ class Math
         $result = $udf->ArraySum($cNumbers, $numbersCount);
 
         if (!$newUdf) {
-            array_push($this->udfPool, $udf);
+            Scheduler::withoutPreemptive(function () use ($udf) {
+                array_push($this->udfPool, $udf);
+            });
         }
 
         return $result;
