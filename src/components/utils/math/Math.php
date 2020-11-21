@@ -3,6 +3,7 @@
 namespace SwFwLess\components\utils\math;
 
 use SwFwLess\components\utils\OS;
+use SwFwLess\components\utils\Runtime;
 
 class Math
 {
@@ -30,11 +31,13 @@ class Math
     {
         $this->config = $config;
 
-        $osType = OS::type();
-        if ($osType === OS::OS_LINUX) {
-            $this->ffiPath = __DIR__ . '/ffi/c/linux/libcmath.so';
-        } elseif ($osType === OS::OS_DARWIN) {
-            $this->ffiPath = __DIR__ . '/ffi/c/darwin/libcmath.so';
+        if (Runtime::supportFFI()) {
+            $osType = OS::type();
+            if ($osType === OS::OS_LINUX) {
+                $this->ffiPath = __DIR__ . '/ffi/c/linux/libcmath.so';
+            } elseif ($osType === OS::OS_DARWIN) {
+                $this->ffiPath = __DIR__ . '/ffi/c/darwin/libcmath.so';
+            }
         }
 
         if ($this->ffiPath) {
@@ -57,7 +60,7 @@ class Math
 
     public function sum($numbers = null, $numbersCount = null, $cNumbers = null)
     {
-        if (version_compare(PHP_VERSION, '7.4.0') < 0) {
+        if (!Runtime::supportFFI()) {
             return array_sum($numbers);
         }
 
