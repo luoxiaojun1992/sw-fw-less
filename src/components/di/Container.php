@@ -16,7 +16,12 @@ class Container
 
     public static function diSwitch()
     {
-        return config('di_switch', App::DEFAULT_DI_SWITCH) && config('route_di_switch');
+        return config('di_switch', App::DEFAULT_DI_SWITCH);
+    }
+
+    public static function routeDiSwitch()
+    {
+        return static::diSwitch() && config('route_di_switch');
     }
 
     /**

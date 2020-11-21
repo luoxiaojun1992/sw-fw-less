@@ -193,7 +193,7 @@ class App
             list($middlewareClass, $middlewareOptions) = $this->parseMiddlewareName($middlewareName);
 
             /** @var \SwFwLess\middlewares\AbstractMiddleware $middlewareConcrete */
-            $middlewareConcrete = \SwFwLess\components\di\Container::diSwitch() ?
+            $middlewareConcrete = \SwFwLess\components\di\Container::routeDiSwitch() ?
                 Container::make($middlewareClass) :
                 new $middlewareClass;
             $middlewareConcrete->setParameters([$appRequest]);
