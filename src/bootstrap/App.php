@@ -183,6 +183,7 @@ class App
 
     private function getRequestHandler($request)
     {
+        //todo optimization using object pool
         $appRequest = \SwFwLess\components\http\Request::fromSwRequest($request);
 
         $routeDiSwitch = \SwFwLess\components\di\Container::routeDiSwitch();
@@ -222,7 +223,7 @@ class App
     public function swHttpStart(\Swoole\Http\Server $server)
     {
         echo 'Server started.', PHP_EOL;
-        echo 'Listening ' . $server->ports[0]->host . ':' . $server->ports[0]->port, PHP_EOL;
+        echo 'Listening ' , $server->ports[0]->host , ':' , $server->ports[0]->port, PHP_EOL;
     }
 
     public function swHttpShutdown(\Swoole\Http\Server $server)
