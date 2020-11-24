@@ -319,10 +319,9 @@ class App
 
         if (isset($swRequest->header['content-type'])) {
             if (substr($swRequest->header['content-type'], 0, 16) === 'application/grpc') {
-                $grpcStatus = Status::status($httpCode);
-                $grpcMessage = urlencode(urlencode(Status::msg($grpcStatus)));
+                list($grpcStatus, $grpcMessage) = Status::statusAndMsg($httpCode);
                 $swfResponse->trailer('grpc-status', $grpcStatus);
-                $swfResponse->trailer('grpc-message', $grpcMessage);
+                $swfResponse->trailer('grpc-message', urlencode(urlencode($grpcMessage)));
             }
         }
 

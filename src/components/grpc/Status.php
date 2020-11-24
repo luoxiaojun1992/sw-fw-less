@@ -161,4 +161,10 @@ class Status
     {
         return static::HTTP_CODE_STATUS_MAPPING[$httpCode] ?? static::UNKNOWN;
     }
+
+    public static function statusAndMsg($httpCode)
+    {
+        $status = static::status($httpCode);
+        return [$status, static::msg($status)];
+    }
 }
