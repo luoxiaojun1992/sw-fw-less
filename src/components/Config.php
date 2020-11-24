@@ -28,8 +28,10 @@ class Config
     public static function get($key, $default = null)
     {
         return Scheduler::withoutPreemptive(function () use ($key, $default) {
-            if (array_key_exists($key, self::$configCache)) {
-                return self::$configCache[$key];
+            if (is_string($key)) {
+                if (array_key_exists($key, self::$configCache)) {
+                    return self::$configCache[$key];
+                }
             }
 
             if (!is_string($key) && !is_array($key) && !is_int($key)) {
@@ -38,7 +40,9 @@ class Config
 
             if (Helper::nestedArrHas(static::$config, $key)) {
                 $config = Helper::nestedArrGet(static::$config, $key, $default);
-                self::$configCache[$key] = $config;
+                if (is_string($key)) {
+                    self::$configCache[$key] = $config;
+                }
             } else {
                 $config = $default;
             }
@@ -54,6 +58,11 @@ class Config
         }
 
         Helper::nestedArrSet(static::$config, $key, $value);
+        if (is_string($key)) {
+            Scheduler::withoutPreemptive(function () use ($key, $value) {
+                static::$configCache[$key] = $value;
+            });
+        }
     }
 
     public static function forget($key)
@@ -63,6 +72,11 @@ class Config
         }
 
         Helper::nestedArrForget(static::$config, $key);
+        if (is_string($key)) {
+            Scheduler::withoutPreemptive(function () use ($key) {
+                unset(static::$configCache[$key]);
+            });
+        }
     }
 
     /**
