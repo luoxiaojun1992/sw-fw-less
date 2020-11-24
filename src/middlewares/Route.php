@@ -12,6 +12,10 @@ use FastRoute\Dispatcher;
 
 class Route extends AbstractMiddleware
 {
+    static $routeCacheKeyCache = [];
+
+    static $routeCacheKeyCacheCount = 0;
+
     static $cachedRouteInfo = [];
 
     static $cachedRouteInfoCount = 0;
@@ -76,14 +80,28 @@ class Route extends AbstractMiddleware
         $requestUri = rawurldecode($requestUri);
 
         $routeInfo = Scheduler::withoutPreemptive(function () use ($request, $requestUri) {
-            $cacheKey = json_encode(['method' => $request->method(), 'uri' => $requestUri]);
+            $requestMethod = $request->method();
+            if (isset(self::$routeCacheKeyCache[$requestMethod][$requestUri])) {
+                $cacheKey = self::$routeCacheKeyCache[$requestMethod][$requestUri];
+            } else {
+                $cacheKey = json_encode(['method' => $requestMethod, 'uri' => $requestUri]);
+                self::$routeCacheKeyCache[$requestMethod][$requestUri] = $cacheKey;
+                ++self::$routeCacheKeyCacheCount;
+                if (self::$routeCacheKeyCacheCount > 100) {
+                    self::$routeCacheKeyCache = array_slice(
+                        self::$routeCacheKeyCache, 0, 100, true
+                    );
+                    self::$routeCacheKeyCacheCount = 100;
+                }
+            }
+
             if (isset(self::$cachedRouteInfo[$cacheKey])) {
                 $routeInfo = self::$cachedRouteInfo[$cacheKey];
             } else {
                 /** @var Dispatcher $httpRouteDispatcher */
                 $httpRouteDispatcher = $this->getOptions();
                 self::$cachedRouteInfo[$cacheKey] = $routeInfo = $httpRouteDispatcher->dispatch(
-                    $request->method(), $requestUri
+                    $requestMethod, $requestUri
                 );
                 ++self::$cachedRouteInfoCount;
                 if (self::$cachedRouteInfoCount > 100) {
