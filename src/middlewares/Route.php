@@ -38,6 +38,7 @@ class Route extends AbstractMiddleware
         }
         /** @var \SwFwLess\middlewares\MiddlewareContract[]|\SwFwLess\middlewares\AbstractMiddleware[] $middlewareConcretes */
         $middlewareConcretes = [];
+        $middlewareConcrete = null;
         foreach ($middlewareNames as $i => $middlewareName) {
             list($middlewareClass, $middlewareOptions) = $this->parseMiddlewareName($middlewareName);
 
@@ -56,9 +57,8 @@ class Route extends AbstractMiddleware
 
             array_push($middlewareConcretes, $middlewareConcrete);
         }
-        $middlewareConcretesCount = count($middlewareConcretes);
-        if ($middlewareConcretesCount > 0) {
-            $middlewareConcretes[$middlewareConcretesCount - 1]->setNext($controller);
+        if (isset($middlewareConcrete)) {
+            $middlewareConcrete->setNext($controller);
         }
         array_push($middlewareConcretes, $controller);
 
