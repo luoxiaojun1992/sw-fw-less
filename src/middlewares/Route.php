@@ -14,6 +14,8 @@ class Route extends AbstractMiddleware
 {
     static $cachedRouteInfo = [];
 
+    static $cachedRouteInfoCount = 0;
+
     use Parser;
 
     private function getRequestHandler(Request $appRequest, $routeInfo)
@@ -83,8 +85,10 @@ class Route extends AbstractMiddleware
                 self::$cachedRouteInfo[$cacheKey] = $routeInfo = $httpRouteDispatcher->dispatch(
                     $request->method(), $requestUri
                 );
-                if (count(self::$cachedRouteInfo) > 100) {
+                ++self::$cachedRouteInfoCount;
+                if (self::$cachedRouteInfoCount > 100) {
                     self::$cachedRouteInfo = array_slice(self::$cachedRouteInfo, 0, 100, true);
+                    self::$cachedRouteInfoCount = 100;
                 }
             }
             return $routeInfo;
