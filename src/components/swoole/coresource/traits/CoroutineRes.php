@@ -4,8 +4,6 @@ namespace SwFwLess\components\swoole\coresource\traits;
 
 trait CoroutineRes
 {
-    public static $coroutineRes = [];
-
     public static function register($res, $cid = null)
     {
         \SwFwLess\components\swoole\coresource\CoroutineRes::register($res, $cid);

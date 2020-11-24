@@ -183,7 +183,6 @@ class App
 
     private function getRequestHandler($request)
     {
-        //todo optimization using object pool
         $appRequest = \SwFwLess\components\http\Request::fromSwRequest($request);
 
         $routeDiSwitch = \SwFwLess\components\di\Container::routeDiSwitch();

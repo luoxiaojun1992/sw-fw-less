@@ -4,10 +4,12 @@ namespace SwFwLess\components\http;
 
 use SwFwLess\components\Helper;
 use SwFwLess\components\http\traits\Tracer;
+use SwFwLess\components\pool\Poolable;
 use SwFwLess\components\swoole\coresource\traits\CoroutineRes;
+use SwFwLess\facades\ObjectPool;
 use Swoole\Coroutine;
 
-class Request
+class Request implements Poolable
 {
     use Tracer;
     use CoroutineRes;
@@ -18,6 +20,8 @@ class Request
     private $route;
 
     private $cid;
+
+    private $releaseToPool = false;
 
     public function __construct()
     {
@@ -305,6 +309,30 @@ class Request
      */
     public static function fromSwRequest($swRequest)
     {
-        return (new self())->setSwRequest($swRequest);
+        /** @var static $swfRequest */
+        $swfRequest = ObjectPool::pick(static::class);
+        if (!$swfRequest) {
+            $swfRequest = new static();
+        }
+        return $swfRequest->setSwRequest($swRequest);
+    }
+
+    public function reset()
+    {
+        $this->swRequest = null;
+        $this->route = null;
+        $this->cid = null;
+        $this->releaseToPool = false;
+    }
+
+    public function needRelease()
+    {
+        return $this->releaseToPool;
+    }
+
+    public function setReleaseToPool(bool $releaseToPool)
+    {
+        $this->releaseToPool = $releaseToPool;
+        return $this;
     }
 }

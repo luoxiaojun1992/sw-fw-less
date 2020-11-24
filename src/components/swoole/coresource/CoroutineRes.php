@@ -2,7 +2,9 @@
 
 namespace SwFwLess\components\swoole\coresource;
 
+use SwFwLess\components\pool\Poolable;
 use SwFwLess\components\swoole\Scheduler;
+use SwFwLess\facades\ObjectPool;
 use Swoole\Coroutine;
 
 class CoroutineRes
@@ -31,6 +33,11 @@ class CoroutineRes
 
         Scheduler::withoutPreemptive(function () use ($cid, $className) {
             if (isset(self::$coroutineRes[$cid][$className])) {
+                if (is_object(self::$coroutineRes[$cid][$className])) {
+                    if (self::$coroutineRes[$cid][$className] instanceof Poolable) {
+                        ObjectPool::release(self::$coroutineRes[$cid][$className]);
+                    }
+                }
                 unset(self::$coroutineRes[$cid][$className]);
             }
         });
@@ -42,6 +49,14 @@ class CoroutineRes
 
         Scheduler::withoutPreemptive(function () use ($cid) {
             if (isset(self::$coroutineRes[$cid])) {
+                foreach (self::$coroutineRes[$cid] as $coroutineRes) {
+                    if (is_object($coroutineRes)) {
+                        if ($coroutineRes instanceof Poolable) {
+                            ObjectPool::release($coroutineRes);
+                        }
+                    }
+                }
+
                 unset(self::$coroutineRes[$cid]);
             }
         });
