@@ -128,13 +128,11 @@ class Route extends AbstractMiddleware
             }
             return $routeInfo;
         });
-        $routeResult = $routeInfo[0];
-        switch ($routeResult) {
+        switch ($routeInfo[0]) {
             case Dispatcher::NOT_FOUND:
                 // ... 404 Not Found
                 return Response::output('', 404);
             case Dispatcher::METHOD_NOT_ALLOWED:
-                $allowedMethods = $routeInfo[1];
                 // ... 405 Method Not Allowed
                 return Response::output('', 405);
             case Dispatcher::FOUND:
