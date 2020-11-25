@@ -191,7 +191,8 @@ class App
         $middlewareNames = functions\config('middleware.middleware');
         array_push($middlewareNames, \SwFwLess\middlewares\Route::class);
         /** @var \SwFwLess\middlewares\MiddlewareContract[]|\SwFwLess\middlewares\AbstractMiddleware[] $middlewareConcretes */
-        $middlewareConcretes = [];
+        $prevMiddlewareConcrete = null;
+        $firstMiddlewareConcrete = null;
         foreach ($middlewareNames as $i => $middlewareName) {
             list($middlewareClass, $middlewareOptions) = $this->parseMiddlewareName($middlewareName);
 
@@ -203,20 +204,23 @@ class App
                     new $middlewareClass;
             }
 
+            if (is_null($firstMiddlewareConcrete)) {
+                $firstMiddlewareConcrete = $middlewareConcrete;
+            }
+
             $middlewareConcrete->setParametersAndOptions(
                 [$appRequest],
                 $middlewareConcrete instanceof \SwFwLess\middlewares\Route ?
                     $this->httpRouteDispatcher :
                     $middlewareOptions
             );
-            if (isset($middlewareConcretes[$i - 1])) {
-                $middlewareConcretes[$i - 1]->setNext($middlewareConcrete);
+            if (!is_null($prevMiddlewareConcrete)) {
+                $prevMiddlewareConcrete->setNext($middlewareConcrete);
             }
-
-            array_push($middlewareConcretes, $middlewareConcrete);
+            $prevMiddlewareConcrete = $middlewareConcrete;
         }
 
-        return $middlewareConcretes[0];
+        return $firstMiddlewareConcrete;
     }
 
     public function swHttpStart(\Swoole\Http\Server $server)
