@@ -309,11 +309,11 @@ class Request implements Poolable
      */
     public static function fromSwRequest($swRequest)
     {
-        /** @var static $swfRequest */
-        $swfRequest = ObjectPool::pick(static::class);
-        if (!$swfRequest) {
+//        /** @var static $swfRequest */
+//        $swfRequest = ObjectPool::pick(static::class);
+//        if (!$swfRequest) {
             $swfRequest = new static();
-        }
+//        }
         return $swfRequest->setSwRequest($swRequest);
     }
 
