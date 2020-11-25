@@ -120,7 +120,9 @@ class Route extends AbstractMiddleware
                 );
                 ++self::$cachedRouteInfoCount;
                 if (self::$cachedRouteInfoCount > 100) {
-                    self::$cachedRouteInfo = array_slice(self::$cachedRouteInfo, 0, 100, true);
+                    self::$cachedRouteInfo = array_slice(
+                        self::$cachedRouteInfo, 0, 100, true
+                    );
                     self::$cachedRouteInfoCount = 100;
                 }
             }
