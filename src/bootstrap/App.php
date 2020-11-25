@@ -194,15 +194,14 @@ class App
         $prevMiddlewareConcrete = null;
         $firstMiddlewareConcrete = null;
         foreach ($middlewareNames as $i => $middlewareName) {
-            list($middlewareClass, $middlewareOptions) = $this->parseMiddlewareName($middlewareName);
+            list($middlewareClass, $middlewareOptions) = ($middlewareName === \SwFwLess\middlewares\Route::class) ?
+                [$middlewareName, null] :
+                $this->parseMiddlewareName($middlewareName);
 
             /** @var \SwFwLess\middlewares\AbstractMiddleware $middlewareConcrete */
-            $middlewareConcrete = ObjectPool::pick($middlewareClass);
-            if (!$middlewareConcrete) {
-                $middlewareConcrete = $routeDiSwitch ?
-                    Container::make($middlewareClass) :
-                    new $middlewareClass;
-            }
+            $middlewareConcrete = ObjectPool::pick($middlewareClass) ?: ($routeDiSwitch ?
+                Container::make($middlewareClass) :
+                new $middlewareClass);
 
             if (is_null($firstMiddlewareConcrete)) {
                 $firstMiddlewareConcrete = $middlewareConcrete;
