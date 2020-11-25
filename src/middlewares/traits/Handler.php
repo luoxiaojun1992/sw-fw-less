@@ -39,6 +39,14 @@ trait Handler
     }
 
     /**
+     * @return array
+     */
+    public function getHandlerAndParameters()
+    {
+        return [$this->getHandler(), $this->parameters];
+    }
+
+    /**
      * @param array $parameters
      * @return $this
      */
@@ -67,9 +75,10 @@ trait Handler
     public function call()
     {
         try {
+            list($handler, $parameters) = $this->getHandlerAndParameters();
             $response = \SwFwLess\components\di\Container::routeDiSwitch() ?
-                Container::call([$this, $this->getHandler()], $this->getParameters()) :
-                call_user_func_array([$this, $this->getHandler()], $this->getParameters());
+                Container::call([$this, $handler], $parameters) :
+                call_user_func_array([$this, $handler], $parameters);
 
             if (is_array($response)) {
                 return Response::json($response);
