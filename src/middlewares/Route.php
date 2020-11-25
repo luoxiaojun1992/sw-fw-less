@@ -50,9 +50,8 @@ class Route extends AbstractMiddleware
         if (isset($controllerAction[3])) {
             $middlewareNames = array_merge($middlewareNames, $controllerAction[3]);
         }
-        /** @var \SwFwLess\middlewares\MiddlewareContract[]|\SwFwLess\middlewares\AbstractMiddleware[] $middlewareConcretes */
-        $middlewareConcretes = [];
-        $middlewareConcrete = null;
+        $firstMiddlewareConcrete = null;
+        $prevMiddlewareConcrete = null;
         foreach ($middlewareNames as $i => $middlewareName) {
             list($middlewareClass, $middlewareOptions) = $this->parseMiddlewareName($middlewareName);
 
@@ -64,22 +63,27 @@ class Route extends AbstractMiddleware
                     new $middlewareClass;
             }
 
+            if (is_null($firstMiddlewareConcrete)) {
+                $firstMiddlewareConcrete = $middlewareConcrete;
+            }
+
             $middlewareConcrete->setParametersAndOptions(
                 [$appRequest],
                 $middlewareOptions
             );
-            if (isset($middlewareConcretes[$i - 1])) {
-                $middlewareConcretes[$i - 1]->setNext($middlewareConcrete);
+            if (!is_null($prevMiddlewareConcrete)) {
+                $prevMiddlewareConcrete->setNext($middlewareConcrete);
             }
-
-            array_push($middlewareConcretes, $middlewareConcrete);
+            $prevMiddlewareConcrete = $middlewareConcrete;
         }
-        if (isset($middlewareConcrete)) {
-            $middlewareConcrete->setNext($controller);
+        if (!is_null($prevMiddlewareConcrete)) {
+            $prevMiddlewareConcrete->setNext($controller);
         }
-        array_push($middlewareConcretes, $controller);
+        if (is_null($firstMiddlewareConcrete)) {
+            $firstMiddlewareConcrete = $controller;
+        }
 
-        return $middlewareConcretes[0];
+        return $firstMiddlewareConcrete;
     }
 
     public function handle(Request $request)
