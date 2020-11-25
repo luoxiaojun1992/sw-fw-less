@@ -27,6 +27,20 @@ abstract class BaseService implements MiddlewareContract, Poolable
     }
 
     /**
+     * @param Request $request
+     * @param string $handler
+     * @param array $parameters
+     * @return $this
+     */
+    public function setRequestAndHandlerAndParameters(Request $request, string $handler, array $parameters)
+    {
+        $this->request = $request;
+        $this->handler = $handler;
+        $this->parameters = $parameters;
+        return $this;
+    }
+
+    /**
      * @return Request
      */
     public function getRequest()

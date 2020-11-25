@@ -9,6 +9,8 @@ use SwFwLess\facades\Container;
 use SwFwLess\facades\ObjectPool;
 use SwFwLess\middlewares\traits\Parser;
 use FastRoute\Dispatcher;
+use SwFwLess\services\BaseService;
+use SwFwLess\services\GrpcUnaryService;
 
 class Route extends AbstractMiddleware
 {
@@ -31,11 +33,17 @@ class Route extends AbstractMiddleware
         $action = $controllerAction[2];
         $parameters = $routeInfo[2];
         $routeDiSwitch = \SwFwLess\components\di\Container::routeDiSwitch();
+        /** @var AbstractMiddleware|BaseService|GrpcUnaryService $controller */
         $controller = $routeDiSwitch ? Container::make($controllerName) : new $controllerName;
         if ($controller instanceof \SwFwLess\services\BaseService) {
-            $controller->setRequest($appRequest);
+            $controller->setRequestAndHandlerAndParameters(
+                $appRequest,
+                $action,
+                $parameters
+            );
+        } else {
+            $controller->setHandlerAndParameters($action, $parameters);
         }
-        $controller->setHandler($action)->setParameters($parameters);
 
         //Middleware
         $middlewareNames = config('middleware.routeMiddleware');

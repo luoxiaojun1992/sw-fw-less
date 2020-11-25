@@ -67,7 +67,7 @@ abstract class AbstractMiddleware implements MiddlewareContract, Poolable
      * @param $options
      * @return $this
      */
-    public function setParametersAndOptions($parameters, $options)
+    public function setParametersAndOptions(array $parameters, $options)
     {
         $this->parameters = $parameters;
         $this->options = $options;

@@ -49,6 +49,18 @@ trait Handler
     }
 
     /**
+     * @param string $handler
+     * @param array $parameters
+     * @return $this
+     */
+    public function setHandlerAndParameters(string $handler, array $parameters)
+    {
+        $this->handler = $handler;
+        $this->parameters = $parameters;
+        return $this;
+    }
+
+    /**
      * @return array|mixed|Response
      * @throws \Throwable
      */
