@@ -27,15 +27,17 @@ class CoroutineRes
         });
     }
 
-    public static function release($className, $cid = null)
+    public static function release($className, $cid = null, $releaseToPool = true)
     {
         $cid = $cid ?? Coroutine::getCid();
 
-        Scheduler::withoutPreemptive(function () use ($cid, $className) {
+        Scheduler::withoutPreemptive(function () use ($cid, $className, $releaseToPool) {
             if (isset(self::$coroutineRes[$cid][$className])) {
-                if (is_object(self::$coroutineRes[$cid][$className])) {
-                    if (self::$coroutineRes[$cid][$className] instanceof Poolable) {
-                        ObjectPool::release(self::$coroutineRes[$cid][$className]);
+                if ($releaseToPool) {
+                    if (is_object(self::$coroutineRes[$cid][$className])) {
+                        if (self::$coroutineRes[$cid][$className] instanceof Poolable) {
+                            ObjectPool::release(self::$coroutineRes[$cid][$className]);
+                        }
                     }
                 }
                 unset(self::$coroutineRes[$cid][$className]);
