@@ -203,12 +203,12 @@ class App
                     new $middlewareClass;
             }
 
-            $middlewareConcrete->setParameters([$appRequest]);
-            if ($middlewareConcrete instanceof \SwFwLess\middlewares\Route) {
-                $middlewareConcrete->setOptions($this->httpRouteDispatcher);
-            } else {
-                $middlewareConcrete->setOptions($middlewareOptions);
-            }
+            $middlewareConcrete->setParametersAndOptions(
+                [$appRequest],
+                $middlewareConcrete instanceof \SwFwLess\middlewares\Route ?
+                    $this->httpRouteDispatcher :
+                    $middlewareOptions
+            );
             if (isset($middlewareConcretes[$i - 1])) {
                 $middlewareConcretes[$i - 1]->setNext($middlewareConcrete);
             }

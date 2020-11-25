@@ -56,7 +56,10 @@ class Route extends AbstractMiddleware
                     new $middlewareClass;
             }
 
-            $middlewareConcrete->setParameters([$appRequest])->setOptions($middlewareOptions);
+            $middlewareConcrete->setParametersAndOptions(
+                [$appRequest],
+                $middlewareOptions
+            );
             if (isset($middlewareConcretes[$i - 1])) {
                 $middlewareConcretes[$i - 1]->setNext($middlewareConcrete);
             }
