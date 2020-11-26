@@ -244,4 +244,16 @@ class Arr
 
         unset($arr[array_shift($keys)]);
     }
+
+    public static function arrayColumnUnique($arr, $column, $preserveKey = true)
+    {
+        $columnMap = [];
+        foreach ($arr as $key => $val) {
+            if (array_key_exists($val[$column], $columnMap)) {
+                unset($arr[$key]);
+            }
+        }
+
+        return $preserveKey ? $arr : array_values($arr);
+    }
 }
