@@ -23,6 +23,7 @@
         "koala-framework/file-watcher": " ~1.0",
         "lcobucci/jwt": "~3.2",
         "league/flysystem": "~1",
+        "luoxiaojun/closure-php": "dev-main",
         "luoxiaojun/grpc": "dev-master",
         "luoxiaojun1992/laravel-elasticsearch": "~1.0",
         "luoxiaojun1992/monolog-co-stream-handler": "~1.0",
