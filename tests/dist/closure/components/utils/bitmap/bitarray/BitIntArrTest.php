@@ -14,13 +14,11 @@ class BitIntArrClosureTest extends \PHPUnit\Framework\TestCase
 
         //todo used too large memory
         for ($i = 1; $i <= 10000; ++$i) {
-            $bitIntArr = \Lxj\ClosurePHP\Sugars\Object\call(
+            \Lxj\ClosurePHP\Sugars\Object\call(
                 $bitIntArr,
                 'put',
                 \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
-                [$i],
-                false,
-                null
+                [$i]
             );
         }
 
@@ -30,13 +28,11 @@ class BitIntArrClosureTest extends \PHPUnit\Framework\TestCase
         );
 
         for ($i = 1; $i <= 10000; $i += 2) {
-            $bitIntArr = \Lxj\ClosurePHP\Sugars\Object\call(
+            \Lxj\ClosurePHP\Sugars\Object\call(
                 $bitIntArr,
                 'put',
                 \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
-                [$i],
-                false,
-                null
+                [$i]
             );
         }
 
@@ -46,24 +42,20 @@ class BitIntArrClosureTest extends \PHPUnit\Framework\TestCase
         );
 
         for ($i = 1; $i <= 10000; ++$i) {
-            $bitIntArr = \Lxj\ClosurePHP\Sugars\Object\call(
+            \Lxj\ClosurePHP\Sugars\Object\call(
                 $bitIntArr,
                 'put',
                 \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
-                [$i],
-                false,
-                null
+                [$i]
             );
         }
 
         for ($i = 20001; $i <= 30000; ++$i) {
-            $bitIntArr = \Lxj\ClosurePHP\Sugars\Object\call(
+            \Lxj\ClosurePHP\Sugars\Object\call(
                 $bitIntArr,
                 'put',
                 \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
-                [$i],
-                false,
-                null
+                [$i]
             );
         }
 
@@ -73,24 +65,20 @@ class BitIntArrClosureTest extends \PHPUnit\Framework\TestCase
         );
 
         for ($i = 1; $i <= 10000; $i += 2) {
-            $bitIntArr = \Lxj\ClosurePHP\Sugars\Object\call(
+            \Lxj\ClosurePHP\Sugars\Object\call(
                 $bitIntArr,
                 'put',
                 \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
-                [$i],
-                false,
-                null
+                [$i]
             );
         }
 
         for ($i = 20001; $i <= 30000; $i += 2) {
-            $bitIntArr = \Lxj\ClosurePHP\Sugars\Object\call(
+            \Lxj\ClosurePHP\Sugars\Object\call(
                 $bitIntArr,
                 'put',
                 \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
-                [$i],
-                false,
-                null
+                [$i]
             );
         }
 
@@ -108,22 +96,18 @@ class BitIntArrClosureTest extends \PHPUnit\Framework\TestCase
         );
 
         for ($i = 1; $i <= 10000; ++$i) {
-            $bitIntArr = \Lxj\ClosurePHP\Sugars\Object\call(
+            \Lxj\ClosurePHP\Sugars\Object\call(
                 $bitIntArr,
                 'put',
                 \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
-                [$i],
-                false,
-                null
+                [$i]
             );
             $this->assertTrue(
                 \Lxj\ClosurePHP\Sugars\Object\call(
                     $bitIntArr,
                     'has',
                     \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
-                    [$i],
-                    false,
-                    null
+                    [$i]
                 )
             );
         }
@@ -134,9 +118,7 @@ class BitIntArrClosureTest extends \PHPUnit\Framework\TestCase
                     $bitIntArr,
                     'has',
                     \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
-                    [$i],
-                    false,
-                    null
+                    [$i]
                 )
             );
         }
@@ -147,22 +129,18 @@ class BitIntArrClosureTest extends \PHPUnit\Framework\TestCase
         );
 
         for ($i = 1; $i <= 10000; $i += 2) {
-            $bitIntArr = \Lxj\ClosurePHP\Sugars\Object\call(
+            \Lxj\ClosurePHP\Sugars\Object\call(
                 $bitIntArr,
                 'put',
                 \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
-                [$i],
-                false,
-                null
+                [$i]
             );
             $this->assertTrue(
                 \Lxj\ClosurePHP\Sugars\Object\call(
                     $bitIntArr,
                     'has',
                     \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
-                    [$i],
-                    false,
-                    null
+                    [$i]
                 )
             );
         }
@@ -173,9 +151,7 @@ class BitIntArrClosureTest extends \PHPUnit\Framework\TestCase
                     $bitIntArr,
                     'has',
                     \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
-                    [$i],
-                    false,
-                    null
+                    [$i]
                 )
             );
         }
@@ -186,22 +162,18 @@ class BitIntArrClosureTest extends \PHPUnit\Framework\TestCase
         );
 
         for ($i = 1; $i <= 10000; ++$i) {
-            $bitIntArr = \Lxj\ClosurePHP\Sugars\Object\call(
+            \Lxj\ClosurePHP\Sugars\Object\call(
                 $bitIntArr,
                 'put',
                 \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
-                [$i],
-                false,
-                null
+                [$i]
             );
             $this->assertTrue(
                 \Lxj\ClosurePHP\Sugars\Object\call(
                     $bitIntArr,
                     'has',
                     \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
-                    [$i],
-                    false,
-                    null
+                    [$i]
                 )
             );
         }
@@ -212,30 +184,24 @@ class BitIntArrClosureTest extends \PHPUnit\Framework\TestCase
                     $bitIntArr,
                     'has',
                     \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
-                    [$i],
-                    false,
-                    null
+                    [$i]
                 )
             );
         }
 
         for ($i = 20001; $i <= 30000; ++$i) {
-            $bitIntArr = \Lxj\ClosurePHP\Sugars\Object\call(
+            \Lxj\ClosurePHP\Sugars\Object\call(
                 $bitIntArr,
                 'put',
                 \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
-                [$i],
-                false,
-                null
+                [$i]
             );
             $this->assertTrue(
                 \Lxj\ClosurePHP\Sugars\Object\call(
                     $bitIntArr,
                     'has',
                     \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
-                    [$i],
-                    false,
-                    null
+                    [$i]
                 )
             );
         }
@@ -246,9 +212,7 @@ class BitIntArrClosureTest extends \PHPUnit\Framework\TestCase
                     $bitIntArr,
                     'has',
                     \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
-                    [$i],
-                    false,
-                    null
+                    [$i]
                 )
             );
         }
@@ -259,22 +223,18 @@ class BitIntArrClosureTest extends \PHPUnit\Framework\TestCase
         );
 
         for ($i = 1; $i <= 10000; $i += 2) {
-            $bitIntArr = \Lxj\ClosurePHP\Sugars\Object\call(
+            \Lxj\ClosurePHP\Sugars\Object\call(
                 $bitIntArr,
                 'put',
                 \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
-                [$i],
-                false,
-                null
+                [$i]
             );
             $this->assertTrue(
                 \Lxj\ClosurePHP\Sugars\Object\call(
                     $bitIntArr,
                     'has',
                     \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
-                    [$i],
-                    false,
-                    null
+                    [$i]
                 )
             );
         }
@@ -285,30 +245,24 @@ class BitIntArrClosureTest extends \PHPUnit\Framework\TestCase
                     $bitIntArr,
                     'has',
                     \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
-                    [$i],
-                    false,
-                    null
+                    [$i]
                 )
             );
         }
 
         for ($i = 20001; $i <= 30000; $i += 2) {
-            $bitIntArr = \Lxj\ClosurePHP\Sugars\Object\call(
+            \Lxj\ClosurePHP\Sugars\Object\call(
                 $bitIntArr,
                 'put',
                 \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
-                [$i],
-                false,
-                null
+                [$i]
             );
             $this->assertTrue(
                 \Lxj\ClosurePHP\Sugars\Object\call(
                     $bitIntArr,
                     'has',
                     \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
-                    [$i],
-                    false,
-                    null
+                    [$i]
                 )
             );
         }
@@ -319,9 +273,7 @@ class BitIntArrClosureTest extends \PHPUnit\Framework\TestCase
                     $bitIntArr,
                     'has',
                     \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
-                    [$i],
-                    false,
-                    null
+                    [$i]
                 )
             );
         }
@@ -338,33 +290,27 @@ class BitIntArrClosureTest extends \PHPUnit\Framework\TestCase
         );
 
         for ($i = 1; $i <= 10000; ++$i) {
-            $bitIntArr = \Lxj\ClosurePHP\Sugars\Object\call(
+            \Lxj\ClosurePHP\Sugars\Object\call(
                 $bitIntArr,
                 'put',
                 \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
-                [$i],
-                false,
-                null
+                [$i]
             );
         }
 
         for ($i = 1; $i <= 10000; ++$i) {
-            $bitIntArr = \Lxj\ClosurePHP\Sugars\Object\call(
+            \Lxj\ClosurePHP\Sugars\Object\call(
                 $bitIntArr,
                 'del',
                 \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
-                [$i],
-                false,
-                null
+                [$i]
             );
             $this->assertFalse(
                 \Lxj\ClosurePHP\Sugars\Object\call(
                     $bitIntArr,
                     'has',
                     \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
-                    [$i],
-                    false,
-                    null
+                    [$i]
                 )
             );
         }
@@ -375,9 +321,7 @@ class BitIntArrClosureTest extends \PHPUnit\Framework\TestCase
                     $bitIntArr,
                     'has',
                     \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
-                    [$i],
-                    false,
-                    null
+                    [$i]
                 )
             );
         }
@@ -388,30 +332,24 @@ class BitIntArrClosureTest extends \PHPUnit\Framework\TestCase
         );
 
         for ($i = 1; $i <= 10000; ++$i) {
-            $bitIntArr = \Lxj\ClosurePHP\Sugars\Object\call(
+            \Lxj\ClosurePHP\Sugars\Object\call(
                 $bitIntArr,
                 'put',
                 \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
-                [$i],
-                false,
-                null
+                [$i]
             );
-            $bitIntArr = \Lxj\ClosurePHP\Sugars\Object\call(
+            \Lxj\ClosurePHP\Sugars\Object\call(
                 $bitIntArr,
                 'del',
                 \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
-                [$i],
-                false,
-                null
+                [$i]
             );
             $this->assertFalse(
                 \Lxj\ClosurePHP\Sugars\Object\call(
                     $bitIntArr,
                     'has',
                     \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
-                    [$i],
-                    false,
-                    null
+                    [$i]
                 )
             );
         }
@@ -422,9 +360,7 @@ class BitIntArrClosureTest extends \PHPUnit\Framework\TestCase
                     $bitIntArr,
                     'has',
                     \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
-                    [$i],
-                    false,
-                    null
+                    [$i]
                 )
             );
         }
@@ -435,33 +371,27 @@ class BitIntArrClosureTest extends \PHPUnit\Framework\TestCase
         );
 
         for ($i = 1; $i <= 10000; $i += 2) {
-            $bitIntArr = \Lxj\ClosurePHP\Sugars\Object\call(
+            \Lxj\ClosurePHP\Sugars\Object\call(
                 $bitIntArr,
                 'put',
                 \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
-                [$i],
-                false,
-                null
+                [$i]
             );
         }
 
         for ($i = 1; $i <= 10000; $i += 2) {
-            $bitIntArr = \Lxj\ClosurePHP\Sugars\Object\call(
+            \Lxj\ClosurePHP\Sugars\Object\call(
                 $bitIntArr,
                 'del',
                 \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
-                [$i],
-                false,
-                null
+                [$i]
             );
             $this->assertFalse(
                 \Lxj\ClosurePHP\Sugars\Object\call(
                     $bitIntArr,
                     'has',
                     \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
-                    [$i],
-                    false,
-                    null
+                    [$i]
                 )
             );
         }
@@ -472,9 +402,7 @@ class BitIntArrClosureTest extends \PHPUnit\Framework\TestCase
                     $bitIntArr,
                     'has',
                     \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
-                    [$i],
-                    false,
-                    null
+                    [$i]
                 )
             );
         }
@@ -485,30 +413,24 @@ class BitIntArrClosureTest extends \PHPUnit\Framework\TestCase
         );
 
         for ($i = 1; $i <= 10000; $i += 2) {
-            $bitIntArr = \Lxj\ClosurePHP\Sugars\Object\call(
+            \Lxj\ClosurePHP\Sugars\Object\call(
                 $bitIntArr,
                 'put',
                 \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
-                [$i],
-                false,
-                null
+                [$i]
             );
-            $bitIntArr = \Lxj\ClosurePHP\Sugars\Object\call(
+            \Lxj\ClosurePHP\Sugars\Object\call(
                 $bitIntArr,
                 'del',
                 \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
-                [$i],
-                false,
-                null
+                [$i]
             );
             $this->assertFalse(
                 \Lxj\ClosurePHP\Sugars\Object\call(
                     $bitIntArr,
                     'has',
                     \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
-                    [$i],
-                    false,
-                    null
+                    [$i]
                 )
             );
         }
@@ -519,9 +441,7 @@ class BitIntArrClosureTest extends \PHPUnit\Framework\TestCase
                     $bitIntArr,
                     'has',
                     \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
-                    [$i],
-                    false,
-                    null
+                    [$i]
                 )
             );
         }
@@ -532,33 +452,27 @@ class BitIntArrClosureTest extends \PHPUnit\Framework\TestCase
         );
 
         for ($i = 1; $i <= 10000; ++$i) {
-            $bitIntArr = \Lxj\ClosurePHP\Sugars\Object\call(
+            \Lxj\ClosurePHP\Sugars\Object\call(
                 $bitIntArr,
                 'put',
                 \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
-                [$i],
-                false,
-                null
+                [$i]
             );
         }
 
         for ($i = 1; $i <= 10000; $i += 2) {
-            $bitIntArr = \Lxj\ClosurePHP\Sugars\Object\call(
+            \Lxj\ClosurePHP\Sugars\Object\call(
                 $bitIntArr,
                 'del',
                 \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
-                [$i],
-                false,
-                null
+                [$i]
             );
             $this->assertFalse(
                 \Lxj\ClosurePHP\Sugars\Object\call(
                     $bitIntArr,
                     'has',
                     \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
-                    [$i],
-                    false,
-                    null
+                    [$i]
                 )
             );
         }
@@ -570,9 +484,7 @@ class BitIntArrClosureTest extends \PHPUnit\Framework\TestCase
                         $bitIntArr,
                         'has',
                         \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
-                        [$i],
-                        false,
-                        null
+                        [$i]
                     )
                 );
             } else {
@@ -581,9 +493,7 @@ class BitIntArrClosureTest extends \PHPUnit\Framework\TestCase
                         $bitIntArr,
                         'has',
                         \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
-                        [$i],
-                        false,
-                        null
+                        [$i]
                     )
                 );
             }

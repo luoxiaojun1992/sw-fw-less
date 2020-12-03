@@ -3,11 +3,7 @@
 namespace SwFwLess\components\utils\bitmap\bitarray;
 
 use Lxj\ClosurePHP\Sugars\Scope;
-use function Lxj\ClosurePHP\Sugars\Object\access;
-use function Lxj\ClosurePHP\Sugars\Object\call;
-use function Lxj\ClosurePHP\Sugars\Object\get;
 use function Lxj\ClosurePHP\Sugars\Object\newObj;
-use function Lxj\ClosurePHP\Sugars\Object\set;
 use function Lxj\ClosurePHP\Sugars\Object\thisObj;
 
 /**
@@ -94,7 +90,7 @@ function ClassSwFwLess_components_utils_bitmap_bitarray_BitIntArrInstanceProtect
  * @return mixed
  * @throws \Exception
  */
-function ClassSwFwLess_components_utils_bitmap_bitarray_BitIntArrInstancePublicFuncPut($number, $thisObj)
+function ClassSwFwLess_components_utils_bitmap_bitarray_BitIntArrInstancePublicFuncPut($number, &$thisObj)
 {
     $slotIndex = ClassSwFwLess_components_utils_bitmap_bitarray_BitIntArrInstanceProtectedFuncGetSlotIndex($number);
     if (!isset($thisObj['props']['slots'][$slotIndex])) {
@@ -111,7 +107,7 @@ function ClassSwFwLess_components_utils_bitmap_bitarray_BitIntArrInstancePublicF
  * @return mixed
  * @throws \Exception
  */
-function ClassSwFwLess_components_utils_bitmap_bitarray_BitIntArrInstancePublicFuncAdd($number, $thisObj)
+function ClassSwFwLess_components_utils_bitmap_bitarray_BitIntArrInstancePublicFuncAdd($number, &$thisObj)
 {
     $hasNumber = ClassSwFwLess_components_utils_bitmap_bitarray_BitIntArrInstancePublicFuncHas($number, $thisObj);
 
@@ -128,7 +124,7 @@ function ClassSwFwLess_components_utils_bitmap_bitarray_BitIntArrInstancePublicF
  * @return mixed
  * @throws \Exception
  */
-function ClassSwFwLess_components_utils_bitmap_bitarray_BitIntArrInstancePublicFuncDel($number, $thisObj)
+function ClassSwFwLess_components_utils_bitmap_bitarray_BitIntArrInstancePublicFuncDel($number, &$thisObj)
 {
     $hasNumber = ClassSwFwLess_components_utils_bitmap_bitarray_BitIntArrInstancePublicFuncHas($number, $thisObj);
     if (!$hasNumber) {
@@ -149,7 +145,7 @@ function ClassSwFwLess_components_utils_bitmap_bitarray_BitIntArrInstancePublicF
  * @return bool
  * @throws \Exception
  */
-function ClassSwFwLess_components_utils_bitmap_bitarray_BitIntArrInstancePublicFuncHas($number, $thisObj)
+function ClassSwFwLess_components_utils_bitmap_bitarray_BitIntArrInstancePublicFuncHas($number, &$thisObj)
 {
     $slotIndex = ClassSwFwLess_components_utils_bitmap_bitarray_BitIntArrInstanceProtectedFuncGetSlotIndex($number);
 
@@ -166,7 +162,7 @@ function ClassSwFwLess_components_utils_bitmap_bitarray_BitIntArrInstancePublicF
  * @param $thisObj
  * @return \Generator
  */
-function ClassSwFwLess_components_utils_bitmap_bitarray_BitIntArrInstancePublicFuncIterator($thisObj)
+function ClassSwFwLess_components_utils_bitmap_bitarray_BitIntArrInstancePublicFuncIterator(&$thisObj)
 {
     $slotStorage = ClassSwFwLess_components_utils_bitmap_bitarray_BitIntArrInstanceProtectedFuncSlotStorage();
 
