@@ -21,15 +21,7 @@ function ClassSwFwLess_components_utils_bitmap_bitarray_BitIntArrStaticPublicFun
         'SwFwLess\components\utils\bitmap\bitarray\BitIntArr',
         Scope::PRIVATE
     );
-    call(
-        $bitIntArr,
-        'setSlots',
-        Scope::PRIVATE,
-        [$slots],
-        false,
-        null
-    );
-    return $bitIntArr;
+    return ClassSwFwLess_components_utils_bitmap_bitarray_BitIntArrInstancePublicFuncSetSlots($slots, $bitIntArr);
 }
 
 /**
@@ -38,11 +30,8 @@ function ClassSwFwLess_components_utils_bitmap_bitarray_BitIntArrStaticPublicFun
  */
 function ClassSwFwLess_components_utils_bitmap_bitarray_BitIntArrInstancePublicFuncGetSlots()
 {
-    return get(
-        thisObj(func_get_args()),
-        'slots',
-        Scope::PRIVATE
-    );
+    $thisObj = thisObj(func_get_args());
+    return $thisObj['props']['slots'];
 }
 
 /**
@@ -53,12 +42,7 @@ function ClassSwFwLess_components_utils_bitmap_bitarray_BitIntArrInstancePublicF
 function ClassSwFwLess_components_utils_bitmap_bitarray_BitIntArrInstancePublicFuncSetSlots($slots)
 {
     $thisObj = thisObj(func_get_args());
-    set(
-        $thisObj,
-        'slots',
-        $slots,
-        Scope::PRIVATE
-    );
+    $thisObj['props']['slots'] = $slots;
     return $thisObj;
 }
 
@@ -74,14 +58,7 @@ function ClassSwFwLess_components_utils_bitmap_bitarray_BitIntArrInstanceProtect
  */
 function ClassSwFwLess_components_utils_bitmap_bitarray_BitIntArrInstanceProtectedFuncGetSlotIndex($number)
 {
-    $slotStorage = call(
-        thisObj(func_get_args()),
-        'slotStorage',
-        Scope::PRIVATE,
-        [],
-        false,
-        null
-    );
+    $slotStorage = ClassSwFwLess_components_utils_bitmap_bitarray_BitIntArrInstanceProtectedFuncSlotStorage();
     return ceil($number / $slotStorage) - 1;
 }
 
@@ -92,14 +69,7 @@ function ClassSwFwLess_components_utils_bitmap_bitarray_BitIntArrInstanceProtect
  */
 function ClassSwFwLess_components_utils_bitmap_bitarray_BitIntArrInstanceProtectedFuncGetFractionalAmount($number)
 {
-    $slotStorage = call(
-        thisObj(func_get_args()),
-        'slotStorage',
-        Scope::PRIVATE,
-        [],
-        false,
-        null
-    );
+    $slotStorage = ClassSwFwLess_components_utils_bitmap_bitarray_BitIntArrInstanceProtectedFuncSlotStorage();
     $fractionalAmount = $number % $slotStorage;
     if ($fractionalAmount == 0) {
         $fractionalAmount = $slotStorage;
@@ -114,238 +84,98 @@ function ClassSwFwLess_components_utils_bitmap_bitarray_BitIntArrInstanceProtect
  */
 function ClassSwFwLess_components_utils_bitmap_bitarray_BitIntArrInstanceProtectedFuncGetBitmapIndex($number)
 {
-    $fractionalAmount = call(
-        thisObj(func_get_args()),
-        'getFractionalAmount',
-        Scope::PRIVATE,
-        [$number],
-        false,
-        null
-    );
+    $fractionalAmount = ClassSwFwLess_components_utils_bitmap_bitarray_BitIntArrInstanceProtectedFuncGetFractionalAmount($number);
     return 1 << $fractionalAmount - 1;
 }
 
 /**
  * @param $number
+ * @param $thisObj
  * @return mixed
  * @throws \Exception
  */
-function ClassSwFwLess_components_utils_bitmap_bitarray_BitIntArrInstancePublicFuncPut($number)
+function ClassSwFwLess_components_utils_bitmap_bitarray_BitIntArrInstancePublicFuncPut($number, $thisObj)
 {
-    $thisObj = thisObj(func_get_args());
-    $slotIndex = call(
-        $thisObj,
-        'getSlotIndex',
-        Scope::PRIVATE,
-        [$number],
-        false,
-        null
-    );
-    access(
-        $thisObj,
-        'slots',
-        function(&$obj) use ($slotIndex) {
-            if (!isset($obj['props']['slots'][$slotIndex])) {
-                $obj['props']['slots'][$slotIndex] = 0;
-            }
-        },
-        Scope::PRIVATE
-    );
-    $bitMapIndex = call(
-        $thisObj,
-        'getBitmapIndex',
-        Scope::PRIVATE,
-        [$number],
-        false,
-        null
-    );
-    access(
-        $thisObj,
-        'slots',
-        function(&$obj) use ($slotIndex, $bitMapIndex) {
-            if (!isset($obj['props']['slots'][$slotIndex])) {
-                $obj['props']['slots'][$slotIndex] = 0;
-            }
-            $obj['props']['slots'][$slotIndex] = $obj['props']['slots'][$slotIndex] | $bitMapIndex;
-        },
-        Scope::PRIVATE
-    );
+    $slotIndex = ClassSwFwLess_components_utils_bitmap_bitarray_BitIntArrInstanceProtectedFuncGetSlotIndex($number);
+    if (!isset($thisObj['props']['slots'][$slotIndex])) {
+        $thisObj['props']['slots'][$slotIndex] = 0;
+    }
+    $bitMapIndex = ClassSwFwLess_components_utils_bitmap_bitarray_BitIntArrInstanceProtectedFuncGetBitmapIndex($number);
+    $thisObj['props']['slots'][$slotIndex] = $thisObj['props']['slots'][$slotIndex] | $bitMapIndex;
     return $thisObj;
 }
 
 /**
  * @param $number
+ * @param $thisObj
  * @return mixed
  * @throws \Exception
  */
-function ClassSwFwLess_components_utils_bitmap_bitarray_BitIntArrInstancePublicFuncAdd($number)
+function ClassSwFwLess_components_utils_bitmap_bitarray_BitIntArrInstancePublicFuncAdd($number, $thisObj)
 {
-    $thisObj = thisObj(func_get_args());
-
-    $hasNumber = call(
-        $thisObj,
-        'has',
-        Scope::PRIVATE,
-        [$number],
-        false,
-        null
-    );
+    $hasNumber = ClassSwFwLess_components_utils_bitmap_bitarray_BitIntArrInstancePublicFuncHas($number, $thisObj);
 
     if ($hasNumber) {
         throw new \RuntimeException((string) $number . ' existed');
     }
 
-    return call(
-        $thisObj,
-        'put',
-        Scope::PRIVATE,
-        [$number],
-        false,
-        null
-    );
+    return ClassSwFwLess_components_utils_bitmap_bitarray_BitIntArrInstancePublicFuncPut($number, $thisObj);
 }
 
 /**
  * @param $number
+ * @param $thisObj
  * @return mixed
  * @throws \Exception
  */
-function ClassSwFwLess_components_utils_bitmap_bitarray_BitIntArrInstancePublicFuncDel($number)
+function ClassSwFwLess_components_utils_bitmap_bitarray_BitIntArrInstancePublicFuncDel($number, $thisObj)
 {
-    $thisObj = thisObj(func_get_args());
-
-    $hasNumber = call(
-        $thisObj,
-        'has',
-        Scope::PRIVATE,
-        [$number],
-        false,
-        null
-    );
-
+    $hasNumber = ClassSwFwLess_components_utils_bitmap_bitarray_BitIntArrInstancePublicFuncHas($number, $thisObj);
     if (!$hasNumber) {
         throw new \RuntimeException((string) $number . ' not existed');
     }
-    $slotIndex = call(
-        $thisObj,
-        'getSlotIndex',
-        Scope::PRIVATE,
-        [$number],
-        false,
-        null
-    );
-    access(
-        $thisObj,
-        'slots',
-        function (&$obj) use ($slotIndex, $number) {
-            if (!isset($obj['props']['slots'][$slotIndex])) {
-                throw new \RuntimeException('Slot of ' . (string) $number . ' not existed');
-            }
-        },
-        Scope::PRIVATE
-    );
-    $bitMapIndex = call(
-        $thisObj,
-        'getBitmapIndex',
-        Scope::PRIVATE,
-        [$number],
-        false,
-        null
-    );
-    access(
-        $thisObj,
-        'slots',
-        function(&$obj) use ($slotIndex, $bitMapIndex) {
-            $obj['props']['slots'][$slotIndex] = $obj['props']['slots'][$slotIndex] & ~$bitMapIndex;
-        },
-        Scope::PRIVATE
-    );
+    $slotIndex = ClassSwFwLess_components_utils_bitmap_bitarray_BitIntArrInstanceProtectedFuncGetSlotIndex($number);
+    if (!isset($thisObj['props']['slots'][$slotIndex])) {
+        throw new \RuntimeException('Slot of ' . (string) $number . ' not existed');
+    }
+    $bitMapIndex = ClassSwFwLess_components_utils_bitmap_bitarray_BitIntArrInstanceProtectedFuncGetBitmapIndex($number);
+    $thisObj['props']['slots'][$slotIndex] = $thisObj['props']['slots'][$slotIndex] & ~$bitMapIndex;
     return $thisObj;
 }
 
 /**
  * @param $number
+ * @param $thisObj
  * @return bool
  * @throws \Exception
  */
-function ClassSwFwLess_components_utils_bitmap_bitarray_BitIntArrInstancePublicFuncHas($number)
+function ClassSwFwLess_components_utils_bitmap_bitarray_BitIntArrInstancePublicFuncHas($number, $thisObj)
 {
-    $thisObj = thisObj(func_get_args());
+    $slotIndex = ClassSwFwLess_components_utils_bitmap_bitarray_BitIntArrInstanceProtectedFuncGetSlotIndex($number);
 
-    $slotIndex = call(
-        $thisObj,
-        'getSlotIndex',
-        Scope::PRIVATE,
-        [$number],
-        false,
-        null
-    );
-
-    $hasSlot = access(
-        $thisObj,
-        'slots',
-        function (&$obj) use ($slotIndex) {
-            if (!isset($obj['props']['slots'][$slotIndex])) {
-                return false;
-            }
-            return true;
-        },
-        Scope::PRIVATE
-    );
-
-    if (!$hasSlot) {
+    if (!isset($thisObj['props']['slots'][$slotIndex])) {
         return false;
     }
 
-    $bitMapIndex = call(
-        $thisObj,
-        'getBitmapIndex',
-        Scope::PRIVATE,
-        [$number],
-        false,
-        null
-    );
+    $bitMapIndex = ClassSwFwLess_components_utils_bitmap_bitarray_BitIntArrInstanceProtectedFuncGetBitmapIndex($number);
 
-    return access(
-        $thisObj,
-        'slots',
-        function (&$obj) use ($slotIndex, $bitMapIndex) {
-            return ($obj['props']['slots'][$slotIndex] & $bitMapIndex) === $bitMapIndex;
-        },
-        Scope::PRIVATE
-    );
+    return ($thisObj['props']['slots'][$slotIndex] & $bitMapIndex) === $bitMapIndex;
 }
 
 /**
+ * @param $thisObj
  * @return \Generator
- * @throws \Exception
  */
-function ClassSwFwLess_components_utils_bitmap_bitarray_BitIntArrInstancePublicFuncIterator()
+function ClassSwFwLess_components_utils_bitmap_bitarray_BitIntArrInstancePublicFuncIterator($thisObj)
 {
-    $thisObj = thisObj(func_get_args());
+    $slotStorage = ClassSwFwLess_components_utils_bitmap_bitarray_BitIntArrInstanceProtectedFuncSlotStorage();
 
-    $slotStorage = call(
-        $thisObj,
-        'slotStorage',
-        Scope::PRIVATE,
-        [],
-        false,
-        null
-    );
-
-    return access(
-        $thisObj,
-        'slots',
-        function (&$obj) use ($slotStorage) {
-            foreach ($obj['props']['slots'] as $slotIndex => $slot) {
-                for ($i = 1; $i <= $slotStorage; ++$i) {
-                    $bitMapIndex = 1 << $i - 1;
-                    if (($bitMapIndex & $slot) === $bitMapIndex) {
-                        (yield $slotIndex * $slotStorage + $i);
-                    }
-                }
+    foreach ($thisObj['props']['slots'] as $slotIndex => $slot) {
+        for ($i = 1; $i <= $slotStorage; ++$i) {
+            $bitMapIndex = 1 << $i - 1;
+            if (($bitMapIndex & $slot) === $bitMapIndex) {
+                (yield $slotIndex * $slotStorage + $i);
             }
-        },
-        Scope::PRIVATE
-    );
+        }
+    }
 }
