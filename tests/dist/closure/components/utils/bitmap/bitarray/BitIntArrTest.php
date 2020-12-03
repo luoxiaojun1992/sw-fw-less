@@ -12,6 +12,7 @@ class BitIntArrClosureTest extends \PHPUnit\Framework\TestCase
             'SwFwLess\components\utils\bitmap\bitarray\BitIntArr'
         );
 
+        //todo used too large memory
         for ($i = 1; $i <= 10000; ++$i) {
             $bitIntArr = \Lxj\ClosurePHP\Sugars\Object\call(
                 $bitIntArr,
