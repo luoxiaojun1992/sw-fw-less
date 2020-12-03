@@ -27,7 +27,7 @@ function ClassSwFwLess_components_utils_bitmap_bitarray_BitIntArrStaticPublicFun
 function ClassSwFwLess_components_utils_bitmap_bitarray_BitIntArrInstancePublicFuncGetSlots()
 {
     $thisObj = thisObj(func_get_args());
-    return $thisObj['props']['slots'];
+    return $thisObj['props_slots'];
 }
 
 /**
@@ -38,7 +38,7 @@ function ClassSwFwLess_components_utils_bitmap_bitarray_BitIntArrInstancePublicF
 function ClassSwFwLess_components_utils_bitmap_bitarray_BitIntArrInstancePublicFuncSetSlots($slots)
 {
     $thisObj = thisObj(func_get_args());
-    $thisObj['props']['slots'] = $slots;
+    $thisObj['props_slots'] = $slots;
     return $thisObj;
 }
 
@@ -93,11 +93,11 @@ function ClassSwFwLess_components_utils_bitmap_bitarray_BitIntArrInstanceProtect
 function ClassSwFwLess_components_utils_bitmap_bitarray_BitIntArrInstancePublicFuncPut($number, &$thisObj)
 {
     $slotIndex = ClassSwFwLess_components_utils_bitmap_bitarray_BitIntArrInstanceProtectedFuncGetSlotIndex($number);
-    if (!isset($thisObj['props']['slots'][$slotIndex])) {
-        $thisObj['props']['slots'][$slotIndex] = 0;
+    if (!isset($thisObj['props_slots'][$slotIndex])) {
+        $thisObj['props_slots'][$slotIndex] = 0;
     }
     $bitMapIndex = ClassSwFwLess_components_utils_bitmap_bitarray_BitIntArrInstanceProtectedFuncGetBitmapIndex($number);
-    $thisObj['props']['slots'][$slotIndex] = $thisObj['props']['slots'][$slotIndex] | $bitMapIndex;
+    $thisObj['props_slots'][$slotIndex] = $thisObj['props_slots'][$slotIndex] | $bitMapIndex;
     return $thisObj;
 }
 
@@ -131,11 +131,11 @@ function ClassSwFwLess_components_utils_bitmap_bitarray_BitIntArrInstancePublicF
         throw new \RuntimeException((string) $number . ' not existed');
     }
     $slotIndex = ClassSwFwLess_components_utils_bitmap_bitarray_BitIntArrInstanceProtectedFuncGetSlotIndex($number);
-    if (!isset($thisObj['props']['slots'][$slotIndex])) {
+    if (!isset($thisObj['props_slots'][$slotIndex])) {
         throw new \RuntimeException('Slot of ' . (string) $number . ' not existed');
     }
     $bitMapIndex = ClassSwFwLess_components_utils_bitmap_bitarray_BitIntArrInstanceProtectedFuncGetBitmapIndex($number);
-    $thisObj['props']['slots'][$slotIndex] = $thisObj['props']['slots'][$slotIndex] & ~$bitMapIndex;
+    $thisObj['props_slots'][$slotIndex] = $thisObj['props_slots'][$slotIndex] & ~$bitMapIndex;
     return $thisObj;
 }
 
@@ -149,13 +149,13 @@ function ClassSwFwLess_components_utils_bitmap_bitarray_BitIntArrInstancePublicF
 {
     $slotIndex = ClassSwFwLess_components_utils_bitmap_bitarray_BitIntArrInstanceProtectedFuncGetSlotIndex($number);
 
-    if (!isset($thisObj['props']['slots'][$slotIndex])) {
+    if (!isset($thisObj['props_slots'][$slotIndex])) {
         return false;
     }
 
     $bitMapIndex = ClassSwFwLess_components_utils_bitmap_bitarray_BitIntArrInstanceProtectedFuncGetBitmapIndex($number);
 
-    return ($thisObj['props']['slots'][$slotIndex] & $bitMapIndex) === $bitMapIndex;
+    return ($thisObj['props_slots'][$slotIndex] & $bitMapIndex) === $bitMapIndex;
 }
 
 /**
@@ -166,7 +166,7 @@ function ClassSwFwLess_components_utils_bitmap_bitarray_BitIntArrInstancePublicF
 {
     $slotStorage = ClassSwFwLess_components_utils_bitmap_bitarray_BitIntArrInstanceProtectedFuncSlotStorage();
 
-    foreach ($thisObj['props']['slots'] as $slotIndex => $slot) {
+    foreach ($thisObj['props_slots'] as $slotIndex => $slot) {
         for ($i = 1; $i <= $slotStorage; ++$i) {
             $bitMapIndex = 1 << $i - 1;
             if (($bitMapIndex & $slot) === $bitMapIndex) {
