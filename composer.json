@@ -58,7 +58,7 @@
     ],
     "autoload": {
         "psr-4": {"SwFwLess\\": "src/"},
-        "files": ["src/components/functions.php"]
+        "files": ["src/components/functions.php", "dist/closure/meta.php"]
     },
     "config": {
         "sort-packages": true
