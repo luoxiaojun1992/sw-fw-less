@@ -45,7 +45,7 @@ class BitIntArr
         return $this;
     }
 
-    protected function slotStorage()
+    protected static function slotStorage()
     {
         return intval(log(PHP_INT_MAX - 1, 2));
     }
@@ -58,14 +58,14 @@ class BitIntArr
      * @param $number
      * @return false|float|int
      */
-    protected function getSlotIndex($number)
+    protected static function getSlotIndex($number)
     {
-        return ceil($number / $this->slotStorage()) - 1;
+        return ceil($number / static::slotStorage()) - 1;
     }
 
-    protected function getFractionalAmount($number)
+    protected static function getFractionalAmount($number)
     {
-        $slotStorage = $this->slotStorage();
+        $slotStorage = static::slotStorage();
 
         $fractionalAmount = $number % $slotStorage;
         if ($fractionalAmount == 0) {
@@ -83,9 +83,9 @@ class BitIntArr
      * @param $number
      * @return int
      */
-    protected function getBitmapIndex($number)
+    protected static function getBitmapIndex($number)
     {
-        return 1 << ($this->getFractionalAmount($number) - 1);
+        return 1 << (static::getFractionalAmount($number) - 1);
     }
 
     /**
@@ -93,12 +93,12 @@ class BitIntArr
      */
     public function put($number)
     {
-        $slotIndex = $this->getSlotIndex($number);
+        $slotIndex = static::getSlotIndex($number);
         if (!isset($this->slots[$slotIndex])) {
             $this->slots[$slotIndex] = 0;
         }
 
-        $bitMapIndex = $this->getBitmapIndex($number);
+        $bitMapIndex = static::getBitmapIndex($number);
         $this->slots[$slotIndex] = ($this->slots[$slotIndex] | $bitMapIndex);
     }
 
@@ -123,12 +123,12 @@ class BitIntArr
             throw new \RuntimeException(((string)$number) . ' not existed');
         }
 
-        $slotIndex = $this->getSlotIndex($number);
+        $slotIndex = static::getSlotIndex($number);
         if (!isset($this->slots[$slotIndex])) {
             throw new \RuntimeException(('Slot of ' . (string)$number) . ' not existed');
         }
 
-        $bitMapIndex = $this->getBitmapIndex($number);
+        $bitMapIndex = static::getBitmapIndex($number);
         $this->slots[$slotIndex] = ($this->slots[$slotIndex] & (~$bitMapIndex));
     }
 
@@ -138,12 +138,12 @@ class BitIntArr
      */
     public function has($number)
     {
-        $slotIndex = $this->getSlotIndex($number);
+        $slotIndex = static::getSlotIndex($number);
         if (!isset($this->slots[$slotIndex])) {
             return false;
         }
 
-        $bitMapIndex = $this->getBitmapIndex($number);
+        $bitMapIndex = static::getBitmapIndex($number);
         return ($this->slots[$slotIndex] & $bitMapIndex) === $bitMapIndex;
     }
 
@@ -152,7 +152,7 @@ class BitIntArr
      */
     public function iterator()
     {
-        $slotStorage = $this->slotStorage();
+        $slotStorage = static::slotStorage();
         foreach ($this->slots as $slotIndex => $slot) {
             for ($i = 1; $i <= $slotStorage; ++$i) {
                 $bitMapIndex = (1 << ($i - 1));
