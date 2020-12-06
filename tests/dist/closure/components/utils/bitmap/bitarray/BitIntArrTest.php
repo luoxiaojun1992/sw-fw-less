@@ -651,91 +651,255 @@ class BitIntArrClosureTest extends \PHPUnit\Framework\TestCase
         }
 
         //Case 8
-        $bitIntArr = new \SwFwLess\components\utils\bitmap\bitarray\BitIntArr();
+        $bitIntArr = \Lxj\ClosurePHP\Sugars\Object\newObj(
+            'SwFwLess\components\utils\bitmap\bitarray\BitIntArr'
+        );
 
         for ($i = 1; $i <= 10000; $i += 2) {
-            $bitIntArr->put($i);
+            \Lxj\ClosurePHP\Sugars\Object\call(
+                $bitIntArr,
+                'put',
+                \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                [$i]
+            );
         }
 
         for ($i = 20001; $i <= 30000; $i += 2) {
-            $bitIntArr->put($i);
+            \Lxj\ClosurePHP\Sugars\Object\call(
+                $bitIntArr,
+                'put',
+                \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                [$i]
+            );
         }
 
         for ($i = 1; $i <= 10000; $i += 2) {
-            $bitIntArr->del($i);
-            $this->assertFalse($bitIntArr->has($i));
+            \Lxj\ClosurePHP\Sugars\Object\call(
+                $bitIntArr,
+                'del',
+                \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                [$i]
+            );
+            $this->assertFalse(
+                \Lxj\ClosurePHP\Sugars\Object\call(
+                    $bitIntArr,
+                    'has',
+                    \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                    [$i]
+                )
+            );
         }
 
         for ($i = 20001; $i <= 30000; $i += 2) {
-            $bitIntArr->del($i);
-            $this->assertFalse($bitIntArr->has($i));
+            \Lxj\ClosurePHP\Sugars\Object\call(
+                $bitIntArr,
+                'del',
+                \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                [$i]
+            );
+            $this->assertFalse(
+                \Lxj\ClosurePHP\Sugars\Object\call(
+                    $bitIntArr,
+                    'has',
+                    \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                    [$i]
+                )
+            );
         }
 
         for ($i = 1; $i <= 10000; ++$i) {
-            $this->assertFalse($bitIntArr->has($i));
+            $this->assertFalse(
+                \Lxj\ClosurePHP\Sugars\Object\call(
+                    $bitIntArr,
+                    'has',
+                    \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                    [$i]
+                )
+            );
         }
 
         for ($i = 20001; $i <= 30000; ++$i) {
-            $this->assertFalse($bitIntArr->has($i));
+            $this->assertFalse(
+                \Lxj\ClosurePHP\Sugars\Object\call(
+                    $bitIntArr,
+                    'has',
+                    \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                    [$i]
+                )
+            );
         }
 
         //Case 9
-        $bitIntArr = new \SwFwLess\components\utils\bitmap\bitarray\BitIntArr();
+        $bitIntArr = \Lxj\ClosurePHP\Sugars\Object\newObj(
+            'SwFwLess\components\utils\bitmap\bitarray\BitIntArr'
+        );
 
         for ($i = 1; $i <= 10000; $i += 2) {
-            $bitIntArr->put($i);
-            $bitIntArr->del($i);
-            $this->assertFalse($bitIntArr->has($i));
+            \Lxj\ClosurePHP\Sugars\Object\call(
+                $bitIntArr,
+                'put',
+                \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                [$i]
+            );
+            \Lxj\ClosurePHP\Sugars\Object\call(
+                $bitIntArr,
+                'del',
+                \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                [$i]
+            );
+            $this->assertFalse(
+                \Lxj\ClosurePHP\Sugars\Object\call(
+                    $bitIntArr,
+                    'has',
+                    \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                    [$i]
+                )
+            );
         }
 
         for ($i = 20001; $i <= 30000; $i += 2) {
-            $bitIntArr->put($i);
-            $bitIntArr->del($i);
-            $this->assertFalse($bitIntArr->has($i));
+            \Lxj\ClosurePHP\Sugars\Object\call(
+                $bitIntArr,
+                'put',
+                \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                [$i]
+            );
+            \Lxj\ClosurePHP\Sugars\Object\call(
+                $bitIntArr,
+                'del',
+                \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                [$i]
+            );
+            $this->assertFalse(
+                \Lxj\ClosurePHP\Sugars\Object\call(
+                    $bitIntArr,
+                    'has',
+                    \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                    [$i]
+                )
+            );
         }
 
         for ($i = 1; $i <= 10000; ++$i) {
-            $this->assertFalse($bitIntArr->has($i));
+            $this->assertFalse(
+                \Lxj\ClosurePHP\Sugars\Object\call(
+                    $bitIntArr,
+                    'has',
+                    \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                    [$i]
+                )
+            );
         }
 
         for ($i = 20001; $i <= 30000; ++$i) {
-            $this->assertFalse($bitIntArr->has($i));
+            $this->assertFalse(
+                \Lxj\ClosurePHP\Sugars\Object\call(
+                    $bitIntArr,
+                    'has',
+                    \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                    [$i]
+                )
+            );
         }
 
         //Case 10
-        $bitIntArr = new \SwFwLess\components\utils\bitmap\bitarray\BitIntArr();
+        $bitIntArr = \Lxj\ClosurePHP\Sugars\Object\newObj(
+            'SwFwLess\components\utils\bitmap\bitarray\BitIntArr'
+        );
 
         for ($i = 1; $i <= 10000; ++$i) {
-            $bitIntArr->put($i);
+            \Lxj\ClosurePHP\Sugars\Object\call(
+                $bitIntArr,
+                'put',
+                \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                [$i]
+            );
         }
 
         for ($i = 20001; $i <= 30000; ++$i) {
-            $bitIntArr->put($i);
+            \Lxj\ClosurePHP\Sugars\Object\call(
+                $bitIntArr,
+                'put',
+                \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                [$i]
+            );
         }
 
         for ($i = 1; $i <= 10000; $i += 2) {
-            $bitIntArr->del($i);
-            $this->assertFalse($bitIntArr->has($i));
+            \Lxj\ClosurePHP\Sugars\Object\call(
+                $bitIntArr,
+                'del',
+                \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                [$i]
+            );
+            $this->assertFalse(
+                \Lxj\ClosurePHP\Sugars\Object\call(
+                    $bitIntArr,
+                    'has',
+                    \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                    [$i]
+                )
+            );
         }
 
         for ($i = 20001; $i <= 30000; $i += 2) {
-            $bitIntArr->del($i);
-            $this->assertFalse($bitIntArr->has($i));
+            \Lxj\ClosurePHP\Sugars\Object\call(
+                $bitIntArr,
+                'del',
+                \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                [$i]
+            );
+            $this->assertFalse(
+                \Lxj\ClosurePHP\Sugars\Object\call(
+                    $bitIntArr,
+                    'has',
+                    \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                    [$i]
+                )
+            );
         }
 
         for ($i = 1; $i <= 10000; ++$i) {
             if (($i % 2) == 0) {
-                $this->assertTrue($bitIntArr->has($i));
+                $this->assertTrue(
+                    \Lxj\ClosurePHP\Sugars\Object\call(
+                        $bitIntArr,
+                        'has',
+                        \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                        [$i]
+                    )
+                );
             } else {
-                $this->assertFalse($bitIntArr->has($i));
+                $this->assertFalse(
+                    \Lxj\ClosurePHP\Sugars\Object\call(
+                        $bitIntArr,
+                        'has',
+                        \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                        [$i]
+                    )
+                );
             }
         }
 
         for ($i = 20001; $i <= 30000; ++$i) {
             if (($i % 2) == 0) {
-                $this->assertTrue($bitIntArr->has($i));
+                $this->assertTrue(
+                    \Lxj\ClosurePHP\Sugars\Object\call(
+                        $bitIntArr,
+                        'has',
+                        \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                        [$i]
+                    )
+                );
             } else {
-                $this->assertFalse($bitIntArr->has($i));
+                $this->assertFalse(
+                    \Lxj\ClosurePHP\Sugars\Object\call(
+                        $bitIntArr,
+                        'has',
+                        \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                        [$i]
+                    )
+                );
             }
         }
     }
