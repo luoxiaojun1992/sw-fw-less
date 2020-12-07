@@ -11,6 +11,7 @@ use SwFwLess\facades\Container;
 use SwFwLess\facades\Log;
 use SwFwLess\facades\ObjectPool;
 use SwFwLess\facades\RateLimit;
+use SwFwLess\middlewares\Parser;
 use Swoole\Http\Server;
 use Swoole\Server\Task;
 
@@ -196,7 +197,7 @@ class App
         foreach ($middlewareNames as $i => $middlewareName) {
             list($middlewareClass, $middlewareOptions) = ($middlewareName === \SwFwLess\middlewares\Route::class) ?
                 [$middlewareName, null] :
-                $this->parseMiddlewareName($middlewareName);
+                Parser::parseMiddlewareName($middlewareName);
 
             /** @var \SwFwLess\middlewares\AbstractMiddleware $middlewareConcrete */
             $middlewareConcrete = ObjectPool::pick($middlewareClass) ?: ($routeDiSwitch ?
