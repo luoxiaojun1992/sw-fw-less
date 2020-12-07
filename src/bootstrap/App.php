@@ -189,7 +189,7 @@ class App
 
         //Middleware
         $middlewareNames = functions\config('middleware.middleware');
-        array_push($middlewareNames, \SwFwLess\middlewares\Route::class);
+        $middlewareNames[] = \SwFwLess\middlewares\Route::class;
         /** @var \SwFwLess\middlewares\MiddlewareContract[]|\SwFwLess\middlewares\AbstractMiddleware[] $middlewareConcretes */
         $prevMiddlewareConcrete = null;
         $firstMiddlewareConcrete = null;
