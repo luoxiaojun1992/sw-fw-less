@@ -904,46 +904,93 @@ class BitIntArrClosureTest extends \PHPUnit\Framework\TestCase
         }
     }
 
+    /**
+     * @throws Exception
+     */
     public function testIterator()
     {
         //Case 1
-        $bitIntArr = new \SwFwLess\components\utils\bitmap\bitarray\BitIntArr();
+        $bitIntArr = \Lxj\ClosurePHP\Sugars\Object\newObj(
+            'SwFwLess\components\utils\bitmap\bitarray\BitIntArr'
+        );
 
         for ($i = 1; $i <= 10000; ++$i) {
-            $bitIntArr->put($i);
+            \Lxj\ClosurePHP\Sugars\Object\call(
+                $bitIntArr,
+                'put',
+                \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                [$i]
+            );
         }
 
+        $iterator = \Lxj\ClosurePHP\Sugars\Object\call(
+            $bitIntArr,
+            'iterator',
+            \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+            []
+        );
         $i = 0;
-        foreach ($bitIntArr->iterator() as $number) {
+        foreach ($iterator as $number) {
             $this->assertEquals(++$i, $number);
         }
 
         //Case 2
-        $bitIntArr = new \SwFwLess\components\utils\bitmap\bitarray\BitIntArr();
+        $bitIntArr = \Lxj\ClosurePHP\Sugars\Object\newObj(
+            'SwFwLess\components\utils\bitmap\bitarray\BitIntArr'
+        );
 
         for ($i = 1; $i <= 10000; $i += 2) {
-            $bitIntArr->put($i);
+            \Lxj\ClosurePHP\Sugars\Object\call(
+                $bitIntArr,
+                'put',
+                \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                [$i]
+            );
         }
 
+        $iterator = \Lxj\ClosurePHP\Sugars\Object\call(
+            $bitIntArr,
+            'iterator',
+            \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+            []
+        );
         $i = 1;
-        foreach ($bitIntArr->iterator() as $number) {
+        foreach ($iterator as $number) {
             $this->assertEquals($i, $number);
             $i += 2;
         }
 
         //Case 3
-        $bitIntArr = new \SwFwLess\components\utils\bitmap\bitarray\BitIntArr();
+        $bitIntArr = \Lxj\ClosurePHP\Sugars\Object\newObj(
+            'SwFwLess\components\utils\bitmap\bitarray\BitIntArr'
+        );
 
         for ($i = 1; $i <= 10000; ++$i) {
-            $bitIntArr->put($i);
+            \Lxj\ClosurePHP\Sugars\Object\call(
+                $bitIntArr,
+                'put',
+                \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                [$i]
+            );
         }
 
         for ($i = 20001; $i <= 30000; ++$i) {
-            $bitIntArr->put($i);
+            \Lxj\ClosurePHP\Sugars\Object\call(
+                $bitIntArr,
+                'put',
+                \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                [$i]
+            );
         }
 
+        $iterator = \Lxj\ClosurePHP\Sugars\Object\call(
+            $bitIntArr,
+            'iterator',
+            \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+            []
+        );
         $i = 0;
-        foreach ($bitIntArr->iterator() as $number) {
+        foreach ($iterator as $number) {
             $this->assertEquals(++$i, $number);
             if ($i === 10000) {
                 $i = 20000;
@@ -951,18 +998,36 @@ class BitIntArrClosureTest extends \PHPUnit\Framework\TestCase
         }
 
         //Case 4
-        $bitIntArr = new \SwFwLess\components\utils\bitmap\bitarray\BitIntArr();
+        $bitIntArr = \Lxj\ClosurePHP\Sugars\Object\newObj(
+            'SwFwLess\components\utils\bitmap\bitarray\BitIntArr'
+        );
 
         for ($i = 1; $i <= 10000; $i += 2) {
-            $bitIntArr->put($i);
+            \Lxj\ClosurePHP\Sugars\Object\call(
+                $bitIntArr,
+                'put',
+                \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                [$i]
+            );
         }
 
         for ($i = 20001; $i <= 30000; $i += 2) {
-            $bitIntArr->put($i);
+            \Lxj\ClosurePHP\Sugars\Object\call(
+                $bitIntArr,
+                'put',
+                \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                [$i]
+            );
         }
 
+        $iterator = \Lxj\ClosurePHP\Sugars\Object\call(
+            $bitIntArr,
+            'iterator',
+            \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+            []
+        );
         $i = 1;
-        foreach ($bitIntArr->iterator() as $number) {
+        foreach ($iterator as $number) {
             $this->assertEquals($i, $number);
             $i += 2;
             if ($i > 10000 && $i < 20001) {
@@ -971,254 +1036,721 @@ class BitIntArrClosureTest extends \PHPUnit\Framework\TestCase
         }
     }
 
+    /**
+     * @throws Exception
+     */
     public function testCreateFromSlots()
     {
         //Case 1
-        $bitIntArr = new \SwFwLess\components\utils\bitmap\bitarray\BitIntArr();
+        $bitIntArr = \Lxj\ClosurePHP\Sugars\Object\newObj(
+            'SwFwLess\components\utils\bitmap\bitarray\BitIntArr'
+        );
 
         for ($i = 1; $i <= 10000; ++$i) {
-            $bitIntArr->put($i);
-            $this->assertTrue($bitIntArr->has($i));
+            \Lxj\ClosurePHP\Sugars\Object\call(
+                $bitIntArr,
+                'put',
+                \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                [$i]
+            );
+            $this->assertTrue(
+                \Lxj\ClosurePHP\Sugars\Object\call(
+                    $bitIntArr,
+                    'has',
+                    \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                    [$i]
+                )
+            );
         }
 
         for ($i = 1; $i <= 10000; ++$i) {
-            $this->assertTrue($bitIntArr->has($i));
+            $this->assertTrue(
+                \Lxj\ClosurePHP\Sugars\Object\call(
+                    $bitIntArr,
+                    'has',
+                    \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                    [$i]
+                )
+            );
         }
 
-        $bitIntArr = \SwFwLess\components\utils\bitmap\bitarray\BitIntArr::createFromSlots($bitIntArr->getSlots());
+        $slots = \Lxj\ClosurePHP\Sugars\Object\call(
+            $bitIntArr,
+            'getSlots',
+            \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+            []
+        );
+        $bitIntArr = \Lxj\ClosurePHP\Sugars\Object\callStatic(
+            'SwFwLess\components\utils\bitmap\bitarray\BitIntArr',
+            'createFromSlots',
+            \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+            [$slots]
+        );
 
         for ($i = 1; $i <= 10000; ++$i) {
-            $this->assertTrue($bitIntArr->has($i));
+            $this->assertTrue(
+                \Lxj\ClosurePHP\Sugars\Object\call(
+                    $bitIntArr,
+                    'has',
+                    \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                    [$i]
+                )
+            );
         }
 
         //Case 2
-        $bitIntArr = new \SwFwLess\components\utils\bitmap\bitarray\BitIntArr();
+        $bitIntArr = \Lxj\ClosurePHP\Sugars\Object\newObj(
+            'SwFwLess\components\utils\bitmap\bitarray\BitIntArr'
+        );
 
         for ($i = 1; $i <= 10000; $i += 2) {
-            $bitIntArr->put($i);
-            $this->assertTrue($bitIntArr->has($i));
+            \Lxj\ClosurePHP\Sugars\Object\call(
+                $bitIntArr,
+                'put',
+                \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                [$i]
+            );
+            $this->assertTrue(
+                \Lxj\ClosurePHP\Sugars\Object\call(
+                    $bitIntArr,
+                    'has',
+                    \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                    [$i]
+                )
+            );
         }
 
         for ($i = 1; $i <= 10000; $i += 2) {
-            $this->assertTrue($bitIntArr->has($i));
+            $this->assertTrue(
+                \Lxj\ClosurePHP\Sugars\Object\call(
+                    $bitIntArr,
+                    'has',
+                    \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                    [$i]
+                )
+            );
         }
 
-        $bitIntArr = \SwFwLess\components\utils\bitmap\bitarray\BitIntArr::createFromSlots($bitIntArr->getSlots());
+        $slots = \Lxj\ClosurePHP\Sugars\Object\call(
+            $bitIntArr,
+            'getSlots',
+            \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+            []
+        );
+        $bitIntArr = \Lxj\ClosurePHP\Sugars\Object\callStatic(
+            'SwFwLess\components\utils\bitmap\bitarray\BitIntArr',
+            'createFromSlots',
+            \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+            [$slots]
+        );
 
         for ($i = 1; $i <= 10000; $i += 2) {
-            $this->assertTrue($bitIntArr->has($i));
+            $this->assertTrue(
+                \Lxj\ClosurePHP\Sugars\Object\call(
+                    $bitIntArr,
+                    'has',
+                    \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                    [$i]
+                )
+            );
         }
 
         //Case 3
-        $bitIntArr = new \SwFwLess\components\utils\bitmap\bitarray\BitIntArr();
+        $bitIntArr = \Lxj\ClosurePHP\Sugars\Object\newObj(
+            'SwFwLess\components\utils\bitmap\bitarray\BitIntArr'
+        );
 
         for ($i = 1; $i <= 10000; ++$i) {
-            $bitIntArr->put($i);
-            $this->assertTrue($bitIntArr->has($i));
+            \Lxj\ClosurePHP\Sugars\Object\call(
+                $bitIntArr,
+                'put',
+                \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                [$i]
+            );
+            $this->assertTrue(
+                \Lxj\ClosurePHP\Sugars\Object\call(
+                    $bitIntArr,
+                    'has',
+                    \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                    [$i]
+                )
+            );
         }
 
         for ($i = 1; $i <= 10000; ++$i) {
-            $this->assertTrue($bitIntArr->has($i));
+            $this->assertTrue(
+                \Lxj\ClosurePHP\Sugars\Object\call(
+                    $bitIntArr,
+                    'has',
+                    \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                    [$i]
+                )
+            );
         }
 
         for ($i = 20001; $i <= 30000; ++$i) {
-            $bitIntArr->put($i);
-            $this->assertTrue($bitIntArr->has($i));
+            \Lxj\ClosurePHP\Sugars\Object\call(
+                $bitIntArr,
+                'put',
+                \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                [$i]
+            );
+            $this->assertTrue(
+                \Lxj\ClosurePHP\Sugars\Object\call(
+                    $bitIntArr,
+                    'has',
+                    \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                    [$i]
+                )
+            );
         }
 
         for ($i = 20001; $i <= 30000; ++$i) {
-            $this->assertTrue($bitIntArr->has($i));
+            $this->assertTrue(
+                \Lxj\ClosurePHP\Sugars\Object\call(
+                    $bitIntArr,
+                    'has',
+                    \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                    [$i]
+                )
+            );
         }
 
-        $bitIntArr = \SwFwLess\components\utils\bitmap\bitarray\BitIntArr::createFromSlots($bitIntArr->getSlots());
+        $slots = \Lxj\ClosurePHP\Sugars\Object\call(
+            $bitIntArr,
+            'getSlots',
+            \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+            []
+        );
+        $bitIntArr = \Lxj\ClosurePHP\Sugars\Object\callStatic(
+            'SwFwLess\components\utils\bitmap\bitarray\BitIntArr',
+            'createFromSlots',
+            \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+            [$slots]
+        );
 
         for ($i = 1; $i <= 10000; ++$i) {
-            $this->assertTrue($bitIntArr->has($i));
+            $this->assertTrue(
+                \Lxj\ClosurePHP\Sugars\Object\call(
+                    $bitIntArr,
+                    'has',
+                    \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                    [$i]
+                )
+            );
         }
 
         for ($i = 20001; $i <= 30000; ++$i) {
-            $this->assertTrue($bitIntArr->has($i));
+            $this->assertTrue(
+                \Lxj\ClosurePHP\Sugars\Object\call(
+                    $bitIntArr,
+                    'has',
+                    \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                    [$i]
+                )
+            );
         }
 
         //Case 4
-        $bitIntArr = new \SwFwLess\components\utils\bitmap\bitarray\BitIntArr();
+        $bitIntArr = \Lxj\ClosurePHP\Sugars\Object\newObj(
+            'SwFwLess\components\utils\bitmap\bitarray\BitIntArr'
+        );
 
         for ($i = 1; $i <= 10000; $i += 2) {
-            $bitIntArr->put($i);
-            $this->assertTrue($bitIntArr->has($i));
+            \Lxj\ClosurePHP\Sugars\Object\call(
+                $bitIntArr,
+                'put',
+                \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                [$i]
+            );
+            $this->assertTrue(
+                \Lxj\ClosurePHP\Sugars\Object\call(
+                    $bitIntArr,
+                    'has',
+                    \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                    [$i]
+                )
+            );
         }
 
         for ($i = 1; $i <= 10000; $i += 2) {
-            $this->assertTrue($bitIntArr->has($i));
+            $this->assertTrue(
+                \Lxj\ClosurePHP\Sugars\Object\call(
+                    $bitIntArr,
+                    'has',
+                    \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                    [$i]
+                )
+            );
         }
 
         for ($i = 20001; $i <= 30000; $i += 2) {
-            $bitIntArr->put($i);
-            $this->assertTrue($bitIntArr->has($i));
+            \Lxj\ClosurePHP\Sugars\Object\call(
+                $bitIntArr,
+                'put',
+                \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                [$i]
+            );
+            $this->assertTrue(
+                \Lxj\ClosurePHP\Sugars\Object\call(
+                    $bitIntArr,
+                    'has',
+                    \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                    [$i]
+                )
+            );
         }
 
         for ($i = 20001; $i <= 30000; $i += 2) {
-            $this->assertTrue($bitIntArr->has($i));
+            $this->assertTrue(
+                \Lxj\ClosurePHP\Sugars\Object\call(
+                    $bitIntArr,
+                    'has',
+                    \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                    [$i]
+                )
+            );
         }
 
-        $bitIntArr = \SwFwLess\components\utils\bitmap\bitarray\BitIntArr::createFromSlots($bitIntArr->getSlots());
+        $slots = \Lxj\ClosurePHP\Sugars\Object\call(
+            $bitIntArr,
+            'getSlots',
+            \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+            []
+        );
+        $bitIntArr = \Lxj\ClosurePHP\Sugars\Object\callStatic(
+            'SwFwLess\components\utils\bitmap\bitarray\BitIntArr',
+            'createFromSlots',
+            \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+            [$slots]
+        );
 
         for ($i = 1; $i <= 10000; $i += 2) {
-            $this->assertTrue($bitIntArr->has($i));
+            $this->assertTrue(
+                \Lxj\ClosurePHP\Sugars\Object\call(
+                    $bitIntArr,
+                    'has',
+                    \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                    [$i]
+                )
+            );
         }
 
         for ($i = 20001; $i <= 30000; $i += 2) {
-            $this->assertTrue($bitIntArr->has($i));
+            $this->assertTrue(
+                \Lxj\ClosurePHP\Sugars\Object\call(
+                    $bitIntArr,
+                    'has',
+                    \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                    [$i]
+                )
+            );
         }
 
         //Case 5
-        $bitIntArr = new \SwFwLess\components\utils\bitmap\bitarray\BitIntArr();
+        $bitIntArr = \Lxj\ClosurePHP\Sugars\Object\newObj(
+            'SwFwLess\components\utils\bitmap\bitarray\BitIntArr'
+        );
 
         for ($i = 1; $i <= 10000; ++$i) {
-            $bitIntArr->put($i);
+            \Lxj\ClosurePHP\Sugars\Object\call(
+                $bitIntArr,
+                'put',
+                \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                [$i]
+            );
         }
 
         for ($i = 1; $i <= 10000; $i += 2) {
-            $bitIntArr->del($i);
-            $this->assertFalse($bitIntArr->has($i));
+            \Lxj\ClosurePHP\Sugars\Object\call(
+                $bitIntArr,
+                'del',
+                \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                [$i]
+            );
+            $this->assertFalse(
+                \Lxj\ClosurePHP\Sugars\Object\call(
+                    $bitIntArr,
+                    'has',
+                    \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                    [$i]
+                )
+            );
         }
 
         for ($i = 1; $i <= 10000; ++$i) {
             if (($i % 2) == 0) {
-                $this->assertTrue($bitIntArr->has($i));
+                $this->assertTrue(
+                    \Lxj\ClosurePHP\Sugars\Object\call(
+                        $bitIntArr,
+                        'has',
+                        \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                        [$i]
+                    )
+                );
             } else {
-                $this->assertFalse($bitIntArr->has($i));
+                $this->assertFalse(
+                    \Lxj\ClosurePHP\Sugars\Object\call(
+                        $bitIntArr,
+                        'has',
+                        \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                        [$i]
+                    )
+                );
             }
         }
 
-        $bitIntArr = \SwFwLess\components\utils\bitmap\bitarray\BitIntArr::createFromSlots($bitIntArr->getSlots());
+        $slots = \Lxj\ClosurePHP\Sugars\Object\call(
+            $bitIntArr,
+            'getSlots',
+            \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+            []
+        );
+        $bitIntArr = \Lxj\ClosurePHP\Sugars\Object\callStatic(
+            'SwFwLess\components\utils\bitmap\bitarray\BitIntArr',
+            'createFromSlots',
+            \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+            [$slots]
+        );
 
         for ($i = 1; $i <= 10000; ++$i) {
             if (($i % 2) == 0) {
-                $this->assertTrue($bitIntArr->has($i));
+                $this->assertTrue(
+                    \Lxj\ClosurePHP\Sugars\Object\call(
+                        $bitIntArr,
+                        'has',
+                        \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                        [$i]
+                    )
+                );
             } else {
-                $this->assertFalse($bitIntArr->has($i));
+                $this->assertFalse(
+                    \Lxj\ClosurePHP\Sugars\Object\call(
+                        $bitIntArr,
+                        'has',
+                        \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                        [$i]
+                    )
+                );
             }
         }
 
         //Case 6
-        $bitIntArr = new \SwFwLess\components\utils\bitmap\bitarray\BitIntArr();
+        $bitIntArr = \Lxj\ClosurePHP\Sugars\Object\newObj(
+            'SwFwLess\components\utils\bitmap\bitarray\BitIntArr'
+        );
 
         for ($i = 1; $i <= 10000; ++$i) {
-            $bitIntArr->put($i);
+            \Lxj\ClosurePHP\Sugars\Object\call(
+                $bitIntArr,
+                'put',
+                \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                [$i]
+            );
         }
 
         for ($i = 20001; $i <= 30000; ++$i) {
-            $bitIntArr->put($i);
+            \Lxj\ClosurePHP\Sugars\Object\call(
+                $bitIntArr,
+                'put',
+                \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                [$i]
+            );
         }
 
         for ($i = 1; $i <= 10000; $i += 2) {
-            $bitIntArr->del($i);
-            $this->assertFalse($bitIntArr->has($i));
+            \Lxj\ClosurePHP\Sugars\Object\call(
+                $bitIntArr,
+                'del',
+                \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                [$i]
+            );
+            $this->assertFalse(
+                \Lxj\ClosurePHP\Sugars\Object\call(
+                    $bitIntArr,
+                    'has',
+                    \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                    [$i]
+                )
+            );
         }
 
         for ($i = 20001; $i <= 30000; $i += 2) {
-            $bitIntArr->del($i);
-            $this->assertFalse($bitIntArr->has($i));
+            \Lxj\ClosurePHP\Sugars\Object\call(
+                $bitIntArr,
+                'del',
+                \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                [$i]
+            );
+            $this->assertFalse(
+                \Lxj\ClosurePHP\Sugars\Object\call(
+                    $bitIntArr,
+                    'has',
+                    \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                    [$i]
+                )
+            );
         }
 
         for ($i = 1; $i <= 10000; ++$i) {
             if (($i % 2) == 0) {
-                $this->assertTrue($bitIntArr->has($i));
+                $this->assertTrue(
+                    \Lxj\ClosurePHP\Sugars\Object\call(
+                        $bitIntArr,
+                        'has',
+                        \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                        [$i]
+                    )
+                );
             } else {
-                $this->assertFalse($bitIntArr->has($i));
+                $this->assertFalse(
+                    \Lxj\ClosurePHP\Sugars\Object\call(
+                        $bitIntArr,
+                        'has',
+                        \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                        [$i]
+                    )
+                );
             }
         }
 
         for ($i = 20001; $i <= 30000; ++$i) {
             if (($i % 2) == 0) {
-                $this->assertTrue($bitIntArr->has($i));
+                $this->assertTrue(
+                    \Lxj\ClosurePHP\Sugars\Object\call(
+                        $bitIntArr,
+                        'has',
+                        \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                        [$i]
+                    )
+                );
             } else {
-                $this->assertFalse($bitIntArr->has($i));
+                $this->assertFalse(
+                    \Lxj\ClosurePHP\Sugars\Object\call(
+                        $bitIntArr,
+                        'has',
+                        \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                        [$i]
+                    )
+                );
             }
         }
 
-        $bitIntArr = \SwFwLess\components\utils\bitmap\bitarray\BitIntArr::createFromSlots($bitIntArr->getSlots());
+        $slots = \Lxj\ClosurePHP\Sugars\Object\call(
+            $bitIntArr,
+            'getSlots',
+            \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+            []
+        );
+        $bitIntArr = \Lxj\ClosurePHP\Sugars\Object\callStatic(
+            'SwFwLess\components\utils\bitmap\bitarray\BitIntArr',
+            'createFromSlots',
+            \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+            [$slots]
+        );
 
         for ($i = 1; $i <= 10000; ++$i) {
             if (($i % 2) == 0) {
-                $this->assertTrue($bitIntArr->has($i));
+                $this->assertTrue(
+                    \Lxj\ClosurePHP\Sugars\Object\call(
+                        $bitIntArr,
+                        'has',
+                        \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                        [$i]
+                    )
+                );
             } else {
-                $this->assertFalse($bitIntArr->has($i));
+                $this->assertFalse(
+                    \Lxj\ClosurePHP\Sugars\Object\call(
+                        $bitIntArr,
+                        'has',
+                        \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                        [$i]
+                    )
+                );
             }
         }
 
         for ($i = 20001; $i <= 30000; ++$i) {
             if (($i % 2) == 0) {
-                $this->assertTrue($bitIntArr->has($i));
+                $this->assertTrue(
+                    \Lxj\ClosurePHP\Sugars\Object\call(
+                        $bitIntArr,
+                        'has',
+                        \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                        [$i]
+                    )
+                );
             } else {
-                $this->assertFalse($bitIntArr->has($i));
+                $this->assertFalse(
+                    \Lxj\ClosurePHP\Sugars\Object\call(
+                        $bitIntArr,
+                        'has',
+                        \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                        [$i]
+                    )
+                );
             }
         }
 
         //Case 7
-        $bitIntArr = new \SwFwLess\components\utils\bitmap\bitarray\BitIntArr();
+        $bitIntArr = \Lxj\ClosurePHP\Sugars\Object\newObj(
+            'SwFwLess\components\utils\bitmap\bitarray\BitIntArr'
+        );
 
         for ($i = 1; $i <= 10000; ++$i) {
-            $bitIntArr->put($i);
+            \Lxj\ClosurePHP\Sugars\Object\call(
+                $bitIntArr,
+                'put',
+                \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                [$i]
+            );
         }
 
+        $iterator = \Lxj\ClosurePHP\Sugars\Object\call(
+            $bitIntArr,
+            'iterator',
+            \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+            []
+        );
         $i = 0;
-        foreach ($bitIntArr->iterator() as $number) {
+        foreach ($iterator as $number) {
             $this->assertEquals(++$i, $number);
         }
 
-        $bitIntArr = \SwFwLess\components\utils\bitmap\bitarray\BitIntArr::createFromSlots($bitIntArr->getSlots());
+        $slots = \Lxj\ClosurePHP\Sugars\Object\call(
+            $bitIntArr,
+            'getSlots',
+            \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+            []
+        );
+        $bitIntArr = \Lxj\ClosurePHP\Sugars\Object\callStatic(
+            'SwFwLess\components\utils\bitmap\bitarray\BitIntArr',
+            'createFromSlots',
+            \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+            [$slots]
+        );
 
+        $iterator = \Lxj\ClosurePHP\Sugars\Object\call(
+            $bitIntArr,
+            'iterator',
+            \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+            []
+        );
         $i = 0;
-        foreach ($bitIntArr->iterator() as $number) {
+        foreach ($iterator as $number) {
             $this->assertEquals(++$i, $number);
         }
 
         //Case 8
-        $bitIntArr = new \SwFwLess\components\utils\bitmap\bitarray\BitIntArr();
+        $bitIntArr = \Lxj\ClosurePHP\Sugars\Object\newObj(
+            'SwFwLess\components\utils\bitmap\bitarray\BitIntArr'
+        );
 
         for ($i = 1; $i <= 10000; $i += 2) {
-            $bitIntArr->put($i);
+            \Lxj\ClosurePHP\Sugars\Object\call(
+                $bitIntArr,
+                'put',
+                \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                [$i]
+            );
         }
 
+        $iterator = \Lxj\ClosurePHP\Sugars\Object\call(
+            $bitIntArr,
+            'iterator',
+            \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+            []
+        );
         $i = 1;
-        foreach ($bitIntArr->iterator() as $number) {
+        foreach ($iterator as $number) {
             $this->assertEquals($i, $number);
             $i += 2;
         }
 
-        $bitIntArr = \SwFwLess\components\utils\bitmap\bitarray\BitIntArr::createFromSlots($bitIntArr->getSlots());
+        $slots = \Lxj\ClosurePHP\Sugars\Object\call(
+            $bitIntArr,
+            'getSlots',
+            \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+            []
+        );
+        $bitIntArr = \Lxj\ClosurePHP\Sugars\Object\callStatic(
+            'SwFwLess\components\utils\bitmap\bitarray\BitIntArr',
+            'createFromSlots',
+            \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+            [$slots]
+        );
 
+        $iterator = \Lxj\ClosurePHP\Sugars\Object\call(
+            $bitIntArr,
+            'iterator',
+            \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+            []
+        );
         $i = 1;
-        foreach ($bitIntArr->iterator() as $number) {
+        foreach ($iterator as $number) {
             $this->assertEquals($i, $number);
             $i += 2;
         }
 
         //Case 9
-        $bitIntArr = new \SwFwLess\components\utils\bitmap\bitarray\BitIntArr();
+        $bitIntArr = \Lxj\ClosurePHP\Sugars\Object\newObj(
+            'SwFwLess\components\utils\bitmap\bitarray\BitIntArr'
+        );
 
         for ($i = 1; $i <= 10000; ++$i) {
-            $bitIntArr->put($i);
+            \Lxj\ClosurePHP\Sugars\Object\call(
+                $bitIntArr,
+                'put',
+                \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                [$i]
+            );
         }
 
         for ($i = 20001; $i <= 30000; ++$i) {
-            $bitIntArr->put($i);
+            \Lxj\ClosurePHP\Sugars\Object\call(
+                $bitIntArr,
+                'put',
+                \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                [$i]
+            );
         }
 
+        $iterator = \Lxj\ClosurePHP\Sugars\Object\call(
+            $bitIntArr,
+            'iterator',
+            \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+            []
+        );
         $i = 0;
-        foreach ($bitIntArr->iterator() as $number) {
+        foreach ($iterator as $number) {
             $this->assertEquals(++$i, $number);
             if ($i === 10000) {
                 $i = 20000;
             }
         }
 
-        $bitIntArr = \SwFwLess\components\utils\bitmap\bitarray\BitIntArr::createFromSlots($bitIntArr->getSlots());
+        $slots = \Lxj\ClosurePHP\Sugars\Object\call(
+            $bitIntArr,
+            'getSlots',
+            \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+            []
+        );
+        $bitIntArr = \Lxj\ClosurePHP\Sugars\Object\callStatic(
+            'SwFwLess\components\utils\bitmap\bitarray\BitIntArr',
+            'createFromSlots',
+            \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+            [$slots]
+        );
 
+        $iterator = \Lxj\ClosurePHP\Sugars\Object\call(
+            $bitIntArr,
+            'iterator',
+            \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+            []
+        );
         $i = 0;
-        foreach ($bitIntArr->iterator() as $number) {
+        foreach ($iterator as $number) {
             $this->assertEquals(++$i, $number);
             if ($i === 10000) {
                 $i = 20000;
@@ -1226,18 +1758,36 @@ class BitIntArrClosureTest extends \PHPUnit\Framework\TestCase
         }
 
         //Case 10
-        $bitIntArr = new \SwFwLess\components\utils\bitmap\bitarray\BitIntArr();
+        $bitIntArr = \Lxj\ClosurePHP\Sugars\Object\newObj(
+            'SwFwLess\components\utils\bitmap\bitarray\BitIntArr'
+        );
 
         for ($i = 1; $i <= 10000; $i += 2) {
-            $bitIntArr->put($i);
+            \Lxj\ClosurePHP\Sugars\Object\call(
+                $bitIntArr,
+                'put',
+                \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                [$i]
+            );
         }
 
         for ($i = 20001; $i <= 30000; $i += 2) {
-            $bitIntArr->put($i);
+            \Lxj\ClosurePHP\Sugars\Object\call(
+                $bitIntArr,
+                'put',
+                \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+                [$i]
+            );
         }
 
+        $iterator = \Lxj\ClosurePHP\Sugars\Object\call(
+            $bitIntArr,
+            'iterator',
+            \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+            []
+        );
         $i = 1;
-        foreach ($bitIntArr->iterator() as $number) {
+        foreach ($iterator as $number) {
             $this->assertEquals($i, $number);
             $i += 2;
             if ($i > 10000 && $i < 20001) {
@@ -1245,10 +1795,27 @@ class BitIntArrClosureTest extends \PHPUnit\Framework\TestCase
             }
         }
 
-        $bitIntArr = \SwFwLess\components\utils\bitmap\bitarray\BitIntArr::createFromSlots($bitIntArr->getSlots());
+        $slots = \Lxj\ClosurePHP\Sugars\Object\call(
+            $bitIntArr,
+            'getSlots',
+            \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+            []
+        );
+        $bitIntArr = \Lxj\ClosurePHP\Sugars\Object\callStatic(
+            'SwFwLess\components\utils\bitmap\bitarray\BitIntArr',
+            'createFromSlots',
+            \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+            [$slots]
+        );
 
+        $iterator = \Lxj\ClosurePHP\Sugars\Object\call(
+            $bitIntArr,
+            'iterator',
+            \Lxj\ClosurePHP\Sugars\Scope::PUBLIC,
+            []
+        );
         $i = 1;
-        foreach ($bitIntArr->iterator() as $number) {
+        foreach ($iterator as $number) {
             $this->assertEquals($i, $number);
             $i += 2;
             if ($i > 10000 && $i < 20001) {
