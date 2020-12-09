@@ -108,6 +108,7 @@ EOF;
         $redis = $this->redisPool->pick($this->config['connection']);
 
         try {
+            //todo get ttl flag and data using pipeline, reduce io times
             if ($redis->get($key . ':ttl') === false) {
                 if (RedLock::lock('update:cache:' . $key, $this->config['update_lock_ttl'])) {
                     if ($redis->get($key . ':ttl') === false) {
