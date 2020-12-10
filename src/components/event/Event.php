@@ -15,7 +15,7 @@ class Event
     {
         $this->eventManager = EventManager::instance();
 
-        foreach (config('events') as $eventName => $eventListeners) {
+        foreach (\SwFwLess\components\functions\config('events') as $eventName => $eventListeners) {
             foreach ($eventListeners as $eventListener) {
                 $this->eventManager->on($eventName, [], $eventListener);
             }

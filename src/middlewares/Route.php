@@ -46,7 +46,7 @@ class Route extends AbstractMiddleware
         }
 
         //Middleware
-        $middlewareNames = config('middleware.routeMiddleware');
+        $middlewareNames = \SwFwLess\components\functions\config('middleware.routeMiddleware');
         if (isset($controllerAction[3])) {
             $middlewareNames = array_merge($middlewareNames, $controllerAction[3]);
         }

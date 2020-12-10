@@ -38,6 +38,9 @@ class ErrorHandler
 
     private static function formatErrMsg(\Throwable $e)
     {
-        return call_user_func_array(config('error_handler.err_formatter'), [$e]);
+        return call_user_func_array(
+            \SwFwLess\components\functions\config('error_handler.err_formatter'),
+            [$e]
+        );
     }
 }

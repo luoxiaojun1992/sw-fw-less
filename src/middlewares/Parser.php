@@ -34,7 +34,8 @@ class Parser
                 }
             }
 
-            $result[0] = config('middleware.aliases')[$result[0]] ?? $result[0];
+            $result[0] = \SwFwLess\components\functions\config('middleware.aliases')[$result[0]] ??
+                $result[0];
 
             return $result;
         });

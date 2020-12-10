@@ -11,7 +11,7 @@ class SwooleProvider extends AbstractProvider
      */
     protected static function setCoroutineConfig()
     {
-        $coroutineConfig = config('coroutine');
+        $coroutineConfig = \SwFwLess\components\functions\config('coroutine');
         if ($coroutineConfig['enable_preemptive_scheduler']) {
             throw new \Exception('Preemptive coroutine scheduler has not been supported.');
         }

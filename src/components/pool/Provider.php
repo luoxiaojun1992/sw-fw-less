@@ -8,6 +8,6 @@ class Provider extends AbstractProvider
 {
     public static function bootWorker()
     {
-        ObjectPool::create(config('pool'));
+        ObjectPool::create(\SwFwLess\components\functions\config('pool'));
     }
 }

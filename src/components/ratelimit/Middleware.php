@@ -20,7 +20,7 @@ class Middleware extends AbstractMiddleware
      */
     public function handle(Request $request)
     {
-        $throttleConfig = config('throttle');
+        $throttleConfig = \SwFwLess\components\functions\config('throttle');
         $options = $this->parseOptions(['period', 'throttle']);
         if (isset($options['period']) && $options['period'] !== '') {
             $throttleConfig['period'] = intval($options['period']);
