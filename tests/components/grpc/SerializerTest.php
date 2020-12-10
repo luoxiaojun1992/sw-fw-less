@@ -4,18 +4,30 @@ class SerializerTest extends \PHPUnit\Framework\TestCase
 {
     //TODO
 
-    public function testUnpack()
+    public function testBinaryPack()
     {
-        //TODO
-    }
+        require_once __DIR__ . '/../../stubs/grpc-gen/GPBMetadata/Demo.php';
+        require_once __DIR__ . '/../../stubs/grpc-gen/Demo/HelloReply.php';
 
-    public function testUnpackHeader()
-    {
-        //TODO
-    }
+        $grpcReplyMessage = 'hello';
+        $grpcReplyData = 'world';
 
-    public function testPack()
-    {
-        //TODO
+        $grpcReply = \SwFwLess\components\grpc\Serializer::pack(
+            (new \Demo\HelloReply())->setMessage($grpcReplyMessage)
+                ->setData($grpcReplyData)
+        );
+
+        $helloReply = new \Demo\HelloReply();
+
+        \SwFwLess\components\grpc\Serializer::unpack($helloReply, $grpcReply);
+
+        $this->assertEquals(
+            $grpcReplyMessage,
+            $helloReply->getMessage()
+        );
+        $this->assertEquals(
+            $grpcReplyData,
+            $helloReply->getData()
+        );
     }
 }
