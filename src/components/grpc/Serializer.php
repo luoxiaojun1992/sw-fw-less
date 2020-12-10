@@ -25,11 +25,15 @@ class Serializer
 
     /**
      * @param $body
-     * @return array
+     * @param bool $hasMessage
+     * @return array|false
      */
-    public static function unpackHeader($body)
+    public static function unpackHeader($body, $hasMessage = true)
     {
-        return unpack('Cflag/Nlength', static::extractHeaderMessage($body)[0]);
+        return unpack(
+            'Cflag/Nlength',
+            $hasMessage ? static::extractHeaderMessage($body)[0] : $body
+        );
     }
 
     /**
