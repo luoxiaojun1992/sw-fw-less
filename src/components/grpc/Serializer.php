@@ -13,7 +13,7 @@ class Serializer
     public static function unpack(\Google\Protobuf\Internal\Message $message, $body, $hasHeader = true, $isJson = false)
     {
         if ($hasHeader) {
-            $body = substr($body, 5);
+            $body = static::extractHeaderMessage($body)[1];
         }
 
         if ($isJson) {
@@ -29,7 +29,7 @@ class Serializer
      */
     public static function unpackHeader($body)
     {
-        return unpack('Cflag/Nlength', substr($body, 0, 5));
+        return unpack('Cflag/Nlength', static::extractHeaderMessage($body)[0]);
     }
 
     /**
@@ -46,5 +46,11 @@ class Serializer
         }
 
         return pack('CN', 0, strlen($message)) . $message;
+    }
+
+    public static function extractHeaderMessage($body)
+    {
+        $headerLength = 5;
+        return [substr($body, 0, $headerLength), substr($body, $headerLength)];
     }
 }
