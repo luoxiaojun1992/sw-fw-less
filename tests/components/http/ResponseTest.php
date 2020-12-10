@@ -69,4 +69,36 @@ class ResponseTest extends \PHPUnit\Framework\TestCase
             $headers['cache-control']
         );
     }
+
+    public function testTrailers()
+    {
+        $response = $this->createResponse();
+        $response->setTrailers([
+            'grpc-status' => \SwFwLess\components\grpc\Status::OK,
+        ]);
+        $trailers = $response->getTrailers();
+        $this->assertEquals(
+            \SwFwLess\components\grpc\Status::OK,
+            $trailers['grpc-status']
+        );
+
+        $response = $this->createResponse();
+        $response->setTrailers([
+            'grpc-status' => \SwFwLess\components\grpc\Status::OK,
+            'grpc-message' => \SwFwLess\components\grpc\Status::msg(
+                \SwFwLess\components\grpc\Status::OK
+            )
+        ]);
+        $trailers = $response->getTrailers();
+        $this->assertEquals(
+            \SwFwLess\components\grpc\Status::OK,
+            $trailers['grpc-status']
+        );
+        $this->assertEquals(
+            \SwFwLess\components\grpc\Status::msg(
+                \SwFwLess\components\grpc\Status::OK
+            ),
+            $trailers['grpc-message']
+        );
+    }
 }
