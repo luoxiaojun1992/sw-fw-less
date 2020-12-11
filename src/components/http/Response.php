@@ -10,8 +10,8 @@ use Zend\Diactoros\StreamFactory;
 class Response
 {
     private $content;
-    private $status = 200;
-    private $reasonPhrase = 'OK';
+    private $status = Code::STATUS_OK;
+    private $reasonPhrase = Code::CODE_PHRASES_MAPPING[Code::STATUS_OK];
     private $protocolVersion = Protocol::HTTP_V1_1; //Swoole not supported
     private $headers = [];
     private $trailers = [];

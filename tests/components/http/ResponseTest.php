@@ -38,11 +38,21 @@ class ResponseTest extends \PHPUnit\Framework\TestCase
     public function testStatus()
     {
         $response = $this->createResponse();
-        $this->assertEquals(200, $response->getStatus());
+        $responseStatus = $response->getStatus();
+        $this->assertEquals(\SwFwLess\components\http\Code::STATUS_OK, $responseStatus);
+        $this->assertEquals(
+            \SwFwLess\components\http\Code::phrase($responseStatus),
+            $response->getReasonPhrase()
+        );
 
         $response = $this->createResponse();
         $response->setStatus(201);
-        $this->assertEquals(201, $response->getStatus());
+        $responseStatus = $response->getStatus();
+        $this->assertEquals(201, $responseStatus);
+        $this->assertEquals(
+            \SwFwLess\components\http\Code::phrase($responseStatus),
+            $response->getReasonPhrase()
+        );
     }
 
     public function testHeaders()

@@ -4,12 +4,14 @@ namespace SwFwLess\components\http;
 
 class Code
 {
+    const STATUS_OK = 200;
+
     /** @var array Map of standard HTTP status code/reason phrases */
     const CODE_PHRASES_MAPPING = [
         100 => 'Continue',
         101 => 'Switching Protocols',
         102 => 'Processing',
-        200 => 'OK',
+        self::STATUS_OK => 'OK',
         201 => 'Created',
         202 => 'Accepted',
         203 => 'Non-Authoritative Information',
