@@ -38,8 +38,11 @@ class ResponseTest extends \PHPUnit\Framework\TestCase
     public function testStatus()
     {
         $response = $this->createResponse();
-        $response->setStatus(200);
         $this->assertEquals(200, $response->getStatus());
+
+        $response = $this->createResponse();
+        $response->setStatus(201);
+        $this->assertEquals(201, $response->getStatus());
     }
 
     public function testHeaders()
@@ -99,6 +102,23 @@ class ResponseTest extends \PHPUnit\Framework\TestCase
                 \SwFwLess\components\grpc\Status::OK
             ),
             $trailers['grpc-message']
+        );
+    }
+
+    public function testProtocolVersion()
+    {
+        $response = $this->createResponse();
+        $this->assertEquals(
+            \SwFwLess\components\http\Protocol::HTTP_V1_1,
+            $response->getProtocolVersion()
+        );
+
+        $protocolV2 = \SwFwLess\components\http\Protocol::HTTP_V2;
+        $response = $this->createResponse();
+        $response->setProtocolVersion($protocolV2);
+        $this->assertEquals(
+            $protocolV2,
+            $response->getProtocolVersion()
         );
     }
 }

@@ -12,7 +12,7 @@ class Response
     private $content;
     private $status = 200;
     private $reasonPhrase = 'OK';
-    private $protocolVersion = '1.1'; //Swoole not supported
+    private $protocolVersion = Protocol::HTTP_V1_1; //Swoole not supported
     private $headers = [];
     private $trailers = [];
 
