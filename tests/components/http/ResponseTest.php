@@ -45,10 +45,11 @@ class ResponseTest extends \PHPUnit\Framework\TestCase
             $response->getReasonPhrase()
         );
 
+        $statusCreated = \SwFwLess\components\http\Code::STATUS_CREATED;
         $response = $this->createResponse();
-        $response->setStatus(201);
+        $response->setStatus($statusCreated);
         $responseStatus = $response->getStatus();
-        $this->assertEquals(201, $responseStatus);
+        $this->assertEquals($statusCreated, $responseStatus);
         $this->assertEquals(
             \SwFwLess\components\http\Code::phrase($responseStatus),
             $response->getReasonPhrase()
