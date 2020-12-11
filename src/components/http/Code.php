@@ -15,6 +15,7 @@ class Code
     const STATUS_FORBIDDEN = 403;
     const STATUS_NOT_FOUND = 404;
     const STATUS_METHOD_NOT_ALLOWED = 405;
+    const STATUS_TOO_MANY_REQUESTS = 429;
 
     const STATUS_INTERNAL_SERVER_ERROR = 500;
     const STATUS_BAD_GATEWAY = 502;
@@ -68,7 +69,7 @@ class Code
         425 => 'Unordered Collection',
         426 => 'Upgrade Required',
         428 => 'Precondition Required',
-        429 => 'Too Many Requests',
+        self::STATUS_TOO_MANY_REQUESTS => 'Too Many Requests',
         431 => 'Request Header Fields Too Large',
         451 => 'Unavailable For Legal Reasons',
         self::STATUS_INTERNAL_SERVER_ERROR => 'Internal Server Error',
