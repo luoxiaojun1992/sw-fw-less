@@ -14,32 +14,32 @@ function helper($method, ...$args)
 
 function env($name, $default = null)
 {
-    return helper(__METHOD__, $name, $default);
+    return helper('env', $name, $default);
 }
 
 function envInt($name, $default = null)
 {
-    return helper(__METHOD__, $name, $default);
+    return helper('envInt', $name, $default);
 }
 
 function envDouble($name, $default = null)
 {
-    return helper(__METHOD__, $name, $default);
+    return helper('envDouble', $name, $default);
 }
 
 function envArray($name, $default = null, $separator = ',')
 {
-    return helper(__METHOD__, $name, $default, $separator);
+    return helper('envArray', $name, $default, $separator);
 }
 
 function envBool($name, $default = null)
 {
-    return helper(__METHOD__, $name, $default);
+    return helper('envBool', $name, $default);
 }
 
 function appVersion()
 {
-    return helper(__METHOD__);
+    return helper('apiVersion');
 }
 
 /**
@@ -57,5 +57,5 @@ function event($event)
 
 function sapi()
 {
-    return helper(__METHOD__);
+    return helper('sapi');
 }
