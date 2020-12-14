@@ -180,9 +180,10 @@ class MysqlWrapper
             try {
                 return $this->callPdo($name, $arguments);
             } catch (\PDOException $e) {
-                if (Helper::causedByLostConnection($e)) {
-                    $this->handleExecuteException($e);
-                    if (($this->isRetry()) && (!$this->inTransaction())) {
+                $this->handleExecuteException($e);
+
+                if (($this->isRetry()) && (!$this->inTransaction())) {
+                    if (Helper::causedByLostConnection($e)) {
                         return $this->callPdo($name, $arguments);
                     }
                 }
@@ -199,8 +200,10 @@ class MysqlWrapper
      */
     public function handleExecuteException(\PDOException $e)
     {
-        if (Helper::causedByLostConnection($e)) {
-            $this->reconnect();
+        if (!$this->inTransaction()) {
+            if (Helper::causedByLostConnection($e)) {
+                $this->reconnect();
+            }
         }
     }
 
