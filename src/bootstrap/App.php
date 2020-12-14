@@ -357,7 +357,7 @@ class App
 
     private function swResponseWithEvents($callback, \SwFwLess\components\http\Response $swfResponse)
     {
-        event(new \Cake\Event\Event(
+        functions\event(new \Cake\Event\Event(
             static::EVENT_RESPONSING,
             null,
             [
@@ -369,7 +369,7 @@ class App
 
         call_user_func($callback);
 
-        event(new \Cake\Event\Event(
+        functions\event(new \Cake\Event\Event(
             static::EVENT_RESPONSED,
             null,
             [

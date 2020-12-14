@@ -52,7 +52,7 @@ class ConnectionPool
         }
 
         if (Config::get('amqp.pool_change_event')) {
-            event(
+            \SwFwLess\components\functions\event(
                 new CakeEvent(static::EVENT_AMQP_POOL_CHANGE,
                     null,
                     ['count' => $poolSize]
@@ -82,7 +82,7 @@ class ConnectionPool
             $connection = $this->getConnect(false);
         } else {
             if (Config::get('amqp.pool_change_event')) {
-                event(
+                \SwFwLess\components\functions\event(
                     new CakeEvent(static::EVENT_AMQP_POOL_CHANGE,
                         null,
                         ['count' => -1]
@@ -105,7 +105,7 @@ class ConnectionPool
                     $this->connectionPool[] = $connection;
                 });
                 if (Config::get('amqp.pool_change_event')) {
-                    event(
+                    \SwFwLess\components\functions\event(
                         new CakeEvent(static::EVENT_AMQP_POOL_CHANGE,
                             null,
                             ['count' => 1]

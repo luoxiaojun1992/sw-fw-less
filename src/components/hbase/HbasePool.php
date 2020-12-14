@@ -50,7 +50,7 @@ class HbasePool
         }
 
         if (Config::get('hbase.pool_change_event')) {
-            event(
+            \SwFwLess\components\functions\event(
                 new CakeEvent(static::EVENT_HBASE_POOL_CHANGE,
                     null,
                     ['count' => $poolSize]
@@ -71,7 +71,7 @@ class HbasePool
             $connection = $this->getConnect(false);
         } else {
             if (Config::get('hbase.pool_change_event')) {
-                event(
+                \SwFwLess\components\functions\event(
                     new CakeEvent(static::EVENT_HBASE_POOL_CHANGE,
                         null,
                         ['count' => -1]
@@ -98,7 +98,7 @@ class HbasePool
                     $this->connectionPool[] = $connection;
                 });
                 if (Config::get('hbase.pool_change_event')) {
-                    event(
+                    \SwFwLess\components\functions\event(
                         new CakeEvent(static::EVENT_HBASE_POOL_CHANGE,
                             null,
                             ['count' => 1]

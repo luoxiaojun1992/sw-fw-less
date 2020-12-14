@@ -18,7 +18,7 @@ trait ModelEvents
      */
     protected function fireEvent($event, $payload = null)
     {
-        return event(
+        return \SwFwLess\components\functions\event(
             new CakeEvent(
                 'model.' . static::class . '.' . $event,
                 null,

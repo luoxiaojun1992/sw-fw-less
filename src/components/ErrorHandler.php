@@ -31,7 +31,7 @@ class ErrorHandler
 
     private static function fireErrEvent(\Throwable $e)
     {
-        event(new Event(static::EVENT_ERROR, null, [
+        \SwFwLess\components\functions\event(new Event(static::EVENT_ERROR, null, [
             'error' => $e,
         ]));
     }

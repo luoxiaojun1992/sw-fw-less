@@ -50,7 +50,7 @@ class RedisPool
             }
 
             if ($redisConfig['pool_change_event']) {
-                event(
+                \SwFwLess\components\functions\event(
                     new CakeEvent(static::EVENT_REDIS_POOL_CHANGE,
                         null,
                         ['count' => $redisConnection['pool_size']]
@@ -79,7 +79,7 @@ class RedisPool
             $redis = $this->getConnect(false, $connectionName);
         } else {
             if ($this->config['pool_change_event']) {
-                event(
+                \SwFwLess\components\functions\event(
                     new CakeEvent(static::EVENT_REDIS_POOL_CHANGE,
                         null,
                         ['count' => -1]
@@ -110,7 +110,7 @@ class RedisPool
                     $this->redisPool[$redis->getConnectionName()][] = $redis;
                 });
                 if ($this->config['pool_change_event']) {
-                    event(
+                    \SwFwLess\components\functions\event(
                         new CakeEvent(static::EVENT_REDIS_POOL_CHANGE,
                             null,
                             ['count' => 1]

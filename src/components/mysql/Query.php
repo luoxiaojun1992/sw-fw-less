@@ -238,7 +238,7 @@ class Query
      */
     private function executeWithEvents($executor, $mode)
     {
-        event(new Event(
+        \SwFwLess\components\functions\event(new Event(
             static::EVENT_EXECUTING,
             null,
             [
@@ -252,7 +252,7 @@ class Query
 
         $result = call_user_func($executor);
 
-        event(new Event(
+        \SwFwLess\components\functions\event(new Event(
             static::EVENT_EXECUTED,
             null,
             [

@@ -47,7 +47,7 @@ class MysqlPool
             }
 
             if ($mysqlConfig['pool_change_event']) {
-                event(
+                \SwFwLess\components\functions\event(
                     new CakeEvent(static::EVENT_MYSQL_POOL_CHANGE,
                         null,
                         ['count' => $mysqlConnection['pool_size']]
@@ -81,7 +81,7 @@ class MysqlPool
             }
 
             if ($this->config['pool_change_event']) {
-                event(
+                \SwFwLess\components\functions\event(
                     new CakeEvent(static::EVENT_MYSQL_POOL_CHANGE,
                         null,
                         ['count' => -1]
@@ -117,7 +117,7 @@ class MysqlPool
                     $this->pdoPool[$pdo->getConnectionName()][] = $pdo;
                 });
                 if ($this->config['pool_change_event']) {
-                    event(
+                    \SwFwLess\components\functions\event(
                         new CakeEvent(static::EVENT_MYSQL_POOL_CHANGE,
                             null,
                             ['count' => 1]
