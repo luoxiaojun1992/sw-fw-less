@@ -41,6 +41,10 @@ class Query
 
     private $pdo;
 
+    private $executeMode = self::QUERY_TYPE_FETCH;
+
+    private $retryWhenError = false;
+
     /**
      * @param string $db
      * @param string $connectionName
@@ -177,13 +181,13 @@ class Query
      */
     private function mysqlExecute($pdo = null, $mode = self::QUERY_TYPE_FETCH, $retry = false)
     {
-        if ($pdo || ($this->pdo)) {
+        if ($pdo) {
             $this->needRelease = false;
         }
 
         try {
             /** @var MysqlWrapper|\PDO $pdo $pdo */
-            $pdo = $pdo ?: ($this->pdo ?: MysqlPool::pick($this->connectionName));
+            $pdo = $pdo ?: MysqlPool::pick($this->connectionName);
 
             return $this->_doMysqlExecute($pdo, $mode);
         } catch (\PDOException $e) {
@@ -217,12 +221,23 @@ class Query
 
     /**
      * @param null $pdo
-     * @param $mode
-     * @param bool $retry
+     * @param int|null $mode
+     * @param bool|null $retry
      * @return mixed
      */
-    public function execute($pdo = null, $mode = 0, $retry = false)
+    public function execute($pdo = null, $mode = null, $retry = null)
     {
+        if (!$pdo) {
+            if ($this->pdo) {
+                $pdo = $this->pdo;
+            }
+        }
+        if (is_null($mode)) {
+            $mode = $this->executeMode;
+        }
+        if (is_null($retry)) {
+            $retry = $this->retryWhenError;
+        }
         $method = $this->db . 'Execute';
         if (method_exists($this, $method)) {
             return $this->executeWithEvents(function () use ($method, $pdo, $mode, $retry) {
@@ -401,6 +416,42 @@ class Query
     public function setPdo($pdo)
     {
         $this->pdo = $pdo;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getExecuteMode(): int
+    {
+        return $this->executeMode;
+    }
+
+    /**
+     * @param int $executeMode
+     * @return $this
+     */
+    public function setExecuteMode(int $executeMode)
+    {
+        $this->executeMode = $executeMode;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isRetryWhenError(): bool
+    {
+        return $this->retryWhenError;
+    }
+
+    /**
+     * @param bool $retryWhenError
+     * @return $this
+     */
+    public function setRetryWhenError(bool $retryWhenError)
+    {
+        $this->retryWhenError = $retryWhenError;
         return $this;
     }
 
