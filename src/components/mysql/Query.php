@@ -29,6 +29,8 @@ class Query
 
     private $needRelease = true;
 
+    private $sequence = 'id';
+
     private $lastInsertId;
 
     private $sql;
@@ -155,7 +157,7 @@ class Query
 
                     return [];
                 case static::QUERY_TYPE_WRITE:
-                    $this->setLastInsertId($pdo->lastInsertId());
+                    $this->setLastInsertId($pdo->lastInsertId($this->sequence));
                     $affectedRows = $this->getAffectedRows();
                     $pdo->setLastActivityAt();
                     return $affectedRows;
@@ -360,6 +362,24 @@ class Query
     public function setAffectedRows($affectedRows)
     {
         $this->affectedRows = $affectedRows;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSequence(): string
+    {
+        return $this->sequence;
+    }
+
+    /**
+     * @param string $sequence
+     * @return $this
+     */
+    public function setSequence(string $sequence)
+    {
+        $this->sequence = $sequence;
         return $this;
     }
 

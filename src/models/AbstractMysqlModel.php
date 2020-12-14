@@ -90,6 +90,7 @@ abstract class AbstractMysqlModel extends AbstractModel
         foreach ($this->attributes as $attributeName => $attribute) {
             $insertBuilder->col($attributeName)->bindValue(':' . $attributeName, $this->{$attributeName});
         }
+        $insertBuilder->setSequence(static::$primaryKey);
 
         $res = $insertBuilder->write() > 0;
 
