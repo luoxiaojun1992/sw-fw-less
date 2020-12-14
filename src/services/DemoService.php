@@ -209,7 +209,7 @@ class DemoService extends BaseService
 
     public function jwt()
     {
-        $token = Jwt::issue(request(), ['id' => 1]);
+        $token = Jwt::issue(\SwFwLess\components\functions\request(), ['id' => 1]);
 
         return Response::json(['data' => ['token' => (string)$token], 'code' => 0, 'msg' => 'ok']);
     }

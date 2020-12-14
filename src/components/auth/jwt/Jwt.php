@@ -45,7 +45,7 @@ class Jwt
         $signer = new Sha256();
         $time = time();
 
-        $swfRequest = $swfRequest ?? request();
+        $swfRequest = $swfRequest ?? \SwFwLess\components\functions\request();
         $host = $swfRequest->convertToPsr7()->getUri()->getHost();
 
         $tokenBuilder = (new Builder())->setIssuer($host) // Configures the issuer (iss claim)
@@ -73,7 +73,7 @@ class Jwt
             return null;
         }
 
-        $swfRequest = $swfRequest ?? request();
+        $swfRequest = $swfRequest ?? \SwFwLess\components\functions\request();
         $host = $swfRequest->convertToPsr7()->getUri()->getHost();
 
         $token = (new Parser())->parse((string) $tokenStr);

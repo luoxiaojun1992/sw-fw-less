@@ -10,13 +10,13 @@ class RedisProvider extends AbstractProvider
     {
         parent::bootWorker();
 
-        RedisPool::create(config('redis'));
+        RedisPool::create(\SwFwLess\components\functions\config('redis'));
     }
 
     public static function bootRequest()
     {
         parent::bootRequest();
 
-        RedLock::create(RedisPool::create(), config('red_lock'));
+        RedLock::create(RedisPool::create(), \SwFwLess\components\functions\config('red_lock'));
     }
 }

@@ -69,7 +69,7 @@ class Tracer
 
     public static function create(?Request $request = null, $cid = null)
     {
-        $request = $request ?? request();
+        $request = $request ?? \SwFwLess\components\functions\request();
         if ($instance = self::fetch($cid ?? ($request->getCid()))) {
             return $instance;
         }
@@ -87,13 +87,30 @@ class Tracer
 
         $this->setRequest($request);
 
-        $this->serviceName = config('zipkin.service_name', 'Sw-Fw-Less');
-        $this->endpointUrl = config('zipkin.endpoint_url', 'http://localhost:9411/api/v2/spans');
-        $this->sampleRate = config('zipkin.sample_rate', 0);
-        $this->bodySize = config('zipkin.body_size', 5000);
-        $this->curlTimeout = config('zipkin.curl_timeout', 1);
-        $this->redisOptions = array_merge($this->redisOptions, config('zipkin.redis_options', []));
-        $this->reportType = config('zipkin.report_type', 'http');
+        $this->serviceName = \SwFwLess\components\functions\config(
+            'zipkin.service_name',
+            'Sw-Fw-Less'
+        );
+        $this->endpointUrl = \SwFwLess\components\functions\config(
+            'zipkin.endpoint_url',
+            'http://localhost:9411/api/v2/spans'
+        );
+        $this->sampleRate = \SwFwLess\components\functions\config(
+            'zipkin.sample_rate', 0
+        );
+        $this->bodySize = \SwFwLess\components\functions\config(
+            'zipkin.body_size', 5000
+        );
+        $this->curlTimeout = \SwFwLess\components\functions\config(
+            'zipkin.curl_timeout', 1
+        );
+        $this->redisOptions = array_merge(
+            $this->redisOptions,
+            \SwFwLess\components\functions\config('zipkin.redis_options', [])
+        );
+        $this->reportType = \SwFwLess\components\functions\config(
+            'zipkin.report_type', 'http'
+        );
 
         $this->createTracer();
     }
@@ -479,9 +496,13 @@ class Tracer
      */
     private function beforeSpanTags($span)
     {
-        $this->addTag($span, self::FRAMEWORK_VERSION, 'Sw-Fw-Less-' . appVersion());
+        $this->addTag(
+            $span,
+            self::FRAMEWORK_VERSION,
+            'Sw-Fw-Less-' . \SwFwLess\components\functions\appVersion()
+        );
         $this->addTag($span, self::RUNTIME_PHP_VERSION, PHP_VERSION);
-        $this->addTag($span, self::RUNTIME_PHP_SAPI, sapi());
+        $this->addTag($span, self::RUNTIME_PHP_SAPI, \SwFwLess\components\functions\sapi());
 
         $this->startSysLoadTag($span);
     }

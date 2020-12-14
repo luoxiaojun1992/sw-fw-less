@@ -18,8 +18,8 @@ class DiningService extends BaseService
 {
     public function menu()
     {
-        if (request()->get('page') < 6) {
-            if (request()->get('keyword')) {
+        if (\SwFwLess\components\functions\request()->get('page') < 6) {
+            if (\SwFwLess\components\functions\request()->get('keyword')) {
                 return Response::json(
                     [
                         'data' => [
@@ -84,8 +84,8 @@ class DiningService extends BaseService
 
     public function ordered()
     {
-        if (request()->get('page') < 6) {
-            if (request()->get('keyword')) {
+        if (\SwFwLess\components\functions\request()->get('page') < 6) {
+            if (\SwFwLess\components\functions\request()->get('keyword')) {
                 return Response::json(
                     [
                         'data' => [
@@ -150,10 +150,10 @@ class DiningService extends BaseService
             'world',
         ];
 
-        $postData = \json_decode((string)request()->body(), true);
+        $postData = \json_decode((string)\SwFwLess\components\functions\request()->body(), true);
         if (!json_last_error()) {
             if (in_array($postData['code'], $invitationCodes)) {
-                $token = Jwt::issue(request(), ['id' => 1]);
+                $token = Jwt::issue(\SwFwLess\components\functions\request(), ['id' => 1]);
 
                 return Response::json(['data' => ['token' => (string)$token], 'code' => 0, 'msg' => 'ok']);
             }

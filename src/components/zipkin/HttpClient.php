@@ -36,7 +36,7 @@ class HttpClient
         $flushTracing = false
     )
     {
-        $swfRequest = $swfRequest ?? request();
+        $swfRequest = $swfRequest ?? \SwFwLess\components\functions\request();
         /** @var Tracer $swfTracer */
         $swfTracer = $swfRequest->getTracer();
         $request = $saberRequest;

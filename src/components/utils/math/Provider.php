@@ -11,6 +11,6 @@ class Provider extends AbstractProvider
      */
     public static function bootWorker()
     {
-        Math::create(config('util.math'));
+        Math::create(\SwFwLess\components\functions\config('util.math'));
     }
 }

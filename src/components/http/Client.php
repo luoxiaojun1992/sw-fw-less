@@ -59,7 +59,7 @@ class Client
 
     public static function multiRequest($urls, $method, $swfRequest = null, $headers = [], $body = null, $bodyType = self::JSON_BODY)
     {
-        $swfRequest = $swfRequest ?? request();
+        $swfRequest = $swfRequest ?? \SwFwLess\components\functions\request();
 
         if (!is_array($urls)) {
             $urls = (array)$urls;

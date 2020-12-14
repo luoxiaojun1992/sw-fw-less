@@ -419,13 +419,17 @@ class Query
 
     public static function tablePrefix($db, $connectionName): string
     {
-        return config($db . '.connections.' . $connectionName . '.table_prefix', '');
+        return \SwFwLess\components\functions\config(
+            $db . '.connections.' . $connectionName . '.table_prefix', ''
+        );
     }
 
     public static function connectionName($db, $connectionName = null): string
     {
         if (is_null($connectionName)) {
-            $connectionName = config($db . '.default', '');
+            $connectionName = \SwFwLess\components\functions\config(
+                $db . '.default', ''
+            );
         }
 
         return $connectionName;

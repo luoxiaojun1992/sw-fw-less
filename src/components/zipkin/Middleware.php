@@ -26,7 +26,10 @@ class Middleware extends AbstractMiddleware
     private function needSample(Request $request)
     {
         $path = $request->uri();
-        $apiPrefix = explode(',', config('zipkin.api_prefix', '/'));
+        $apiPrefix = explode(
+            ',',
+            \SwFwLess\components\functions\config('zipkin.api_prefix', '/')
+        );
         foreach ($apiPrefix as $prefix) {
             if (stripos($path, $prefix) === 0) {
                 return true;

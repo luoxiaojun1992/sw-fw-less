@@ -55,7 +55,7 @@ class Container
      */
     public function callWithTrace($callable, $parameters = [], $swfRequest = null)
     {
-        $swfRequest = $swfRequest ?? request();
+        $swfRequest = $swfRequest ?? \SwFwLess\components\functions\request();
         $spanName = $this->callableToSpanName($callable);
 
         return $swfRequest->getTracer()->clientSpan($spanName, function () use ($callable, $parameters) {

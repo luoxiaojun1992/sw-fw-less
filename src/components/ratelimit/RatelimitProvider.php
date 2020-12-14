@@ -13,7 +13,7 @@ class RatelimitProvider extends AbstractProvider
         //Rate limiter
         RateLimit::create(
             \SwFwLess\components\redis\RedisPool::create(),
-            config('rate_limit')
+            \SwFwLess\components\functions\config('rate_limit')
         );
     }
 }

@@ -10,7 +10,7 @@ class IpRestriction extends AbstractMiddleware
 {
     public function handle(Request $request)
     {
-        $ipRestrictionConfig = config('ip_restriction');
+        $ipRestrictionConfig = \SwFwLess\components\functions\config('ip_restriction');
 
         if (empty($ipRestrictionConfig['ips'])) {
             return $this->next();

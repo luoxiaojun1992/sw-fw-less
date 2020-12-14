@@ -9,7 +9,7 @@ class JwtUser extends AbstractMysqlModel implements UserProviderContract
 {
     public function retrieveByToken($authToken, $swfRequest = null)
     {
-        $swfRequest = $swfRequest ?? request();
+        $swfRequest = $swfRequest ?? \SwFwLess\components\functions\request();
 
         if (!is_null($token = Jwt::validate($authToken, $swfRequest))) {
             $this->setPrimaryValue($token->getClaim(static::$primaryKey));

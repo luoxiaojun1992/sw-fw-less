@@ -17,17 +17,21 @@ class MonitorService extends BaseService
     public function pool()
     {
         return Response::json([
-            'redis' => config('redis.pool_change_event') && config('redis.report_pool_change') ?
+            'redis' => \SwFwLess\components\functions\config('redis.pool_change_event') &&
+            \SwFwLess\components\functions\config('redis.report_pool_change') ?
                 Counter::get('monitor:pool:redis') : RedisPool::countPool(),
-            'mysql' => config('mysql.pool_change_event') && config('mysql.report_pool_change') ?
+            'mysql' => \SwFwLess\components\functions\config('mysql.pool_change_event') &&
+            \SwFwLess\components\functions\config('mysql.report_pool_change') ?
                 Counter::get('monitor:pool:mysql') : MysqlPool::countPool(),
             'log' => [
                 'pool' => Log::countPool(),
                 'record_buffer' => Log::countRecordBuffer(),
             ],
-            'amqp' => config('amqp.pool_change_event') && config('amqp.report_pool_change') ?
+            'amqp' => \SwFwLess\components\functions\config('amqp.pool_change_event') &&
+            \SwFwLess\components\functions\config('amqp.report_pool_change') ?
                 Counter::get('monitor:pool:amqp') : AMQPConnectionPool::countPool(),
-            'hbase' => config('hbase.pool_change_event') && config('hbase.report_pool_change') ?
+            'hbase' => \SwFwLess\components\functions\config('hbase.pool_change_event') &&
+            \SwFwLess\components\functions\config('hbase.report_pool_change') ?
                 Counter::get('monitor:pool:hbase') : HbasePool::countPool(),
         ]);
     }
