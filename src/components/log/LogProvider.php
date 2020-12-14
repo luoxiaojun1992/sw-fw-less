@@ -12,14 +12,14 @@ class LogProvider extends AbstractProvider
     public static function bootWorker()
     {
         parent::bootWorker();
-        if (config('log.switch')) {
+        if (\SwFwLess\components\functions\config('log.switch')) {
             Log::create(
-                config('log.path'),
-                config('log.level'),
-                config('log.pool_size'),
-                config('log.buffer_max_size'),
-                config('log.name'),
-                config('log.reserve_days')
+                \SwFwLess\components\functions\config('log.path'),
+                \SwFwLess\components\functions\config('log.level'),
+                \SwFwLess\components\functions\config('log.pool_size'),
+                \SwFwLess\components\functions\config('log.buffer_max_size'),
+                \SwFwLess\components\functions\config('log.name'),
+                \SwFwLess\components\functions\config('log.reserve_days')
             );
         }
     }

@@ -61,7 +61,7 @@ class Auth
      */
     public static function verify($credentialCarrier, $guardName = null, $config = null)
     {
-        $config = $config ?? config('auth');
+        $config = $config ?? \SwFwLess\components\functions\config('auth');
         $guardName = $guardName ?? $config['guard'];
         $guardConfig = $config['guards'][$guardName];
         /** @var GuardContract $guard */

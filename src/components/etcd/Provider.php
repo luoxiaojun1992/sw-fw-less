@@ -10,14 +10,14 @@ class Provider extends AbstractProvider
     {
         parent::bootWorker();
 
-        Client::create(config('etcd'));
-        RateLimit::create(Client::create(), config('rate_limit'));
+        Client::create(\SwFwLess\components\functions\config('etcd'));
+        RateLimit::create(Client::create(), \SwFwLess\components\functions\config('rate_limit'));
     }
 
     public static function bootRequest()
     {
         parent::bootRequest();
 
-        Lock::create(Client::create(), config('lock', []));
+        Lock::create(Client::create(), \SwFwLess\components\functions\config('lock', []));
     }
 }

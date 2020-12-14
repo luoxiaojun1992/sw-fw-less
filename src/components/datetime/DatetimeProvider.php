@@ -10,7 +10,7 @@ class DatetimeProvider extends AbstractProvider
     {
         parent::bootWorker();
 
-        $timezone = config('timezone');
+        $timezone = \SwFwLess\components\functions\config('timezone');
         if ((!is_null($timezone)) && (date_default_timezone_get() != $timezone)) {
             date_default_timezone_set($timezone);
         }

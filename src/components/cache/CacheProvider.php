@@ -10,6 +10,9 @@ class CacheProvider extends AbstractProvider
     {
         parent::bootWorker();
 
-        Cache::create(\SwFwLess\components\redis\RedisPool::create(), config('cache'));
+        Cache::create(
+            \SwFwLess\components\redis\RedisPool::create(),
+            \SwFwLess\components\functions\config('cache')
+        );
     }
 }

@@ -10,6 +10,6 @@ class JwtProvider extends AbstractProvider
     {
         parent::bootWorker();
 
-        Jwt::create(config('auth.guards.jwt'));
+        Jwt::create(\SwFwLess\components\functions\config('auth.guards.jwt'));
     }
 }

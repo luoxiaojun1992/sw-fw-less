@@ -10,7 +10,7 @@ class HbaseProvider extends AbstractProvider
     {
         parent::bootWorker();
 
-        if (config('hbase.switch')) {
+        if (\SwFwLess\components\functions\config('hbase.switch')) {
             HbasePool::create();
         }
     }

@@ -10,6 +10,6 @@ class MysqlProvider extends AbstractProvider
     {
         parent::bootWorker();
 
-        MysqlPool::create(config('mysql'));
+        MysqlPool::create(\SwFwLess\components\functions\config('mysql'));
     }
 }

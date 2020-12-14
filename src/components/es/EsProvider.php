@@ -10,7 +10,7 @@ class EsProvider extends AbstractProvider
     {
         parent::bootWorker();
 
-        if (config('elasticsearch.switch')) {
+        if (\SwFwLess\components\functions\config('elasticsearch.switch')) {
             Manager::create();
         }
     }

@@ -10,7 +10,7 @@ class AmqpProvider extends AbstractProvider
     {
         parent::bootWorker();
 
-        if (config('amqp.switch')) {
+        if (\SwFwLess\components\functions\config('amqp.switch')) {
             ConnectionPool::create();
         }
     }

@@ -13,7 +13,7 @@ class Middleware extends AbstractMiddleware
 
     public function handle(Request $request)
     {
-        $config = config('auth');
+        $config = \SwFwLess\components\functions\config('auth');
 
         $options = $this->parseOptions(['guardName', 'userProvider', 'credentialKey']);
         $guardName = !empty($options['guardName']) ? $options['guardName'] : $config['guard'];
