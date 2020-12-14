@@ -39,6 +39,8 @@ class Query
 
     private $affectedRows = 0;
 
+    private $pdo;
+
     /**
      * @param string $db
      * @param string $connectionName
@@ -175,13 +177,13 @@ class Query
      */
     private function mysqlExecute($pdo = null, $mode = self::QUERY_TYPE_FETCH, $retry = false)
     {
-        if ($pdo) {
+        if ($pdo || ($this->pdo)) {
             $this->needRelease = false;
         }
 
         try {
             /** @var MysqlWrapper|\PDO $pdo $pdo */
-            $pdo = $pdo ?: MysqlPool::pick($this->connectionName);
+            $pdo = $pdo ?: ($this->pdo ?: MysqlPool::pick($this->connectionName));
 
             return $this->_doMysqlExecute($pdo, $mode);
         } catch (\PDOException $e) {
@@ -381,6 +383,24 @@ class Query
     public function setSequence(string $sequence)
     {
         $this->sequence = $sequence;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPdo()
+    {
+        return $this->pdo;
+    }
+
+    /**
+     * @param $pdo
+     * @return $this
+     */
+    public function setPdo($pdo)
+    {
+        $this->pdo = $pdo;
         return $this;
     }
 
