@@ -29,6 +29,8 @@ class Query
 
     private $sequence = 'id';
 
+    private $hasSequence = true;
+
     private $lastInsertId;
 
     private $sql;
@@ -251,7 +253,7 @@ class Query
      * @param $mode
      * @return mixed
      */
-    private function executeWithEvents($executor, $mode)
+    protected function executeWithEvents($executor, $mode)
     {
         \SwFwLess\components\functions\event(new Event(
             static::EVENT_EXECUTING,
@@ -396,6 +398,24 @@ class Query
     public function setSequence(string $sequence)
     {
         $this->sequence = $sequence;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isHasSequence(): bool
+    {
+        return $this->hasSequence;
+    }
+
+    /**
+     * @param bool $hasSequence
+     * @return $this
+     */
+    public function setHasSequence(bool $hasSequence)
+    {
+        $this->hasSequence = $hasSequence;
         return $this;
     }
 

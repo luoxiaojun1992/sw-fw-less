@@ -91,7 +91,10 @@ abstract class AbstractMysqlModel extends AbstractModel
             $insertBuilder->col($attributeName)->bindValue(':' . $attributeName, $this->{$attributeName});
         }
         if (static::$incrPrimaryKey) {
-            $insertBuilder->setSequence(static::$primaryKey);
+            $insertBuilder->setSequence(static::$primaryKey)
+                ->setHasSequence(true);
+        } else {
+            $insertBuilder->setHasSequence(false);
         }
 
         $res = $insertBuilder->write() > 0;

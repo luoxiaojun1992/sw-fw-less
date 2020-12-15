@@ -11,4 +11,9 @@ class Query extends \SwFwLess\components\mysql\Query
     {
         return 'test';
     }
+
+    protected function executeWithEvents($executor, $mode)
+    {
+        return call_user_func($executor);
+    }
 }
