@@ -45,7 +45,7 @@ class Query
 
     /**
      * @param string $db
-     * @param string $connectionName
+     * @param null|string $connectionName
      * @return QueryFactory|Query
      */
     public static function create($db = 'mysql', $connectionName = null)

@@ -16,6 +16,7 @@ abstract class AbstractModel implements \JsonSerializable, \ArrayAccess
     use ModelJson;
 
     protected static $primaryKey = 'id';
+    protected static $incrPrimaryKey = true;
     protected static $bootedLock = [true];
 
     protected $newRecord = true;
