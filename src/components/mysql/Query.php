@@ -58,7 +58,7 @@ class Query
     /**
      * @param string $db
      * @param string $connectionName
-     * @return \Aura\SqlQuery\Common\SelectInterface|static
+     * @return \Aura\SqlQuery\Common\SelectInterface|static|QueryInterface
      */
     public static function select($db = 'mysql', $connectionName = null)
     {
@@ -68,7 +68,7 @@ class Query
     /**
      * @param string $db
      * @param string $connectionName
-     * @return \Aura\SqlQuery\Common\UpdateInterface|static
+     * @return \Aura\SqlQuery\Common\UpdateInterface|static|QueryInterface
      */
     public static function update($db = 'mysql', $connectionName = null)
     {
@@ -78,7 +78,7 @@ class Query
     /**
      * @param string $db
      * @param string $connectionName
-     * @return \Aura\SqlQuery\Common\InsertInterface|static
+     * @return \Aura\SqlQuery\Common\InsertInterface|static|QueryInterface
      */
     public static function insert($db = 'mysql', $connectionName = null)
     {
@@ -88,7 +88,7 @@ class Query
     /**
      * @param string $db
      * @param string $connectionName
-     * @return \Aura\SqlQuery\Common\DeleteInterface|static
+     * @return \Aura\SqlQuery\Common\DeleteInterface|static|QueryInterface
      */
     public static function delete($db = 'mysql', $connectionName = null)
     {

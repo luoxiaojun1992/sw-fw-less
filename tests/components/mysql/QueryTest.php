@@ -27,11 +27,15 @@ class QueryTest extends \PHPUnit\Framework\TestCase
     {
         //Insert
 
-        /** @var ModelQuery|QueryInterface|SelectInterface|InsertInterface|DeleteInterface|UpdateInterface $query */
+        /** @var ModelQuery|QueryInterface|InsertInterface $query */
         $query = $this->getQuery()->newInsert();
         $query->col('name')->bindValue(':name', 'Foo');
         $result = $query->write($this->getTestPDO());
         $this->assertEquals(1, $result);
         $this->assertEquals(1, $query->getLastInsertId());
+
+        //Update
+
+
     }
 }

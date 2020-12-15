@@ -32,7 +32,7 @@ abstract class AbstractMysqlModel extends AbstractModel
     }
 
     /**
-     * @return ModelQuery|QueryInterface|SelectInterface|InsertInterface|DeleteInterface|UpdateInterface
+     * @return ModelQuery|QueryInterface|SelectInterface
      */
     public static function select()
     {
@@ -40,7 +40,7 @@ abstract class AbstractMysqlModel extends AbstractModel
     }
 
     /**
-     * @return ModelQuery|QueryInterface|SelectInterface|InsertInterface|DeleteInterface|UpdateInterface
+     * @return ModelQuery|QueryInterface|UpdateInterface
      */
     public static function update()
     {
@@ -48,7 +48,7 @@ abstract class AbstractMysqlModel extends AbstractModel
     }
 
     /**
-     * @return ModelQuery|QueryInterface|SelectInterface|InsertInterface|DeleteInterface|UpdateInterface
+     * @return ModelQuery|QueryInterface|InsertInterface
      */
     public static function insert()
     {
@@ -56,7 +56,7 @@ abstract class AbstractMysqlModel extends AbstractModel
     }
 
     /**
-     * @return ModelQuery|QueryInterface|SelectInterface|InsertInterface|DeleteInterface|UpdateInterface
+     * @return ModelQuery|QueryInterface|DeleteInterface
      */
     public static function delete()
     {
