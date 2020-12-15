@@ -2,6 +2,8 @@
 
 namespace SwFwLess\components\functions;
 
+use SwFwLess\facades\ObjectPool;
+
 function config($key, $default = null)
 {
     return \SwFwLess\components\Config::get($key, $default);
@@ -58,4 +60,9 @@ function event($event)
 function sapi()
 {
     return helper('sapi');
+}
+
+function newObj($className)
+{
+    return ObjectPool::pick($className) ?: (new $className);
 }

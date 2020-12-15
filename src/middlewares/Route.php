@@ -34,7 +34,12 @@ class Route extends AbstractMiddleware
         $parameters = $routeInfo[2];
         $routeDiSwitch = \SwFwLess\components\di\Container::routeDiSwitch();
         /** @var AbstractMiddleware|BaseService|GrpcUnaryService $controller */
-        $controller = $routeDiSwitch ? Container::make($controllerName) : new $controllerName;
+        $controller = ObjectPool::pick($controllerName) ?:
+            (
+                $routeDiSwitch ?
+                Container::make($controllerName) :
+                new $controllerName
+            );
         if ($controller instanceof \SwFwLess\services\BaseService) {
             $controller->setRequestAndHandlerAndParameters(
                 $appRequest,
