@@ -1,11 +1,21 @@
 <?php
 
-use Carbon\Carbon;
-use SwFwLess\components\Helper;
 use SwFwLess\components\mysql\MysqlWrapper;
 
 class TestPDO extends MysqlWrapper
 {
+    protected $mockData;
+
+    /**
+     * @param $mockData
+     * @return $this
+     */
+    public function setMockData($mockData)
+    {
+        $this->mockData = $mockData;
+        return $this;
+    }
+
     public function reconnect()
     {
         //
@@ -15,7 +25,7 @@ class TestPDO extends MysqlWrapper
     {
         require_once __DIR__ . '/TestPDOStatement.php';
 
-        return new TestPDOStatement();
+        return (new TestPDOStatement())->setMockData($this->mockData);
     }
 
     public function prepare($statement, array $driver_options = array())
@@ -25,6 +35,6 @@ class TestPDO extends MysqlWrapper
 
     public function lastInsertId ($name = null)
     {
-        return 1;
+        return $this->mockData[0][$name];
     }
 }

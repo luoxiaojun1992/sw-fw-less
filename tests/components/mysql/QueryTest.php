@@ -1,9 +1,6 @@
 <?php
 
-use Aura\SqlQuery\Common\DeleteInterface;
 use Aura\SqlQuery\Common\InsertInterface;
-use Aura\SqlQuery\Common\SelectInterface;
-use Aura\SqlQuery\Common\UpdateInterface;
 use Aura\SqlQuery\QueryInterface;
 use SwFwLess\components\mysql\ModelQuery;
 
@@ -25,12 +22,17 @@ class QueryTest extends \PHPUnit\Framework\TestCase
 
     public function testWrite()
     {
+        $mockData = [
+            ['id' => 1, 'name' => 'Foo'],
+        ];
+
         //Insert
 
-        /** @var ModelQuery|QueryInterface|InsertInterface $query */
+        /** @var Query|QueryInterface|InsertInterface $query */
         $query = $this->getQuery()->newInsert();
         $query->col('name')->bindValue(':name', 'Foo');
-        $result = $query->write($this->getTestPDO());
+        $query->setMockData($mockData);
+        $result = $query->write($this->getTestPDO()->setMockData($mockData));
         $this->assertEquals(1, $result);
         $this->assertEquals(1, $query->getLastInsertId());
 
