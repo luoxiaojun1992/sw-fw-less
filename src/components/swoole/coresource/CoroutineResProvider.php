@@ -6,9 +6,9 @@ use SwFwLess\components\provider\AbstractProvider;
 
 class CoroutineResProvider extends AbstractProvider
 {
-    public static function shutdown()
+    public static function shutdownResponse()
     {
-        parent::shutdown();
+        parent::shutdownResponse();
 
         CoroutineRes::releaseAll();
     }
