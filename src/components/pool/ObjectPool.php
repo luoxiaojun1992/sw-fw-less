@@ -103,10 +103,14 @@ class ObjectPool
      */
     public function stats()
     {
-        $stats = [];
+        $total = 0;
+        $classPoolCounter = [];
         foreach ($this->pool as $className => $objects) {
-            $stats[$className] = count($objects);
+            $total += $classPoolCounter[$className] = count($objects);
         }
-        return $stats;
+        return [
+            'classes' => $classPoolCounter,
+            'total' => $total,
+        ];
     }
 }
