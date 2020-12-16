@@ -49,8 +49,14 @@ class MonitorService extends BaseService
 
     public function swoole()
     {
+        $swServer = Server::getInstance();
+
         return Response::json([
-            'swoole' => Server::getInstance()->stats(),
+            'worker' => [
+                'id' => $swServer->worker_id,
+                'pid' => $swServer->worker_pid,
+            ],
+            'swoole' => $swServer->stats(),
             'coroutine' => Coroutine::stats(),
         ]);
     }
