@@ -42,4 +42,11 @@ class MonitorService extends BaseService
             'coroutine' => Coroutine::stats(),
         ]);
     }
+
+    public function memory()
+    {
+        return Response::json([
+            'usage' => memory_get_usage()
+        ]);
+    }
 }

@@ -122,6 +122,11 @@ class App
                             '/swoole',
                             ['/internal/monitor/swoole', \SwFwLess\services\internals\MonitorService::class, 'swoole']
                         );
+                        $r->addRoute(
+                            'GET',
+                            '/memory',
+                            ['/internal/monitor/memory', \SwFwLess\services\internals\MonitorService::class, 'memory']
+                        );
                     });
                     $r->addRoute(
                         'GET',
