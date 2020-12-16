@@ -4,6 +4,7 @@ namespace SwFwLess\services\internals;
 
 use SwFwLess\components\http\Response;
 use SwFwLess\components\swoole\counter\Counter;
+use SwFwLess\components\swoole\Server;
 use SwFwLess\facades\AMQPConnectionPool;
 use SwFwLess\facades\HbasePool;
 use SwFwLess\facades\Log;
@@ -16,7 +17,13 @@ class MonitorService extends BaseService
 {
     public function pool()
     {
+        $swServer = Server::getInstance();
+
         return Response::json([
+            'worker' => [
+                'id' => $swServer->worker_id,
+                'pid' => $swServer->worker_pid,
+            ],
             'redis' => \SwFwLess\components\functions\config('redis.pool_change_event') &&
             \SwFwLess\components\functions\config('redis.report_pool_change') ?
                 Counter::get('monitor:pool:redis') : RedisPool::countPool(),
@@ -26,6 +33,8 @@ class MonitorService extends BaseService
             'log' => [
                 'pool' => Log::countPool(),
                 'record_buffer' => Log::countRecordBuffer(),
+                'worker_id' => $swServer->worker_id,
+                'worker_pid' => $swServer->worker_pid,
             ],
             'amqp' => \SwFwLess\components\functions\config('amqp.pool_change_event') &&
             \SwFwLess\components\functions\config('amqp.report_pool_change') ?
@@ -39,14 +48,22 @@ class MonitorService extends BaseService
     public function swoole()
     {
         return Response::json([
+            'swoole' => Server::getInstance()->stats(),
             'coroutine' => Coroutine::stats(),
         ]);
     }
 
     public function memory()
     {
+        $swServer = Server::getInstance();
+
         return Response::json([
-            'usage' => memory_get_usage()
+            'usage' => memory_get_usage(),
+            'real_usage' => memory_get_usage(true),
+            'peak_usage' => memory_get_peak_usage(),
+            'peak_real_usage' => memory_get_peak_usage(true),
+            'worker_id' => $swServer->worker_id,
+            'worker_pid' => $swServer->worker_pid,
         ]);
     }
 }
