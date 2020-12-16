@@ -97,4 +97,16 @@ class ObjectPool
             }
         }
     }
+
+    /**
+     * @return array
+     */
+    public function stats()
+    {
+        $stats = [];
+        foreach ($this->pool as $className => $objects) {
+            $stats[$className] = count($objects);
+        }
+        return $stats;
+    }
 }

@@ -127,6 +127,11 @@ class App
                             '/memory',
                             ['/internal/monitor/memory', \SwFwLess\services\internals\MonitorService::class, 'memory']
                         );
+                        $r->addRoute(
+                            'GET',
+                            '/cpu',
+                            ['/internal/monitor/cpu', \SwFwLess\services\internals\MonitorService::class, 'cpu']
+                        );
                     });
                     $r->addRoute(
                         'GET',

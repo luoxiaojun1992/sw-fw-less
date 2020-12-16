@@ -7,6 +7,7 @@ namespace SwFwLess\facades;
  *
  * @method static mixed|null pick($class)
  * @method static release($object)
+ * @method static array stats()
  * @package SwFwLess\facades
  */
 class ObjectPool extends AbstractFacade

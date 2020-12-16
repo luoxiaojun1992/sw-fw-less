@@ -9,6 +9,7 @@ use SwFwLess\facades\AMQPConnectionPool;
 use SwFwLess\facades\HbasePool;
 use SwFwLess\facades\Log;
 use SwFwLess\facades\MysqlPool;
+use SwFwLess\facades\ObjectPool;
 use SwFwLess\facades\RedisPool;
 use SwFwLess\services\BaseService;
 use Swoole\Coroutine;
@@ -42,6 +43,7 @@ class MonitorService extends BaseService
             'hbase' => \SwFwLess\components\functions\config('hbase.pool_change_event') &&
             \SwFwLess\components\functions\config('hbase.report_pool_change') ?
                 Counter::get('monitor:pool:hbase') : HbasePool::countPool(),
+            'object' => ObjectPool::stats(),
         ]);
     }
 
@@ -50,6 +52,17 @@ class MonitorService extends BaseService
         return Response::json([
             'swoole' => Server::getInstance()->stats(),
             'coroutine' => Coroutine::stats(),
+        ]);
+    }
+
+    public function cpu()
+    {
+        $swServer = Server::getInstance();
+
+        return Response::json([
+            'worker_id' => $swServer->worker_id,
+            'worker_pid' => $swServer->worker_pid,
+            'sys_load' => sys_getloadavg(),
         ]);
     }
 
