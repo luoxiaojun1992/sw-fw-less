@@ -201,6 +201,7 @@ class Query
      * @param $mode
      * @param bool $retry
      * @return mixed
+     * @throws \Exception
      */
     private function mysqlExecute($pdo = null, $mode = self::QUERY_TYPE_FETCH, $retry = false)
     {
@@ -247,6 +248,7 @@ class Query
      * @param int|null $mode
      * @param bool|null $retry
      * @return mixed
+     * @throws \Exception
      */
     public function execute($pdo = null, $mode = null, $retry = null)
     {
@@ -309,6 +311,7 @@ class Query
     /**
      * @param null $pdo
      * @return mixed
+     * @throws \Exception
      */
     public function first($pdo = null)
     {
@@ -319,6 +322,7 @@ class Query
     /**
      * @param null $pdo
      * @return mixed
+     * @throws \Exception
      */
     public function get($pdo = null)
     {
@@ -328,6 +332,7 @@ class Query
     /**
      * @param null $pdo
      * @return mixed
+     * @throws \Exception
      */
     public function write($pdo = null)
     {

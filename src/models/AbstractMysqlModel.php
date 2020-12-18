@@ -80,6 +80,10 @@ abstract class AbstractMysqlModel extends AbstractModel
         return $result;
     }
 
+    /**
+     * @return bool
+     * @throws \Exception
+     */
     protected function performInsert()
     {
         if ($this->fireEvent('creating')->isStopped()) {
@@ -113,6 +117,11 @@ abstract class AbstractMysqlModel extends AbstractModel
         return $res;
     }
 
+    /**
+     * @param false $force
+     * @return bool
+     * @throws \Exception
+     */
     protected function performUpdate($force = false)
     {
         if ($this->fireEvent('updating')->isStopped()) {

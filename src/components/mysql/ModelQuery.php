@@ -22,6 +22,7 @@ class ModelQuery extends Query
     /**
      * @param null $pdo
      * @return AbstractMysqlModel|null
+     * @throws \Exception
      */
     public function first($pdo = null)
     {
@@ -33,6 +34,7 @@ class ModelQuery extends Query
     /**
      * @param null $pdo
      * @return AbstractMysqlModel[]|array
+     * @throws \Exception
      */
     public function get($pdo = null)
     {
