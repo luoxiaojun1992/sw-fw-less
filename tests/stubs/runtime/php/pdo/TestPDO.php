@@ -37,4 +37,9 @@ class TestPDO extends MysqlWrapper
     {
         return $this->mockData[0][$name];
     }
+
+    public function rollback()
+    {
+        return true;
+    }
 }

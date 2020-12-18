@@ -40,4 +40,13 @@ class Request extends \SwFwLess\components\http\Request
     {
         return $this->method;
     }
+
+    /**
+     * @param $swRequest
+     * @return Request
+     */
+    public static function fromSwRequest($swRequest)
+    {
+        return (new static())->setSwRequest($swRequest);
+    }
 }

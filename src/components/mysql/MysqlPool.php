@@ -20,12 +20,12 @@ class MysqlPool
 
     public static function create($mysqlConfig = null)
     {
-        if (self::$instance instanceof self) {
-            return self::$instance;
+        if (static::$instance instanceof self) {
+            return static::$instance;
         }
 
         if (is_array($mysqlConfig) && !empty($mysqlConfig['switch'])) {
-            return self::$instance = new self($mysqlConfig);
+            return static::$instance = new static($mysqlConfig);
         } else {
             return null;
         }
