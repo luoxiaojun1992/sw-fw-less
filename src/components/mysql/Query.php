@@ -140,11 +140,7 @@ class Query
             foreach ($bindValues as $placeholder => $bindValue) {
                 if (is_string($bindValue)) {
                     $paramType = \PDO::PARAM_STR;
-                } elseif (is_integer($bindValue)) {
-                    $paramType = \PDO::PARAM_INT;
-                } elseif (is_float($bindValue)) {
-                    $paramType = \PDO::PARAM_INT;
-                } elseif (is_double($bindValue)) {
+                } elseif (is_integer($bindValue) || is_float($bindValue) || is_double($bindValue)) {
                     $paramType = \PDO::PARAM_INT;
                 } elseif (is_null($bindValue)) {
                     $paramType = \PDO::PARAM_NULL;
