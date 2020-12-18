@@ -154,7 +154,7 @@ class Query
                     throw new \Exception('Invalid type of pdo parameter value');
                 }
                 $pdoStatement->bindValue(
-                    $placeholder,
+                    is_integer($placeholder) ? $placeholder + 1 : $placeholder,
                     $bindValue,
                     $paramType
                 );
