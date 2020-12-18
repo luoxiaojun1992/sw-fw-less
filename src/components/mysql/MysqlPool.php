@@ -16,7 +16,7 @@ class MysqlPool
     /** @var MysqlWrapper[][] */
     private $pdoPool = [];
 
-    private $config = [];
+    protected $config = [];
 
     public static function create($mysqlConfig = null)
     {
@@ -47,18 +47,23 @@ class MysqlPool
             }
 
             if ($mysqlConfig['pool_change_event']) {
-                \SwFwLess\components\functions\event(
-                    new CakeEvent(static::EVENT_MYSQL_POOL_CHANGE,
-                        null,
-                        ['count' => $mysqlConnection['pool_size']]
-                    )
-                );
+                $this->poolChange($mysqlConnection['pool_size']);
             }
         }
     }
 
+    protected function poolChange($count)
+    {
+        \SwFwLess\components\functions\event(
+            new CakeEvent(static::EVENT_MYSQL_POOL_CHANGE,
+                null,
+                ['count' => $count]
+            )
+        );
+    }
+
     /**
-     * @param string $connectionName
+     * @param string|null $connectionName
      * @return MysqlWrapper mixed
      */
     public function pick($connectionName = null)
@@ -81,12 +86,7 @@ class MysqlPool
             }
 
             if ($this->config['pool_change_event']) {
-                \SwFwLess\components\functions\event(
-                    new CakeEvent(static::EVENT_MYSQL_POOL_CHANGE,
-                        null,
-                        ['count' => -1]
-                    )
-                );
+                $this->poolChange(-1);
             }
         }
 
@@ -117,12 +117,7 @@ class MysqlPool
                     $this->pdoPool[$pdo->getConnectionName()][] = $pdo;
                 });
                 if ($this->config['pool_change_event']) {
-                    \SwFwLess\components\functions\event(
-                        new CakeEvent(static::EVENT_MYSQL_POOL_CHANGE,
-                            null,
-                            ['count' => 1]
-                        )
-                    );
+                    $this->poolChange(1);
                 }
             }
         }
@@ -130,7 +125,7 @@ class MysqlPool
 
     /**
      * @param bool $needRelease
-     * @param string $connectionName
+     * @param string|null $connectionName
      * @return MysqlWrapper
      */
     public function getConnect($needRelease = true, $connectionName = null)
