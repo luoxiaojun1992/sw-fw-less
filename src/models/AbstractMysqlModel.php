@@ -66,6 +66,7 @@ abstract class AbstractMysqlModel extends AbstractModel
     /**
      * @param bool $force
      * @return bool|mixed
+     * @throws \Exception
      */
     public function save($force = false)
     {
