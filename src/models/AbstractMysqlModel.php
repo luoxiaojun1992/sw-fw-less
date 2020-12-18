@@ -141,6 +141,7 @@ abstract class AbstractMysqlModel extends AbstractModel
 
             $updateBuilder->col($attributeName)->bindValue(':' . $attributeName, $this->{$attributeName});
         }
+        $updateBuilder->setHasSequence(false);
         $updateBuilder->write();
         $this->fireEvent('updated');
 

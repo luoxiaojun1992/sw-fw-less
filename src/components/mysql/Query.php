@@ -163,7 +163,9 @@ class Query
 
                     return [];
                 case static::QUERY_TYPE_WRITE:
-                    $this->setLastInsertId($pdo->lastInsertId($this->sequence));
+                    if ($this->hasSequence) {
+                        $this->setLastInsertId($pdo->lastInsertId($this->sequence));
+                    }
                     $affectedRows = $this->getAffectedRows();
                     $pdo->setLastActivityAt();
                     return $affectedRows;
