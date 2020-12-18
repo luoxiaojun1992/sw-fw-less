@@ -33,4 +33,9 @@ class TestPDOStatement
     {
         return $this->mockData;
     }
+
+    public function bindValue ($parameter, $value, $data_type = PDO::PARAM_STR)
+    {
+        return true;
+    }
 }
