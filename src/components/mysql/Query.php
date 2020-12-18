@@ -127,7 +127,8 @@ class Query
     /**
      * @param MysqlWrapper|\PDO $pdo
      * @param int $mode
-     * @return array|mixed|null
+     * @return array|int|mixed|null
+     * @throws \Exception
      */
     private function _doMysqlExecute($pdo, $mode = self::QUERY_TYPE_FETCH)
     {
@@ -140,6 +141,10 @@ class Query
                 if (is_string($bindValue)) {
                     $paramType = \PDO::PARAM_STR;
                 } elseif (is_integer($bindValue)) {
+                    $paramType = \PDO::PARAM_INT;
+                } elseif (is_float($bindValue)) {
+                    $paramType = \PDO::PARAM_INT;
+                } elseif (is_double($bindValue)) {
                     $paramType = \PDO::PARAM_INT;
                 } elseif (is_null($bindValue)) {
                     $paramType = \PDO::PARAM_NULL;
