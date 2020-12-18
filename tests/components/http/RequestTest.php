@@ -12,11 +12,12 @@ class RequestTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return \Swoole\Http\Request
+     * @return SwRequest
      */
     private function createSwRequest()
     {
-        return new \Swoole\Http\Request();
+        require_once __DIR__ . '/../../stubs/runtime/swoole/http/SwRequest.php';
+        return new SwRequest();
     }
 
     /**
@@ -226,31 +227,31 @@ class RequestTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(false, $swfRequest->hasServer('server_protocol'));
     }
 
-//    public function testMethod()
-//    {
-//        $swRequest = $this->createSwRequest();
-//        $swfRequest = $this->createSwfRequest($swRequest);
-//        $swRequest->server = [];
-//        $swRequest->server['request_method'] = 'GET';
-//        $this->assertEquals('GET', $swfRequest->method());
-//
-//        $swRequest = $this->createSwRequest();
-//        $swfRequest = $this->createSwfRequest($swRequest);
-//        $this->assertEquals(null, $swfRequest->method());
-//    }
+    public function testMethod()
+    {
+        $swRequest = $this->createSwRequest();
+        $swfRequest = $this->createSwfRequest($swRequest);
+        $swRequest->server = [];
+        $swRequest->server['request_method'] = 'GET';
+        $this->assertEquals('GET', $swfRequest->method());
 
-//    public function testUri()
-//    {
-//        $swRequest = $this->createSwRequest();
-//        $swfRequest = $this->createSwfRequest($swRequest);
-//        $swRequest->server = [];
-//        $swRequest->server['request_uri'] = '/foo/bar';
-//        $this->assertEquals('/foo/bar', $swfRequest->uri());
-//
-//        $swRequest = $this->createSwRequest();
-//        $swfRequest = $this->createSwfRequest($swRequest);
-//        $this->assertEquals(null, $swfRequest->uri());
-//    }
+        $swRequest = $this->createSwRequest();
+        $swfRequest = $this->createSwfRequest($swRequest);
+        $this->assertEquals(null, $swfRequest->method());
+    }
+
+    public function testUri()
+    {
+        $swRequest = $this->createSwRequest();
+        $swfRequest = $this->createSwfRequest($swRequest);
+        $swRequest->server = [];
+        $swRequest->server['request_uri'] = '/foo/bar';
+        $this->assertEquals('/foo/bar', $swfRequest->uri());
+
+        $swRequest = $this->createSwRequest();
+        $swfRequest = $this->createSwfRequest($swRequest);
+        $this->assertEquals(null, $swfRequest->uri());
+    }
 
     public function testQueryString()
     {

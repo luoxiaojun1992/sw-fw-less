@@ -15,7 +15,7 @@ class Request implements Poolable
     use CoroutineRes;
 
     /** @var \Swoole\Http\Request */
-    private $swRequest;
+    protected $swRequest;
 
     private $route;
 

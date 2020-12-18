@@ -16,6 +16,25 @@ class RouteTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * @return SwRequest
+     */
+    private function createSwRequest()
+    {
+        require_once __DIR__ . '/../stubs/runtime/swoole/http/SwRequest.php';
+        return new SwRequest();
+    }
+
+    /**
+     * @param null $swRequest
+     * @return \SwFwLess\components\http\Request
+     */
+    private function createSwfRequest($swRequest = null)
+    {
+        require_once __DIR__ . '/../stubs/components/http/Request.php';
+        return Request::fromSwRequest($swRequest ?? $this->createSwRequest());
+    }
+
+    /**
      * @throws Throwable
      */
     public function testMiddleware()
@@ -24,10 +43,12 @@ class RouteTest extends \PHPUnit\Framework\TestCase
 
         $routeMiddleware = new Route();
 
-        require_once __DIR__ . '/../stubs/components/http/Request.php';
+        $swRequest = $this->createSwRequest();
+        $swRequest->server = [];
+        $swRequest->server['request_uri'] = '/test';
+        $swRequest->server['request_method'] = 'GET';
 
-        $request = (new Request())->setUri('/test')
-            ->setMethod('GET');
+        $request = $this->createSwfRequest($swRequest);
 
         $routeMiddleware->setParametersAndOptions(
             [$request],
