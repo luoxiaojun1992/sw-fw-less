@@ -37,7 +37,7 @@ class QueryTest extends \PHPUnit\Framework\TestCase
         $mockData = [
             ['id' => 1, 'name' => 'Bar'],
         ];
-        /** @var Query|QueryInterface|InsertInterface $query */
+        /** @var Query|QueryInterface|\Aura\SqlQuery\Common\UpdateInterface $query */
         $query = $this->getQuery()->newUpdate();
         $query->where("`id` = :primaryValue");
         $query->bindValue(':primaryValue', 1);
