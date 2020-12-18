@@ -134,7 +134,27 @@ class Query
         /** @var \PDOStatement $pdoStatement */
         $pdoStatement = $pdo->prepare($this->setSql($this->auraQuery->getStatement())->getSql());
         if ($pdoStatement) {
-            $result = $pdoStatement->execute($this->setBindValues($this->auraQuery->getBindValues())->getBindValues());
+            $bindValues = $this->auraQuery->getBindValues();
+            $this->setBindValues($bindValues);
+            foreach ($bindValues as $placeholder => $bindValue) {
+                if (is_string($bindValue)) {
+                    $paramType = \PDO::PARAM_STR;
+                } elseif (is_integer($bindValue)) {
+                    $paramType = \PDO::PARAM_INT;
+                } elseif (is_null($bindValue)) {
+                    $paramType = \PDO::PARAM_NULL;
+                } elseif (is_bool($bindValue)) {
+                    $paramType = \PDO::PARAM_BOOL;
+                } else {
+                    throw new \Exception('Invalid type of pdo parameter value');
+                }
+                $pdoStatement->bindValue(
+                    $placeholder,
+                    $bindValue,
+                    $paramType
+                );
+            }
+            $result = $pdoStatement->execute();
             $pdo->setLastActivityAt();
             if ($result) {
                 $this->setAffectedRows($pdoStatement->rowCount());
