@@ -45,10 +45,49 @@ class QueryTest extends \PHPUnit\Framework\TestCase
         $query->setMockData($mockData);
         $result = $query->write($this->getTestPDO()->setMockData($mockData));
         $this->assertEquals(1, $result);
+
+        //Delete
+        $mockData = [
+            ['id' => 1, 'name' => 'Bar'],
+        ];
+        /** @var Query|QueryInterface|\Aura\SqlQuery\Common\DeleteInterface $query */
+        $query = $this->getQuery()->newDelete();
+        $query->where("`id` = :primaryValue");
+        $query->bindValue(':primaryValue', 1);
+        $query->write($this->getTestPDO()->setMockData($mockData));
+        $this->assertEquals(1, $result);
     }
 
     public function testGetOrFirst()
     {
-        //TODO
+        //First
+        $mockData = [
+            ['id' => 1, 'name' => 'Foo'],
+        ];
+        /** @var Query|QueryInterface|\Aura\SqlQuery\Common\SelectInterface $query */
+        $query = $this->getQuery()->newSelect();
+        $query->cols(['id', 'name']);
+        $query->where('`id` = :primaryValue');
+        $query->bindValue(':primaryValue', 1);
+        $result = $query->first($this->getTestPDO()->setMockData($mockData));
+        $this->assertEquals(
+            $mockData[0],
+            $result
+        );
+
+        //Get
+        $mockData = [
+            ['id' => 1, 'name' => 'Foo'],
+        ];
+        /** @var Query|QueryInterface|\Aura\SqlQuery\Common\SelectInterface $query */
+        $query = $this->getQuery()->newSelect();
+        $query->cols(['id', 'name']);
+        $query->where('`id` = :primaryValue');
+        $query->bindValue(':primaryValue', 1);
+        $result = $query->get($this->getTestPDO()->setMockData($mockData));
+        $this->assertEquals(
+            $mockData,
+            $result
+        );
     }
 }
