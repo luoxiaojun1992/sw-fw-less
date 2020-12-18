@@ -46,4 +46,9 @@ class QueryTest extends \PHPUnit\Framework\TestCase
         $result = $query->write($this->getTestPDO()->setMockData($mockData));
         $this->assertEquals(1, $result);
     }
+
+    public function testGetOrFirst()
+    {
+        //TODO
+    }
 }
