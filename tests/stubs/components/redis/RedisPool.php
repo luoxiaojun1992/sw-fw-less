@@ -7,10 +7,17 @@ class RedisPool extends \SwFwLess\components\redis\RedisPool
         //
     }
 
+    protected function getTestRedis()
+    {
+        require_once __DIR__ . '/../../runtime/php/redis/TestRedis.php';
+
+        return new TestRedis();
+    }
+
     /**
      * @param bool $needRelease
-     * @param string $connectionName
-     * @return RedisWrapper
+     * @param null $connectionName
+     * @return \SwFwLess\components\redis\RedisWrapper|TestRedis|null
      */
     public function getConnect($needRelease = true, $connectionName = null)
     {
@@ -21,18 +28,7 @@ class RedisPool extends \SwFwLess\components\redis\RedisPool
             return null;
         }
 
-        $redis = new \Redis();
-        $redis->connect(
-            $this->config['connections'][$connectionName]['host'],
-            $this->config['connections'][$connectionName]['port'],
-            $this->config['connections'][$connectionName]['timeout']
-        );
-        if ($this->config['connections'][$connectionName]['passwd']) {
-            $redis->auth($this->config['connections'][$connectionName]['passwd']);
-        }
-        $redis->setOption(\Redis::OPT_PREFIX, $this->config['connections'][$connectionName]['prefix']);
-        $redis->select($this->config['connections'][$connectionName]['db']);
-        return (new RedisWrapper())->setRedis($redis)
+        return $this->getTestRedis()
             ->setNeedRelease($needRelease)
             ->setConnectionName($connectionName);
     }

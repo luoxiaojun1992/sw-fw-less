@@ -23,12 +23,12 @@ class RedisPool
      */
     public static function create($redisConfig = null)
     {
-        if (self::$instance instanceof self) {
-            return self::$instance;
+        if (static::$instance instanceof static) {
+            return static::$instance;
         }
 
         if (is_array($redisConfig) && !empty($redisConfig['switch'])) {
-            return self::$instance = new self($redisConfig);
+            return static::$instance = new static($redisConfig);
         } else {
             return null;
         }

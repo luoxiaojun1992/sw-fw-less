@@ -48,6 +48,11 @@ class MysqlPoolTest extends \PHPUnit\Framework\TestCase
 
         $mysqlPool = $this->getTestMysqlPool($mysqlConfig);
 
+        $this->assertEquals(
+            $poolSize,
+            $mysqlPool->countPool()
+        );
+
         $pdo = $mysqlPool->pick();
 
         $this->assertInstanceOf(
