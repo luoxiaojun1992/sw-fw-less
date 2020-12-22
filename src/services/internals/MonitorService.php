@@ -16,6 +16,11 @@ use Swoole\Coroutine;
 
 class MonitorService extends BaseService
 {
+    public function status()
+    {
+        //TODO
+    }
+
     public function pool()
     {
         $swServer = Server::getInstance();

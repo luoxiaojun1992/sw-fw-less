@@ -39,5 +39,12 @@ class RedisPoolTest extends \PHPUnit\Framework\TestCase
         );
 
         //TODO
+
+        $pdo = $redisPool->pick();
+
+        $this->assertInstanceOf(
+            TestRedis::class,
+            $pdo
+        );
     }
 }
