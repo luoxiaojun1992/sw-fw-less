@@ -15,7 +15,7 @@ class RedisPool
     /** @var RedisWrapper[][]|\Redis[][] */
     private $redisPool = [];
 
-    private $config = [];
+    protected $config = [];
 
     /**
      * @param array $redisConfig
@@ -50,14 +50,19 @@ class RedisPool
             }
 
             if ($redisConfig['pool_change_event']) {
-                \SwFwLess\components\functions\event(
-                    new CakeEvent(static::EVENT_REDIS_POOL_CHANGE,
-                        null,
-                        ['count' => $redisConnection['pool_size']]
-                    )
-                );
+                $this->poolChange($redisConnection['pool_size']);
             }
         }
+    }
+
+    protected function poolChange($count)
+    {
+        \SwFwLess\components\functions\event(
+            new CakeEvent(static::EVENT_REDIS_POOL_CHANGE,
+                null,
+                ['count' => $count]
+            )
+        );
     }
 
     /**
@@ -79,12 +84,7 @@ class RedisPool
             $redis = $this->getConnect(false, $connectionName);
         } else {
             if ($this->config['pool_change_event']) {
-                \SwFwLess\components\functions\event(
-                    new CakeEvent(static::EVENT_REDIS_POOL_CHANGE,
-                        null,
-                        ['count' => -1]
-                    )
-                );
+                $this->poolChange(-1);
             }
         }
 
@@ -110,12 +110,7 @@ class RedisPool
                     $this->redisPool[$redis->getConnectionName()][] = $redis;
                 });
                 if ($this->config['pool_change_event']) {
-                    \SwFwLess\components\functions\event(
-                        new CakeEvent(static::EVENT_REDIS_POOL_CHANGE,
-                            null,
-                            ['count' => 1]
-                        )
-                    );
+                    $this->poolChange(1);
                 }
             }
         }
