@@ -10,7 +10,7 @@ class RedisPool
 {
     const EVENT_REDIS_POOL_CHANGE = 'redis.pool.change';
 
-    private static $instance;
+    protected static $instance;
 
     /** @var RedisWrapper[][]|\Redis[][] */
     private $redisPool = [];

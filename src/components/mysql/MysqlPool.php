@@ -11,7 +11,7 @@ class MysqlPool
 {
     const EVENT_MYSQL_POOL_CHANGE = 'mysql.pool.change';
 
-    private static $instance;
+    protected static $instance;
 
     /** @var MysqlWrapper[][] */
     private $pdoPool = [];
@@ -20,7 +20,7 @@ class MysqlPool
 
     public static function create($mysqlConfig = null)
     {
-        if (static::$instance instanceof self) {
+        if (static::$instance instanceof static) {
             return static::$instance;
         }
 
