@@ -132,6 +132,11 @@ class App
                             '/cpu',
                             ['/internal/monitor/cpu', \SwFwLess\services\internals\MonitorService::class, 'cpu']
                         );
+                        $r->addRoute(
+                            'GET',
+                            '/status',
+                            ['/internal/monitor/status', \SwFwLess\services\internals\MonitorService::class, 'status']
+                        );
                     });
                     $r->addRoute(
                         'GET',
