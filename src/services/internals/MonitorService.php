@@ -7,6 +7,7 @@ use SwFwLess\components\swoole\counter\Counter;
 use SwFwLess\components\swoole\Server;
 use SwFwLess\facades\AMQPConnectionPool;
 use SwFwLess\facades\HbasePool;
+use SwFwLess\facades\HealthCheck;
 use SwFwLess\facades\Log;
 use SwFwLess\facades\MysqlPool;
 use SwFwLess\facades\ObjectPool;
@@ -18,7 +19,9 @@ class MonitorService extends BaseService
 {
     public function status()
     {
-        //TODO
+        return Response::json([
+            'status' => HealthCheck::status(),
+        ]);
     }
 
     public function pool()
