@@ -19,20 +19,6 @@ class ResponseTest extends \PHPUnit\Framework\TestCase
             $responseContent,
             $response->getContent()
         );
-
-        $arr = ['foo' => 'bar'];
-        $jsonResponse = \SwFwLess\components\http\Response::json($arr);
-        $this->assertJsonStringEqualsJsonString(
-            json_encode($arr),
-            $jsonResponse->getContent()
-        );
-
-        $rawResponseContent = 'bar';
-        $rawResponse = \SwFwLess\components\http\Response::output($rawResponseContent);
-        $this->assertEquals(
-            $rawResponseContent,
-            $rawResponse->getContent()
-        );
     }
 
     public function testStatus()
@@ -46,7 +32,6 @@ class ResponseTest extends \PHPUnit\Framework\TestCase
         );
 
         $statusCreated = \SwFwLess\components\http\Code::STATUS_CREATED;
-        $response = $this->createResponse();
         $response->setStatus($statusCreated);
         $responseStatus = $response->getStatus();
         $this->assertEquals($statusCreated, $responseStatus);
@@ -125,7 +110,6 @@ class ResponseTest extends \PHPUnit\Framework\TestCase
         );
 
         $protocolV2 = \SwFwLess\components\http\Protocol::HTTP_V2;
-        $response = $this->createResponse();
         $response->setProtocolVersion($protocolV2);
         $this->assertEquals(
             $protocolV2,
@@ -135,26 +119,100 @@ class ResponseTest extends \PHPUnit\Framework\TestCase
 
     public function testReasonPhrase()
     {
-        //TODO
+        $response = $this->createResponse();
+        $this->assertEquals(
+            \SwFwLess\components\http\Code::phrase(
+                \SwFwLess\components\http\Code::STATUS_OK
+            ),
+            $response->getReasonPhrase()
+        );
+
+        $testReasonPhrase = \SwFwLess\components\http\Code::phrase(
+            \SwFwLess\components\http\Code::STATUS_NOT_FOUND
+        );
+
+        $response->setReasonPhrase($testReasonPhrase);
+        $this->assertEquals(
+            $testReasonPhrase,
+            $response->getReasonPhrase()
+        );
     }
 
     public function testServerError()
     {
-        //TODO
+        $response = $this->createResponse();
+        $this->assertFalse(
+            $response->isServerError()
+        );
+
+        $response->setStatus(
+            \SwFwLess\components\http\Code::STATUS_NOT_FOUND
+        );
+        $this->assertFalse(
+            $response->isServerError()
+        );
+
+        $response->setStatus(
+            \SwFwLess\components\http\Code::STATUS_BAD_GATEWAY
+        );
+        $this->assertTrue(
+            $response->isServerError()
+        );
+
+        $response->setStatus(
+            \SwFwLess\components\http\Code::STATUS_FORBIDDEN
+        );
+        $this->assertFalse(
+            $response->isServerError()
+        );
     }
 
     public function testClientError()
     {
-        //TODO
+        $response = $this->createResponse();
+        $this->assertFalse(
+            $response->isClientError()
+        );
+
+        $response->setStatus(
+            \SwFwLess\components\http\Code::STATUS_GATEWAY_TIMEOUT
+        );
+        $this->assertFalse(
+            $response->isClientError()
+        );
+
+        $response->setStatus(
+            \SwFwLess\components\http\Code::STATUS_UNAUTHORIZED
+        );
+        $this->assertTrue(
+            $response->isClientError()
+        );
+
+        $response->setStatus(
+            \SwFwLess\components\http\Code::STATUS_INTERNAL_SERVER_ERROR
+        );
+        $this->assertFalse(
+            $response->isClientError()
+        );
     }
 
     public function testOutput()
     {
-        //TODO
+        $rawResponseContent = 'bar';
+        $rawResponse = \SwFwLess\components\http\Response::output($rawResponseContent);
+        $this->assertEquals(
+            $rawResponseContent,
+            $rawResponse->getContent()
+        );
     }
 
     public function testJson()
     {
-        //TODO
+        $arr = ['foo' => 'bar'];
+        $jsonResponse = \SwFwLess\components\http\Response::json($arr);
+        $this->assertJsonStringEqualsJsonString(
+            json_encode($arr),
+            $jsonResponse->getContent()
+        );
     }
 }
