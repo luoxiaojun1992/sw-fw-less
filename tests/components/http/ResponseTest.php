@@ -132,4 +132,29 @@ class ResponseTest extends \PHPUnit\Framework\TestCase
             $response->getProtocolVersion()
         );
     }
+
+    public function testReasonPhrase()
+    {
+        //TODO
+    }
+
+    public function testServerError()
+    {
+        //TODO
+    }
+
+    public function testClientError()
+    {
+        //TODO
+    }
+
+    public function testOutput()
+    {
+        //TODO
+    }
+
+    public function testJson()
+    {
+        //TODO
+    }
 }
