@@ -5,7 +5,12 @@ namespace SwFwLess\components\traits;
 trait Singleton
 {
     /** @var static */
-    private static $instance;
+    protected static $instance;
+
+    public static function clearInstance()
+    {
+        static::$instance = null;
+    }
 
     /**
      * @return static

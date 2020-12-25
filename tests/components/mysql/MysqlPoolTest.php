@@ -4,6 +4,12 @@ use Mockery as M;
 
 class MysqlPoolTest extends \PHPUnit\Framework\TestCase
 {
+    public function tearDown()
+    {
+        parent::tearDown();
+        \SwFwLess\components\mysql\MysqlPool::clearInstance();
+    }
+
     protected function getTestMysqlPool($mysqlConfig = null)
     {
         require_once __DIR__ . '/../../stubs/components/mysql/MysqlPool.php';

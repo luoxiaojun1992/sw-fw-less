@@ -17,6 +17,11 @@ class RedisPool
 
     protected $config = [];
 
+    public static function clearInstance()
+    {
+        static::$instance = null;
+    }
+
     /**
      * @param array $redisConfig
      * @return RedisPool|null

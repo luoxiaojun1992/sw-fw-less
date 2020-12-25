@@ -18,6 +18,11 @@ class MysqlPool
 
     protected $config = [];
 
+    public static function clearInstance()
+    {
+        static::$instance = null;
+    }
+
     public static function create($mysqlConfig = null)
     {
         if (static::$instance instanceof static) {

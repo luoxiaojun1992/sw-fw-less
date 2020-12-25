@@ -4,6 +4,12 @@ use Mockery as M;
 
 class RedisPoolTest extends \PHPUnit\Framework\TestCase
 {
+    public function tearDown()
+    {
+        parent::tearDown();
+        RedisPool::clearInstance();
+    }
+
     protected function getTestRedisPool($redisConfig = null)
     {
         require_once __DIR__ . '/../../stubs/components/redis/RedisPool.php';
@@ -50,6 +56,7 @@ class RedisPoolTest extends \PHPUnit\Framework\TestCase
             $redisPool->countPool()
         );
 
+        /** @var TestRedis $redis */
         $redis = $redisPool->pick();
 
         $this->assertInstanceOf(
@@ -66,6 +73,7 @@ class RedisPoolTest extends \PHPUnit\Framework\TestCase
             $redisPool->countPool()
         );
 
+        $redis->setMockResponseArr(['OK']);
         $redisPool->release($redis);
 
         $this->assertEquals(
@@ -86,6 +94,7 @@ class RedisPoolTest extends \PHPUnit\Framework\TestCase
 
         $this->assertFalse($redis->isNeedRelease());
 
+        $redis->setMockResponseArr(['OK']);
         $redisPool->release($redis);
 
         $this->assertEquals(

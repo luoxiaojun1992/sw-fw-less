@@ -2,10 +2,20 @@
 
 class TestRedis extends \SwFwLess\components\redis\RedisWrapper
 {
-    //TODO
+    protected $mockResponseArr;
 
-    public function discard()
+    /**
+     * @param mixed $mockResponseArr
+     * @return $this
+     */
+    public function setMockResponseArr($mockResponseArr)
     {
-        return 'OK';
+        $this->mockResponseArr = $mockResponseArr;
+        return $this;
+    }
+
+    public function __call($name, $arguments)
+    {
+        return array_shift($this->mockResponseArr);
     }
 }
