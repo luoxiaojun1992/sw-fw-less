@@ -1,5 +1,7 @@
 <?php
 
+use Mockery as M;
+
 class RateLimitTest extends \PHPUnit\Framework\TestCase
 {
     public function tearDown()
@@ -21,6 +23,13 @@ class RateLimitTest extends \PHPUnit\Framework\TestCase
      */
     public function testPass()
     {
+        $mockScheduler = M::mock('alias:' . 'SwFwLess\components\swoole\Scheduler');
+        $mockScheduler->shouldReceive('withoutPreemptive')
+            ->with(M::type('callable'))
+            ->andReturnUsing(function ($arg) {
+                return call_user_func($arg);
+            });
+
         $rateLimitRedisConnection = 'rate_limit';
 
         $redisConfig = [

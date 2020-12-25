@@ -11,6 +11,12 @@ class Config
 
     private static $configCache = [];
 
+    public static function clear()
+    {
+        static::$config = [];
+        static::$configCache = [];
+    }
+
     public static function initByArr($arrConfig)
     {
         static::$config = $arrConfig;
