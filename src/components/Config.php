@@ -11,6 +11,11 @@ class Config
 
     private static $configCache = [];
 
+    public static function initByArr($arrConfig)
+    {
+        static::$config = $arrConfig;
+    }
+
     /**
      * @param $configPath
      * @param string $format
