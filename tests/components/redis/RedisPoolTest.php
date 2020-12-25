@@ -1,5 +1,7 @@
 <?php
 
+use Mockery as M;
+
 class RedisPoolTest extends \PHPUnit\Framework\TestCase
 {
     protected function getTestRedisPool($redisConfig = null)
@@ -9,8 +11,18 @@ class RedisPoolTest extends \PHPUnit\Framework\TestCase
         return RedisPool::create($redisConfig);
     }
 
+    /**
+     * @throws RedisException
+     */
     public function testPickAndRelease()
     {
+        $mockScheduler = M::mock('alias:' . 'SwFwLess\components\swoole\Scheduler');
+        $mockScheduler->shouldReceive('withoutPreemptive')
+            ->with(M::type('callable'))
+            ->andReturnUsing(function ($arg) {
+                return call_user_func($arg);
+            });
+
         $poolSize = 5;
 
         $redisConfig = [
@@ -38,13 +50,47 @@ class RedisPoolTest extends \PHPUnit\Framework\TestCase
             $redisPool->countPool()
         );
 
-        //TODO
-
-        $pdo = $redisPool->pick();
+        $redis = $redisPool->pick();
 
         $this->assertInstanceOf(
             TestRedis::class,
-            $pdo
+            $redis
+        );
+
+        $this->assertTrue(
+            $redis->isNeedRelease()
+        );
+
+        $this->assertEquals(
+            $poolSize - 1,
+            $redisPool->countPool()
+        );
+
+        $redisPool->release($redis);
+
+        $this->assertEquals(
+            $poolSize,
+            $redisPool->countPool()
+        );
+
+        for ($i = 0; $i < $poolSize; ++$i) {
+            $redisPool->pick();
+        }
+
+        $this->assertEquals(
+            0,
+            $redisPool->countPool()
+        );
+
+        $redis = $redisPool->pick();
+
+        $this->assertFalse($redis->isNeedRelease());
+
+        $redisPool->release($redis);
+
+        $this->assertEquals(
+            0,
+            $redisPool->countPool()
         );
     }
 }
