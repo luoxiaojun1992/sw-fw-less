@@ -2,5 +2,9 @@
 
 class ConfigTest extends \PHPUnit\Framework\TestCase
 {
-    //TODO
+    public function testSetAndGet()
+    {
+        //TODO
+        $this->assertTrue(true);
+    }
 }

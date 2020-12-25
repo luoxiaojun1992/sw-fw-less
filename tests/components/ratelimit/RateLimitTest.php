@@ -2,5 +2,9 @@
 
 class RateLimitTest extends \PHPUnit\Framework\TestCase
 {
-    //TODO
+    public function testPass()
+    {
+        //TODO
+        $this->assertTrue(true);
+    }
 }
