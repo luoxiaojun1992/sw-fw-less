@@ -118,7 +118,7 @@ class Helper
             'Packets out of order. Expected',
         ];
         foreach ($lostConnectionMessages as $lostConnectionMessage) {
-            if (stripos($message, $lostConnectionMessage) !== false) {
+            if (mb_stripos($message, $lostConnectionMessage) !== false) {
                 return true;
             }
         }
