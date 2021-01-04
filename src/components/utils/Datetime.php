@@ -10,13 +10,13 @@ class Datetime
     {
         if (is_null($fromDate)) {
             return [
-                \Carbon\Carbon::now()->subWeek($weeks)->startOfWeek()->toDateString(),
-                \Carbon\Carbon::now()->subWeek(1)->endOfWeek()->toDateString(),
+                \Carbon\Carbon::now()->endOfDay()->subWeek($weeks)->startOfWeek()->toDateString(),
+                \Carbon\Carbon::now()->endOfDay()->subWeek(1)->endOfWeek()->toDateString(),
             ];
         } else {
             return [
-                static::toDateObj($fromDate)->subWeek($weeks)->startOfWeek()->toDateString(),
-                static::toDateObj($fromDate)->subWeek(1)->endOfWeek()->toDateString(),
+                static::toDateObj($fromDate)->endOfDay()->subWeek($weeks)->startOfWeek()->toDateString(),
+                static::toDateObj($fromDate)->endOfDay()->subWeek(1)->endOfWeek()->toDateString(),
             ];
         }
     }
@@ -30,13 +30,13 @@ class Datetime
     {
         if (is_null($fromDate)) {
             return [
-                \Carbon\Carbon::now()->subMonthNoOverflow($months)->startOfMonth()->toDateString(),
-                \Carbon\Carbon::now()->subMonthNoOverflow(1)->endOfMonth()->toDateString(),
+                \Carbon\Carbon::now()->endOfDay()->subMonthNoOverflow($months)->startOfMonth()->toDateString(),
+                \Carbon\Carbon::now()->endOfDay()->subMonthNoOverflow(1)->endOfMonth()->toDateString(),
             ];
         } else {
             return [
-                static::toDateObj($fromDate)->subMonthNoOverflow($months)->startOfMonth()->toDateString(),
-                static::toDateObj($fromDate)->subMonthNoOverflow(1)->endOfMonth()->toDateString(),
+                static::toDateObj($fromDate)->endOfDay()->subMonthNoOverflow($months)->startOfMonth()->toDateString(),
+                static::toDateObj($fromDate)->endOfDay()->subMonthNoOverflow(1)->endOfMonth()->toDateString(),
             ];
         }
     }
@@ -50,13 +50,13 @@ class Datetime
     {
         if (is_null($fromDate)) {
             return [
-                \Carbon\Carbon::now()->subQuarter($quarters)->startOfQuarter()->toDateString(),
-                \Carbon\Carbon::now()->subQuarter(1)->endOfQuarter()->toDateString(),
+                \Carbon\Carbon::now()->endOfDay()->subQuarter($quarters)->startOfQuarter()->toDateString(),
+                \Carbon\Carbon::now()->endOfDay()->subQuarter(1)->endOfQuarter()->toDateString(),
             ];
         } else {
             return [
-                static::toDateObj($fromDate)->subQuarter($quarters)->startOfQuarter()->toDateString(),
-                static::toDateObj($fromDate)->subQuarter(1)->endOfQuarter()->toDateString(),
+                static::toDateObj($fromDate)->endOfDay()->subQuarter($quarters)->startOfQuarter()->toDateString(),
+                static::toDateObj($fromDate)->endOfDay()->subQuarter(1)->endOfQuarter()->toDateString(),
             ];
         }
     }
@@ -70,13 +70,13 @@ class Datetime
     {
         if (is_null($fromDate)) {
             return [
-                \Carbon\Carbon::now()->subYear($years)->startOfYear()->toDateString(),
-                \Carbon\Carbon::now()->subYear(1)->endOfYear()->toDateString(),
+                \Carbon\Carbon::now()->endOfDay()->subYear($years)->startOfYear()->toDateString(),
+                \Carbon\Carbon::now()->endOfDay()->subYear(1)->endOfYear()->toDateString(),
             ];
         } else {
             return [
-                static::toDateObj($fromDate)->subYear($years)->startOfYear()->toDateString(),
-                static::toDateObj($fromDate)->subYear(1)->endOfYear()->toDateString(),
+                static::toDateObj($fromDate)->endOfDay()->subYear($years)->startOfYear()->toDateString(),
+                static::toDateObj($fromDate)->endOfDay()->subYear(1)->endOfYear()->toDateString(),
             ];
         }
     }
@@ -100,13 +100,13 @@ class Datetime
     {
         if (is_null($fromDate)) {
             return [
-                \Carbon\Carbon::now()->subDays($days)->startOfDay()->toDateString(),
-                \Carbon\Carbon::now()->subDays(1)->endOfDay()->toDateString(),
+                \Carbon\Carbon::now()->endOfDay()->subDays($days)->toDateString(),
+                \Carbon\Carbon::now()->endOfDay()->subDays(1)->toDateString(),
             ];
         } else {
             return [
-                static::toDateObj($fromDate)->subDays($days)->startOfDay()->toDateString(),
-                static::toDateObj($fromDate)->subDays(1)->endOfDay()->toDateString(),
+                static::toDateObj($fromDate)->endOfDay()->subDays($days)->toDateString(),
+                static::toDateObj($fromDate)->endOfDay()->subDays(1)->toDateString(),
             ];
         }
     }
@@ -128,13 +128,12 @@ class Datetime
 
     public static function yesterday()
     {
-        $yesterday = Carbon::yesterday()->startOfDay()->toDateString();
-        return [$yesterday, $yesterday];
+        return static::lastDays(1);
     }
 
     public static function toDateObj($date)
     {
-        return Carbon::createFromFormat('Y-m-d', $date);
+        return Carbon::parse($date);
     }
 
     public static function toIntDate($date)
@@ -165,14 +164,9 @@ class Datetime
      */
     public static function sequentialPeriod(string $startDate, string $endDate)
     {
-        if (static::isSeveralRealWeeks($startDate, $endDate)) {
-            return static::lastWeeks(
-                static::diffRealWeeks($startDate, $endDate),
-                $startDate
-            );
-        } elseif (static::isSeveralRealMonths($startDate, $endDate)) {
-            return static::lastMonths(
-                static::diffRealMonths($startDate, $endDate),
+        if (static::isSeveralRealYears($startDate, $endDate)) {
+            return static::lastYears(
+                static::diffRealYears($startDate, $endDate),
                 $startDate
             );
         } elseif (static::isSeveralRealQuarters($startDate, $endDate)) {
@@ -180,14 +174,19 @@ class Datetime
                 static::diffRealQuarters($startDate, $endDate),
                 $startDate
             );
-        } elseif (static::isSeveralRealYears($startDate, $endDate)) {
-            return static::lastYears(
-                static::diffRealYears($startDate, $endDate),
+        } elseif (static::isSeveralRealMonths($startDate, $endDate)) {
+            return static::lastMonths(
+                static::diffRealMonths($startDate, $endDate),
+                $startDate
+            );
+        } elseif (static::isSeveralRealWeeks($startDate, $endDate)) {
+            return static::lastWeeks(
+                static::diffRealWeeks($startDate, $endDate),
                 $startDate
             );
         } else {
-            $start = static::toDateObj($startDate);
-            $end = static::toDateObj($endDate);
+            $start = static::toDateObj($startDate)->startOfDay();
+            $end = static::toDateObj($endDate)->endOfDay();
             $diff = $end->diffInDays($start);
             $sequentialStart = $start->subDays($diff + 1)->toDateString();
             $sequentialEnd = $start->addDays($diff)->toDateString();
@@ -202,7 +201,7 @@ class Datetime
 
     public static function diffRealWeeks(string $startDate, string $endDate)
     {
-        return (static::toDateObj($endDate)->diffInWeeks(static::toDateObj($startDate)) + 1);
+        return (static::toDateObj($endDate)->endOfDay()->diffInWeeks(static::toDateObj($startDate)->startOfDay()) + 1);
     }
 
     public static function isSeveralRealWeeks(string $startDate, string $endDate, $weeks = null)
@@ -226,7 +225,23 @@ class Datetime
 
     public static function diffRealMonths(string $startDate, string $endDate)
     {
-        return (static::toDateObj($endDate)->diffInMonths(static::toDateObj($startDate)) + 1);
+        $startDateObj = static::toDateObj($startDate);
+        $endDateObj = static::toDateObj($endDate);
+        $startDateMonth = $startDateObj->month;
+        $endDateMonth = $endDateObj->month;
+        $startDateYear = $startDateObj->year;
+        $endDateYear = $endDateObj->year;
+        $diffYear = $endDateYear - $startDateYear;
+        if ($diffYear === 0) {
+            return $endDateMonth - $startDateMonth + 1;
+        } else {
+            $diffMonth = $endDateMonth + (12 - $startDateMonth + 1);
+            if ($diffYear > 1) {
+                $diffMonth += ($endDateYear - $startDateYear - 1) * 12;
+            }
+        }
+
+        return $diffMonth;
     }
 
     public static function isSeveralRealMonths(string $startDate, string $endDate, $months = null)
@@ -250,7 +265,7 @@ class Datetime
 
     public static function diffRealQuarters(string $startDate, string $endDate)
     {
-        return ((static::toDateObj($endDate)->diffInMonths(static::toDateObj($startDate)) + 1) / 3);
+        return (static::diffRealMonths($startDate, $endDate) / 3);
     }
 
     public static function isSeveralRealQuarters(string $startDate, string $endDate, $quarters = null)
@@ -282,7 +297,7 @@ class Datetime
 
     public static function diffRealYears(string $startDate, string $endDate)
     {
-        return (static::toDateObj($endDate)->diffInYears(static::toDateObj($startDate)) + 1);
+        return (static::toDateObj($endDate)->endOfDay()->diffInYears(static::toDateObj($startDate)->startOfDay()) + 1);
     }
 
     public static function isSeveralRealYears(string $startDate, string $endDate, $years = null)
@@ -374,8 +389,8 @@ class Datetime
     {
         $dateList = [];
 
-        $now = static::toDateObj($startDate)->startOfMonth();
-        $endDateObj = static::toDateObj($endDate)->endOfMonth();
+        $now = static::toDateObj($startDate)->startOfMonth()->startOfDay();
+        $endDateObj = static::toDateObj($endDate)->endOfMonth()->endOfDay();
         while ($now->lessThanOrEqualTo($endDateObj)) {
             $dateList[] = $now->format($format);
             $now->addMonthsNoOverflow(1);
