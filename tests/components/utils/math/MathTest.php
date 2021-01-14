@@ -16,7 +16,6 @@ class MathTest extends \PHPUnit\Framework\TestCase
 
     public function testSum()
     {
-        //TODO
         $this->mockSwooleScheduler();
 
         $mathUtil = \SwFwLess\components\utils\math\Math::create([
@@ -29,7 +28,18 @@ class MathTest extends \PHPUnit\Framework\TestCase
             $mathUtil->sum($testArr)
         );
 
-        $testArr = range(1, 100000);
+        $testArr = range(1, 150000);
+        $this->assertEquals(
+            doubleval(array_sum($testArr)),
+            $mathUtil->sum($testArr)
+        );
+
+        $mathUtil = \SwFwLess\components\utils\math\Math::create([
+            'pool_size' => 1,
+            'sum_ffi_min_count' => 200000,
+        ]);
+
+        $testArr = range(1, 300000);
         $this->assertEquals(
             doubleval(array_sum($testArr)),
             $mathUtil->sum($testArr)
