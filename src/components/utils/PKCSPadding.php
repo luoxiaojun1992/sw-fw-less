@@ -13,7 +13,7 @@ class PKCSPadding
     {
         $dataLen = strlen($data);
         $padAmount = $blockSize - ($dataLen % $blockSize);
-        return str_pad($data, $padAmount, chr($padAmount));
+        return $data . str_repeat(chr($padAmount), $padAmount);
     }
 
     /**
