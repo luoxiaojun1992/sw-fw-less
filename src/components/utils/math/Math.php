@@ -61,6 +61,12 @@ class Math
 
     public function sum($numbers = null, $numbersCount = null, $cNumbers = null)
     {
+        $numbersCount = $numbersCount ?? count($numbers);
+
+        if ($numbersCount < ($this->config['sum_ffi_min_count'] ?? 100000)) {
+            return array_sum($numbers);
+        }
+
         if (!Runtime::supportFFI()) {
             return array_sum($numbers);
         }
@@ -71,17 +77,11 @@ class Math
 
         $newUdf = false;
         $udf = Scheduler::withoutPreemptive(function () {
-            return array_pop($this->udfPool[]);
+            return array_pop($this->udfPool);
         });
         if (!$udf) {
             $newUdf = true;
             $udf = $this->createUdf($this->ffiPath);
-        }
-
-        $numbersCount = $numbersCount ?? count($numbers);
-
-        if ($numbersCount < ($this->config['sum_ffi_min_count'] ?? 100000)) {
-            return array_sum($numbers);
         }
 
         if (is_null($cNumbers)) {
