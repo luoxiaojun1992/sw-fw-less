@@ -91,6 +91,25 @@ class Route extends AbstractMiddleware
         return $firstMiddlewareConcrete;
     }
 
+    protected function selectRouteCacheKeyCache(
+        $requestMethodFilter, $slicedJsonCache = [], $slicedJsonCacheCount = 0
+    )
+    {
+        foreach (self::$routeCacheKeyCache as $cachedMethod => $cachedUriJson) {
+            if ($requestMethodFilter($cachedMethod)) {
+                foreach (array_reverse($cachedUriJson, true) as $cachedUri => $cachedJson) {
+                    $slicedJsonCache[$cachedMethod][$cachedUri] = $cachedJson;
+                    ++$slicedJsonCacheCount;
+                    if ($slicedJsonCacheCount >= 100) {
+                        break;
+                    }
+                }
+            }
+        }
+
+        return [$slicedJsonCache, $slicedJsonCacheCount];
+    }
+
     public function handle(Request $request)
     {
         $requestUri = $request->uri();
@@ -108,10 +127,20 @@ class Route extends AbstractMiddleware
                 self::$routeCacheKeyCache[$requestMethod][$requestUri] = $cacheKey;
                 ++self::$routeCacheKeyCacheCount;
                 if (self::$routeCacheKeyCacheCount > 100) {
-                    self::$routeCacheKeyCache = array_slice(
-                        self::$routeCacheKeyCache, 0, 100, true
+                    list($slicedJsonCache, $slicedJsonCacheCount) = $this->selectRouteCacheKeyCache(
+                        function ($cachedRequestMethod) use ($requestMethod) {
+                            return $cachedRequestMethod === $requestMethod;
+                        }
                     );
-                    self::$routeCacheKeyCacheCount = 100;
+                    list($slicedJsonCache, $slicedJsonCacheCount) = $this->selectRouteCacheKeyCache(
+                        function ($cachedRequestMethod) use ($requestMethod) {
+                            return $cachedRequestMethod !== $requestMethod;
+                        },
+                        $slicedJsonCache,
+                        $slicedJsonCacheCount
+                    );
+                    self::$routeCacheKeyCache = $slicedJsonCache;
+                    self::$routeCacheKeyCacheCount = $slicedJsonCacheCount;
                 }
             }
 
@@ -126,7 +155,7 @@ class Route extends AbstractMiddleware
                 ++self::$cachedRouteInfoCount;
                 if (self::$cachedRouteInfoCount > 100) {
                     self::$cachedRouteInfo = array_slice(
-                        self::$cachedRouteInfo, 0, 100, true
+                        self::$cachedRouteInfo, -100, null, true
                     );
                     self::$cachedRouteInfoCount = 100;
                 }

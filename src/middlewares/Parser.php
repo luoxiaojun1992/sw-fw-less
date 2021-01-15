@@ -28,7 +28,7 @@ class Parser
                 ++self::$cachedMiddlewareNameCount;
                 if (self::$cachedMiddlewareNameCount > 100) {
                     self::$cachedMiddlewareName = array_slice(
-                        self::$cachedMiddlewareName, 0, 100, true
+                        self::$cachedMiddlewareName, -100, null, true
                     );
                     self::$cachedMiddlewareNameCount = 100;
                 }
