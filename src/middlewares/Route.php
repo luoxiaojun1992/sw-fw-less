@@ -5,6 +5,7 @@ namespace SwFwLess\middlewares;
 use SwFwLess\components\http\Request;
 use SwFwLess\components\http\Response;
 use SwFwLess\components\swoole\Scheduler;
+use SwFwLess\components\utils\http\Url;
 use SwFwLess\facades\Container;
 use SwFwLess\facades\ObjectPool;
 use SwFwLess\middlewares\traits\Parser;
@@ -96,7 +97,7 @@ class Route extends AbstractMiddleware
         if (false !== $pos = strpos($requestUri, '?')) {
             $requestUri = substr($requestUri, 0, $pos);
         }
-        $requestUri = rawurldecode($requestUri);
+        $requestUri = Url::decode($requestUri);
 
         $routeInfo = Scheduler::withoutPreemptive(function () use ($request, $requestUri) {
             $requestMethod = $request->method();
