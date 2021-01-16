@@ -17,7 +17,6 @@
         "cakephp/event": "3.7.1",
         "cakephp/validation": "~3",
         "dragonmantank/cron-expression": "^2.3",
-        "elasticsearch/elasticsearch": "~6",
         "filp/whoops": "~2.1@stable",
         "huang-yi/swoole-watcher": "~0.0",
         "koala-framework/file-watcher": " ~1.0",
@@ -25,7 +24,6 @@
         "league/flysystem": "~1",
         "luoxiaojun/closure-php": "dev-main",
         "luoxiaojun/grpc": "dev-master",
-        "luoxiaojun1992/laravel-elasticsearch": "~1.0",
         "luoxiaojun1992/monolog-co-stream-handler": "~1.0",
         "monolog/monolog": "^1",
         "nesbot/carbon": "^1.26.3",
@@ -47,7 +45,9 @@
         "ext-phalcon": "*",
         "ext-jsonnet": "*",
         "ext-redis": "*",
-        "ext-curl": "*"
+        "ext-curl": "*",
+        "luoxiaojun1992/laravel-elasticsearch": "~1.0",
+        "elasticsearch/elasticsearch": "~6"
     },
     "license": "apache-2.0",
     "authors": [
