@@ -247,4 +247,11 @@ class ResponseTest extends \PHPUnit\Framework\TestCase
             $actualResponseContent
         );
     }
+
+    public function testGrpc()
+    {
+        //TODO
+
+        $this->assertTrue(true);
+    }
 }
