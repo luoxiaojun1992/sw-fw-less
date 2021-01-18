@@ -213,8 +213,14 @@ class Response
     )
     {
         if ($isGrpc) {
-            $headers['Content-Type'] = $toJson ? 'application/grpc+json' : 'application/grpc+proto';
-            return static::output(Serializer::pack($reply, $toJson), $status, $headers, $trailers);
+            return static::output(
+                Serializer::pack($reply, $toJson),
+                $status,
+                array_merge(
+                    $headers,
+                    ['Content-Type' => $toJson ? 'application/grpc+json' : 'application/grpc+proto']
+                ),
+                $trailers);
         } else {
             return static::json($reply->serializeToJsonString(), $status, $headers, $trailers);
         }
