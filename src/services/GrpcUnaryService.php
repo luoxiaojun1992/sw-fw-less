@@ -16,6 +16,11 @@ abstract class GrpcUnaryService extends BaseService
         return null;
     }
 
+    public function requestMessageName($method)
+    {
+        return null;
+    }
+
     public function call()
     {
         try {
@@ -51,10 +56,12 @@ abstract class GrpcUnaryService extends BaseService
 
             $parameters = $this->getParameters();
 
-            $requestMessageClass = $this->requestMessageClass($this->getHandler());
+            $handler = $this->getHandler();
+
+            $requestMessageClass = $this->requestMessageClass($handler);
 
             if (is_null($requestMessageClass)) {
-                $reflectionHandler = new \ReflectionMethod($this, $this->getHandler());
+                $reflectionHandler = new \ReflectionMethod($this, $handler);
                 $handlerParameters = $reflectionHandler->getParameters();
                 foreach ($handlerParameters as $handlerParameter) {
                     if ($declaringClass = $handlerParameter->getClass()) {
@@ -69,7 +76,7 @@ abstract class GrpcUnaryService extends BaseService
             } else {
                 $protoRequest = new $requestMessageClass;
                 Serializer::unpack($protoRequest, $body, $isGrpc, (!$isGrpc) || $isGrpcJson);
-                $parameters['request'] = $protoRequest;
+                $parameters[$this->requestMessageName($handler) ?? 'request'] = $protoRequest;
             }
 
             $this->setParameters($parameters);

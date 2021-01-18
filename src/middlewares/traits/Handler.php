@@ -2,6 +2,8 @@
 
 namespace SwFwLess\middlewares\traits;
 
+use Google\Protobuf\Internal\Message;
+use SwFwLess\components\Helper;
 use SwFwLess\components\http\Response;
 use SwFwLess\exceptions\HttpException;
 use SwFwLess\facades\Container;
@@ -99,6 +101,8 @@ trait Handler
             return Response::json($response);
         } elseif (is_string($response)) {
             return Response::output($response);
+        } elseif ($response instanceof Message) {
+            return $response;
         }
 
         throw new HttpException('Invalid http response', 500);

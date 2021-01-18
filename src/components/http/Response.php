@@ -2,6 +2,7 @@
 
 namespace SwFwLess\components\http;
 
+use Google\Protobuf\Internal\Message;
 use SwFwLess\components\grpc\Serializer;
 use SwFwLess\components\Helper;
 use Zend\Diactoros\ResponseFactory;
@@ -194,12 +195,11 @@ class Response
      */
     public static function output($content, $status = 200, $headers = [], $trailers = [])
     {
-        return (new self)->setContent($content)->setStatus($status)
-            ->setHeaders($headers)->setTrailers($trailers);
+        return (new self)->setContent($content)->setStatus($status)->setHeaders($headers)->setTrailers($trailers);
     }
 
     /**
-     * @param $reply
+     * @param Message $reply
      * @param int $status
      * @param array $headers
      * @param array $trailers
@@ -207,9 +207,7 @@ class Response
      * @param bool $isGrpc
      * @return Response
      */
-    public static function grpc(
-        $reply, $status = 200, $headers = [], $trailers = [], $toJson = false, $isGrpc = true
-    )
+    public static function grpc($reply, $status = 200, $headers = [], $trailers = [], $toJson = false, $isGrpc = true)
     {
         if ($isGrpc) {
             $headers['Content-Type'] = $toJson ? 'application/grpc+json' : 'application/grpc+proto';
@@ -224,18 +222,12 @@ class Response
      * @param int $status
      * @param array $headers
      * @param array $trailers
-     * @param int $jsonOptions
      * @return Response
      */
-    public static function json(
-        $arr, $status = 200, $headers = [], $trailers = [], $jsonOptions = JSON_UNESCAPED_UNICODE
-    )
+    public static function json($arr, $status = 200, $headers = [], $trailers = [])
     {
-        return self::output(
-            is_string($arr) ? $arr : Helper::jsonEncode($arr, $jsonOptions),
-            $status,
-            array_merge($headers, ['Content-Type' => 'application/json']),
-            $trailers
-        );
+        $headers['Content-Type'] = 'application/json';
+        $content = is_string($arr) ? $arr : Helper::jsonEncode($arr);
+        return self::output($content, $status, $headers, $trailers);
     }
 }
