@@ -231,8 +231,11 @@ class Response
         $arr, $status = 200, $headers = [], $trailers = [], $jsonOptions = JSON_UNESCAPED_UNICODE
     )
     {
-        $headers['Content-Type'] = 'application/json';
-        $content = is_string($arr) ? $arr : Helper::jsonEncode($arr, $jsonOptions);
-        return self::output($content, $status, $headers, $trailers);
+        return self::output(
+            is_string($arr) ? $arr : Helper::jsonEncode($arr, $jsonOptions),
+            $status,
+            array_merge($headers, ['Content-Type' => 'application/json']),
+            $trailers
+        );
     }
 }
