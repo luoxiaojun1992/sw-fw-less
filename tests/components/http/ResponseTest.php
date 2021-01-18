@@ -214,5 +214,25 @@ class ResponseTest extends \PHPUnit\Framework\TestCase
             json_encode($arr),
             $jsonResponse->getContent()
         );
+
+        $arr = ['foo' => '中文'];
+        $jsonResponse = \SwFwLess\components\http\Response::json($arr);
+        $this->assertJsonStringEqualsJsonString(
+            json_encode($arr, JSON_UNESCAPED_UNICODE),
+            $jsonResponse->getContent()
+        );
+
+        $arr = ['foo' => '中文'];
+        $jsonResponse = \SwFwLess\components\http\Response::json(
+            $arr,
+            200,
+            [],
+            [],
+            0
+        );
+        $this->assertJsonStringEqualsJsonString(
+            json_encode($arr),
+            $jsonResponse->getContent()
+        );
     }
 }
