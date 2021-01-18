@@ -217,9 +217,15 @@ class ResponseTest extends \PHPUnit\Framework\TestCase
 
         $arr = ['foo' => '中文'];
         $jsonResponse = \SwFwLess\components\http\Response::json($arr);
+        $expectedResponseContent = json_encode($arr, JSON_UNESCAPED_UNICODE);
+        $actualResponseContent = $jsonResponse->getContent();
         $this->assertJsonStringEqualsJsonString(
-            json_encode($arr, JSON_UNESCAPED_UNICODE),
-            $jsonResponse->getContent()
+            $expectedResponseContent,
+            $actualResponseContent
+        );
+        $this->assertEquals(
+            $expectedResponseContent,
+            $actualResponseContent
         );
 
         $arr = ['foo' => '中文'];
@@ -230,9 +236,15 @@ class ResponseTest extends \PHPUnit\Framework\TestCase
             [],
             0
         );
+        $expectedResponseContent = json_encode($arr);
+        $actualResponseContent = $jsonResponse->getContent();
         $this->assertJsonStringEqualsJsonString(
-            json_encode($arr),
-            $jsonResponse->getContent()
+            $expectedResponseContent,
+            $actualResponseContent
+        );
+        $this->assertEquals(
+            $expectedResponseContent,
+            $actualResponseContent
         );
     }
 }
