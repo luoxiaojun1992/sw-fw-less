@@ -59,6 +59,23 @@ class Response
     }
 
     /**
+     * @param $content
+     * @param $status
+     * @param $headers
+     * @param $trailers
+     * @return $this
+     */
+    public function setProperties($content, $status, $headers, $trailers)
+    {
+        $this->content = $content;
+        $this->status = $status;
+        $this->reasonPhrase = Code::phrase($status);
+        $this->headers = $headers;
+        $this->trailers = $trailers;
+        return $this;
+    }
+
+    /**
      * @param $protocolVersion
      * @return $this
      */
@@ -195,8 +212,9 @@ class Response
      */
     public static function output($content, $status = 200, $headers = [], $trailers = [])
     {
-        return (new self)->setContent($content)->setStatus($status)
-            ->setHeaders($headers)->setTrailers($trailers);
+        return (new self())->setProperties(
+            $content, $status, $headers, $trailers
+        );
     }
 
     /**
