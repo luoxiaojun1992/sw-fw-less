@@ -30,7 +30,7 @@ class DemoService extends BaseService
 {
     public function ping()
     {
-        return Response::output('pong');
+        return 'pong';
     }
 
     public function zipkin()
