@@ -3,7 +3,6 @@
 namespace SwFwLess\middlewares\traits;
 
 use Google\Protobuf\Internal\Message;
-use SwFwLess\components\Helper;
 use SwFwLess\components\http\Response;
 use SwFwLess\exceptions\HttpException;
 use SwFwLess\facades\Container;
