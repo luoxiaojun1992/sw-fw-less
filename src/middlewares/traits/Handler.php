@@ -3,6 +3,7 @@
 namespace SwFwLess\middlewares\traits;
 
 use SwFwLess\components\http\Response;
+use SwFwLess\exceptions\HttpException;
 use SwFwLess\facades\Container;
 use SwFwLess\facades\ObjectPool;
 
@@ -76,19 +77,30 @@ trait Handler
     {
         try {
             list($handler, $parameters) = $this->getHandlerAndParameters();
-            $response = \SwFwLess\components\di\Container::routeDiSwitch() ?
-                Container::call([$this, $handler], $parameters) :
-                call_user_func_array([$this, $handler], $parameters);
-
-            if (is_array($response)) {
-                return Response::json($response);
-            }
-
-            return $response;
+            return $this->formatResponse(
+                \SwFwLess\components\di\Container::routeDiSwitch() ?
+                    Container::call([$this, $handler], $parameters) :
+                    call_user_func_array([$this, $handler], $parameters)
+            );
         } catch (\Throwable $e) {
             throw $e;
         } finally {
             ObjectPool::release($this);
         }
+    }
+
+    protected function formatResponse($response)
+    {
+        if ($response instanceof Response) {
+            return $response;
+        }
+
+        if (is_array($response)) {
+            return Response::json($response);
+        } elseif (is_string($response)) {
+            return Response::output($response);
+        }
+
+        throw new HttpException('Invalid http response', 500);
     }
 }
