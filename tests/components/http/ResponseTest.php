@@ -319,6 +319,33 @@ class ResponseTest extends \PHPUnit\Framework\TestCase
         );
 
         //Test Grpc Json
-        //TODO
+        $grpcMessage = (new \Demo\HelloReply())->setMessage($grpcMessageMessage)
+            ->setData($grpcMessageData);
+
+        $grpcJsonResponse = \SwFwLess\components\http\Response::grpc(
+            $grpcMessage,
+            200,
+            [],
+            [],
+            true,
+            true
+        );
+
+        $unpackedGrpcMessage = new \Demo\HelloReply();
+        \SwFwLess\components\grpc\Serializer::unpack(
+            $unpackedGrpcMessage,
+            $grpcJsonResponse->getContent(),
+            true,
+            true
+        );
+
+        $this->assertEquals(
+            $grpcMessage->getMessage(),
+            $unpackedGrpcMessage->getMessage()
+        );
+        $this->assertEquals(
+            $grpcMessage->getData(),
+            $unpackedGrpcMessage->getData()
+        );
     }
 }
