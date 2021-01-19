@@ -253,6 +253,7 @@ class ResponseTest extends \PHPUnit\Framework\TestCase
         require_once __DIR__ . '/../../stubs/grpc-gen/GPBMetadata/Demo.php';
         require_once __DIR__ . '/../../stubs/grpc-gen/Demo/HelloReply.php';
 
+        //Test Grpc Proto
         $grpcMessageMessage = 'hello';
         $grpcMessageData = 'world';
 
@@ -279,5 +280,45 @@ class ResponseTest extends \PHPUnit\Framework\TestCase
             $grpcMessage->getData(),
             $unpackedGrpcMessage->getData()
         );
+
+        //Test Json
+        $grpcMessage = (new \Demo\HelloReply())->setMessage($grpcMessageMessage)
+            ->setData($grpcMessageData);
+
+        $jsonResponse = \SwFwLess\components\http\Response::grpc(
+            $grpcMessage,
+            200,
+            [],
+            [],
+            true,
+            false
+        );
+
+        $this->assertJsonStringEqualsJsonString(
+            $grpcMessage->serializeToJsonString(),
+            $jsonResponse->getContent()
+        );
+
+        $grpcMessageMessage = 'hello';
+        $grpcMessageData = '中文';
+        $grpcMessage = (new \Demo\HelloReply())->setMessage($grpcMessageMessage)
+            ->setData($grpcMessageData);
+
+        $jsonResponse = \SwFwLess\components\http\Response::grpc(
+            $grpcMessage,
+            200,
+            [],
+            [],
+            true,
+            false
+        );
+
+        $this->assertJsonStringEqualsJsonString(
+            $grpcMessage->serializeToJsonString(),
+            $jsonResponse->getContent()
+        );
+
+        //Test Grpc Json
+        //TODO
     }
 }
