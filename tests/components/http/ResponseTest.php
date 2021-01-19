@@ -250,8 +250,34 @@ class ResponseTest extends \PHPUnit\Framework\TestCase
 
     public function testGrpc()
     {
-        //TODO
+        require_once __DIR__ . '/../../stubs/grpc-gen/GPBMetadata/Demo.php';
+        require_once __DIR__ . '/../../stubs/grpc-gen/Demo/HelloReply.php';
 
-        $this->assertTrue(true);
+        $grpcMessageMessage = 'hello';
+        $grpcMessageData = 'world';
+
+        $grpcMessage = (new \Demo\HelloReply())->setMessage($grpcMessageMessage)
+            ->setData($grpcMessageData);
+
+        $grpcResponse = \SwFwLess\components\http\Response::grpc(
+            $grpcMessage
+        );
+
+        $unpackedGrpcMessage = new \Demo\HelloReply();
+        \SwFwLess\components\grpc\Serializer::unpack(
+            $unpackedGrpcMessage,
+            $grpcResponse->getContent(),
+            true,
+            false
+        );
+
+        $this->assertEquals(
+            $grpcMessage->getMessage(),
+            $unpackedGrpcMessage->getMessage()
+        );
+        $this->assertEquals(
+            $grpcMessage->getData(),
+            $unpackedGrpcMessage->getData()
+        );
     }
 }
