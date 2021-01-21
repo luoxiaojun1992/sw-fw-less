@@ -11,6 +11,8 @@ class KernelProvider extends AbstractProvider
      */
     public static function init($providers)
     {
+        //TODO perf optimization 区分
+
         static::$providers = static::mergeProviders(
             $providers,
             self::composerProviders()
@@ -18,7 +20,8 @@ class KernelProvider extends AbstractProvider
     }
 
     /**
-     * 优先执行core providers，保证composer providers能使用核心资源
+     * Give priority to core providers，to ensure core resources have been loaded before
+     * booting composer providers.
      *
      * @param $configProviders
      * @param $composerProviders
