@@ -6,6 +6,12 @@ class KernelProvider extends AbstractProvider
 {
     private static $providers = [];
 
+    private static $appProviders = [];
+
+    private static $workerProviders = [];
+
+    private static $requestProviders = [];
+
     /**
      * @param $providers
      */
