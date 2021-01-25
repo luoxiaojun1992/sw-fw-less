@@ -146,9 +146,6 @@ class KernelProvider extends AbstractProvider
         }
     }
 
-    /**
-     * @throws \ReflectionException
-     */
     public static function bootRequest()
     {
         parent::bootRequest();
