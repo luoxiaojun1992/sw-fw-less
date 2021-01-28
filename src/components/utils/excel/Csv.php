@@ -7,15 +7,18 @@ class Csv
     const BOM = "\u{FEFF}";
 
     /** @var \SplTempFileObject */
-    protected $buffer;
+    protected $readBuffer;
 
-    protected $bufferSize = 0;
+    /** @var \SplTempFileObject */
+    protected $writeBuffer;
 
-    protected $maxBufferSize = 20;
+    protected $writeBufferSize = 0;
+
+    protected $maxWriteBufferSize = 20;
 
     protected $filePath;
 
-    protected $fp;
+    protected $writeFp;
 
     protected $withBom = false;
 
@@ -30,12 +33,12 @@ class Csv
     }
 
     /**
-     * @param int $maxBufferSize
+     * @param int $maxWriteBufferSize
      * @return $this
      */
-    public function setMaxBufferSize(int $maxBufferSize)
+    public function setMaxWriteBufferSize(int $maxWriteBufferSize)
     {
-        $this->maxBufferSize = $maxBufferSize;
+        $this->maxWriteBufferSize = $maxWriteBufferSize;
         return $this;
     }
 
@@ -56,14 +59,14 @@ class Csv
      */
     public function setFile($filePath)
     {
-        $this->buffer = new \SplTempFileObject();
+        $this->writeBuffer = new \SplTempFileObject();
         $this->filePath = $filePath;
-        $this->fp = fopen($filePath, 'w');
-        if ($this->fp === false) {
+        $this->writeFp = fopen($filePath, 'w');
+        if ($this->writeFp === false) {
             throw new \Exception('Failed to open file [' . $filePath . ']');
         }
         if ($this->withBom) {
-            $writeBomRes = fwrite($this->fp, static::BOM);
+            $writeBomRes = fwrite($this->writeFp, static::BOM);
             if ($writeBomRes === false) {
                 throw new \Exception('Failed to write bom header');
             }
@@ -81,16 +84,16 @@ class Csv
      */
     public function putCsv(array $fields, $delimiter = ',' , $enclosure = '"', $escape = "\\")
     {
-        $putRes = $this->buffer->fputcsv(
+        $putRes = $this->writeBuffer->fputcsv(
             $fields, $delimiter, $enclosure, $escape
         );
         if ($putRes === false) {
             return $putRes;
         }
 
-        ++$this->bufferSize;
+        ++$this->writeBufferSize;
 
-        if ($this->bufferSize >= $this->maxBufferSize) {
+        if ($this->writeBufferSize >= $this->maxWriteBufferSize) {
             $this->flush();
         }
 
@@ -104,21 +107,21 @@ class Csv
     public function flush()
     {
         $bufferContent = '';
-        $this->buffer->rewind();
-        while (!$this->buffer->eof()) {
-            $line = $this->buffer->fgets();
+        $this->writeBuffer->rewind();
+        while (!$this->writeBuffer->eof()) {
+            $line = $this->writeBuffer->fgets();
             if ($line === false) {
                 throw new \Exception('Failed to get buffer line');
             }
             $bufferContent .= $line;
         }
         if ($bufferContent) {
-            $flushRes = fwrite($this->fp, $bufferContent);
+            $flushRes = fwrite($this->writeFp, $bufferContent);
             if ($flushRes === false) {
                 throw new \Exception('Failed to write buffer');
             }
-            $this->buffer = new \SplTempFileObject();
-            $this->bufferSize = 0;
+            $this->writeBuffer = new \SplTempFileObject();
+            $this->writeBufferSize = 0;
         }
         return $this;
     }
@@ -129,11 +132,11 @@ class Csv
      */
     public function closeFile()
     {
-        $res = fclose($this->fp);
+        $res = fclose($this->writeFp);
         if ($res === false) {
             throw new \Exception('Failed to close file');
         }
-        $this->fp = null;
+        $this->writeFp = null;
         return $this;
     }
 
@@ -142,7 +145,7 @@ class Csv
      */
     public function __destruct()
     {
-        if (is_null($this->fp)) {
+        if (is_null($this->writeFp)) {
             return;
         }
 
