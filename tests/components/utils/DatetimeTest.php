@@ -81,4 +81,47 @@ class DatetimeTest extends \PHPUnit\Framework\TestCase
             )
         );
     }
+
+    public function testDaysIterator()
+    {
+        $this->assertCount(
+            123,
+            \SwFwLess\components\utils\Datetime::daysIterator(
+                '2020-01-30',
+                '2020-05-31'
+            )
+        );
+
+        $this->assertCount(
+            92,
+            \SwFwLess\components\utils\Datetime::daysIterator(
+                '2020-03-01',
+                '2020-05-31'
+            )
+        );
+
+        $this->assertCount(
+            121,
+            \SwFwLess\components\utils\Datetime::daysIterator(
+                '2020-02-01',
+                '2020-05-31'
+            )
+        );
+
+        $this->assertCount(
+            94,
+            \SwFwLess\components\utils\Datetime::daysIterator(
+                '2020-02-28',
+                '2020-05-31'
+            )
+        );
+
+        $this->assertCount(
+            459,
+            \SwFwLess\components\utils\Datetime::daysIterator(
+                '2019-02-28',
+                '2020-05-31'
+            )
+        );
+    }
 }

@@ -398,4 +398,18 @@ class Datetime
 
         return $dateList;
     }
+
+    public static function daysIterator(string $startDate, string $endDate, $format = 'Y-m-d')
+    {
+        $dateList = [];
+
+        $now = static::toDateObj($startDate)->startOfDay();
+        $endDateObj = static::toDateObj($endDate)->endOfDay();
+        while ($now->lessThanOrEqualTo($endDateObj)) {
+            $dateList[] = $now->format($format);
+            $now->addDay();
+        }
+
+        return $dateList;
+    }
 }

@@ -2,12 +2,17 @@
 
 namespace SwFwLess\components\pool;
 
-use SwFwLess\components\provider\AbstractProvider;
+use SwFwLess\components\provider\WorkerProviderContract;
 
-class Provider extends AbstractProvider
+class Provider implements WorkerProviderContract
 {
     public static function bootWorker()
     {
         ObjectPool::create(\SwFwLess\components\functions\config('pool'));
+    }
+
+    public static function shutdownWorker()
+    {
+        //
     }
 }

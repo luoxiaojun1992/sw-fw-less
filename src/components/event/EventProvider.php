@@ -2,17 +2,20 @@
 
 namespace SwFwLess\components\event;
 
-use SwFwLess\components\provider\AbstractProvider;
+use SwFwLess\components\provider\WorkerProviderContract;
 
-class EventProvider extends AbstractProvider
+class EventProvider implements WorkerProviderContract
 {
     /**
      * @throws \Exception
      */
     public static function bootWorker()
     {
-        parent::bootWorker();
-
         Event::create();
+    }
+
+    public static function shutdownWorker()
+    {
+        //
     }
 }

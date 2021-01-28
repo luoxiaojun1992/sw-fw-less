@@ -6,3 +6,4 @@
 /runtime/
 /composer.lock
 /.phpunit*
+.DS_Store

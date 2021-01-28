@@ -2,16 +2,15 @@
 
 namespace SwFwLess\components\log;
 
-use SwFwLess\components\provider\AbstractProvider;
+use SwFwLess\components\provider\WorkerProviderContract;
 
-class LogProvider extends AbstractProvider
+class LogProvider implements WorkerProviderContract
 {
     /**
      * @throws \Exception
      */
     public static function bootWorker()
     {
-        parent::bootWorker();
         if (\SwFwLess\components\functions\config('log.switch')) {
             Log::create(
                 \SwFwLess\components\functions\config('log.path'),
@@ -22,5 +21,10 @@ class LogProvider extends AbstractProvider
                 \SwFwLess\components\functions\config('log.reserve_days')
             );
         }
+    }
+
+    public static function shutdownWorker()
+    {
+        //
     }
 }

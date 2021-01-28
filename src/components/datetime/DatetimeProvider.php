@@ -2,17 +2,20 @@
 
 namespace SwFwLess\components\datetime;
 
-use SwFwLess\components\provider\AbstractProvider;
+use SwFwLess\components\provider\WorkerProviderContract;
 
-class DatetimeProvider extends AbstractProvider
+class DatetimeProvider implements WorkerProviderContract
 {
     public static function bootWorker()
     {
-        parent::bootWorker();
-
         $timezone = \SwFwLess\components\functions\config('timezone');
         if ((!is_null($timezone)) && (date_default_timezone_get() != $timezone)) {
             date_default_timezone_set($timezone);
         }
+    }
+
+    public static function shutdownWorker()
+    {
+        //
     }
 }

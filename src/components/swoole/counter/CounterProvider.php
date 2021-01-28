@@ -3,25 +3,32 @@
 namespace SwFwLess\components\swoole\counter;
 
 use SwFwLess\components\di\Container;
-use SwFwLess\components\provider\AbstractProvider;
+use SwFwLess\components\provider\AppProviderContract;
+use SwFwLess\components\provider\WorkerProviderContract;
 
-class CounterProvider extends AbstractProvider
+class CounterProvider implements AppProviderContract, WorkerProviderContract
 {
     public static function bootApp()
     {
-        parent::bootApp();
-
         if (Container::diSwitch()) {
             Counter::init();
         }
     }
 
+    public static function shutdownApp()
+    {
+        //
+    }
+
     public static function bootWorker()
     {
-        parent::bootWorker();
-
         if (Container::diSwitch()) {
             Counter::reload();
         }
+    }
+
+    public static function shutdownWorker()
+    {
+        //
     }
 }

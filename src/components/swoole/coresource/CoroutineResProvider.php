@@ -2,14 +2,17 @@
 
 namespace SwFwLess\components\swoole\coresource;
 
-use SwFwLess\components\provider\AbstractProvider;
+use SwFwLess\components\provider\RequestProviderContract;
 
-class CoroutineResProvider extends AbstractProvider
+class CoroutineResProvider implements RequestProviderContract
 {
+    public static function bootRequest()
+    {
+        //
+    }
+
     public static function shutdownResponse()
     {
-        parent::shutdownResponse();
-
         CoroutineRes::releaseAll();
     }
 }

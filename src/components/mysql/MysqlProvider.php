@@ -2,14 +2,17 @@
 
 namespace SwFwLess\components\mysql;
 
-use SwFwLess\components\provider\AbstractProvider;
+use SwFwLess\components\provider\WorkerProviderContract;
 
-class MysqlProvider extends AbstractProvider
+class MysqlProvider implements WorkerProviderContract
 {
     public static function bootWorker()
     {
-        parent::bootWorker();
-
         MysqlPool::create(\SwFwLess\components\functions\config('mysql'));
+    }
+
+    public static function shutdownWorker()
+    {
+        //
     }
 }

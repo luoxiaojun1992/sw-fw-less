@@ -2,23 +2,26 @@
 
 namespace SwFwLess\components\di;
 
-use SwFwLess\components\provider\AbstractProvider;
+use SwFwLess\components\provider\WorkerProviderContract;
 
 /**
  * Class ContainerProvider
  * @package SwFwLess\components\di
  */
-class ContainerProvider extends AbstractProvider
+class ContainerProvider implements WorkerProviderContract
 {
     /**
      * @throws \Exception
      */
     public static function bootWorker()
     {
-        parent::bootWorker();
-
         if (Container::diSwitch()) {
             Container::create();
         }
+    }
+
+    public static function shutdownWorker()
+    {
+        //
     }
 }

@@ -2,9 +2,10 @@
 
 namespace SwFwLess\components\swoole;
 
-use SwFwLess\components\provider\AbstractProvider;
+use SwFwLess\components\provider\AppProviderContract;
+use SwFwLess\components\provider\WorkerProviderContract;
 
-class SwooleProvider extends AbstractProvider
+class SwooleProvider implements AppProviderContract, WorkerProviderContract
 {
     /**
      * @throws \Exception
@@ -23,9 +24,12 @@ class SwooleProvider extends AbstractProvider
      */
     public static function bootApp()
     {
-        parent::bootApp();
-
         self::setCoroutineConfig();
+    }
+
+    public static function shutdownApp()
+    {
+        //
     }
 
     /**
@@ -33,8 +37,11 @@ class SwooleProvider extends AbstractProvider
      */
     public static function bootWorker()
     {
-        parent::bootWorker();
-
         self::setCoroutineConfig();
+    }
+
+    public static function shutdownWorker()
+    {
+        //
     }
 }

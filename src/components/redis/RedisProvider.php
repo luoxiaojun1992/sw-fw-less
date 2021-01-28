@@ -2,21 +2,28 @@
 
 namespace SwFwLess\components\redis;
 
-use SwFwLess\components\provider\AbstractProvider;
+use SwFwLess\components\provider\RequestProviderContract;
+use SwFwLess\components\provider\WorkerProviderContract;
 
-class RedisProvider extends AbstractProvider
+class RedisProvider implements WorkerProviderContract, RequestProviderContract
 {
     public static function bootWorker()
     {
-        parent::bootWorker();
-
         RedisPool::create(\SwFwLess\components\functions\config('redis'));
+    }
+
+    public static function shutdownWorker()
+    {
+        //
     }
 
     public static function bootRequest()
     {
-        parent::bootRequest();
-
         RedLock::create(RedisPool::create(), \SwFwLess\components\functions\config('red_lock'));
+    }
+
+    public static function shutdownResponse()
+    {
+        //
     }
 }
