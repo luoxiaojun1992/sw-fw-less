@@ -5,7 +5,7 @@ class CsvTest extends \PHPUnit\Framework\TestCase
     /**
      * @throws Exception
      */
-    public function testPutCsv()
+    public function testPutGetCsv()
     {
         $this->putCsv();
         $this->putCsv(true);
@@ -26,7 +26,7 @@ class CsvTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue(touch($filePath));
 
         $csvFile = \SwFwLess\components\utils\excel\Csv::createFromFilePath(
-            $filePath
+            $filePath, true, true
         )->withBom($withBom);
 
         $rowCount = 10000;
@@ -52,13 +52,19 @@ class CsvTest extends \PHPUnit\Framework\TestCase
             $this->assertGreaterThan(0, $putRes);
         }
 
-        $csvFile->flush()->closeFile();
+        $csvFile->flush();
 
         $csvFileLineCount = shell_exec('wc -l ' . realpath($filePath));
         $this->assertEquals(
             $rowCount + 1,
             intval($csvFileLineCount)
         );
+
+        for ($rowNum = 0; $rowNum < $rowCount; ++$rowNum) {
+            $this->assertIsArray($csvFile->getCsv());
+        }
+
+        $csvFile->closeFile();
 
         unlink($filePath);
     }
