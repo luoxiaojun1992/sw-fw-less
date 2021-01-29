@@ -2,6 +2,8 @@
 
 namespace SwFwLess\components\utils\excel;
 
+use function Swlib\Http\str;
+
 class Csv
 {
     const BOM = "\u{FEFF}";
@@ -39,6 +41,10 @@ class Csv
      */
     public static function createFromFilePath($filePath, $readable = false, $writable = true)
     {
+        if ($readable && $writable) {
+            throw new \Exception('Both writes and reads cannot be supported');
+        }
+
         return (new static())->setReadable($readable)
             ->setWritable($writable)
             ->setFile($filePath);
@@ -165,24 +171,47 @@ class Csv
      * @param string $escape
      * @throws \Exception
      */
-    protected function readCsvBuffer($delimiter = ",", $enclosure = "\"", $escape = "\\")
+    protected function refreshCsvBuffer($delimiter = ",", $enclosure = "\"", $escape = "\\")
     {
-        $this->readBuffer->rewind();
-        if (!$this->readBuffer->eof()) {
-            $this->readBuffer = new \SplTempFileObject();
-        }
+        $this->readBuffer = new \SplTempFileObject();
 
         for ($i = 0; $i < $this->maxReadBufferSize; ++$i) {
             if (!feof($this->readFp)) {
-                $fields = fgetcsv($this->readFp, 0, $delimiter, $enclosure, $escape);
-                if (is_null($fields) || ($fields === false)) {
-                    throw new \Exception('Failed to read csv buffer');
+                $line = fgets($this->readFp);
+                if ($line === false) {
+                    if (feof($this->readFp)) {
+                        break;
+                    } else {
+                        throw new \Exception('Failed to read csv line');
+                    }
                 }
+                $fields = str_getcsv($line);
                 $this->readBuffer->fputcsv($fields, $delimiter, $enclosure, $escape);
+            } else {
+                break;
             }
         }
 
         $this->readBuffer->rewind();
+    }
+
+    /**
+     * @return array
+     * @throws \Exception
+     */
+    protected function readCsvBuffer()
+    {
+        if (!$this->readBuffer->eof()) {
+            $readBufferLine = $this->readBuffer->fgets();
+            if ($readBufferLine === false) {
+                throw new \Exception('Failed to get read buffer line');
+            }
+            if ($readBufferLine !== '') {
+                return str_getcsv($readBufferLine);
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -194,18 +223,14 @@ class Csv
      */
     public function getCsv($delimiter = ",", $enclosure = "\"", $escape = "\\")
     {
-        if (!$this->readBuffer->eof()) {
-            return $this->readBuffer->fgetcsv($delimiter, $enclosure, $escape);
+        $csvBufferLine = $this->readCsvBuffer();
+        if (!is_null($csvBufferLine)) {
+            return $csvBufferLine;
         }
 
-        $this->flush();
-        $this->readCsvBuffer($delimiter, $enclosure, $escape);
+        $this->refreshCsvBuffer($delimiter, $enclosure, $escape);
 
-        if (!$this->readBuffer->eof()) {
-            return $this->readBuffer->fgetcsv($delimiter, $enclosure, $escape);
-        }
-
-        return [];
+        return $this->readCsvBuffer();
     }
 
     /**
