@@ -2,8 +2,6 @@
 
 namespace SwFwLess\components\utils\excel;
 
-use function Swlib\Http\str;
-
 class Csv
 {
     const BOM = "\u{FEFF}";
