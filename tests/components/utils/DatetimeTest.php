@@ -124,4 +124,47 @@ class DatetimeTest extends \PHPUnit\Framework\TestCase
             )
         );
     }
+
+    public function testDiffDays()
+    {
+        $this->assertEquals(
+            123,
+            \SwFwLess\components\utils\Datetime::diffDays(
+                '2020-01-30',
+                '2020-05-31'
+            )
+        );
+
+        $this->assertEquals(
+            92,
+            \SwFwLess\components\utils\Datetime::diffDays(
+                '2020-03-01',
+                '2020-05-31'
+            )
+        );
+
+        $this->assertEquals(
+            121,
+            \SwFwLess\components\utils\Datetime::diffDays(
+                '2020-02-01',
+                '2020-05-31'
+            )
+        );
+
+        $this->assertEquals(
+            94,
+            \SwFwLess\components\utils\Datetime::diffDays(
+                '2020-02-28',
+                '2020-05-31'
+            )
+        );
+
+        $this->assertEquals(
+            459,
+            \SwFwLess\components\utils\Datetime::diffDays(
+                '2019-02-28',
+                '2020-05-31'
+            )
+        );
+    }
 }
