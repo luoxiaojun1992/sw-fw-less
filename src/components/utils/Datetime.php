@@ -412,4 +412,9 @@ class Datetime
 
         return $dateList;
     }
+
+    public static function diffDays($startDate, $endDate)
+    {
+        return (static::toDateObj($endDate)->endOfDay()->diffInDays(static::toDateObj($startDate)->startOfDay()) + 1);
+    }
 }
