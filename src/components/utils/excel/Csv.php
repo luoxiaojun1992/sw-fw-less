@@ -32,12 +32,15 @@ class Csv
 
     /**
      * @param $filePath
-     * @param false $readable
+     * @param bool $readable
      * @param bool $writable
+     * @param bool $withBom
      * @return Csv
      * @throws \Exception
      */
-    public static function createFromFilePath($filePath, $readable = false, $writable = true)
+    public static function createFromFilePath(
+        $filePath, $readable = false, $writable = true, $withBom = false
+    )
     {
         if ($readable && $writable) {
             throw new \Exception('Both writes and reads cannot be supported');
@@ -45,6 +48,7 @@ class Csv
 
         return (new static())->setReadable($readable)
             ->setWritable($writable)
+            ->withBom($withBom)
             ->setFile($filePath);
     }
 
@@ -72,7 +76,7 @@ class Csv
      * @param bool $withBom
      * @return $this
      */
-    public function withBom(bool $withBom)
+    protected function withBom(bool $withBom)
     {
         $this->withBom = $withBom;
         return $this;

@@ -26,8 +26,8 @@ class CsvTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue(touch($filePath));
 
         $csvFile = \SwFwLess\components\utils\excel\Csv::createFromFilePath(
-            $filePath, false, true
-        )->withBom($withBom);
+            $filePath, false, true, $withBom
+        );
 
         $rowCount = 10000;
         $colCount = 10;
@@ -75,8 +75,8 @@ class CsvTest extends \PHPUnit\Framework\TestCase
         $filePath = __DIR__ . '/../../../stubs/components/utils/excel/test.csv';
 
         $csvFile = \SwFwLess\components\utils\excel\Csv::createFromFilePath(
-            $filePath, true, false
-        )->withBom($withBom);
+            $filePath, true, false, $withBom
+        );
 
         $rowCount = 101;
         for ($rowNum = 0; $rowNum < $rowCount; ++$rowNum) {
