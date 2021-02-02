@@ -2,9 +2,9 @@
 
 namespace SwFwLess\components\utils\math;
 
-use SwFwLess\components\provider\AbstractProvider;
+use SwFwLess\components\provider\WorkerProviderContract;
 
-class Provider extends AbstractProvider
+class Provider implements WorkerProviderContract
 {
     /**
      * @throws \Exception
@@ -12,5 +12,10 @@ class Provider extends AbstractProvider
     public static function bootWorker()
     {
         Math::create(\SwFwLess\components\functions\config('util.math'));
+    }
+
+    public static function shutdownWorker()
+    {
+        //
     }
 }
