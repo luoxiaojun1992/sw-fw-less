@@ -155,7 +155,10 @@ class Query
                     $paramType
                 );
             }
-            // The result is always true, because the error mode of pdo should be set \PDO::ERRMODE_EXCEPTION.
+            /**
+             * The result is always true, because the error mode of pdo should be set to \PDO::ERRMODE_EXCEPTION.
+             * The PDO driver will throw an exception on failure instead of the result.
+             */
             $result = $pdoStatement->execute();
             $pdo->setLastActivityAt();
             if ($result) {
