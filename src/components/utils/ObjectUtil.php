@@ -10,6 +10,10 @@ class ObjectUtil
      */
     public static function toArray($object)
     {
-        return get_object_vars($object);
+        if (is_object($object)) {
+            return array_map([static::class, __METHOD__], get_object_vars($object));
+        } else {
+            return $object;
+        }
     }
 }
