@@ -2,16 +2,19 @@
 
 namespace SwFwLess\components\amqp;
 
-use SwFwLess\components\provider\AbstractProvider;
+use SwFwLess\components\provider\WorkerProviderContract;
 
-class AmqpProvider extends AbstractProvider
+class AmqpProvider implements WorkerProviderContract
 {
     public static function bootWorker()
     {
-        parent::bootWorker();
-
         if (\SwFwLess\components\functions\config('amqp.switch')) {
             ConnectionPool::create();
         }
+    }
+
+    public static function shutdownWorker()
+    {
+        //
     }
 }

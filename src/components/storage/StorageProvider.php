@@ -2,14 +2,17 @@
 
 namespace SwFwLess\components\storage;
 
-use SwFwLess\components\provider\AbstractProvider;
+use SwFwLess\components\provider\WorkerProviderContract;
 
-class StorageProvider extends AbstractProvider
+class StorageProvider implements WorkerProviderContract
 {
     public static function bootWorker()
     {
-        parent::bootWorker();
-
         Storage::init();
+    }
+
+    public static function shutdownWorker()
+    {
+        //
     }
 }

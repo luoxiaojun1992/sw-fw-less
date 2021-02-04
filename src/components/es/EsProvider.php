@@ -2,16 +2,19 @@
 
 namespace SwFwLess\components\es;
 
-use SwFwLess\components\provider\AbstractProvider;
+use SwFwLess\components\provider\WorkerProviderContract;
 
-class EsProvider extends AbstractProvider
+class EsProvider implements WorkerProviderContract
 {
     public static function bootWorker()
     {
-        parent::bootWorker();
-
         if (\SwFwLess\components\functions\config('elasticsearch.switch')) {
             Manager::create();
         }
+    }
+
+    public static function shutdownWorker()
+    {
+        //
     }
 }
