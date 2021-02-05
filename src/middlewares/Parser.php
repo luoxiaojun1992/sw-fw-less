@@ -10,6 +10,8 @@ class Parser
 
     static $cachedMiddlewareNameCount = 0;
 
+    static $cachedMiddlewareNameCapacity = 100;
+
     /**
      * @param $middlewareName
      * @return array
@@ -26,11 +28,11 @@ class Parser
 
                 self::$cachedMiddlewareName[$middlewareName] = $result;
                 ++self::$cachedMiddlewareNameCount;
-                if (self::$cachedMiddlewareNameCount > 100) {
+                if (self::$cachedMiddlewareNameCount > static::$cachedMiddlewareNameCapacity) {
                     self::$cachedMiddlewareName = array_slice(
-                        self::$cachedMiddlewareName, -100, null, true
+                        self::$cachedMiddlewareName, -1 * static::$cachedMiddlewareNameCapacity, null, true
                     );
-                    self::$cachedMiddlewareNameCount = 100;
+                    self::$cachedMiddlewareNameCount = static::$cachedMiddlewareNameCapacity;
                 }
             }
 

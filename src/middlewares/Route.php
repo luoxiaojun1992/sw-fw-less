@@ -19,9 +19,13 @@ class Route extends AbstractMiddleware
 
     static $routeCacheKeyCacheCount = 0;
 
+    static $routeCacheKeyCacheCapacity = 100;
+
     static $cachedRouteInfo = [];
 
     static $cachedRouteInfoCount = 0;
+
+    static $cachedRouteInfoCapacity = 100;
 
     use Parser;
 
@@ -100,7 +104,7 @@ class Route extends AbstractMiddleware
                 foreach (array_reverse($cachedUriJson, true) as $cachedUri => $cachedJson) {
                     $slicedJsonCache[$cachedMethod][$cachedUri] = $cachedJson;
                     ++$slicedJsonCacheCount;
-                    if ($slicedJsonCacheCount >= 100) {
+                    if ($slicedJsonCacheCount >= static::$routeCacheKeyCacheCapacity) {
                         break;
                     }
                 }
@@ -126,7 +130,7 @@ class Route extends AbstractMiddleware
                 $cacheKey = json_encode(['method' => $requestMethod, 'uri' => $requestUri]);
                 self::$routeCacheKeyCache[$requestMethod][$requestUri] = $cacheKey;
                 ++self::$routeCacheKeyCacheCount;
-                if (self::$routeCacheKeyCacheCount > 100) {
+                if (self::$routeCacheKeyCacheCount > static::$routeCacheKeyCacheCapacity) {
                     list($slicedJsonCache, $slicedJsonCacheCount) = $this->selectRouteCacheKeyCache(
                         function ($cachedRequestMethod) use ($requestMethod) {
                             return $cachedRequestMethod === $requestMethod;
@@ -153,11 +157,11 @@ class Route extends AbstractMiddleware
                     $requestMethod, $requestUri
                 );
                 ++self::$cachedRouteInfoCount;
-                if (self::$cachedRouteInfoCount > 100) {
+                if (self::$cachedRouteInfoCount > static::$cachedRouteInfoCapacity) {
                     self::$cachedRouteInfo = array_slice(
-                        self::$cachedRouteInfo, -100, null, true
+                        self::$cachedRouteInfo, -1 * static::$cachedRouteInfoCapacity, null, true
                     );
-                    self::$cachedRouteInfoCount = 100;
+                    self::$cachedRouteInfoCount = static::$cachedRouteInfoCapacity;
                 }
             }
             return $routeInfo;

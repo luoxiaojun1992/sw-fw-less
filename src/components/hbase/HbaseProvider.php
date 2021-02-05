@@ -2,16 +2,19 @@
 
 namespace SwFwLess\components\hbase;
 
-use SwFwLess\components\provider\AbstractProvider;
+use SwFwLess\components\provider\WorkerProviderContract;
 
-class HbaseProvider extends AbstractProvider
+class HbaseProvider implements WorkerProviderContract
 {
     public static function bootWorker()
     {
-        parent::bootWorker();
-
         if (\SwFwLess\components\functions\config('hbase.switch')) {
             HbasePool::create();
         }
+    }
+
+    public static function shutdownWorker()
+    {
+        //
     }
 }

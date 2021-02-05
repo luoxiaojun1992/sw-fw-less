@@ -10,6 +10,8 @@ class Url
 
     protected static $decodedCacheCount = 0;
 
+    protected static $decodedCacheCapacity = 100;
+
     public static function decode($url)
     {
         return Scheduler::withoutPreemptive(function () use ($url) {
@@ -19,11 +21,11 @@ class Url
                 $cachedUrl = rawurldecode($url);
                 self::$decodedCache[$url] = $cachedUrl;
                 ++self::$decodedCacheCount;
-                if (self::$decodedCacheCount > 100) {
+                if (self::$decodedCacheCount > static::$decodedCacheCapacity) {
                     self::$decodedCache = array_slice(
-                        self::$decodedCache, -100, null, true
+                        self::$decodedCache, -1 * static::$decodedCacheCapacity, null, true
                     );
-                    self::$decodedCacheCount = 100;
+                    self::$decodedCacheCount = static::$decodedCacheCapacity;
                 }
             }
 
