@@ -40,10 +40,10 @@ abstract class AbstractModel implements \JsonSerializable, \ArrayAccess
     {
         if (static::bootedLock()) {
             static::setFilter();
+        }
 
-            if (method_exists(static::class, 'boot')) {
-                call_user_func([static::class, 'boot']);
-            }
+        if (method_exists(static::class, 'boot')) {
+            call_user_func([static::class, 'boot']);
         }
     }
 

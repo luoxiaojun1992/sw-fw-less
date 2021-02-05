@@ -4,6 +4,7 @@ namespace SwFwLess\models\traits;
 
 use SwFwLess\facades\Event;
 use Cake\Event\Event as CakeEvent;
+use SwFwLess\models\Definitions;
 
 trait ModelEvents
 {
@@ -16,13 +17,13 @@ trait ModelEvents
      * @param mixed $payload
      * @return \Cake\Event\Event
      */
-    protected function fireEvent($event, $payload = null)
+    protected function fireEvent(string $event, $payload = null)
     {
         return \SwFwLess\components\functions\event(
             new CakeEvent(
-                'model.' . static::class . '.' . $event,
+                Definitions::MODEL_EVENT,
                 null,
-                ['model' => $this, 'payload' => $payload]
+                [$event, ['model' => $this, 'payload' => $payload]]
             )
         );
     }
@@ -36,10 +37,13 @@ trait ModelEvents
     public static function listenEvent($event, $callback)
     {
         Event::on(
-            'model.' . static::class . '.' . $event,
+            Definitions::MODEL_EVENT,
             [],
-            function(CakeEvent $event) use ($callback) {
-                call_user_func_array($callback, $event->getData());
+            function(CakeEvent $event) use ($event, $callback) {
+                list($eventName, $eventData) = $event->getData();
+                if ($eventName === $event) {
+                    call_user_func_array($callback, $eventData);
+                }
             }
         );
     }
