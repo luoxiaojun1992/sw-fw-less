@@ -12,6 +12,8 @@ namespace SwFwLess\facades;
  */
 class ObjectPool extends AbstractFacade
 {
+    protected static $useCache = true;
+
     protected static function getAccessor()
     {
         return \SwFwLess\components\pool\ObjectPool::create();
