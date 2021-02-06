@@ -13,15 +13,15 @@ trait ModelEvents
     /**
      * Fire a model event
      *
-     * @param string $event
+     * @param string $eventName
      * @param mixed $payload
      * @return \Cake\Event\Event
      */
-    protected function fireEvent(string $event, $payload = null)
+    protected function fireEvent(string $eventName, $payload = null)
     {
         return \SwFwLess\components\functions\event(
             new CakeEvent(
-                Definitions::MODEL_EVENT . '.' . $event,
+                Definitions::MODEL_EVENT . '.' . $eventName,
                 null,
                 ['model' => $this, 'payload' => $payload]
             )
@@ -31,15 +31,15 @@ trait ModelEvents
     /**
      * Listen a model event
      *
-     * @param $event
+     * @param $eventName
      * @param $callback
      */
-    public static function listenEvent($event, $callback)
+    public static function listenEvent($eventName, $callback)
     {
         Event::on(
-            Definitions::MODEL_EVENT . '.' . $event,
+            Definitions::MODEL_EVENT . '.' . $eventName,
             [],
-            function(CakeEvent $event) use ($event, $callback) {
+            function(CakeEvent $event) use ($callback) {
                 return call_user_func_array($callback, $event->getData());
             }
         );
