@@ -21,9 +21,9 @@ trait ModelEvents
     {
         return \SwFwLess\components\functions\event(
             new CakeEvent(
-                Definitions::MODEL_EVENT,
+                Definitions::MODEL_EVENT . '.' . $event,
                 null,
-                [$event, ['model' => $this, 'payload' => $payload]]
+                ['model' => $this, 'payload' => $payload]
             )
         );
     }
@@ -37,13 +37,10 @@ trait ModelEvents
     public static function listenEvent($event, $callback)
     {
         Event::on(
-            Definitions::MODEL_EVENT,
+            Definitions::MODEL_EVENT . '.' . $event,
             [],
             function(CakeEvent $event) use ($event, $callback) {
-                list($eventName, $eventData) = $event->getData();
-                if ($eventName === $event) {
-                    call_user_func_array($callback, $eventData);
-                }
+                return call_user_func_array($callback, $event->getData());
             }
         );
     }
