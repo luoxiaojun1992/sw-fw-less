@@ -2,6 +2,7 @@
 
 namespace SwFwLess\components\functions;
 
+use SwFwLess\components\utils\Variable;
 use SwFwLess\facades\ObjectPool;
 
 function config($key, $default = null)
@@ -65,4 +66,14 @@ function sapi()
 function newObj($className)
 {
     return ObjectPool::pick($className) ?: (new $className);
+}
+
+/**
+ * @param $variable
+ * @param $value
+ * @throws \Exception
+ */
+function assignValToVar(&$variable, $value)
+{
+    Variable::assignValue($variable, $value);
 }
