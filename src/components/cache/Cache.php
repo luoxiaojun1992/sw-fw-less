@@ -77,7 +77,7 @@ end
 end
 return resSet
 EOF;
-                return $redis->eval($lua, [$key, $key . ':ttl', $value, $ttl], 2);
+                return $redis->eval($lua, ['cache:' . $key, 'ttl:' . $key, $value, $ttl], 2);
             } else {
                 $lua = <<<EOF
 local resSet = redis.call('set', KEYS[1], ARGV[1]);
@@ -86,7 +86,7 @@ local resExp = redis.call('set', KEYS[2], ARGV[2]);
 end
 return resSet
 EOF;
-                return $redis->eval($lua, [$key, $key . ':ttl', $value, 1], 2);
+                return $redis->eval($lua, ['cache:' . $key, 'ttl:' . $key, $value, 1], 2);
             }
         } catch (\Throwable $e) {
             throw $e;
@@ -109,7 +109,7 @@ EOF;
 
         try {
             //todo perf-optimize: get ttl flag and data using pipeline, reduce io times
-            if ($redis->get($key . ':ttl') === false) {
+            if ($redis->get('ttl:' . $key) === false) {
                 if (RedLock::lock('update:cache:' . $key, $this->config['update_lock_ttl'])) {
                     if ($redis->get($key . ':ttl') === false) {
                         return false;
@@ -117,7 +117,7 @@ EOF;
                 }
             }
 
-            return $redis->get($key);
+            return $redis->get('cache:' . $key);
         } catch (\Throwable $e) {
             throw $e;
         } finally {
