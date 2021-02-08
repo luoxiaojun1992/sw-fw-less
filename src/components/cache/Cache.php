@@ -77,6 +77,7 @@ end
 end
 return resSet
 EOF;
+                //todo prefix config
                 return $redis->eval($lua, ['cache:' . $key, 'ttl:' . $key, $value, $ttl], 2);
             } else {
                 $lua = <<<EOF
