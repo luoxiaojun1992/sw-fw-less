@@ -251,9 +251,38 @@ class Arr
         foreach ($arr as $key => $val) {
             if (array_key_exists($val[$column], $columnMap)) {
                 unset($arr[$key]);
+            } else {
+                $columnMap[$val[$column]] = true;
             }
         }
 
         return $preserveKey ? $arr : array_values($arr);
+    }
+
+    /**
+     * @param array $arr
+     * @return array|int[]
+     */
+    public static function intVal($arr)
+    {
+        return array_map(function ($item) {return intval($item);}, $arr);
+    }
+
+    /**
+     * @param array $arr
+     * @return array|float[]
+     */
+    public static function doubleVal($arr)
+    {
+        return array_map(function ($item) {return doubleval($item);}, $arr);
+    }
+
+    /**
+     * @param array $arr
+     * @return string[]
+     */
+    public static function stringVal($arr)
+    {
+        return array_map(function ($item) {return (string)$item;}, $arr);
     }
 }

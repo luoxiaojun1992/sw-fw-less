@@ -22,6 +22,8 @@ class Cache
     private $config = [
         'connection' => 'cache',
         'update_lock_ttl' => 10,
+        'cache_prefix' => 'cache:',
+        'cache_ttl_prefix' => 'cache_ttl:',
     ];
 
     /**
@@ -40,6 +42,26 @@ class Cache
         }
 
         return null;
+    }
+
+    protected function cachePrefix()
+    {
+        return $this->config['cache_prefix'];
+    }
+
+    protected function cacheKeyWithPrefix($cacheKey)
+    {
+        return $this->cachePrefix() . $cacheKey;
+    }
+
+    protected function cacheTTLPrefix()
+    {
+        return $this->config['cache_ttl_prefix'];
+    }
+
+    protected function cacheTTLKeyWithPrefix($cacheKey)
+    {
+        return $this->cacheTTLPrefix() . $cacheKey;
     }
 
     /**
@@ -65,6 +87,9 @@ class Cache
         /** @var \Redis $redis */
         $redis = $this->redisPool->pick($this->config['connection']);
 
+        $cacheKeyWithPrefix = $this->cacheKeyWithPrefix($key);
+        $cacheTTLKeyWithPrefix = $this->cacheTTLKeyWithPrefix($key);
+
         try {
             if ($ttl > 0) {
                 $lua = <<<EOF
@@ -77,8 +102,7 @@ end
 end
 return resSet
 EOF;
-                //todo prefix config
-                return $redis->eval($lua, ['cache:' . $key, 'cache_ttl:' . $key, $value, $ttl], 2);
+                return $redis->eval($lua, [$cacheKeyWithPrefix, $cacheTTLKeyWithPrefix, $value, $ttl], 2);
             } else {
                 $lua = <<<EOF
 local resSet = redis.call('set', KEYS[1], ARGV[1]);
@@ -87,15 +111,13 @@ local resExp = redis.call('set', KEYS[2], ARGV[2]);
 end
 return resSet
 EOF;
-                return $redis->eval($lua, ['cache:' . $key, 'cache_ttl:' . $key, $value, 1], 2);
+                return $redis->eval($lua, [$cacheKeyWithPrefix, $cacheTTLKeyWithPrefix, $value, 1], 2);
             }
         } catch (\Throwable $e) {
             throw $e;
         } finally {
             $this->redisPool->release($redis);
         }
-
-        return false;
     }
 
     /**
@@ -109,16 +131,18 @@ EOF;
         $redis = $this->redisPool->pick($this->config['connection']);
 
         try {
+            $cacheTTLKeyWithPrefix = $this->cacheTTLKeyWithPrefix($key);
+
             //todo perf-optimize: get ttl flag and data using pipeline, reduce io times
-            if ($redis->get('cache_ttl:' . $key) === false) {
+            if ($redis->get($cacheTTLKeyWithPrefix) === false) {
                 if (RedLock::lock('update:cache:' . $key, $this->config['update_lock_ttl'])) {
-                    if ($redis->get('cache_ttl:' . $key) === false) {
+                    if ($redis->get($cacheTTLKeyWithPrefix) === false) {
                         return false;
                     }
                 }
             }
 
-            return $redis->get('cache:' . $key);
+            return $redis->get($this->cacheKeyWithPrefix($key));
         } catch (\Throwable $e) {
             throw $e;
         } finally {

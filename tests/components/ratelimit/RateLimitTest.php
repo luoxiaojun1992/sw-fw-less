@@ -7,6 +7,9 @@ class RateLimitTest extends \PHPUnit\Framework\TestCase
     public function tearDown()
     {
         parent::tearDown();
+
+        require_once __DIR__ . '/../../stubs/components/redis/RedisPool.php';
+
         RedisPool::clearInstance();
     }
 

@@ -7,7 +7,10 @@ class MysqlPoolTest extends \PHPUnit\Framework\TestCase
     public function tearDown()
     {
         parent::tearDown();
-        \SwFwLess\components\mysql\MysqlPool::clearInstance();
+
+        require_once __DIR__ . '/../../stubs/components/mysql/MysqlPool.php';
+
+        MysqlPool::clearInstance();
     }
 
     protected function getTestMysqlPool($mysqlConfig = null)
