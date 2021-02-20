@@ -101,6 +101,57 @@ EOF;
 
     /**
      * @param $metric
+     * @param $period
+     * @param $throttle
+     * @return int
+     * @throws \RedisException
+     * @throws \Throwable
+     */
+    public function giveBack($metric, $period, $throttle)
+    {
+        /** @var \Redis $redis */
+        $redis = $this->redisPool->pick($this->config['connection']);
+        try {
+            if ($period > 0) {
+                $lua = <<<EOF
+local is_existed=redis.call('exists', KEYS[1]);
+if(is_existed == 0) then
+return 0
+end
+local new_value=redis.call('decr', KEYS[1]);
+local ttl_value=redis.call('ttl', KEYS[1]);
+if(ttl_value == -1) then 
+redis.call('expire', KEYS[1], ARGV[1]) 
+end
+return new_value
+EOF;
+                $passed = intval($redis->eval($lua, [$metric, $period], 1));
+            } else {
+                $lua = <<<EOF
+local is_existed=redis.call('exists', KEYS[1]);
+if(is_existed == 0) then
+return 0
+end
+local new_value=redis.call('decr', KEYS[1]);
+local ttl_value=redis.call('ttl', KEYS[1]);
+if(ttl_value > -1) then 
+redis.call('persist', KEYS[1]) 
+end
+return new_value
+EOF;
+                $passed = intval($redis->eval($lua, [$metric], 1));
+            }
+
+            return $throttle - $passed;
+        } catch (\Throwable $e) {
+            throw $e;
+        } finally {
+            $this->redisPool->release($redis);
+        }
+    }
+
+    /**
+     * @param $metric
      * @return int
      * @throws \RedisException
      * @throws \Throwable
