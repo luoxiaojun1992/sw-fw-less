@@ -34,15 +34,23 @@ class Middleware extends AbstractMiddleware
         }
         $this->config = $throttleConfig;
 
-        list($metric, $period, $throttle) = $this->parseConfig($request);
+        list($metric, $period, $throttle, $giveBack) = $this->parseConfig($request);
 
-        //todo give back
+        $rateLimit = RateLimit::create();
 
-        if (!RateLimit::create()->pass($metric, $period, $throttle, $remaining)) {
+        if (!$rateLimit->pass($metric, $period, $throttle, $remaining)) {
+            if ($giveBack) {
+                $remaining = $rateLimit->giveBack($metric, $period, $throttle);
+            }
+
             return Response::output('', Code::STATUS_TOO_MANY_REQUESTS)
                 ->header('X-RateLimit-Period', $period)
                 ->header('X-RateLimit-Throttle', $throttle)
                 ->header('X-RateLimit-Remaining', $remaining);
+        }
+
+        if ($giveBack) {
+            $remaining = $rateLimit->giveBack($metric, $period, $throttle);
         }
 
         return $this->next()->header('X-RateLimit-Throttle', $throttle)->header('X-RateLimit-Remaining', $remaining);
