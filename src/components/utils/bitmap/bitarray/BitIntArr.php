@@ -144,7 +144,7 @@ class BitIntArr
         }
 
         $bitMapIndex = static::getBitmapIndex($number);
-        return ($this->slots[$slotIndex] & $bitMapIndex) === $bitMapIndex;
+        return ($this->slots[$slotIndex] & $bitMapIndex) > 0;
     }
 
     /**

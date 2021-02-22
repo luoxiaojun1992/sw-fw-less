@@ -155,7 +155,7 @@ function ClassSwFwLess_components_utils_bitmap_bitarray_BitIntArrInstancePublicF
 
     $bitMapIndex = ClassSwFwLess_components_utils_bitmap_bitarray_BitIntArrInstanceProtectedFuncGetBitmapIndex($number);
 
-    return ($thisObj['p_slots'][$slotIndex] & $bitMapIndex) === $bitMapIndex;
+    return ($thisObj['p_slots'][$slotIndex] & $bitMapIndex) > 0;
 }
 
 /**
