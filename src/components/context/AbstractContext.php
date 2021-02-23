@@ -70,4 +70,9 @@ class AbstractContext
         $this->container->setData($data);
         return $this;
     }
+
+    public function parentContext()
+    {
+        return $this->parentContext;
+    }
 }
