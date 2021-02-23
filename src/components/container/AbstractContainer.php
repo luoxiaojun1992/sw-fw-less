@@ -6,7 +6,7 @@ use SwFwLess\components\utils\Arr;
 
 class AbstractContainer
 {
-    protected $data;
+    protected $data = [];
 
     public function set($id, $res)
     {
@@ -28,5 +28,16 @@ class AbstractContainer
     {
         Arr::nestedArrForget($this->data, $id);
         return $this;
+    }
+
+    public function setData($data)
+    {
+        $this->data = $data;
+        return $this;
+    }
+
+    public function clear()
+    {
+        return $this->setData([]);
     }
 }

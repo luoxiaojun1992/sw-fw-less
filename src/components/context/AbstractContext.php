@@ -58,4 +58,16 @@ class AbstractContext
         $this->container->forget($id);
         return $this;
     }
+
+    public function clear()
+    {
+        $this->container->clear();
+        return $this;
+    }
+
+    public function setAll($data)
+    {
+        $this->container->setData($data);
+        return $this;
+    }
 }
