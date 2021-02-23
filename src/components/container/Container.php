@@ -6,10 +6,7 @@ class Container extends AbstractContainer
 {
     public static function createByData($data)
     {
-        $container = new static;
-        $container->data = $data;
-
-        return $container;
+        return static::create()->setData($data);
     }
 
     public static function create()
