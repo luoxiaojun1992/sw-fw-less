@@ -113,7 +113,7 @@ if(existed >= 1) then
     end
 else
     local initCounterRes=redis.call('set', KEYS[1], 1);
-    if(initCounterRes == 'ok') then
+    if(initCounterRes) then
         return true;
     else
         return false;
@@ -160,17 +160,15 @@ EOF;
 
         try {
             $lua = <<<EOF
+local result=true;
 local reduceCounterRes=redis.call('decr', KEYS[1]);
 if(reduceCounterRes == 0) then
-    local delRes=redis.call('del', KEYS[1]);
-    if(delRes >= 0) then
-        return true;
-    else
-        return false;
+    local delRes=redis.call('del', KEYS[1])
+    if(delRes < 0) then
+        result=false;
     end
-else
-    return true;
 end
+return result
 EOF;
             $result = $redis->eval($lua, [$keyWithPrefix], 1) > 0;
             if ($result) {
@@ -198,27 +196,26 @@ EOF;
         $redis = $this->redisPool->pick($this->config['connection']);
         try {
             $lua = <<<EOF
+local result=true;
 local existed=redis.call('exists', KEYS[1]);
 if(existed >= 1) then
-    local counter=redis.call('get', KEYS[1]);
+    local counter=redis.call('get', KEYS[1])
     if(counter <= 0) then
-        local lockRes=redis.call('set', KEYS[1], -1);
-        if(lockRes == 'ok') then
-            return true;
-        else
-            return false;
+        local lockRes=redis.call('set', KEYS[1], -1)
+        if(not( lockRes )) then
+            result=false
         end
-    else
-        return false;
+    end
+    if(counter > 0) then
+        result=false
     end
 else
-    local initCounterRes=redis.call('set', KEYS[1], -1);
-    if(initCounterRes == 'ok') then
-        return true;
-    else
-        return false;
+    local initCounterRes=redis.call('set', KEYS[1], -1)
+    if(not( initCounterRes )) then
+        result=false
     end
 end
+return result
 EOF;
             return $redis->eval($lua, [$keyWithPrefix], 1);
         } catch (\Throwable $e) {
