@@ -95,10 +95,13 @@ class Cache
                 $lua = <<<EOF
 local resSet = redis.call('set', KEYS[1], ARGV[1]);
 if(resSet) then
-local resExp = redis.call('set', KEYS[2], ARGV[2]);
-if(resExp) then
-redis.call('expire', KEYS[2], ARGV[2])
-end
+    local resExp = redis.call('set', KEYS[2], ARGV[2])
+    if(resExp) then
+        local resExpire=redis.call('expire', KEYS[2], ARGV[2])
+        if(resExpire == 0) then
+            resSet=false
+        end
+    end
 end
 return resSet
 EOF;
@@ -107,7 +110,7 @@ EOF;
                 $lua = <<<EOF
 local resSet = redis.call('set', KEYS[1], ARGV[1]);
 if(resSet) then
-local resExp = redis.call('set', KEYS[2], ARGV[2]);
+    local resExp = redis.call('set', KEYS[2], ARGV[2])
 end
 return resSet
 EOF;

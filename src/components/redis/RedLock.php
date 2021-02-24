@@ -98,27 +98,26 @@ class RedLock
         $redis = $this->redisPool->pick($this->config['connection']);
         try {
             $lua = <<<EOF
+local result = true;
 local existed=redis.call('exists', KEYS[1]);
 if(existed >= 1) then
-    local counter=redis.call('get', KEYS[1]);
+    local counter=redis.call('get', KEYS[1])
     if(counter > -1) then
-        local addCounterRes=redis.call('incr', KEYS[1]);
-        if(addCounterRes >= 1) then
-            return true;
-        else
-            return false;
+        local addCounterRes=redis.call('incr', KEYS[1])
+        if(addCounterRes < 1) then
+            result=false
         end
-    else
-        return false;
+    end
+    if(counter <= -1) then
+        result=false
     end
 else
-    local initCounterRes=redis.call('set', KEYS[1], 1);
-    if(initCounterRes) then
-        return true;
-    else
-        return false;
+    local initCounterRes=redis.call('set', KEYS[1], 1)
+    if(not( initCounterRes )) then
+        result=false
     end
 end
+return result
 EOF;
             $result = $redis->eval($lua, [$keyWithPrefix], 1);
             if ($result) {
@@ -165,7 +164,7 @@ local reduceCounterRes=redis.call('decr', KEYS[1]);
 if(reduceCounterRes == 0) then
     local delRes=redis.call('del', KEYS[1])
     if(delRes < 0) then
-        result=false;
+        result=false
     end
 end
 return result
@@ -287,13 +286,16 @@ EOF;
                                 $lua = <<<EOF
 local existed=redis.call('exists', KEYS[1]);
 if(existed >= 1) then
-local remainTtl=redis.call('ttl', KEYS[1]);
-if(remainTtl <= 1) then
-redis.call('expire', KEYS[1], ARGV[1]);
+    local remainTtl=redis.call('ttl', KEYS[1])
+    if(remainTtl <= 1) then
+        redis.call('expire', KEYS[1], ARGV[1])
+    end
 end
-end
+return true
 EOF;
-                                $redis->eval($lua, [$keyWithPrefix, $ttl], 1);
+                                if ($redis->eval($lua, [$keyWithPrefix, $ttl], 1) === false) {
+                                    throw new \Exception('Redis eval error:' . $redis->getLastError());
+                                }
                             } catch (\Throwable $e) {
                                 throw $e;
                             } finally {

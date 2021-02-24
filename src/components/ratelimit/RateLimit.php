@@ -88,21 +88,36 @@ class RateLimit
 local new_value=redis.call('incr', KEYS[1]);
 local ttl_value=redis.call('ttl', KEYS[1]);
 if(ttl_value == -1) then 
-redis.call('expire', KEYS[1], ARGV[1]) 
+    local expire_res=redis.call('expire', KEYS[1], ARGV[1])
+    if(expire_res == 0) then
+        new_value=0
+    end
 end
 return new_value
 EOF;
-                $passed = intval($redis->eval($lua, [$metricWithPrefix, $period], 1));
+                $passed = $redis->eval($lua, [$metricWithPrefix, $period], 1);
+
+                if ($passed === false) {
+                    throw new \Exception('Redis eval error:' . $redis->getLastError());
+                }
+
+                $passed = intval($passed);
             } else {
                 $lua = <<<EOF
 local new_value=redis.call('incr', KEYS[1]);
 local ttl_value=redis.call('ttl', KEYS[1]);
 if(ttl_value > -1) then 
-redis.call('persist', KEYS[1]) 
+    redis.call('persist', KEYS[1]) 
 end
 return new_value
 EOF;
-                $passed = intval($redis->eval($lua, [$metricWithPrefix], 1));
+                $passed = $redis->eval($lua, [$metricWithPrefix], 1);
+
+                if ($passed === false) {
+                    throw new \Exception('Redis eval error:' . $redis->getLastError());
+                }
+
+                $passed = intval($passed);
             }
 
             $remaining = $throttle - $passed;
@@ -131,32 +146,55 @@ EOF;
 
             if ($period > 0) {
                 $lua = <<<EOF
+local continue=true;
+local new_value=0;
 local is_existed=redis.call('exists', KEYS[1]);
 if(is_existed == 0) then
-return 0
+    continue=false
 end
-local new_value=redis.call('decr', KEYS[1]);
-local ttl_value=redis.call('ttl', KEYS[1]);
-if(ttl_value == -1) then 
-redis.call('expire', KEYS[1], ARGV[1]) 
+if(continue) then
+    new_value=redis.call('decr', KEYS[1])
+    local ttl_value=redis.call('ttl', KEYS[1])
+    if(ttl_value == -1) then 
+        local expire_res=redis.call('expire', KEYS[1], ARGV[1])
+        if(expire_res == 0) then
+            new_value=0
+        end
+    end
 end
 return new_value
 EOF;
-                $passed = intval($redis->eval($lua, [$metricWithPrefix, $period], 1));
+                $passed = $redis->eval($lua, [$metricWithPrefix, $period], 1);
+
+                if ($passed === false) {
+                    throw new \Exception('Redis eval error:' . $redis->getLastError());
+                }
+
+                $passed = intval($passed);
             } else {
                 $lua = <<<EOF
+local continue=true;
+local new_value=0;
 local is_existed=redis.call('exists', KEYS[1]);
 if(is_existed == 0) then
-return 0
+    continue=false
 end
-local new_value=redis.call('decr', KEYS[1]);
-local ttl_value=redis.call('ttl', KEYS[1]);
-if(ttl_value > -1) then 
-redis.call('persist', KEYS[1]) 
+if(continue) then
+    new_value=redis.call('decr', KEYS[1])
+    local ttl_value=redis.call('ttl', KEYS[1])
+    if(ttl_value > -1) then 
+        redis.call('persist', KEYS[1]) 
+    end
 end
 return new_value
 EOF;
-                $passed = intval($redis->eval($lua, [$metricWithPrefix], 1));
+                $passed = $redis->eval($lua, [$metricWithPrefix], 1);
+
+                if ($passed === false) {
+                    throw new \Exception('Redis eval error:' . $redis->getLastError());
+                }
+
+                $passed = intval($passed);
             }
 
             return $throttle - $passed;
