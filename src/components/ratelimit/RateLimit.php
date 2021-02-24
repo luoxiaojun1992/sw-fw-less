@@ -20,7 +20,10 @@ class RateLimit
      */
     private $redisPool;
 
-    private $config = ['connection' => 'rate_limit'];
+    private $config = [
+        'connection' => 'rate_limit',
+        'metric_prefix' => 'rate_limit_metric:',
+    ];
 
     /**
      * @param RedisPool|null $redisPool
@@ -51,6 +54,16 @@ class RateLimit
         $this->config = array_merge($this->config, $config);
     }
 
+    protected function metricPrefix()
+    {
+        return $this->config['metric_prefix'];
+    }
+
+    protected function metricWithPrefix($metric)
+    {
+        return $this->metricPrefix() . $metric;
+    }
+
     /**
      * @param $metric
      * @param $period
@@ -64,7 +77,9 @@ class RateLimit
         /** @var \Redis $redis */
         $redis = $this->redisPool->pick($this->config['connection']);
         try {
-            if (intval($redis->get($metric)) >= $throttle) {
+            $metricWithPrefix = $this->metricWithPrefix($metric);
+
+            if (intval($redis->get($metricWithPrefix)) >= $throttle) {
                 return false;
             }
 
@@ -77,7 +92,7 @@ redis.call('expire', KEYS[1], ARGV[1])
 end
 return new_value
 EOF;
-                $passed = intval($redis->eval($lua, [$metric, $period], 1));
+                $passed = intval($redis->eval($lua, [$metricWithPrefix, $period], 1));
             } else {
                 $lua = <<<EOF
 local new_value=redis.call('incr', KEYS[1]);
@@ -87,7 +102,7 @@ redis.call('persist', KEYS[1])
 end
 return new_value
 EOF;
-                $passed = intval($redis->eval($lua, [$metric], 1));
+                $passed = intval($redis->eval($lua, [$metricWithPrefix], 1));
             }
 
             $remaining = $throttle - $passed;
@@ -112,6 +127,8 @@ EOF;
         /** @var \Redis $redis */
         $redis = $this->redisPool->pick($this->config['connection']);
         try {
+            $metricWithPrefix = $this->metricWithPrefix($metric);
+
             if ($period > 0) {
                 $lua = <<<EOF
 local is_existed=redis.call('exists', KEYS[1]);
@@ -125,7 +142,7 @@ redis.call('expire', KEYS[1], ARGV[1])
 end
 return new_value
 EOF;
-                $passed = intval($redis->eval($lua, [$metric, $period], 1));
+                $passed = intval($redis->eval($lua, [$metricWithPrefix, $period], 1));
             } else {
                 $lua = <<<EOF
 local is_existed=redis.call('exists', KEYS[1]);
@@ -139,7 +156,7 @@ redis.call('persist', KEYS[1])
 end
 return new_value
 EOF;
-                $passed = intval($redis->eval($lua, [$metric], 1));
+                $passed = intval($redis->eval($lua, [$metricWithPrefix], 1));
             }
 
             return $throttle - $passed;
@@ -161,7 +178,7 @@ EOF;
         /** @var \Redis $redis */
         $redis = $this->redisPool->pick($this->config['connection']);
         try {
-            return $redis->del($metric);
+            return $redis->del($this->metricWithPrefix($metric));
         } catch (\Throwable $e) {
             throw $e;
         } finally {
