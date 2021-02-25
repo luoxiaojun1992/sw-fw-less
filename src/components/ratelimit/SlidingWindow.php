@@ -200,4 +200,27 @@ EOF;
             $this->redisPool->release($redis);
         }
     }
+
+    /**
+     * @param $metric
+     * @return int
+     * @throws \RedisException
+     * @throws \Throwable
+     */
+    public function clear($metric)
+    {
+        /** @var \Redis $redis */
+        $redis = $this->redisPool->pick($this->config['connection']);
+        try {
+            return $redis->del(
+                $this->metricWithPrefix($metric),
+                $this->metricWithPeriodPrefix($metric),
+                $this->metricWithWindowPrefix($metric)
+            );
+        } catch (\Throwable $e) {
+            throw $e;
+        } finally {
+            $this->redisPool->release($redis);
+        }
+    }
 }
