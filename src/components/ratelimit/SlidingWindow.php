@@ -6,8 +6,6 @@ use SwFwLess\components\redis\RedisPool;
 
 class SlidingWindow
 {
-    //TODO
-
     private static $instance;
 
     /**
