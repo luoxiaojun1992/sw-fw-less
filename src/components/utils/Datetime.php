@@ -237,7 +237,7 @@ class Datetime
         } else {
             $diffMonth = $endDateMonth + (12 - $startDateMonth + 1);
             if ($diffYear > 1) {
-                $diffMonth += ($endDateYear - $startDateYear - 1) * 12;
+                $diffMonth += ($diffYear - 1) * 12;
             }
         }
 
