@@ -24,6 +24,7 @@ class AbstractContext
     public function withParent(AbstractContext $parentContext)
     {
         $this->parentContext = $parentContext;
+        return $this;
     }
 
     public function withReturn(callable $returnCallback)
