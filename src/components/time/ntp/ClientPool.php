@@ -2,7 +2,6 @@
 
 namespace SwFwLess\components\time\ntp;
 
-use Bt51\NTP\Client;
 use Bt51\NTP\Socket;
 use SwFwLess\components\pool\AbstractPool;
 
@@ -44,17 +43,20 @@ class ClientPool extends AbstractPool
         }
     }
 
-    protected function createRes($id)
+    public function createSocket($id)
     {
         $options = $this->config['servers'][$id];
 
-        $socket = new Socket(
+        return new Socket(
             $options['host'],
             $options['port'] ?? 123,
             $options['timeout'] ?? 5
         );
+    }
 
-        return new Client($socket);
+    protected function createRes($id)
+    {
+        return new ClientWrapper($this->createSocket($id));
     }
 
     protected function pickServerId()
