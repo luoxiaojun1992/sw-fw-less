@@ -3,6 +3,7 @@
 namespace SwFwLess\components\ratelimit;
 
 use SwFwLess\components\provider\WorkerProviderContract;
+use SwFwLess\components\redis\RedisPool;
 
 class RatelimitProvider implements WorkerProviderContract
 {
@@ -11,6 +12,11 @@ class RatelimitProvider implements WorkerProviderContract
         //Rate limiter
         RateLimit::create(
             \SwFwLess\components\redis\RedisPool::create(),
+            \SwFwLess\components\functions\config('rate_limit')
+        );
+
+        SlidingWindow::create(
+            RedisPool::create(),
             \SwFwLess\components\functions\config('rate_limit')
         );
     }

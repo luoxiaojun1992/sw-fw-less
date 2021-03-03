@@ -36,7 +36,7 @@ class ObjectPool
      */
     public function __construct($config)
     {
-        $this->config = $config;
+        $this->config = array_merge($this->config, $config);
 
         foreach ($config['objects'] as $class => $options) {
             for ($i = 0; $i < $options['pool_size']; ++$i) {

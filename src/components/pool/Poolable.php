@@ -9,4 +9,6 @@ interface Poolable
     public function needRelease();
 
     public function setReleaseToPool(bool $releaseToPool);
+
+    public function getPoolResId();
 }

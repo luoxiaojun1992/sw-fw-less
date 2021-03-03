@@ -9,6 +9,7 @@ use SwFwLess\components\Config;
 use SwFwLess\components\Helper;
 use SwFwLess\components\http\Client;
 use SwFwLess\components\http\Response;
+use SwFwLess\components\time\ntp\Time;
 use SwFwLess\facades\Alioss;
 use SwFwLess\facades\AMQPConnectionPool;
 use SwFwLess\facades\Cache;
@@ -230,5 +231,14 @@ class DemoService extends BaseService
             $cNumbers[$i - 1] = $i;
         }
         return Response::json(['sum' => Math::sum(null, 100000, $cNumbers)]);
+    }
+
+    /**
+     * @return Response
+     * @throws \Throwable
+     */
+    public function ntp()
+    {
+        return Response::json(['timestamp' => Time::create()->getTimestamp()]);
     }
 }

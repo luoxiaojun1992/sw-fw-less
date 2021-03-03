@@ -342,4 +342,9 @@ class Request implements Poolable
         $this->releaseToPool = $releaseToPool;
         return $this;
     }
+
+    public function getPoolResId()
+    {
+        return get_class($this);
+    }
 }

@@ -13,6 +13,7 @@
         "ext-json": "*",
         "ext-swoole": ">=4.4.0",
         "aura/sqlquery": "^2",
+        "bt51/ntp": "~0.1.0",
         "cakephp/event": "3.7.1",
         "cakephp/validation": "~3",
         "dragonmantank/cron-expression": "^2.3",
@@ -21,6 +22,7 @@
         "koala-framework/file-watcher": " ~1.0",
         "league/flysystem": "~1",
         "luoxiaojun/closure-php": "dev-main",
+        "luoxiaojun/grpc": "dev-master",
         "luoxiaojun1992/monolog-co-stream-handler": "~1.0",
         "monolog/monolog": "^1",
         "nesbot/carbon": "^1.26.3",
@@ -30,8 +32,7 @@
         "ramsey/uuid": "~3",
         "swlib/saber": "^1",
         "symfony/var-dumper": "~3.0",
-        "vlucas/phpdotenv": "~2.2",
-        "luoxiaojun/grpc": "dev-master"
+        "vlucas/phpdotenv": "~2.2"
     },
     "suggest": {
         "ext-pdo": "*",

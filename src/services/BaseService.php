@@ -69,4 +69,9 @@ abstract class BaseService implements MiddlewareContract, Poolable
         $this->releaseToPool = $releaseToPool;
         return $this;
     }
+
+    public function getPoolResId()
+    {
+        return get_class($this);
+    }
 }
