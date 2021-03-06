@@ -20,6 +20,8 @@ class Log
 
     private $level = Logger::DEBUG;
 
+    private $syncLevels = [];
+
     private $poolSize = 100;
 
     private $bufferMaxSize = 10;
@@ -33,6 +35,7 @@ class Log
     /**
      * @param string $log_path
      * @param int $level
+     * @param array $syncLevels
      * @param int $pool_size
      * @param int $buffer_max_size
      * @param string $name
@@ -43,6 +46,7 @@ class Log
     public static function create(
         $log_path = '',
         $level = Logger::DEBUG,
+        $syncLevels = [],
         $pool_size = 100,
         $buffer_max_size = 10,
         $name = 'sw-fw-less',
@@ -54,7 +58,9 @@ class Log
         }
 
         if (Config::get('log.switch')) {
-            return self::$instance = new self($log_path, $level, $pool_size, $buffer_max_size, $name, $reserve_days);
+            return self::$instance = new self(
+                $log_path, $level, $syncLevels, $pool_size, $buffer_max_size, $name, $reserve_days
+            );
         } else {
             return null;
         }
@@ -64,6 +70,7 @@ class Log
      * Log constructor.
      * @param $log_path
      * @param int $level
+     * @param array $syncLevels
      * @param int $pool_size
      * @param int $buffer_max_size
      * @param string $name
@@ -73,6 +80,7 @@ class Log
     public function __construct(
         $log_path,
         $level = Logger::DEBUG,
+        $syncLevels = [],
         $pool_size = 100,
         $buffer_max_size = 10,
         $name = 'sw-fw-less',
@@ -81,6 +89,7 @@ class Log
     {
         $this->logPath = $log_path;
         $this->level = $level;
+        $this->syncLevels = $syncLevels;
         $this->poolSize = $pool_size;
         $this->bufferMaxSize = $buffer_max_size;
         $this->name = $name;
@@ -96,10 +105,11 @@ class Log
     private function createLogger()
     {
         $this->loggerDate = date('Ymd');
-        $log_path = $this->getLogPath($this->loggerDate);
+        $logPath = $this->getLogPath($this->loggerDate);
         $handler = new Handler(
-            $log_path,
+            $logPath,
             $this->level,
+            $this->syncLevels,
             true,
             null,
             $this->poolSize,
