@@ -19,7 +19,7 @@ class ClientWrapper extends Client implements Poolable
 
     public function needRelease()
     {
-        return $this->needRelease();
+        return $this->needRelease;
     }
 
     public function setReleaseToPool(bool $releaseToPool)
