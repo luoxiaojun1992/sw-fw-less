@@ -23,6 +23,7 @@ class RedisWrapper
     private $inTransaction = false;
     private $needRelease = true;
     private $connectionName;
+    private $retry = false;
     private $idleTimeout = 500; //seconds
     private $lastConnectedAt;
     private $lastActivityAt;
@@ -78,6 +79,24 @@ class RedisWrapper
     public function setConnectionName($connectionName)
     {
         $this->connectionName = $connectionName;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isRetry(): bool
+    {
+        return $this->retry;
+    }
+
+    /**
+     * @param bool $retry
+     * @return $this
+     */
+    public function setRetry(bool $retry)
+    {
+        $this->retry = $retry;
         return $this;
     }
 
