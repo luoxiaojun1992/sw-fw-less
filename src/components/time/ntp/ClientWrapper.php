@@ -34,6 +34,26 @@ class ClientWrapper extends Client implements Poolable
     }
 
     /**
+     * Unpacks the binary data that was returned
+     * from the remote ntp server
+     *
+     * @param string $binary The binary from the response
+     *
+     * @throws \Exception
+     * @return string
+     */
+    protected function unpack($binary)
+    {
+        $data = unpack('N12', $binary);
+
+        if (!isset($data[9])) {
+            throw new \Exception('Connection timed out');
+        }
+
+        return sprintf('%u', $data[9]);
+    }
+
+    /**
      * @return \DateTime|mixed
      * @throws \Throwable
      */
