@@ -112,6 +112,8 @@ class RedisPool
                 }
             }
             if ($redis->isNeedRelease()) {
+                $redis->setRetry(false);
+
                 Scheduler::withoutPreemptive(function () use ($redis) {
                     $this->redisPool[$redis->getConnectionName()][] = $redis;
                 });

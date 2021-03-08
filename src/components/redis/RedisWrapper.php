@@ -232,12 +232,13 @@ class RedisWrapper
             try {
                 return $this->callRedis($name, $arguments);
             } catch (\RedisException $e) {
-                if (!$this->inTransaction() && Helper::causedByLostConnection($e)) {
-                    $this->handleCommandException($e);
-                    return $this->callRedis($name, $arguments);
-                }
-
-                throw $e;
+                return $this->handleCommandException(
+                    $e,
+                    $this->isRetry(),
+                    function () use ($name, $arguments) {
+                        return $this->callRedis($name, $arguments);
+                    }
+                );
             }
         }
 
@@ -246,12 +247,20 @@ class RedisWrapper
 
     /**
      * @param \RedisException $e
+     * @param bool $retry
+     * @param callable $callback
+     * @return mixed
      */
-    private function handleCommandException(\RedisException $e)
+    private function handleCommandException(\RedisException $e, $retry, $callback)
     {
-        //todo retry argument
         if (!$this->inTransaction() && Helper::causedByLostConnection($e)) {
             $this->setRedis(RedisPool::getConnect(false, $this->getConnectionName())->getRedis());
+
+            if ($retry) {
+                return call_user_func($callback);
+            }
         }
+
+        throw $e;
     }
 }
