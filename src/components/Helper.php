@@ -116,6 +116,7 @@ class Helper
             'Name or service not known',
             'ORA-03114',
             'Packets out of order. Expected',
+            'Connection timed out',
         ];
         foreach ($lostConnectionMessages as $lostConnectionMessage) {
             if (mb_stripos($message, $lostConnectionMessage) !== false) {

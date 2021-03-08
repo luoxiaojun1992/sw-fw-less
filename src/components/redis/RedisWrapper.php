@@ -230,6 +230,7 @@ class RedisWrapper
      */
     private function handleCommandException(\RedisException $e)
     {
+        //todo retry argument
         if (!$this->inTransaction() && Helper::causedByLostConnection($e)) {
             $this->setRedis(RedisPool::getConnect(false, $this->getConnectionName())->getRedis());
         }

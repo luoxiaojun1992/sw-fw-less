@@ -88,6 +88,7 @@ class RedisPool
         if (!$redis) {
             $redis = $this->getConnect(false, $connectionName);
         } else {
+            //todo handle idle timeout
             if ($this->config['pool_change_event']) {
                 $this->poolChange(-1);
             }
