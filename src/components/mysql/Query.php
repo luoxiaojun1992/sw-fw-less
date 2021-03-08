@@ -343,6 +343,11 @@ class Query
         return $this->execute($pdo, static::QUERY_TYPE_WRITE);
     }
 
+    public function whereHasInteraction()
+    {
+        //TODO
+    }
+
     /**
      * @param $id
      * @return $this
