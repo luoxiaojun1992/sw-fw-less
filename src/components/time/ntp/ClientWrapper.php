@@ -8,6 +8,8 @@ use SwFwLess\components\pool\Poolable;
 
 class ClientWrapper extends Client implements Poolable
 {
+    //todo idle timeout
+
     protected $serverId;
 
     protected $needRelease = false;
