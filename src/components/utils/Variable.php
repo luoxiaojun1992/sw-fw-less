@@ -14,7 +14,16 @@ class Variable
         $varType = gettype($variable);
         $valType = gettype($value);
         if ($varType !== $valType) {
-            throw new \Exception('Type error');
+            throw new \Exception('Type error, var type:' . $varType . ', val type:' . $valType);
+        }
+
+        if (is_object($value)) {
+            $varClass = get_class($variable);
+            if (!($value instanceof $varClass)) {
+                throw new \Exception(
+                    'Object Type error, var type:' . $varClass . ', val type:' . get_class($value)
+                );
+            }
         }
 
         $variable = $value;
