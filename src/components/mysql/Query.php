@@ -2,6 +2,7 @@
 
 namespace SwFwLess\components\mysql;
 
+use SwFwLess\components\utils\Variable;
 use SwFwLess\facades\MysqlPool;
 use Aura\SqlQuery\QueryFactory;
 use Aura\SqlQuery\QueryInterface;
@@ -343,9 +344,51 @@ class Query
         return $this->execute($pdo, static::QUERY_TYPE_WRITE);
     }
 
-    public function whereHasInteraction()
+    public function whereHasInteraction($beginField, $endField, $begin = null, $end = null)
     {
-        //TODO
+        if (Variable::allNull($begin, $end)) {
+            return $this;
+        }
+
+        $sql = '';
+
+        $beginConditionSql = '';
+        if (!is_null($begin)) {
+            $beginConditionSql .= "{$beginField} >= :begin";
+        }
+        if (!is_null($end)) {
+            if ($beginConditionSql) {
+                $beginConditionSql .= " and {$beginField} <= :end";
+            } else {
+                $beginConditionSql .= "{$beginField} <= :end";
+            }
+        }
+
+        $sql .= '('.$beginConditionSql.')';
+
+        $endConditionSql = '';
+        if (!is_null($begin)) {
+            $endConditionSql .= "{$endField} >= :begin";
+        }
+        if (!is_null($end)) {
+            if ($endConditionSql) {
+                $endConditionSql .= " and {$endField} <= :end";
+            } else {
+                $endConditionSql .= "{$endField} <= :end";
+            }
+        }
+
+        $sql .= ' OR (' . $endConditionSql . ')';
+
+        if (Variable::allNotNull($begin, $end)) {
+            $startEndConditionSql = "{$beginField} <= :begin AND {$endField} >= :end";
+            $sql .= ' OR (' . $startEndConditionSql . ')';
+        }
+
+        $this->auraQuery->where('(' . $sql . ')');
+        $this->auraQuery->bindValue(':begin', $begin);
+        $this->auraQuery->bindValue(':end', $end);
+        return $this;
     }
 
     /**

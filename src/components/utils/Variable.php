@@ -19,4 +19,44 @@ class Variable
 
         $variable = $value;
     }
+
+    public static function oneNull(...$vars)
+    {
+        $result = false;
+
+        foreach ($vars as $var) {
+            if (is_null($var)) {
+                $result = true;
+                break;
+            }
+        }
+
+        return $result;
+    }
+
+    public static function allNull(...$vars)
+    {
+        $result = false;
+
+        foreach ($vars as $var) {
+            if (is_null($var)) {
+                $result = true;
+            } else {
+                $result = false;
+                break;
+            }
+        }
+
+        return $result;
+    }
+
+    public static function oneNotNull(...$vars)
+    {
+        return (!(static::allNull(...$vars)));
+    }
+
+    public static function allNotNull(...$vars)
+    {
+        return (!(static::oneNull(...$vars)));
+    }
 }
