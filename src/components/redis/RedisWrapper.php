@@ -250,11 +250,12 @@ class RedisWrapper
      * @param bool $retry
      * @param callable $callback
      * @return mixed
+     * @throws \RedisException
      */
     private function handleCommandException(\RedisException $e, $retry, $callback)
     {
         if (!$this->inTransaction() && Helper::causedByLostConnection($e)) {
-            $this->setRedis(RedisPool::getConnect(false, $this->getConnectionName())->getRedis());
+            $this->reconnect();
 
             if ($retry) {
                 return call_user_func($callback);
@@ -262,5 +263,10 @@ class RedisWrapper
         }
 
         throw $e;
+    }
+
+    public function reconnect()
+    {
+        return $this->setRedis(RedisPool::getConnect(false, $this->getConnectionName())->getRedis());
     }
 }

@@ -216,10 +216,9 @@ class MysqlWrapper
 
     public function reconnect()
     {
-        $this->setPDO(\SwFwLess\facades\MysqlPool::getConnect(false, $this->getConnectionName())->getPDO())
-            ->setLastConnectedAt()
-            ->setLastActivityAt()
-            ->setBigQueryTimes(0);
+        return $this->setPDO(
+            \SwFwLess\facades\MysqlPool::getConnect(false, $this->getConnectionName())->getPDO()
+        )->setLastConnectedAt()->setLastActivityAt()->setBigQueryTimes(0);
     }
 
     /**

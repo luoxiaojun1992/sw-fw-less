@@ -82,13 +82,17 @@ class RedisPool
         if (!isset($this->redisPool[$connectionName])) {
             return null;
         }
+        /** @var RedisWrapper $redis */
         $redis = Scheduler::withoutPreemptive(function () use ($connectionName) {
             return array_pop($this->redisPool[$connectionName]);
         });
         if (!$redis) {
             $redis = $this->getConnect(false, $connectionName);
         } else {
-            //todo handle idle timeout
+            if ($redis->exceedIdleTimeout()) {
+                $redis->reconnect();
+            }
+
             if ($this->config['pool_change_event']) {
                 $this->poolChange(-1);
             }
