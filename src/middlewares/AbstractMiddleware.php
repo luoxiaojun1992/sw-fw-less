@@ -102,4 +102,9 @@ abstract class AbstractMiddleware implements MiddlewareContract, Poolable
     {
         return get_class($this);
     }
+
+    public function refresh()
+    {
+        return $this;
+    }
 }

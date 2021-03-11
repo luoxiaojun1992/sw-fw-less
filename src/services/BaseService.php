@@ -74,4 +74,9 @@ abstract class BaseService implements MiddlewareContract, Poolable
     {
         return get_class($this);
     }
+
+    public function refresh()
+    {
+        return $this;
+    }
 }

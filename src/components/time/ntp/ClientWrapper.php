@@ -17,12 +17,15 @@ class ClientWrapper extends Client implements Poolable
 
     protected $needRelease = false;
 
-    public function reset()
+    public function refresh()
     {
         if ($this->exceedIdleTimeout()) {
             $this->reconnect();
         }
+    }
 
+    public function reset()
+    {
         return $this;
     }
 

@@ -177,6 +177,7 @@ class RedisWrapper
      */
     private function callRedis($name, $arguments)
     {
+        $this->setLastActivityAt();
         $result = $this->callRedisWithEvents(function () use ($name, $arguments) {
             return call_user_func_array([$this->redis, $name], $arguments);
         });
@@ -267,6 +268,7 @@ class RedisWrapper
 
     public function reconnect()
     {
-        return $this->setRedis(RedisPool::getConnect(false, $this->getConnectionName())->getRedis());
+        return $this->setRedis(RedisPool::getConnect(false, $this->getConnectionName())->getRedis())
+            ->setLastConnectedAt()->setLastActivityAt();
     }
 }

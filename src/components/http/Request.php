@@ -347,4 +347,9 @@ class Request implements Poolable
     {
         return get_class($this);
     }
+
+    public function refresh()
+    {
+        return $this;
+    }
 }

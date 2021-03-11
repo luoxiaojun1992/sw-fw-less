@@ -56,7 +56,10 @@ class ClientPool extends AbstractPool
 
     protected function createRes($id)
     {
-        return new ClientWrapper($this->createSocket($id));
+        $options = $this->config['servers'][$id];
+
+        return (new ClientWrapper($this->createSocket($id)))
+            ->setIdleTimeout($options['idle_timeout'] ?? 500);
     }
 
     protected function pickServerId()

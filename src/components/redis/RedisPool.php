@@ -165,7 +165,9 @@ class RedisPool
         return (new RedisWrapper())->setRedis($redis)
             ->setNeedRelease($needRelease)
             ->setConnectionName($connectionName)
-            ->setIdleTimeout($this->config['connections'][$connectionName]['idle_timeout'] ?? 500);
+            ->setIdleTimeout($this->config['connections'][$connectionName]['idle_timeout'] ?? 500)
+            ->setLastConnectedAt()
+            ->setLastActivityAt();
     }
 
     /**
