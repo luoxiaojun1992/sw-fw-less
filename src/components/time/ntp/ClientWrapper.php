@@ -3,12 +3,15 @@
 namespace SwFwLess\components\time\ntp;
 
 use Bt51\NTP\Client;
+use Carbon\Carbon;
 use SwFwLess\components\Helper;
 use SwFwLess\components\pool\Poolable;
 
 class ClientWrapper extends Client implements Poolable
 {
-    //todo idle timeout
+    protected $idleTimeout = 500; //seconds
+
+    protected $lastActivityAt;
 
     protected $serverId;
 
@@ -16,7 +19,55 @@ class ClientWrapper extends Client implements Poolable
 
     public function reset()
     {
+        if ($this->exceedIdleTimeout()) {
+            $this->reconnect();
+        }
+
         return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getIdleTimeout(): int
+    {
+        return $this->idleTimeout;
+    }
+
+    /**
+     * @param int $idleTimeout
+     * @return $this
+     */
+    public function setIdleTimeout(int $idleTimeout)
+    {
+        $this->idleTimeout = $idleTimeout;
+        return $this;
+    }
+
+    /**
+     * @param null|CarbonInterface $lastActivityAt
+     * @return $this
+     */
+    public function setLastActivityAt($lastActivityAt = null)
+    {
+        $this->lastActivityAt = ($lastActivityAt ?: Carbon::now());
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getLastActivityAt()
+    {
+        return $this->lastActivityAt;
+    }
+
+    /**
+     * @return bool
+     */
+    public function exceedIdleTimeout()
+    {
+        return (Carbon::now()->diffInSeconds($this->getLastActivityAt())) > ($this->getIdleTimeout());
     }
 
     public function needRelease()
