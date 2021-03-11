@@ -59,7 +59,8 @@ class ClientPool extends AbstractPool
         $options = $this->config['servers'][$id];
 
         return (new ClientWrapper($this->createSocket($id)))
-            ->setIdleTimeout($options['idle_timeout'] ?? 500);
+            ->setIdleTimeout($options['idle_timeout'] ?? 500)
+            ->setLastActivityAt();
     }
 
     protected function pickServerId()

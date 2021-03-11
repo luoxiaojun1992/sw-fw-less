@@ -19,6 +19,7 @@ abstract class AbstractPool
         if (!isset($this->pool[$id])) {
             return null;
         }
+        /** @var Poolable $object */
         $object = Scheduler::withoutPreemptive(function () use ($id) {
             return array_pop($this->pool[$id]);
         });
@@ -26,6 +27,7 @@ abstract class AbstractPool
             $object = $this->createRes($id);
             $object->setReleaseToPool(false);
         } else {
+            $object->refresh();
             $object->setReleaseToPool(true);
         }
         return $object;

@@ -115,6 +115,8 @@ class ClientWrapper extends Client implements Poolable
      */
     public function getTime()
     {
+        $this->setLastActivityAt();
+
         $requestFunc = function () {
             $packet = $this->buildPacket();
             $this->write($packet);
@@ -139,6 +141,7 @@ class ClientWrapper extends Client implements Poolable
     public function reconnect()
     {
         $this->socket = ClientPool::create()->createSocket($this->serverId);
+        $this->setLastActivityAt();
         return $this;
     }
 }
