@@ -285,4 +285,15 @@ class Arr
     {
         return array_map(function ($item) {return (string)$item;}, $arr);
     }
+
+    /**
+     * @param $arr
+     * @param $keyColumn
+     * @param null $column
+     * @return array
+     */
+    public static function mapping($arr, $keyColumn, $column = null)
+    {
+        return array_column($arr, $column, $keyColumn);
+    }
 }
