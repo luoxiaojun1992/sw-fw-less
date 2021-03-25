@@ -20,7 +20,9 @@ class Qiniu
     {
         $this->config = Config::get('storage');
 
-        class_alias(QiniuCoHttpClient::class, Client::class);
+        if (($this->config['native_coroutine']) ?? false) {
+            class_alias(QiniuCoHttpClient::class, Client::class);
+        }
     }
 
     /**
