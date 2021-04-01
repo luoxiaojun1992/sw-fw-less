@@ -24,4 +24,15 @@ class Process
 
         return true;
     }
+
+    /**
+     * @param $expression
+     * @param $callbackOnTrue
+     * @param $callbackOnFalse
+     * @return mixed
+     */
+    public static function conditionBranch($expression, $callbackOnTrue, $callbackOnFalse)
+    {
+        return $expression ? call_user_func($callbackOnTrue) : call_user_func($callbackOnFalse);
+    }
 }
