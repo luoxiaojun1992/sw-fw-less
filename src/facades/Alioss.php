@@ -3,6 +3,7 @@
 namespace SwFwLess\facades;
 
 use League\Flysystem\Filesystem;
+use SwFwLess\components\storage\Storage;
 
 /**
  * Class Alioss
@@ -14,6 +15,6 @@ class Alioss extends AbstractFacade
 {
     protected static function getAccessor()
     {
-        return \SwFwLess\components\storage\alioss\Alioss::create();
+        return Storage::alioss();
     }
 }

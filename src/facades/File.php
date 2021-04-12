@@ -4,6 +4,7 @@ namespace SwFwLess\facades;
 
 use League\Flysystem\Adapter\Local;
 use League\Flysystem\Filesystem;
+use SwFwLess\components\storage\Storage;
 
 /**
  * Class File
@@ -19,6 +20,6 @@ class File extends AbstractFacade
 {
     protected static function getAccessor()
     {
-        return \SwFwLess\components\storage\file\File::create();
+        return Storage::file();
     }
 }

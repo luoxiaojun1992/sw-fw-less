@@ -3,6 +3,9 @@
 namespace SwFwLess\components\storage;
 
 use SwFwLess\components\Config;
+use SwFwLess\components\storage\alioss\Alioss;
+use SwFwLess\components\storage\file\File;
+use SwFwLess\components\storage\qiniu\Qiniu;
 
 class Storage
 {
@@ -18,5 +21,20 @@ class Storage
                 }
             }
         }
+    }
+
+    public static function alioss()
+    {
+        return Alioss::create();
+    }
+
+    public static function file()
+    {
+        return File::create();
+    }
+
+    public static function qiniu()
+    {
+        return Qiniu::create();
     }
 }

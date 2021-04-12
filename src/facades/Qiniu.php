@@ -3,6 +3,7 @@
 namespace SwFwLess\facades;
 
 use League\Flysystem\Filesystem;
+use SwFwLess\components\storage\Storage;
 
 /**
  * Class Qiniu
@@ -14,6 +15,6 @@ class Qiniu extends AbstractFacade
 {
     protected static function getAccessor()
     {
-        return \SwFwLess\components\storage\qiniu\Qiniu::create();
+        return Storage::qiniu();
     }
 }
