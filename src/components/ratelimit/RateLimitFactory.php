@@ -20,7 +20,11 @@ class RateLimitFactory
         ],
     ];
 
-    public static function create($algorithm = self::ALGORITHM_LEAKY_BUCKET)
+    /**
+     * @param string $algorithm
+     * @return RateLimit|SlidingWindow|\SwFwLess\components\etcd\RateLimit
+     */
+    public static function resolve($algorithm = self::ALGORITHM_LEAKY_BUCKET)
     {
         return call_user_func(self::$resolvers[$algorithm]);
     }

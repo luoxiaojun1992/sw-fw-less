@@ -22,7 +22,7 @@ class Middleware extends AbstractMiddleware
     public function handle(Request $request)
     {
         $throttleConfig = \SwFwLess\components\functions\config('throttle');
-        $options = $this->parseOptions(['period', 'throttle', 'back']);
+        $options = $this->parseOptions(['period', 'throttle', 'back', 'driver']);
         if (isset($options['period']) && $options['period'] !== '') {
             $throttleConfig['period'] = intval($options['period']);
         }
@@ -32,11 +32,14 @@ class Middleware extends AbstractMiddleware
         if (isset($options['back']) && $options['back'] !== '') {
             $throttleConfig['back'] = boolval(intval($options['back']));
         }
+        if (isset($options['driver']) && $options['driver'] !== '') {
+            $throttleConfig['driver'] = $options['driver'];
+        }
         $this->config = $throttleConfig;
 
-        list($metric, $period, $throttle, $giveBack) = $this->parseConfig($request);
+        list($metric, $period, $throttle, $giveBack, $driver) = $this->parseConfig($request);
 
-        $rateLimit = RateLimit::create();
+        $rateLimit = $driver ? RateLimitFactory::resolve($driver) : RateLimitFactory::resolve();
 
         if (!$rateLimit->pass($metric, $period, $throttle, $remaining)) {
             if ($giveBack) {
@@ -73,6 +76,7 @@ class Middleware extends AbstractMiddleware
             $this->config['period'],
             $this->config['throttle'],
             ($this->config['back']) ?? false,
+            ($this->config['driver']) ?? null
         ];
     }
 }
