@@ -129,6 +129,11 @@ EOF;
         }
     }
 
+    public function supportGivingBack()
+    {
+        return true;
+    }
+
     /**
      * @param $metric
      * @param $period

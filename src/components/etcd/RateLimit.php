@@ -86,10 +86,9 @@ class RateLimit
         return ($passed > 0) && ($passed <= $throttle);
     }
 
-    public function giveBack($metric, $period, $throttle)
+    public function supportGivingBack()
     {
-        //todo
-        return 0;
+        return false;
     }
 
     /**

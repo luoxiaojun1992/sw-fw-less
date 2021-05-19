@@ -43,7 +43,9 @@ class Middleware extends AbstractMiddleware
 
         if (!$rateLimit->pass($metric, $period, $throttle, $remaining)) {
             if ($giveBack) {
-                $remaining = $rateLimit->giveBack($metric, $period, $throttle);
+                if ($rateLimit->supportGivingBack()) {
+                    $remaining = $rateLimit->giveBack($metric, $period, $throttle);
+                }
             }
 
             return Response::output('', Code::STATUS_TOO_MANY_REQUESTS)
@@ -53,7 +55,9 @@ class Middleware extends AbstractMiddleware
         }
 
         if ($giveBack) {
-            $remaining = $rateLimit->giveBack($metric, $period, $throttle);
+            if ($rateLimit->supportGivingBack()) {
+                $remaining = $rateLimit->giveBack($metric, $period, $throttle);
+            }
         }
 
         return $this->next()->header('X-RateLimit-Throttle', $throttle)->header('X-RateLimit-Remaining', $remaining);
