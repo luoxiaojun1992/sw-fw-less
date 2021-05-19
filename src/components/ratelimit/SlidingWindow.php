@@ -199,6 +199,12 @@ EOF;
         }
     }
 
+    public function giveBack($metric, $period, $throttle)
+    {
+        //todo
+        return 0;
+    }
+
     /**
      * @param $metric
      * @return int
