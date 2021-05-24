@@ -21,25 +21,31 @@ class ModelQuery extends Query
 
     /**
      * @param null $pdo
+     * @param bool|null $retry
+     * @param string|null $sql
+     * @param array|null $bindValues
      * @return AbstractMysqlModel|null
      * @throws \Exception
      */
-    public function first($pdo = null)
+    public function first($pdo = null, $retry = null, $sql = null, $bindValues = null)
     {
-        $result = parent::first($pdo);
+        $result = parent::first($pdo, $retry, $sql, $bindValues);
         $modelClass = $this->modelClass;
         return $result ? (new $modelClass)->setAttributes($result)->setNewRecord(false) : null;
     }
 
     /**
      * @param null $pdo
+     * @param bool|null $retry
+     * @param string|null $sql
+     * @param array|null $bindValues
      * @return AbstractMysqlModel[]|array
      * @throws \Exception
      */
-    public function get($pdo = null)
+    public function get($pdo = null, $retry = null, $sql = null, $bindValues = null)
     {
         $models = [];
-        $results = parent::get($pdo);
+        $results = parent::get($pdo, $retry, $sql, $bindValues);
         $modelClass = $this->modelClass;
         foreach ($results as $result) {
             $models[] = (new $modelClass)->setAttributes($result)->setNewRecord(false);
