@@ -128,15 +128,17 @@ class Query
     /**
      * @param MysqlWrapper|\PDO $pdo
      * @param int $mode
+     * @param string|null $sql
+     * @param array|null $bindValues
      * @return array|int|mixed|null
      * @throws \Exception
      */
-    private function _doMysqlExecute($pdo, $mode = self::QUERY_TYPE_FETCH)
+    private function _doMysqlExecute($pdo, $mode = self::QUERY_TYPE_FETCH, $sql = null, $bindValues = null)
     {
         /** @var \PDOStatement $pdoStatement */
-        $pdoStatement = $pdo->prepare($this->setSql($this->auraQuery->getStatement())->getSql());
+        $pdoStatement = $pdo->prepare($this->setSql($sql ?? ($this->auraQuery->getStatement()))->getSql());
         if ($pdoStatement) {
-            $bindValues = $this->auraQuery->getBindValues();
+            $bindValues = $bindValues ?? ($this->auraQuery->getBindValues());
             $this->setBindValues($bindValues);
             foreach ($bindValues as $placeholder => $bindValue) {
                 if (is_string($bindValue)) {
@@ -205,10 +207,14 @@ class Query
      * @param MysqlWrapper|null|\PDO $pdo
      * @param $mode
      * @param bool $retry
+     * @param string|null $sql
+     * @param array|null $bindValues
      * @return mixed
      * @throws \Exception
      */
-    private function mysqlExecute($pdo = null, $mode = self::QUERY_TYPE_FETCH, $retry = false)
+    private function mysqlExecute(
+        $pdo = null, $mode = self::QUERY_TYPE_FETCH, $retry = false, $sql = null, $bindValues = null
+    )
     {
         if ($pdo) {
             $this->needRelease = false;
@@ -218,14 +224,14 @@ class Query
             /** @var MysqlWrapper|\PDO $pdo $pdo */
             $pdo = $pdo ?: MysqlPool::pick($this->connectionName);
 
-            return $this->_doMysqlExecute($pdo, $mode);
+            return $this->_doMysqlExecute($pdo, $mode, $sql, $bindValues);
         } catch (\PDOException $e) {
             if ($pdo) {
                 return $pdo->handleExecuteException(
                     $e,
                     $retry,
-                    function () use ($pdo, $mode) {
-                        return $this->_doMysqlExecute($pdo, $mode);
+                    function () use ($pdo, $mode, $sql, $bindValues) {
+                        return $this->_doMysqlExecute($pdo, $mode, $sql, $bindValues);
                     }
                 );
             }
@@ -252,10 +258,12 @@ class Query
      * @param null $pdo
      * @param int|null $mode
      * @param bool|null $retry
+     * @param $sql
+     * @param array|null $bindValues
      * @return mixed
      * @throws \Exception
      */
-    public function execute($pdo = null, $mode = null, $retry = null)
+    public function execute($pdo = null, $mode = null, $retry = null, $sql = null, $bindValues = null)
     {
         if (!$pdo) {
             if ($this->pdo) {
@@ -268,10 +276,16 @@ class Query
         if (is_null($retry)) {
             $retry = $this->retryWhenError;
         }
+        if (is_null($sql)) {
+            $sql = $this->auraQuery->getStatement();
+        }
+        if (is_null($bindValues)) {
+            $bindValues = $this->auraQuery->getBindValues();
+        }
         $method = $this->db . 'Execute';
         if (method_exists($this, $method)) {
-            return $this->executeWithEvents(function () use ($method, $pdo, $mode, $retry) {
-                return call_user_func_array([$this, $method], [$pdo, $mode, $retry]);
+            return $this->executeWithEvents(function () use ($method, $pdo, $mode, $retry, $sql, $bindValues) {
+                return call_user_func_array([$this, $method], [$pdo, $mode, $retry, $sql, $bindValues]);
             }, $mode);
         }
 
@@ -315,33 +329,48 @@ class Query
 
     /**
      * @param null $pdo
+     * @param null $retry
+     * @param string|null $sql
+     * @param array|null $bindValues
      * @return mixed
      * @throws \Exception
      */
-    public function first($pdo = null)
+    public function first($pdo = null, $retry = null, $sql = null, $bindValues = null)
     {
         $this->limit(1);
-        return $this->execute($pdo, static::QUERY_TYPE_FETCH);
+        return $this->execute(
+            $pdo, static::QUERY_TYPE_FETCH, $retry, $sql, $bindValues
+        );
     }
 
     /**
      * @param null $pdo
+     * @param null $retry
+     * @param string|null $sql
+     * @param array|null $bindValues
      * @return mixed
      * @throws \Exception
      */
-    public function get($pdo = null)
+    public function get($pdo = null, $retry = null, $sql = null, $bindValues = null)
     {
-        return $this->execute($pdo, static::QUERY_TYPE_FETCH_ALL);
+        return $this->execute(
+            $pdo, static::QUERY_TYPE_FETCH_ALL, $retry, $sql, $bindValues
+        );
     }
 
     /**
      * @param null $pdo
+     * @param null $retry
+     * @param string|null $sql
+     * @param array|null $bindValues
      * @return mixed
      * @throws \Exception
      */
-    public function write($pdo = null)
+    public function write($pdo = null, $retry = null, $sql = null, $bindValues = null)
     {
-        return $this->execute($pdo, static::QUERY_TYPE_WRITE);
+        return $this->execute(
+            $pdo, static::QUERY_TYPE_WRITE, $retry, $sql, $bindValues
+        );
     }
 
     public function whereHasInteraction($beginField, $endField, $begin = null, $end = null)
