@@ -250,6 +250,7 @@ class App
         );
         $output->writeln('');
         $output->writeln('<comment>Press CTRL+C to stop the server.</comment>');
+        $output->writeln('');
     }
 
     public function swHttpStart(\Swoole\Http\Server $server)
