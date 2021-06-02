@@ -239,11 +239,22 @@ class App
         return $firstMiddlewareConcrete;
     }
 
-    public function swHttpStart(\Swoole\Http\Server $server)
+    protected function bootstrapInfo(\Swoole\Http\Server $server)
     {
         $output = new ConsoleOutput();
         $output->writeln('<info>Server started.</info>');
-        echo 'Listening ' , $server->ports[0]->host , ':' , $server->ports[0]->port, PHP_EOL;
+        $output->writeln(
+            '<info>Listening ' .
+            $server->ports[0]->host . ':' . ((string)($server->ports[0]->port)) .
+            '</info>'
+        );
+        $output->writeln('');
+        $output->writeln('<comment>Press CTRL+C to stop the server.</comment>');
+    }
+
+    public function swHttpStart(\Swoole\Http\Server $server)
+    {
+        $this->bootstrapInfo($server);
     }
 
     public function swHttpShutdown(\Swoole\Http\Server $server)
