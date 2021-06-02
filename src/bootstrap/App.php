@@ -249,7 +249,7 @@ class App
             '</info>'
         );
         $output->writeln('');
-        $output->writeln('<comment>Press CTRL+C to stop the server.</comment>');
+        $output->writeln('<comment>Press Ctrl+C to stop the server.</comment>');
         $output->writeln('');
     }
 
