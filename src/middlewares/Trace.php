@@ -24,6 +24,24 @@ class Trace extends AbstractMiddleware
         return [$formattedDuration, $durationUnit];
     }
 
+    protected function formatMemUsage($memUsage)
+    {
+        if ($memUsage >= 1000000000) { //GB
+            $formattedMemUsage = round($memUsage / 1000000000, 2);
+            $memUsageUnit = 'GB';
+        } elseif ($memUsage >= 1000000) { //MB
+            $formattedMemUsage = round($memUsage / 1000000, 2);
+            $memUsageUnit = 'MB';
+        } elseif ($memUsage >= 1000) { //KB
+            $formattedMemUsage = round($memUsage / 1000, 2);
+            $memUsageUnit = 'KB';
+        } else {
+            $formattedMemUsage = $memUsage;
+            $memUsageUnit = 'Bytes';
+        }
+        return [$formattedMemUsage, $memUsageUnit];
+    }
+
     protected function requestInfo(
         Request $request, ?Response $response, $requestDuration, $memoryUsage
     )
@@ -43,18 +61,8 @@ class Trace extends AbstractMiddleware
         list($formattedReqDuration, $reqDurationUnit) = $this->formatDuration($requestDuration);
         $requestDurationText = ((string)$formattedReqDuration) . ' ' . $reqDurationUnit;
 
-        if ($memoryUsage >= 1000000000) { //GB
-            $formattedMemUsage = round($memoryUsage / 1000000000, 2);
-            $memUsageText = ((string)$formattedMemUsage) . ' GB';
-        } elseif ($memoryUsage >= 1000000) { //MB
-            $formattedMemUsage = round($memoryUsage / 1000000, 2);
-            $memUsageText = ((string)$formattedMemUsage) . ' MB';
-        } elseif ($memoryUsage >= 1000) { //KB
-            $formattedMemUsage = round($memoryUsage / 1000, 2);
-            $memUsageText = ((string)$formattedMemUsage) . ' KB';
-        } else {
-            $memUsageText = ((string)$memoryUsage) . ' Bytes';
-        }
+        list($formattedMemUsage, $memUsageUnit) = $this->formatMemUsage($memoryUsage);
+        $memUsageText = ((string)$formattedMemUsage) . ' ' . $memUsageUnit;
 
         $output->writeln(
             "<{$traceLevel}>{$httpCode}</{$traceLevel}>" .
@@ -67,11 +75,6 @@ class Trace extends AbstractMiddleware
         );
     }
 
-    /**
-     * @param Request $request
-     * @return Response
-     * @throws \Throwable
-     */
     public function handle(Request $request)
     {
         $beforeReqMem = memory_get_usage();
