@@ -9,6 +9,21 @@ use Symfony\Component\Console\Output\ConsoleOutput;
 
 class Trace extends AbstractMiddleware
 {
+    protected function formatDuration($duration)
+    {
+        if ($duration >= 1) {
+            $formattedDuration = round($duration, 2);
+            $durationUnit = 'sec';
+        } elseif ($duration >= 0.001) {
+            $formattedDuration = round($duration * 1000, 2);
+            $durationUnit = 'ms';
+        } else {
+            $formattedDuration = round($duration * 1000000, 2);
+            $durationUnit = 'us';
+        }
+        return [$formattedDuration, $durationUnit];
+    }
+
     protected function requestInfo(
         Request $request, ?Response $response, $requestDuration, $memoryUsage
     )
@@ -25,16 +40,8 @@ class Trace extends AbstractMiddleware
             $traceLevel = 'error';
         }
 
-        if ($requestDuration >= 1) {
-            $formattedReqDuration = round($requestDuration, 2);
-            $requestDurationText = ((string)$formattedReqDuration) . ' sec';
-        } elseif ($requestDuration >= 0.001) {
-            $formattedReqDuration = round($requestDuration * 1000, 2);
-            $requestDurationText = ((string)$formattedReqDuration) . ' ms';
-        } else {
-            $formattedReqDuration = round($requestDuration * 1000000, 2);
-            $requestDurationText = ((string)$formattedReqDuration) . ' us';
-        }
+        list($formattedReqDuration, $reqDurationUnit) = $this->formatDuration($requestDuration);
+        $requestDurationText = ((string)$formattedReqDuration) . ' ' . $reqDurationUnit;
 
         if ($memoryUsage >= 1000000000) { //GB
             $formattedMemUsage = round($memoryUsage / 1000000000, 2);
@@ -60,6 +67,11 @@ class Trace extends AbstractMiddleware
         );
     }
 
+    /**
+     * @param Request $request
+     * @return Response
+     * @throws \Throwable
+     */
     public function handle(Request $request)
     {
         $beforeReqMem = memory_get_usage();
