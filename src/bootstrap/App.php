@@ -14,6 +14,7 @@ use SwFwLess\facades\RateLimit;
 use SwFwLess\middlewares\Parser;
 use Swoole\Http\Server;
 use Swoole\Server\Task;
+use Symfony\Component\Console\Output\ConsoleOutput;
 
 class App
 {
@@ -240,7 +241,8 @@ class App
 
     public function swHttpStart(\Swoole\Http\Server $server)
     {
-        echo 'Server started.', PHP_EOL;
+        $output = new ConsoleOutput();
+        $output->writeln('<info>Server started.</info>');
         echo 'Listening ' , $server->ports[0]->host , ':' , $server->ports[0]->port, PHP_EOL;
     }
 
