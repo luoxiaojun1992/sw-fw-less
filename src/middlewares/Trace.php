@@ -76,9 +76,9 @@ class Trace extends AbstractMiddleware
             "    " .
             "<info>{$requestMethod} {$uri}" .
             "    " .
-            "{$memUsageText}" .
-            "    " .
             "{$requestDurationText}".
+            "    " .
+            "{$memUsageText}" .
             "    " .
             "PID:{$pid}" .
             "    " .
