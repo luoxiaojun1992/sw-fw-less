@@ -5,6 +5,8 @@ namespace SwFwLess\middlewares;
 use SwFwLess\components\http\Code;
 use SwFwLess\components\http\Request;
 use SwFwLess\components\http\Response;
+use SwFwLess\components\swoole\Server;
+use Swoole\Coroutine;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
 class Trace extends AbstractMiddleware
@@ -64,6 +66,11 @@ class Trace extends AbstractMiddleware
         list($formattedMemUsage, $memUsageUnit) = $this->formatMemUsage($memoryUsage);
         $memUsageText = ((string)$formattedMemUsage) . ' ' . $memUsageUnit;
 
+        $swooleServer = Server::getInstance();
+
+        $pid = $swooleServer->worker_pid;
+        $coroutineId = Coroutine::getCid();
+
         $output->writeln(
             "<{$traceLevel}>{$httpCode}</{$traceLevel}>" .
             "    " .
@@ -71,7 +78,12 @@ class Trace extends AbstractMiddleware
             "    " .
             "{$memUsageText}" .
             "    " .
-            "{$requestDurationText}</info>"
+            "{$requestDurationText}".
+            "    " .
+            "PID:{$pid}" .
+            "    " .
+            "CID:{$coroutineId}" .
+            "</info>"
         );
     }
 
