@@ -4,6 +4,10 @@ namespace SwFwLess\components\i18n;
 
 use Symfony\Component\Translation\Loader\PhpFileLoader;
 
+/**
+ * Class Translator
+ * @package SwFwLess\components\i18n
+ */
 class Translator
 {
     /** @var \Symfony\Component\Translation\Translator */
