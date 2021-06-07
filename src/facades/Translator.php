@@ -6,6 +6,7 @@ namespace SwFwLess\facades;
  * Class Translator
  *
  * @method static string trans($id, array $parameters = array(), $domain = null, $locale = null)
+ * @method static setLocale($locale)
  * @package SwFwLess\facades
  */
 class Translator extends AbstractFacade
