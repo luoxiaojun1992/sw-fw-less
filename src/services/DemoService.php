@@ -21,6 +21,7 @@ use SwFwLess\facades\Log;
 use SwFwLess\facades\Math;
 use SwFwLess\facades\Qiniu;
 use SwFwLess\facades\RedisPool;
+use SwFwLess\facades\Translator;
 use SwFwLess\models\Member;
 use SwFwLess\models\Test;
 use Cake\Validation\Validator;
@@ -240,5 +241,17 @@ class DemoService extends BaseService
     public function ntp()
     {
         return Response::json(['timestamp' => Time::create()->getTimestamp()]);
+    }
+
+    /**
+     * @return Response
+     */
+    public function translate()
+    {
+        return Response::json(
+            [
+                'Hello world' => Translator::trans('Hello world', [], 'app', 'zh_CN')
+            ]
+        );
     }
 }
