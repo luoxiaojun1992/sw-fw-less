@@ -32,6 +32,7 @@
         "ramsey/uuid": "~3",
         "swlib/saber": "^1",
         "symfony/console": "~3.3.0",
+        "symfony/translation": "~4.0.0",
         "symfony/var-dumper": "~3.0",
         "vlucas/phpdotenv": "~2.2"
     },
