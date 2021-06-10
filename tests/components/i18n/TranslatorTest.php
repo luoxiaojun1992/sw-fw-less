@@ -4,6 +4,7 @@ class TranslatorTest extends \PHPUnit\Framework\TestCase
 {
     public function testTransInDefaultEN()
     {
+        \SwFwLess\components\i18n\Translator::clearInstance();
         \SwFwLess\components\i18n\Translator::create(
             __DIR__ . '/../../stubs/components/i18n',
             ['locale' => 'en_US']
@@ -41,6 +42,7 @@ class TranslatorTest extends \PHPUnit\Framework\TestCase
 
     public function testTransInDefaultCN()
     {
+        \SwFwLess\components\i18n\Translator::clearInstance();
         \SwFwLess\components\i18n\Translator::create(
             __DIR__ . '/../../stubs/components/i18n',
             ['locale' => 'zh_CN']
@@ -78,6 +80,7 @@ class TranslatorTest extends \PHPUnit\Framework\TestCase
 
     public function testTransInInternalDefaultLocale()
     {
+        \SwFwLess\components\i18n\Translator::clearInstance();
         \SwFwLess\components\i18n\Translator::create(
             __DIR__ . '/../../stubs/components/i18n',
             []
