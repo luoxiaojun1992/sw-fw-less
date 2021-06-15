@@ -3,7 +3,7 @@
 namespace SwFwLess\components;
 
 use SwFwLess\bootstrap\App;
-use SwFwLess\components\utils\Arr;
+use SwFwLess\components\utils\data\structure\Arr;
 
 class Helper
 {

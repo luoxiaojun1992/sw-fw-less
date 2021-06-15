@@ -1,7 +1,7 @@
 <?php
 
 //You need to check the duplication of these functions.
-//Don't add an new function!!!
+//Don't add any new function!!!
 
 if (!function_exists('config')) {
     /**
@@ -11,7 +11,7 @@ if (!function_exists('config')) {
      * @deprecated
      */
     function config($key, $default = null) {
-        return \SwFwLess\components\Config::get($key, $default);
+        return \SwFwLess\components\functions\config($key, $default);
     }
 }
 
@@ -23,7 +23,7 @@ if (!function_exists('helper')) {
      * @deprecated
      */
     function helper($method, ...$args) {
-        return call_user_func_array([\SwFwLess\components\Helper::class, $method], $args);
+        return \SwFwLess\components\functions\helper($method, ...$args);
     }
 }
 
@@ -36,7 +36,7 @@ if (!function_exists('env')) {
      */
     function env($name, $default = null)
     {
-        return helper(__METHOD__, $name, $default);
+        return \SwFwLess\components\functions\helper(__METHOD__, $name, $default);
     }
 }
 
@@ -49,7 +49,7 @@ if (!function_exists('envInt')) {
      */
     function envInt($name, $default = null)
     {
-        return helper(__METHOD__, $name, $default);
+        return \SwFwLess\components\functions\helper(__METHOD__, $name, $default);
     }
 }
 
@@ -62,7 +62,7 @@ if (!function_exists('envDouble')) {
      */
     function envDouble($name, $default = null)
     {
-        return helper(__METHOD__, $name, $default);
+        return \SwFwLess\components\functions\helper(__METHOD__, $name, $default);
     }
 }
 
@@ -76,7 +76,7 @@ if (!function_exists('envArray')) {
      */
     function envArray($name, $default = null, $separator = ',')
     {
-        return helper(__METHOD__, $name, $default, $separator);
+        return \SwFwLess\components\functions\helper(__METHOD__, $name, $default, $separator);
     }
 }
 
@@ -89,7 +89,7 @@ if (!function_exists('envBool')) {
      */
     function envBool($name, $default = null)
     {
-        return helper(__METHOD__, $name, $default);
+        return \SwFwLess\components\functions\helper(__METHOD__, $name, $default);
     }
 }
 
@@ -100,7 +100,7 @@ if (!function_exists('appVersion')) {
      */
     function appVersion()
     {
-        return helper(__METHOD__);
+        return \SwFwLess\components\functions\helper(__METHOD__);
     }
 }
 
@@ -111,7 +111,7 @@ if (!function_exists('request')) {
      */
     function request()
     {
-        return \SwFwLess\components\http\Request::fetch();
+        return \SwFwLess\components\functions\request();
     }
 }
 
@@ -123,7 +123,7 @@ if (!function_exists('event')) {
      */
     function event($event)
     {
-        return \SwFwLess\facades\Event::dispatch($event);
+        return \SwFwLess\components\functions\event($event);
     }
 }
 
@@ -134,6 +134,6 @@ if (!function_exists('sapi')) {
      */
     function sapi()
     {
-        return helper(__METHOD__);
+        return \SwFwLess\components\functions\helper(__METHOD__);
     }
 }

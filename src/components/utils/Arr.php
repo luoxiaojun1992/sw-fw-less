@@ -11,7 +11,7 @@ class Arr
      */
     public static function safeInArray($needle, $haystack)
     {
-        return in_array($needle, $haystack, true);
+        return \SwFwLess\components\utils\data\structure\Arr::safeInArray($needle, $haystack);
     }
 
     /**
@@ -21,14 +21,7 @@ class Arr
      */
     public static function arrHas($arr, $key)
     {
-        if (!is_array($arr)) {
-            return false;
-        }
-        if (!is_string($key) && !is_int($key)) {
-            return false;
-        }
-
-        return array_key_exists($key, $arr);
+        return \SwFwLess\components\utils\data\structure\Arr::arrHas($arr, $key);
     }
 
     /**
@@ -39,14 +32,7 @@ class Arr
      */
     public static function arrGet($arr, $key, $default = null)
     {
-        if (!is_array($arr)) {
-            return $default;
-        }
-        if (!is_string($key) && !is_int($key)) {
-            return $default;
-        }
-
-        return static::arrHas($arr, $key) ? $arr[$key] : $default;
+        return \SwFwLess\components\utils\data\structure\Arr::arrGet($arr, $key, $default);
     }
 
     /**
@@ -56,14 +42,7 @@ class Arr
      */
     public static function arrSet(&$arr, $key, $value)
     {
-        if (!is_array($arr)) {
-            return;
-        }
-        if (!is_string($key) && !is_int($key)) {
-            return;
-        }
-
-        $arr[$key] = $value;
+        \SwFwLess\components\utils\data\structure\Arr::arrSet($arr, $key, $value);
     }
 
     /**
@@ -72,14 +51,7 @@ class Arr
      */
     public static function arrForget(&$arr, $key)
     {
-        if (!is_array($arr)) {
-            return;
-        }
-        if (!is_string($key) && !is_int($key)) {
-            return;
-        }
-
-        unset($arr[$key]);
+        \SwFwLess\components\utils\data\structure\Arr::arrForget($arr, $key);
     }
 
     /**
@@ -89,39 +61,7 @@ class Arr
      */
     public static function nestedArrHas($arr, $keys)
     {
-        if (!is_array($arr)) {
-            return false;
-        }
-
-        if (is_string($keys)) {
-            if (static::arrHas($arr, $keys)) {
-                return true;
-            }
-
-            $keys = explode('.', $keys);
-        } elseif (is_int($keys)) {
-            $keys = [$keys];
-        } else {
-            if (!is_array($keys)) {
-                return false;
-            }
-        }
-
-        $existed = false;
-
-        $subConfig = $arr;
-
-        foreach ($keys as $key) {
-            if (is_array($subConfig) && array_key_exists($key, $subConfig)) {
-                $subConfig = $subConfig[$key];
-                $existed = true;
-            } else {
-                $existed = false;
-                break;
-            }
-        }
-
-        return $existed;
+        return \SwFwLess\components\utils\data\structure\Arr::nestedArrHas($arr, $keys);
     }
 
     /**
@@ -132,36 +72,7 @@ class Arr
      */
     public static function nestedArrGet($arr, $keys, $default = null)
     {
-        if (!is_array($arr)) {
-            return $default;
-        }
-
-        if (is_string($keys)) {
-            if (static::arrHas($arr, $keys)) {
-                return static::arrGet($arr, $keys, $default);
-            }
-
-            $keys = explode('.', $keys);
-        } elseif (is_int($keys)) {
-            $keys = [$keys];
-        } else {
-            if (!is_array($keys)) {
-                return $default;
-            }
-        }
-
-        $subConfig = $arr;
-
-        foreach ($keys as $key) {
-            if (is_array($subConfig) && array_key_exists($key, $subConfig)) {
-                $subConfig = $subConfig[$key];
-            } else {
-                $subConfig = $default;
-                break;
-            }
-        }
-
-        return $subConfig;
+        return \SwFwLess\components\utils\data\structure\Arr::nestedArrGet($arr, $keys, $default);
     }
 
     /**
@@ -171,40 +82,7 @@ class Arr
      */
     public static function nestedArrSet(&$arr, $keys, $value)
     {
-        if (!is_array($arr)) {
-            return;
-        }
-
-        if (is_string($keys)) {
-            if (static::arrHas($arr, $keys)) {
-                static::arrSet($arr, $keys, $value);
-                return;
-            }
-
-            $keys = explode('.', $keys);
-        } elseif (is_int($keys)) {
-            $keys = [$keys];
-        } else {
-            if (!is_array($keys)) {
-                return;
-            }
-        }
-
-        while (count($keys) > 1) {
-            $key = array_shift($keys);
-
-            if (array_key_exists($key, $arr)) {
-                if (!is_array($arr[$key])) {
-                    return;
-                }
-            } else {
-                $arr[$key] = [];
-            }
-
-            $arr = &$arr[$key];
-        }
-
-        $arr[array_shift($keys)] = $value;
+        \SwFwLess\components\utils\data\structure\Arr::nestedArrSet($arr, $keys, $value);
     }
 
     /**
@@ -213,50 +91,12 @@ class Arr
      */
     public static function nestedArrForget(&$arr, $keys)
     {
-        if (!is_array($arr)) {
-            return;
-        }
-
-        if (is_string($keys)) {
-            if (static::arrHas($arr, $keys)) {
-                static::arrForget($arr, $keys);
-                return;
-            }
-
-            $keys = explode('.', $keys);
-        } elseif (is_int($keys)) {
-            $keys = [$keys];
-        } else {
-            if (!is_array($keys)) {
-                return;
-            }
-        }
-
-        while (count($keys) > 1) {
-            $key = array_shift($keys);
-
-            if (isset($arr[$key]) && is_array($arr[$key])) {
-                $arr = &$arr[$key];
-            } else {
-                return;
-            }
-        }
-
-        unset($arr[array_shift($keys)]);
+        \SwFwLess\components\utils\data\structure\Arr::nestedArrForget($arr, $keys);
     }
 
     public static function arrayColumnUnique($arr, $column, $preserveKey = true)
     {
-        $columnMap = [];
-        foreach ($arr as $key => $val) {
-            if (array_key_exists($val[$column], $columnMap)) {
-                unset($arr[$key]);
-            } else {
-                $columnMap[$val[$column]] = true;
-            }
-        }
-
-        return $preserveKey ? $arr : array_values($arr);
+        return \SwFwLess\components\utils\data\structure\Arr::arrayColumnUnique($arr, $column, $preserveKey);
     }
 
     /**
@@ -265,7 +105,7 @@ class Arr
      */
     public static function intVal($arr)
     {
-        return array_map(function ($item) {return intval($item);}, $arr);
+        return \SwFwLess\components\utils\data\structure\Arr::intVal($arr);
     }
 
     /**
@@ -274,7 +114,7 @@ class Arr
      */
     public static function doubleVal($arr)
     {
-        return array_map(function ($item) {return doubleval($item);}, $arr);
+        return \SwFwLess\components\utils\data\structure\Arr::doubleVal($arr);
     }
 
     /**
@@ -283,7 +123,7 @@ class Arr
      */
     public static function stringVal($arr)
     {
-        return array_map(function ($item) {return (string)$item;}, $arr);
+        return \SwFwLess\components\utils\data\structure\Arr::stringVal($arr);
     }
 
     /**
@@ -294,6 +134,6 @@ class Arr
      */
     public static function mapping($arr, $keyColumn, $column = null)
     {
-        return array_column($arr, $column, $keyColumn);
+        return \SwFwLess\components\utils\data\structure\Arr::mapping($arr, $keyColumn, $column);
     }
 }
