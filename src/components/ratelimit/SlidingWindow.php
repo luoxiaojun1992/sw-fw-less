@@ -88,7 +88,7 @@ class SlidingWindow
      * @return bool
      * @throws \Throwable
      */
-    public function pass($metric, $period, $throttle, $windowTotal = 10, &$remaining = null)
+    public function pass($metric, $period, $throttle, &$remaining = null, $windowTotal = 10)
     {
         /** @var \Redis $redis */
         $redis = $this->redisPool->pick($this->config['connection']);
