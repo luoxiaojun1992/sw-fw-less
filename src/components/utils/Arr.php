@@ -2,6 +2,11 @@
 
 namespace SwFwLess\components\utils;
 
+/**
+ * Class Arr
+ * @deprecated
+ * @package SwFwLess\components\utils
+ */
 class Arr
 {
     /**
