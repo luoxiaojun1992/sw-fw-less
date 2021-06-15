@@ -8,6 +8,11 @@ class MemLimit
 
     private $config = [];
 
+    public static function clearInstance()
+    {
+        static::$instance = null;
+    }
+
     /**
      * @param array|null $config
      * @return static
