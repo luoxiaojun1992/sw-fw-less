@@ -29,6 +29,12 @@ class RatelimitProvider implements WorkerProviderContract
                 'rate_limit.drivers.' . RateLimitFactory::ALGORITHM_MEMORY_USAGE
             )
         );
+
+        SysLoadLimit::create(
+            \SwFwLess\components\functions\config(
+                'rate_limit.drivers.' . RateLimitFactory::ALGORITHM_SYS_LOAD
+            )
+        );
     }
 
     public static function shutdownWorker()

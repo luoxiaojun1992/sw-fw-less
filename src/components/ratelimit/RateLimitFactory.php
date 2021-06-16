@@ -8,6 +8,7 @@ class RateLimitFactory
     const ALGORITHM_ETCD_LEAKY_BUCKET = 'etcd_leaky_bucket';
     const ALGORITHM_SLIDING_WINDOW = 'sliding_window';
     const ALGORITHM_MEMORY_USAGE = 'memory_usage';
+    const ALGORITHM_SYS_LOAD = 'sys_load';
 
     public static $resolvers = [
         self::ALGORITHM_LEAKY_BUCKET => [
@@ -21,6 +22,9 @@ class RateLimitFactory
         ],
         self::ALGORITHM_MEMORY_USAGE => [
             [MemLimit::class, 'create']
+        ],
+        self::ALGORITHM_SYS_LOAD => [
+            [SysLoadLimit::class, 'create']
         ],
     ];
 
