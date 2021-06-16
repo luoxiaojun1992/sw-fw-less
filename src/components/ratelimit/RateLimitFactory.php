@@ -29,6 +29,15 @@ class RateLimitFactory
     ];
 
     /**
+     * @param string $driver
+     * @param callable $resolver
+     */
+    public static function register($driver, $resolver)
+    {
+        static::$resolvers[$driver] = $resolver;
+    }
+
+    /**
      * @param string $algorithm
      * @return RateLimit|SlidingWindow|\SwFwLess\components\etcd\RateLimit
      */
