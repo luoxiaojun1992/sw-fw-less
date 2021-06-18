@@ -11,13 +11,10 @@ class FaultStore
 
     public static function init()
     {
-        $chaosSwitch = \SwFwLess\components\functions\config('chaos.switch', false);
-        if ($chaosSwitch) {
-            if (!(self::$swTable instanceof Table)) {
-                self::$swTable = new Table(1024);
-                self::$swTable->column('fault', Table::TYPE_STRING, 255);
-                self::$swTable->create();
-            }
+        if (!(self::$swTable instanceof Table)) {
+            self::$swTable = new Table(1024);
+            self::$swTable->column('fault', Table::TYPE_STRING, 255);
+            self::$swTable->create();
         }
     }
 
