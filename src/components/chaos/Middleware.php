@@ -104,6 +104,9 @@ class Middleware extends AbstractMiddleware
                 return null;
             case 'kill':
                 exit(1);
+            case 'callable':
+                call_user_func_array($faultData['callable'], $faultData['callable_params']);
+                return null;
             default:
                 return null;
         }
