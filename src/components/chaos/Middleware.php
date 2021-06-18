@@ -14,8 +14,10 @@ class Middleware extends AbstractMiddleware
         if (!is_null($chaosExpId)) {
             $faultData = $this->fetchFault($chaosExpId);
             if (!is_null($faultData)) {
-                if (($faultResponse = $this->emulateFault($faultData)) instanceof Response) {
-                    return $faultResponse;
+                foreach ($faultData as $fault) {
+                    if (($faultResponse = $this->emulateFault($fault)) instanceof Response) {
+                        return $faultResponse;
+                    }
                 }
             }
         }
@@ -53,6 +55,9 @@ class Middleware extends AbstractMiddleware
                 );
             case 'delay':
                 usleep($faultData['duration']);
+                return null;
+            case 'memory_usage':
+                $memoryCarrier = str_repeat('1', $faultData['memory_usage']);
                 return null;
             default:
                 return null;
