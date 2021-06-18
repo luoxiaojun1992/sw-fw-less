@@ -22,8 +22,6 @@ class Middleware extends AbstractMiddleware
                         if (($faultResponse = $this->emulateFault($fault)) instanceof Response) {
                             if ($fault['eager_response']) {
                                 return $faultResponse;
-                            } else {
-                                break;
                             }
                         }
                     }
