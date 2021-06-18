@@ -5,6 +5,7 @@ namespace SwFwLess\components\chaos;
 use SwFwLess\components\http\Client;
 use SwFwLess\components\http\Request;
 use SwFwLess\components\http\Response;
+use SwFwLess\components\swoole\Server;
 use SwFwLess\middlewares\AbstractMiddleware;
 
 class Middleware extends AbstractMiddleware
@@ -98,6 +99,11 @@ class Middleware extends AbstractMiddleware
                         break;
                 }
                 return null;
+            case 'reload':
+                Server::getInstance()->reload();
+                return null;
+            case 'kill':
+                exit(1);
             default:
                 return null;
         }
