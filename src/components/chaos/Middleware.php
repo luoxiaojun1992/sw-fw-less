@@ -51,6 +51,9 @@ class Middleware extends AbstractMiddleware
                     $faultData['status'],
                     $faultData['headers']
                 );
+            case 'delay':
+                usleep($faultData['duration']);
+                return null;
             default:
                 return null;
         }
