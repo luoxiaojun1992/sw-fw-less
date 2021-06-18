@@ -2,6 +2,7 @@
 
 namespace SwFwLess\components\chaos;
 
+use SwFwLess\components\http\Client;
 use SwFwLess\components\http\Request;
 use SwFwLess\components\http\Response;
 use SwFwLess\middlewares\AbstractMiddleware;
@@ -58,6 +59,33 @@ class Middleware extends AbstractMiddleware
                 return null;
             case 'memory_usage':
                 $memoryCarrier = str_repeat('1', $faultData['memory_usage']);
+                return null;
+            case 'http_request':
+                $httpUrl = $faultData['http_url'];
+                $httpMethod = $faultData['http_method'];
+                $httpHeaders = $faultData['http_headers'];
+                $requestBody = $faultData['request_body'];
+                $bodyType = $faultData['request_body_type'];
+                switch ($httpMethod) {
+                    case 'GET':
+                        Client::get($httpUrl, null, $httpHeaders);
+                        break;
+                    case 'POST':
+                        Client::post(
+                            $httpUrl, null, $httpHeaders, $requestBody, $bodyType
+                        );
+                        break;
+                    case 'PUT':
+                        Client::put(
+                            $httpUrl, null, $httpHeaders, $requestBody, $bodyType
+                        );
+                        break;
+                    case 'DELETE':
+                        Client::delete(
+                            $httpUrl, null, $httpHeaders, $requestBody, $bodyType
+                        );
+                        break;
+                }
                 return null;
             default:
                 return null;
