@@ -144,20 +144,23 @@ class App
                         '/log/flush',
                         ['/internal/log/flush', \SwFwLess\services\internals\LogService::class, 'flush']
                     );
-                    $r->addGroup('/chaos', function (\FastRoute\RouteCollector $r) {
-                        $r->addGroup('/fault', function (\FastRoute\RouteCollector $r) {
-                            $r->addRoute(
-                                'POST',
-                                '/{id}',
-                                ['/internal/chaos/fault/{id}', \SwFwLess\services\internals\ChaosService::class, 'injectFault']
-                            );
-                            $r->addRoute(
-                                'GET',
-                                '/{id}',
-                                ['/internal/chaos/fault/{id}', \SwFwLess\services\internals\ChaosService::class, 'fetchFault']
-                            );
+                    $chaosSwitch = functions\config('chaos.switch', false);
+                    if ($chaosSwitch) {
+                        $r->addGroup('/chaos', function (\FastRoute\RouteCollector $r) {
+                            $r->addGroup('/fault', function (\FastRoute\RouteCollector $r) {
+                                $r->addRoute(
+                                    'POST',
+                                    '/{id}',
+                                    ['/internal/chaos/fault/{id}', \SwFwLess\services\internals\ChaosService::class, 'injectFault']
+                                );
+                                $r->addRoute(
+                                    'GET',
+                                    '/{id}',
+                                    ['/internal/chaos/fault/{id}', \SwFwLess\services\internals\ChaosService::class, 'fetchFault']
+                                );
+                            });
                         });
-                    });
+                    }
                 });
             }
         });

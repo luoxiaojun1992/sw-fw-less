@@ -11,13 +11,16 @@ class Middleware extends AbstractMiddleware
 {
     public function handle(Request $request)
     {
-        $chaosExpId = $request->header('x-chaos-exp-id');
-        if (!is_null($chaosExpId)) {
-            $faultData = $this->fetchFault($chaosExpId);
-            if (!is_null($faultData)) {
-                foreach ($faultData as $fault) {
-                    if (($faultResponse = $this->emulateFault($fault)) instanceof Response) {
-                        return $faultResponse;
+        $chaosSwitch = \SwFwLess\components\functions\config('chaos.switch', false);
+        if ($chaosSwitch) {
+            $chaosExpId = $request->header('x-chaos-exp-id');
+            if (!is_null($chaosExpId)) {
+                $faultData = $this->fetchFault($chaosExpId);
+                if (!is_null($faultData)) {
+                    foreach ($faultData as $fault) {
+                        if (($faultResponse = $this->emulateFault($fault)) instanceof Response) {
+                            return $faultResponse;
+                        }
                     }
                 }
             }
