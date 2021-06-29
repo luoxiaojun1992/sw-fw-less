@@ -279,7 +279,45 @@ class DemoService extends BaseService
         $cVectorCmp = Math::vectorCmp($vector1, $vector2, $numbersCount);
         $vectorCmp = [];
         foreach ($cVectorCmp as $elementCmp) {
-            $vectorCmp[] = $elementCmp;
+            if (is_nan($elementCmp)) {
+                $vectorCmp[] = 1;
+            } else {
+                $vectorCmp[] = $elementCmp;
+            }
+        }
+
+        $numbersCount = 4;
+        $vector1 = Math::createCFloatNumbers($numbersCount);
+        $vector2 = Math::createCFloatNumbers($numbersCount);
+        for ($i = 0; $i < $numbersCount; ++$i) {
+            $vector1[$i] = $i + 1;
+            $vector2[$i] = $i + 2;
+        }
+        $cVectorCmp = Math::vectorCmp($vector1, $vector2, $numbersCount);
+        $vectorCmp2 = [];
+        foreach ($cVectorCmp as $elementCmp) {
+            if (is_nan($elementCmp)) {
+                $vectorCmp2[] = 1;
+            } else {
+                $vectorCmp2[] = $elementCmp;
+            }
+        }
+
+        $numbersCount = 4;
+        $vector1 = Math::createCFloatNumbers($numbersCount);
+        $vector2 = Math::createCFloatNumbers($numbersCount);
+        for ($i = 0; $i < $numbersCount; ++$i) {
+            $vector1[$i] = $i + 2;
+            $vector2[$i] = $i + 1;
+        }
+        $cVectorCmp = Math::vectorCmp($vector1, $vector2, $numbersCount);
+        $vectorCmp3 = [];
+        foreach ($cVectorCmp as $elementCmp) {
+            if (is_nan($elementCmp)) {
+                $vectorCmp3[] = 1;
+            } else {
+                $vectorCmp3[] = $elementCmp;
+            }
         }
 
         return Response::json(
@@ -289,6 +327,8 @@ class DemoService extends BaseService
                 'vector_product' => $vectorProduct,
                 'vector_root' => $vectorRoot,
                 'vector_cmp' => $vectorCmp,
+                'vector_cmp2' => $vectorCmp2,
+                'vector_cmp3' => $vectorCmp3,
             ]
         );
     }

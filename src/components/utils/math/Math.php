@@ -212,7 +212,7 @@ class Math
         if ((!Runtime::supportFFI()) || (!$this->ffiPath)) {
             $result = [];
             for ($i = 0; $i < $numbersCount; ++$i) {
-                $result[$i] = $vector1[$i] * $vector2[$i];
+                $result[$i] = $vector1[$i] <=> $vector2[$i];
             }
             return $result;
         }
