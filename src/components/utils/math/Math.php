@@ -53,7 +53,7 @@ class Math
     {
         return \FFI::cdef(
             "double ArraySum(double numbers[], int size);" .
-            "float* vectorAdd(float vector1[], float vector2[], float sum[]);",
+            "float* vectorAdd(float vector1[], float vector2[], int size);",
             $ffiPath
         );
     }

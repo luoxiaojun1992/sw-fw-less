@@ -232,13 +232,14 @@ class DemoService extends BaseService
             $cNumbers[$i - 1] = $i;
         }
 
-        $vector1 = Math::createCFloatNumbers(4);
-        $vector2 = Math::createCFloatNumbers(4);
-        for ($i = 0; $i < 4; ++$i) {
+        $numbersCount = 4;
+        $vector1 = Math::createCFloatNumbers($numbersCount);
+        $vector2 = Math::createCFloatNumbers($numbersCount);
+        for ($i = 0; $i < $numbersCount; ++$i) {
             $vector1[$i] = $i + 1;
             $vector2[$i] = $i + 1;
         }
-        var_dump(Math::vectorAdd($vector1, $vector2));
+        var_dump(Math::vectorAdd($vector1, $vector2, $numbersCount));
 
         return Response::json(
             [
