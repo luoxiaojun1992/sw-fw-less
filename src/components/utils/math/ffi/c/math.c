@@ -92,7 +92,7 @@ void VectorMul(float vector1[], float vector2[], int size, float result[]){
     }
 }
 
-void vectorSqrt(float vector1[], float vector2[], int size, float result[]) {
+void VectorSqrt(float vector1[], int size, float result[]) {
     __m128 mVector1;
     __m128 mRoot;
 
