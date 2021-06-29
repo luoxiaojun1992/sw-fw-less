@@ -10,6 +10,7 @@ namespace SwFwLess\facades;
  * @method static sum($numbers = null, $numbersCount = null, $cNumbers = null)
  * @method static vectorAdd($vector1, $vector2, $numbersCount)
  * @method static vectorMul($vector1, $vector2, $numbersCount)
+ * @method static vectorSqrt($vector1, $numbersCount)
  *
  * @package SwFwLess\facades
  */

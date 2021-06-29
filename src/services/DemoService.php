@@ -258,11 +258,23 @@ class DemoService extends BaseService
             $vectorProduct[] = $elementProduct;
         }
 
+        $numbersCount = 4;
+        $vector1 = Math::createCFloatNumbers($numbersCount);
+        for ($i = 0; $i < $numbersCount; ++$i) {
+            $vector1[$i] = pow($i + 1, 2);
+        }
+        $cVectorRoot = Math::vectorSqrt($vector1, $numbersCount);
+        $vectorRoot = [];
+        foreach ($cVectorRoot as $elementRoot) {
+            $vectorRoot[] = $elementRoot;
+        }
+
         return Response::json(
             [
                 'sum' => Math::sum(null, 100000, $cNumbers),
                 'vector_sum' => $vectorSum,
                 'vector_product' => $vectorProduct,
+                'vector_root' => $vectorRoot,
             ]
         );
     }
