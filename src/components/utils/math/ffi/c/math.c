@@ -38,7 +38,7 @@ double Add(double number1, double number2) {
     return number1 + number2;
 }
 
-float* vectorAdd(float vector1[], float vector2[], float sum[]) {
+float* vectorAdd(float vector1[], float vector2[], int size){
     __m128 mVector1;
     __m128 mVector2;
     __m128 mSum;
@@ -48,6 +48,7 @@ float* vectorAdd(float vector1[], float vector2[], float sum[]) {
 
     mSum = _mm_add_ps(mVector1, mVector2);
 
+    float* sum;
     _mm_storeu_ps(sum, mSum);
 
     return sum;

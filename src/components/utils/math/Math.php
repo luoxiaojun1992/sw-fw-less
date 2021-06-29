@@ -111,12 +111,12 @@ class Math
         return $result;
     }
 
-    public function vectorAdd($vector1, $vector2)
+    public function vectorAdd($vector1, $vector2, $numbersCount)
     {
         if ((!Runtime::supportFFI()) || (!$this->ffiPath)) {
             $result = [];
-            foreach ($vector1 as $i => $number) {
-                $result[$i] = $number + $vector2[$i];
+            for ($i = 0; $i < $numbersCount; ++$i) {
+                $result[$i] = $vector1[$i] + $vector2[$i];
             }
             return $result;
         }
@@ -130,7 +130,7 @@ class Math
             $udf = $this->createUdf($this->ffiPath);
         }
 
-        $result = $udf->vectorAdd($vector1, $vector2);
+        $result = $udf->vectorAdd($vector1, $vector2, $numbersCount);
 
         if (!$newUdf) {
             Scheduler::withoutPreemptive(function () use ($udf) {
