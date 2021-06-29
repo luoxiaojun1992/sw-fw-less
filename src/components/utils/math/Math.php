@@ -54,7 +54,7 @@ class Math
         return \FFI::cdef(
             "double ArraySum(double numbers[], int size);" . PHP_EOL .
             "void VectorAdd(float vector1[], float vector2[], int size, float result[]);" . PHP_EOL .
-            "void VectorMul(float vector1[], float vector2[], int size, float result[])",
+            "void VectorMul(float vector1[], float vector2[], int size, float result[]);",
             $ffiPath
         );
     }
