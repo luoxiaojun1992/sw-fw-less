@@ -245,10 +245,24 @@ class DemoService extends BaseService
             $vectorSum[] = $elementSum;
         }
 
+        $numbersCount = 4;
+        $vector1 = Math::createCFloatNumbers($numbersCount);
+        $vector2 = Math::createCFloatNumbers($numbersCount);
+        for ($i = 0; $i < $numbersCount; ++$i) {
+            $vector1[$i] = $i + 1;
+            $vector2[$i] = $i + 1;
+        }
+        $cVectorProduct = Math::vectorMul($vector1, $vector2, $numbersCount);
+        $vectorProduct = [];
+        foreach ($cVectorProduct as $elementProduct) {
+            $vectorProduct[] = $elementProduct;
+        }
+
         return Response::json(
             [
                 'sum' => Math::sum(null, 100000, $cNumbers),
                 'vector_sum' => $vectorSum,
+                'vector_product' => $vectorProduct,
             ]
         );
     }

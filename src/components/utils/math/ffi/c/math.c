@@ -64,3 +64,30 @@ void VectorAdd(float vector1[], float vector2[], int size, float result[]){
         result[i] = sum[i];
     }
 }
+
+void VectorMul(float vector1[], float vector2[], int size, float result[]){
+    __m128 mVector1;
+    __m128 mVector2;
+    __m128 mProduct;
+
+    float op1[size];
+    float op2[size];
+    float product[size];
+
+    int i = 0;
+    for (i = 0; i < size; ++i) {
+        op1[i] = vector1[i];
+        op2[i] = vector2[i];
+    }
+
+    mVector1 = _mm_loadu_ps(op1);
+    mVector2 = _mm_loadu_ps(op2);
+
+    mProduct = _mm_mul_ps(mVector1, mVector2);
+
+    _mm_storeu_ps(product, mProduct);
+
+    for (i = 0; i < size; ++i) {
+        result[i] = product[i];
+    }
+}
