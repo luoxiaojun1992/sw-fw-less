@@ -55,7 +55,8 @@ class Math
             "double ArraySum(double numbers[], int size);" . PHP_EOL .
             "void VectorAdd(float vector1[], float vector2[], int size, float result[]);" . PHP_EOL .
             "void VectorMul(float vector1[], float vector2[], int size, float result[]);" . PHP_EOL .
-            "void VectorSqrt(float vector1[], int size, float result[]);",
+            "void VectorSqrt(float vector1[], int size, float result[]);" . PHP_EOL .
+            "void VectorCmp(float vector1[], float vector2[], int size, float result[]);",
             $ffiPath
         );
     }
@@ -196,6 +197,37 @@ class Math
 
         $result = $this->createCFloatNumbers($numbersCount);
         $udf->VectorSqrt($vector1, $numbersCount, $result);
+
+        if (!$newUdf) {
+            Scheduler::withoutPreemptive(function () use ($udf) {
+                array_push($this->udfPool, $udf);
+            });
+        }
+
+        return $result;
+    }
+
+    public function vectorCmp($vector1, $vector2, $numbersCount)
+    {
+        if ((!Runtime::supportFFI()) || (!$this->ffiPath)) {
+            $result = [];
+            for ($i = 0; $i < $numbersCount; ++$i) {
+                $result[$i] = $vector1[$i] * $vector2[$i];
+            }
+            return $result;
+        }
+
+        $newUdf = false;
+        $udf = Scheduler::withoutPreemptive(function () {
+            return array_pop($this->udfPool);
+        });
+        if (!$udf) {
+            $newUdf = true;
+            $udf = $this->createUdf($this->ffiPath);
+        }
+
+        $result = $this->createCFloatNumbers($numbersCount);
+        $udf->VectorCmp($vector1, $vector2, $numbersCount, $result);
 
         if (!$newUdf) {
             Scheduler::withoutPreemptive(function () use ($udf) {

@@ -114,3 +114,30 @@ void VectorSqrt(float vector1[], int size, float result[]) {
         result[i] = root[i];
     }
 }
+
+void VectorCmp(float vector1[], float vector2[], int size, float result[]){
+    __m128 mVector1;
+    __m128 mVector2;
+    __m128 mRes;
+
+    float op1[size];
+    float op2[size];
+    float res[size];
+
+    int i = 0;
+    for (i = 0; i < size; ++i) {
+        op1[i] = vector1[i];
+        op2[i] = vector2[i];
+    }
+
+    mVector1 = _mm_loadu_ps(op1);
+    mVector2 = _mm_loadu_ps(op2);
+
+    mRes = _mm_cmpge_ps(mVector1, mVector2);
+
+    _mm_storeu_ps(res, mRes);
+
+    for (i = 0; i < size; ++i) {
+        result[i] = res[i];
+    }
+}

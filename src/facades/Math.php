@@ -11,6 +11,7 @@ namespace SwFwLess\facades;
  * @method static vectorAdd($vector1, $vector2, $numbersCount)
  * @method static vectorMul($vector1, $vector2, $numbersCount)
  * @method static vectorSqrt($vector1, $numbersCount)
+ * @method static vectorCmp($vector1, $vector2, $numbersCount)
  *
  * @package SwFwLess\facades
  */
