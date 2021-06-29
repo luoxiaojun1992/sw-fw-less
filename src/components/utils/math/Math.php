@@ -52,8 +52,8 @@ class Math
     protected function createUdf($ffiPath)
     {
         return \FFI::cdef(
-            "double ArraySum(double numbers[], int size);" .
-            "float* vectorAdd(float vector1[], float vector2[], int size);",
+            "double ArraySum(double numbers[], int size);" . PHP_EOL .
+            "float* VectorAdd(float vector1[], float vector2[], int size, float result[]);",
             $ffiPath
         );
     }
@@ -130,7 +130,8 @@ class Math
             $udf = $this->createUdf($this->ffiPath);
         }
 
-        $result = $udf->vectorAdd($vector1, $vector2, $numbersCount);
+        $result = $this->createCFloatNumbers($numbersCount);
+        $udf->VectorAdd($vector1, $vector2, $numbersCount, $result);
 
         if (!$newUdf) {
             Scheduler::withoutPreemptive(function () use ($udf) {

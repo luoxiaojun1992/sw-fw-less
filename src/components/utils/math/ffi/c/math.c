@@ -38,18 +38,29 @@ double Add(double number1, double number2) {
     return number1 + number2;
 }
 
-float* vectorAdd(float vector1[], float vector2[], int size){
+void VectorAdd(float vector1[], float vector2[], int size, float result[]){
     __m128 mVector1;
     __m128 mVector2;
     __m128 mSum;
 
-    mVector1 = _mm_loadu_ps(vector1);
-    mVector2 = _mm_loadu_ps(vector2);
+    float op1[size];
+    float op2[size];
+    float sum[size];
+
+    int i = 0;
+    for (i = 0; i < size; ++i) {
+        op1[i] = vector1[i];
+        op2[i] = vector2[i];
+    }
+
+    mVector1 = _mm_loadu_ps(op1);
+    mVector2 = _mm_loadu_ps(op2);
 
     mSum = _mm_add_ps(mVector1, mVector2);
 
-    float* sum;
     _mm_storeu_ps(sum, mSum);
 
-    return sum;
+    for (i = 0; i < size; ++i) {
+        result[i] = sum[i];
+    }
 }

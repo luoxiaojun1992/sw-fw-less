@@ -239,11 +239,16 @@ class DemoService extends BaseService
             $vector1[$i] = $i + 1;
             $vector2[$i] = $i + 1;
         }
-        var_dump(Math::vectorAdd($vector1, $vector2, $numbersCount));
+        $cVectorSum = Math::vectorAdd($vector1, $vector2, $numbersCount);
+        $vectorSum = [];
+        foreach ($cVectorSum as $elementSum) {
+            $vectorSum[] = $elementSum;
+        }
 
         return Response::json(
             [
-                'sum' => Math::sum(null, 100000, $cNumbers)
+                'sum' => Math::sum(null, 100000, $cNumbers),
+                'vector_sum' => $vectorSum,
             ]
         );
     }
