@@ -51,12 +51,21 @@ class Math
 
     protected function createUdf($ffiPath)
     {
-        return \FFI::cdef("double ArraySum(double numbers[], int size);", $ffiPath);
+        return \FFI::cdef(
+            "double ArraySum(double numbers[], int size);" .
+            "float* vectorAdd(float vector1[], float vector2[], float sum[]);",
+            $ffiPath
+        );
     }
 
     public function createCNumbers($count)
     {
         return \FFI::new('double['.((string)$count).']');
+    }
+
+    public function createCFloatNumbers($count)
+    {
+        return \FFI::new('float['.((string)$count).']');
     }
 
     public function sum($numbers = null, $numbersCount = null, $cNumbers = null)
@@ -92,6 +101,36 @@ class Math
         }
 
         $result = $udf->ArraySum($cNumbers, $numbersCount);
+
+        if (!$newUdf) {
+            Scheduler::withoutPreemptive(function () use ($udf) {
+                array_push($this->udfPool, $udf);
+            });
+        }
+
+        return $result;
+    }
+
+    public function vectorAdd($vector1, $vector2)
+    {
+        if ((!Runtime::supportFFI()) || (!$this->ffiPath)) {
+            $result = [];
+            foreach ($vector1 as $i => $number) {
+                $result[$i] = $number + $vector2[$i];
+            }
+            return $result;
+        }
+
+        $newUdf = false;
+        $udf = Scheduler::withoutPreemptive(function () {
+            return array_pop($this->udfPool);
+        });
+        if (!$udf) {
+            $newUdf = true;
+            $udf = $this->createUdf($this->ffiPath);
+        }
+
+        $result = $udf->vectorAdd($vector1, $vector2);
 
         if (!$newUdf) {
             Scheduler::withoutPreemptive(function () use ($udf) {

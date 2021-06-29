@@ -6,7 +6,9 @@ namespace SwFwLess\facades;
  * Class Math
  *
  * @method static createCNumbers($count)
+ * @method static createCFloatNumbers($count)
  * @method static sum($numbers = null, $numbersCount = null, $cNumbers = null)
+ * @method static vectorAdd($vector1, $vector2)
  *
  * @package SwFwLess\facades
  */

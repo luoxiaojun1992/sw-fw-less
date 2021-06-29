@@ -231,7 +231,20 @@ class DemoService extends BaseService
         for ($i = 1; $i <= 100000; ++$i) {
             $cNumbers[$i - 1] = $i;
         }
-        return Response::json(['sum' => Math::sum(null, 100000, $cNumbers)]);
+
+        $vector1 = Math::createCFloatNumbers(4);
+        $vector2 = Math::createCFloatNumbers(4);
+        for ($i = 0; $i < 4; ++$i) {
+            $vector1[$i] = $i + 1;
+            $vector2[$i] = $i + 1;
+        }
+        var_dump(Math::vectorAdd($vector1, $vector2));
+
+        return Response::json(
+            [
+                'sum' => Math::sum(null, 100000, $cNumbers)
+            ]
+        );
     }
 
     /**
