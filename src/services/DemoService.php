@@ -357,6 +357,17 @@ class DemoService extends BaseService
             $vectorRcp[] = $elementRcp;
         }
 
+        $numbersCount = 4;
+        $vector1 = Math::createCIntNumbers($numbersCount);
+        for ($i = 0; $i < $numbersCount; ++$i) {
+            $vector1[$i] = -1 * ($i + 1);
+        }
+        $cVectorAbs = Math::vectorAbs($vector1, $numbersCount);
+        $vectorAbs = [];
+        foreach ($cVectorAbs as $elementAbs) {
+            $vectorAbs[] = $elementAbs;
+        }
+
         return Response::json(
             [
                 'sum' => Math::sum(null, 100000, $cNumbers),
@@ -369,6 +380,7 @@ class DemoService extends BaseService
                 'vector_cmp2' => $vectorCmp2,
                 'vector_cmp3' => $vectorCmp3,
                 'vector_rcp' => $vectorRcp,
+                'vector_abs' => $vectorAbs,
             ]
         );
     }

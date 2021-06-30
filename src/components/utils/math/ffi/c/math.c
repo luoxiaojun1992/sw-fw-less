@@ -218,3 +218,26 @@ void VectorRcp(float vector1[], int size, float result[]) {
         result[i] = rcp[i];
     }
 }
+
+void VectorAbs(int vector1[], int size, int result[]) {
+    __m128i mVector1;
+    __m128i mAbs;
+
+    int op1[size];
+    int absRes[size];
+
+    int i = 0;
+    for (i = 0; i < size; ++i) {
+        op1[i] = vector1[i];
+    }
+
+    mVector1 = _mm_loadu_si128((__m128i *)op1);
+
+    mAbs = _mm_abs_epi32(mVector1);
+
+    _mm_storeu_si128((__m128i *)absRes, mAbs);
+
+    for (i = 0; i < size; ++i) {
+        result[i] = absRes[i];
+    }
+}

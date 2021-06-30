@@ -15,6 +15,7 @@ namespace SwFwLess\facades;
  * @method static vectorRcp($vector1, $numbersCount)
  * @method static vectorDiv($vector1, $vector2, $numbersCount)
  * @method static vectorSub($vector1, $vector2, $numbersCount)
+ * @method static vectorAbs($vector1, $numbersCount)
  *
  * @package SwFwLess\facades
  */
