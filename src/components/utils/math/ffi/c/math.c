@@ -141,3 +141,26 @@ void VectorCmp(float vector1[], float vector2[], int size, float result[]){
         result[i] = res[i];
     }
 }
+
+void VectorRcp(float vector1[], int size, float result[]) {
+    __m128 mVector1;
+    __m128 mRoot;
+
+    float op1[size];
+    float root[size];
+
+    int i = 0;
+    for (i = 0; i < size; ++i) {
+        op1[i] = vector1[i];
+    }
+
+    mVector1 = _mm_loadu_ps(op1);
+
+    mRoot = _mm_rcp_ps(mVector1);
+
+    _mm_storeu_ps(root, mRoot);
+
+    for (i = 0; i < size; ++i) {
+        result[i] = root[i];
+    }
+}
