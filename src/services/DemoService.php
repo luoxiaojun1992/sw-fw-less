@@ -260,6 +260,19 @@ class DemoService extends BaseService
 
         $numbersCount = 4;
         $vector1 = Math::createCFloatNumbers($numbersCount);
+        $vector2 = Math::createCFloatNumbers($numbersCount);
+        for ($i = 0; $i < $numbersCount; ++$i) {
+            $vector1[$i] = $i + 1;
+            $vector2[$i] = $i + 1;
+        }
+        $cVectorDiv = Math::vectorDiv($vector1, $vector2, $numbersCount);
+        $vectorDiv = [];
+        foreach ($cVectorDiv as $elementDiv) {
+            $vectorDiv[] = $elementDiv;
+        }
+
+        $numbersCount = 4;
+        $vector1 = Math::createCFloatNumbers($numbersCount);
         for ($i = 0; $i < $numbersCount; ++$i) {
             $vector1[$i] = pow($i + 1, 2);
         }
@@ -336,6 +349,7 @@ class DemoService extends BaseService
                 'sum' => Math::sum(null, 100000, $cNumbers),
                 'vector_sum' => $vectorSum,
                 'vector_product' => $vectorProduct,
+                'vector_div' => $vectorDiv,
                 'vector_root' => $vectorRoot,
                 'vector_cmp' => $vectorCmp,
                 'vector_cmp2' => $vectorCmp2,

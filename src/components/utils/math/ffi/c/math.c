@@ -92,6 +92,33 @@ void VectorMul(float vector1[], float vector2[], int size, float result[]){
     }
 }
 
+void VectorDiv(float vector1[], float vector2[], int size, float result[]){
+    __m128 mVector1;
+    __m128 mVector2;
+    __m128 mDiv;
+
+    float op1[size];
+    float op2[size];
+    float div[size];
+
+    int i = 0;
+    for (i = 0; i < size; ++i) {
+        op1[i] = vector1[i];
+        op2[i] = vector2[i];
+    }
+
+    mVector1 = _mm_loadu_ps(op1);
+    mVector2 = _mm_loadu_ps(op2);
+
+    mDiv = _mm_div_ps(mVector1, mVector2);
+
+    _mm_storeu_ps(div, mDiv);
+
+    for (i = 0; i < size; ++i) {
+        result[i] = div[i];
+    }
+}
+
 void VectorSqrt(float vector1[], int size, float result[]) {
     __m128 mVector1;
     __m128 mRoot;
@@ -144,10 +171,10 @@ void VectorCmp(float vector1[], float vector2[], int size, float result[]){
 
 void VectorRcp(float vector1[], int size, float result[]) {
     __m128 mVector1;
-    __m128 mRoot;
+    __m128 mRcp;
 
     float op1[size];
-    float root[size];
+    float rcp[size];
 
     int i = 0;
     for (i = 0; i < size; ++i) {
@@ -156,11 +183,11 @@ void VectorRcp(float vector1[], int size, float result[]) {
 
     mVector1 = _mm_loadu_ps(op1);
 
-    mRoot = _mm_rcp_ps(mVector1);
+    mRcp = _mm_rcp_ps(mVector1);
 
-    _mm_storeu_ps(root, mRoot);
+    _mm_storeu_ps(rcp, mRcp);
 
     for (i = 0; i < size; ++i) {
-        result[i] = root[i];
+        result[i] = rcp[i];
     }
 }
