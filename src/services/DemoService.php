@@ -252,6 +252,19 @@ class DemoService extends BaseService
             $vector1[$i] = $i + 1;
             $vector2[$i] = $i + 1;
         }
+        $cVectorDiff = Math::vectorSub($vector1, $vector2, $numbersCount);
+        $vectorDiff = [];
+        foreach ($cVectorDiff as $elementDiff) {
+            $vectorDiff[] = $elementDiff;
+        }
+
+        $numbersCount = 4;
+        $vector1 = Math::createCFloatNumbers($numbersCount);
+        $vector2 = Math::createCFloatNumbers($numbersCount);
+        for ($i = 0; $i < $numbersCount; ++$i) {
+            $vector1[$i] = $i + 1;
+            $vector2[$i] = $i + 1;
+        }
         $cVectorProduct = Math::vectorMul($vector1, $vector2, $numbersCount);
         $vectorProduct = [];
         foreach ($cVectorProduct as $elementProduct) {
@@ -348,6 +361,7 @@ class DemoService extends BaseService
             [
                 'sum' => Math::sum(null, 100000, $cNumbers),
                 'vector_sum' => $vectorSum,
+                'vector_diff' => $vectorDiff,
                 'vector_product' => $vectorProduct,
                 'vector_div' => $vectorDiv,
                 'vector_root' => $vectorRoot,

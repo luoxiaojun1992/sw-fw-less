@@ -58,7 +58,8 @@ class Math
             "void VectorSqrt(float vector1[], int size, float result[]);" . PHP_EOL .
             "void VectorCmp(float vector1[], float vector2[], int size, float result[]);" . PHP_EOL .
             "void VectorRcp(float vector1[], int size, float result[]);" . PHP_EOL .
-            "void VectorDiv(float vector1[], float vector2[], int size, float result[]);",
+            "void VectorDiv(float vector1[], float vector2[], int size, float result[]);" . PHP_EOL .
+            "void VectorSub(float vector1[], float vector2[], int size, float result[]);",
             $ffiPath
         );
     }
@@ -121,7 +122,7 @@ class Math
         if ((!Runtime::supportFFI()) || (!$this->ffiPath)) {
             $result = [];
             for ($i = 0; $i < $numbersCount; ++$i) {
-                $result[$i] = $vector1[$i] + $vector2[$i];
+                $result[$i] = ($vector1[$i] + $vector2[$i]);
             }
             return $result;
         }
@@ -137,6 +138,37 @@ class Math
 
         $result = $this->createCFloatNumbers($numbersCount);
         $udf->VectorAdd($vector1, $vector2, $numbersCount, $result);
+
+        if (!$newUdf) {
+            Scheduler::withoutPreemptive(function () use ($udf) {
+                array_push($this->udfPool, $udf);
+            });
+        }
+
+        return $result;
+    }
+
+    public function vectorSub($vector1, $vector2, $numbersCount)
+    {
+        if ((!Runtime::supportFFI()) || (!$this->ffiPath)) {
+            $result = [];
+            for ($i = 0; $i < $numbersCount; ++$i) {
+                $result[$i] = ($vector1[$i] - $vector2[$i]);
+            }
+            return $result;
+        }
+
+        $newUdf = false;
+        $udf = Scheduler::withoutPreemptive(function () {
+            return array_pop($this->udfPool);
+        });
+        if (!$udf) {
+            $newUdf = true;
+            $udf = $this->createUdf($this->ffiPath);
+        }
+
+        $result = $this->createCFloatNumbers($numbersCount);
+        $udf->VectorSub($vector1, $vector2, $numbersCount, $result);
 
         if (!$newUdf) {
             Scheduler::withoutPreemptive(function () use ($udf) {
