@@ -9,11 +9,8 @@ use SwFwLess\components\utils\Runtime;
 class Math
 {
     protected $config = [];
-    protected $udfPool = [];
     protected $ffiPath;
-
-    /** @var static */
-    private static $instance;
+    protected $udf;
 
     /**
      * @param array $config
@@ -21,11 +18,7 @@ class Math
      */
     public static function create($config = [])
     {
-        if (self::$instance instanceof self) {
-            return self::$instance;
-        }
-
-        return self::$instance = new self($config);
+        return new self($config);
     }
 
     public function __construct($config = [])
@@ -42,10 +35,7 @@ class Math
         }
 
         if ($this->ffiPath) {
-            $poolSize = $this->config['pool_size'] ?? 10;
-            for ($i = 0; $i < $poolSize; ++$i) {
-                $this->udfPool[] = $this->createUdf($this->ffiPath);
-            }
+            $this->udf = $this->createUdf($this->ffiPath);
         }
     }
 
@@ -98,15 +88,6 @@ class Math
             return array_sum($numbers);
         }
 
-        $newUdf = false;
-        $udf = Scheduler::withoutPreemptive(function () {
-            return array_pop($this->udfPool);
-        });
-        if (!$udf) {
-            $newUdf = true;
-            $udf = $this->createUdf($this->ffiPath);
-        }
-
         if (is_null($cNumbers)) {
             $cNumbers = static::createCNumbers($numbersCount);
             for ($i = 0; $i < $numbersCount; ++$i) {
@@ -114,15 +95,7 @@ class Math
             }
         }
 
-        $result = $udf->ArraySum($cNumbers, $numbersCount);
-
-        if (!$newUdf) {
-            Scheduler::withoutPreemptive(function () use ($udf) {
-                array_push($this->udfPool, $udf);
-            });
-        }
-
-        return $result;
+        return $this->udf->ArraySum($cNumbers, $numbersCount);
     }
 
     public function vectorAdd($vector1, $vector2, $numbersCount)
@@ -135,23 +108,8 @@ class Math
             return $result;
         }
 
-        $newUdf = false;
-        $udf = Scheduler::withoutPreemptive(function () {
-            return array_pop($this->udfPool);
-        });
-        if (!$udf) {
-            $newUdf = true;
-            $udf = $this->createUdf($this->ffiPath);
-        }
-
         $result = $this->createCFloatNumbers($numbersCount);
-        $udf->VectorAdd($vector1, $vector2, $numbersCount, $result);
-
-        if (!$newUdf) {
-            Scheduler::withoutPreemptive(function () use ($udf) {
-                array_push($this->udfPool, $udf);
-            });
-        }
+        $this->udf->VectorAdd($vector1, $vector2, $numbersCount, $result);
 
         return $result;
     }
@@ -166,23 +124,8 @@ class Math
             return $result;
         }
 
-        $newUdf = false;
-        $udf = Scheduler::withoutPreemptive(function () {
-            return array_pop($this->udfPool);
-        });
-        if (!$udf) {
-            $newUdf = true;
-            $udf = $this->createUdf($this->ffiPath);
-        }
-
         $result = $this->createCFloatNumbers($numbersCount);
-        $udf->VectorSub($vector1, $vector2, $numbersCount, $result);
-
-        if (!$newUdf) {
-            Scheduler::withoutPreemptive(function () use ($udf) {
-                array_push($this->udfPool, $udf);
-            });
-        }
+        $this->udf->VectorSub($vector1, $vector2, $numbersCount, $result);
 
         return $result;
     }
@@ -197,23 +140,8 @@ class Math
             return $result;
         }
 
-        $newUdf = false;
-        $udf = Scheduler::withoutPreemptive(function () {
-            return array_pop($this->udfPool);
-        });
-        if (!$udf) {
-            $newUdf = true;
-            $udf = $this->createUdf($this->ffiPath);
-        }
-
         $result = $this->createCFloatNumbers($numbersCount);
-        $udf->VectorMul($vector1, $vector2, $numbersCount, $result);
-
-        if (!$newUdf) {
-            Scheduler::withoutPreemptive(function () use ($udf) {
-                array_push($this->udfPool, $udf);
-            });
-        }
+        $this->udf->VectorMul($vector1, $vector2, $numbersCount, $result);
 
         return $result;
     }
@@ -228,23 +156,8 @@ class Math
             return $result;
         }
 
-        $newUdf = false;
-        $udf = Scheduler::withoutPreemptive(function () {
-            return array_pop($this->udfPool);
-        });
-        if (!$udf) {
-            $newUdf = true;
-            $udf = $this->createUdf($this->ffiPath);
-        }
-
         $result = $this->createCFloatNumbers($numbersCount);
-        $udf->VectorDiv($vector1, $vector2, $numbersCount, $result);
-
-        if (!$newUdf) {
-            Scheduler::withoutPreemptive(function () use ($udf) {
-                array_push($this->udfPool, $udf);
-            });
-        }
+        $this->udf->VectorDiv($vector1, $vector2, $numbersCount, $result);
 
         return $result;
     }
@@ -259,23 +172,8 @@ class Math
             return $result;
         }
 
-        $newUdf = false;
-        $udf = Scheduler::withoutPreemptive(function () {
-            return array_pop($this->udfPool);
-        });
-        if (!$udf) {
-            $newUdf = true;
-            $udf = $this->createUdf($this->ffiPath);
-        }
-
         $result = $this->createCFloatNumbers($numbersCount);
-        $udf->VectorSqrt($vector1, $numbersCount, $result);
-
-        if (!$newUdf) {
-            Scheduler::withoutPreemptive(function () use ($udf) {
-                array_push($this->udfPool, $udf);
-            });
-        }
+        $this->udf->VectorSqrt($vector1, $numbersCount, $result);
 
         return $result;
     }
@@ -290,23 +188,8 @@ class Math
             return $result;
         }
 
-        $newUdf = false;
-        $udf = Scheduler::withoutPreemptive(function () {
-            return array_pop($this->udfPool);
-        });
-        if (!$udf) {
-            $newUdf = true;
-            $udf = $this->createUdf($this->ffiPath);
-        }
-
         $result = $this->createCFloatNumbers($numbersCount);
-        $udf->VectorCmp($vector1, $vector2, $numbersCount, $result);
-
-        if (!$newUdf) {
-            Scheduler::withoutPreemptive(function () use ($udf) {
-                array_push($this->udfPool, $udf);
-            });
-        }
+        $this->udf->VectorCmp($vector1, $vector2, $numbersCount, $result);
 
         return $result;
     }
@@ -321,23 +204,8 @@ class Math
             return $result;
         }
 
-        $newUdf = false;
-        $udf = Scheduler::withoutPreemptive(function () {
-            return array_pop($this->udfPool);
-        });
-        if (!$udf) {
-            $newUdf = true;
-            $udf = $this->createUdf($this->ffiPath);
-        }
-
         $result = $this->createCFloatNumbers($numbersCount);
-        $udf->VectorRcp($vector1, $numbersCount, $result);
-
-        if (!$newUdf) {
-            Scheduler::withoutPreemptive(function () use ($udf) {
-                array_push($this->udfPool, $udf);
-            });
-        }
+        $this->udf->VectorRcp($vector1, $numbersCount, $result);
 
         return $result;
     }
@@ -352,23 +220,8 @@ class Math
             return $result;
         }
 
-        $newUdf = false;
-        $udf = Scheduler::withoutPreemptive(function () {
-            return array_pop($this->udfPool);
-        });
-        if (!$udf) {
-            $newUdf = true;
-            $udf = $this->createUdf($this->ffiPath);
-        }
-
         $result = $this->createCIntNumbers($numbersCount);
-        $udf->VectorAbs($vector1, $numbersCount, $result);
-
-        if (!$newUdf) {
-            Scheduler::withoutPreemptive(function () use ($udf) {
-                array_push($this->udfPool, $udf);
-            });
-        }
+        $this->udf->VectorAbs($vector1, $numbersCount, $result);
 
         return $result;
     }
@@ -383,23 +236,8 @@ class Math
             return $result;
         }
 
-        $newUdf = false;
-        $udf = Scheduler::withoutPreemptive(function () {
-            return array_pop($this->udfPool);
-        });
-        if (!$udf) {
-            $newUdf = true;
-            $udf = $this->createUdf($this->ffiPath);
-        }
-
         $result = $this->createCFloatNumbers($numbersCount);
-        $udf->VectorCeil($vector1, $numbersCount, $result);
-
-        if (!$newUdf) {
-            Scheduler::withoutPreemptive(function () use ($udf) {
-                array_push($this->udfPool, $udf);
-            });
-        }
+        $this->udf->VectorCeil($vector1, $numbersCount, $result);
 
         return $result;
     }
@@ -414,23 +252,8 @@ class Math
             return $result;
         }
 
-        $newUdf = false;
-        $udf = Scheduler::withoutPreemptive(function () {
-            return array_pop($this->udfPool);
-        });
-        if (!$udf) {
-            $newUdf = true;
-            $udf = $this->createUdf($this->ffiPath);
-        }
-
         $result = $this->createCFloatNumbers($numbersCount);
-        $udf->VectorFloor($vector1, $numbersCount, $result);
-
-        if (!$newUdf) {
-            Scheduler::withoutPreemptive(function () use ($udf) {
-                array_push($this->udfPool, $udf);
-            });
-        }
+        $this->udf->VectorFloor($vector1, $numbersCount, $result);
 
         return $result;
     }

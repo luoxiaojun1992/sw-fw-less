@@ -29,6 +29,8 @@ class Math extends AbstractFacade
      */
     protected static function getAccessor()
     {
-        return \SwFwLess\components\utils\math\Math::create();
+        return \SwFwLess\components\utils\math\Math::create(
+            \SwFwLess\components\functions\config('util.math')
+        );
     }
 }
