@@ -1,7 +1,5 @@
 <?php
 
-use Mockery as M;
-
 class MathTest extends \PHPUnit\Framework\TestCase
 {
     public function testSum()
