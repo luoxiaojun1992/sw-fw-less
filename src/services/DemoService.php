@@ -368,6 +368,17 @@ class DemoService extends BaseService
             $vectorAbs[] = $elementAbs;
         }
 
+        $numbersCount = 4;
+        $vector1 = Math::createCFloatNumbers($numbersCount);
+        for ($i = 0; $i < $numbersCount; ++$i) {
+            $vector1[$i] = ($i + 1 + 0.3);
+        }
+        $cVectorCeil = Math::vectorCeil($vector1, $numbersCount);
+        $vectorCeil = [];
+        foreach ($cVectorCeil as $elementCeil) {
+            $vectorCeil[] = $elementCeil;
+        }
+
         return Response::json(
             [
                 'sum' => Math::sum(null, 100000, $cNumbers),
@@ -381,6 +392,7 @@ class DemoService extends BaseService
                 'vector_cmp3' => $vectorCmp3,
                 'vector_rcp' => $vectorRcp,
                 'vector_abs' => $vectorAbs,
+                'vector_ceil' => $vectorCeil,
             ]
         );
     }

@@ -241,3 +241,26 @@ void VectorAbs(int vector1[], int size, int result[]) {
         result[i] = absRes[i];
     }
 }
+
+void VectorCeil(float vector1[], int size, float result[]) {
+    __m128 mVector1;
+    __m128 mCeil;
+
+    float op1[size];
+    float ceilRes[size];
+
+    int i = 0;
+    for (i = 0; i < size; ++i) {
+        op1[i] = vector1[i];
+    }
+
+    mVector1 = _mm_loadu_ps(op1);
+
+    mCeil = _mm_ceil_ps(mVector1);
+
+    _mm_storeu_ps(ceilRes, mCeil);
+
+    for (i = 0; i < size; ++i) {
+        result[i] = ceilRes[i];
+    }
+}
