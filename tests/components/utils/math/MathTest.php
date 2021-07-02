@@ -170,4 +170,67 @@ class MathTest extends \PHPUnit\Framework\TestCase
             $this->assertEquals(1.0, $value);
         }
     }
+
+    public function testVectorSqrt()
+    {
+        $mathUtil = \SwFwLess\components\utils\math\Math::create();
+
+        $arrCount = 100000;
+
+        $testArr1 = range(1, $arrCount);
+        $root = [];
+
+        $vector1 = $mathUtil->createCFloatNumbers(4);
+
+        for ($i = 0; $i < $arrCount; $i = $i + 4) {
+            $vector1[0] = pow($testArr1[$i], 2);
+            $vector1[1] = pow($testArr1[$i + 1], 2);
+            $vector1[2] = pow($testArr1[$i + 2], 2);
+            $vector1[3] = pow($testArr1[$i + 3], 2);
+
+            $rootVector = $mathUtil->vectorSqrt($vector1, 4);
+            foreach ($rootVector as $elementRoot) {
+                $root[] = $elementRoot;
+            }
+        }
+
+        foreach ($root as $i => $value) {
+            $this->assertEquals(floatval($i + 1), $value);
+        }
+    }
+
+    public function testVectorCmp()
+    {
+        $mathUtil = \SwFwLess\components\utils\math\Math::create();
+
+        $arrCount = 100000;
+
+        $testArr1 = range(1, $arrCount);
+        $testArr2 = range(1, $arrCount);
+        $comparison = [];
+
+        $vector1 = $mathUtil->createCFloatNumbers(4);
+        $vector2 = $mathUtil->createCFloatNumbers(4);
+
+        for ($i = 0; $i < $arrCount; $i = $i + 4) {
+            $vector1[0] = $testArr1[$i] + 1;
+            $vector1[1] = $testArr1[$i + 1] + 1;
+            $vector1[2] = $testArr1[$i + 2] + 1;
+            $vector1[3] = $testArr1[$i + 3] + 1;
+
+            $vector2[0] = $testArr2[$i];
+            $vector2[1] = $testArr2[$i + 1];
+            $vector2[2] = $testArr2[$i + 2];
+            $vector2[3] = $testArr2[$i + 3];
+
+            $cmpVector = $mathUtil->vectorCmp($vector1, $vector2, 4);
+            foreach ($cmpVector as $elementCmp) {
+                $comparison[] = $elementCmp;
+            }
+        }
+
+        foreach ($comparison as $value) {
+            $this->assertNan($value);
+        }
+    }
 }
