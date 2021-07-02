@@ -6,10 +6,10 @@ php:
       - '7.4'
       - '8.0'
 before_script:
-      - php -r '(version_compare(PHP_VERSION, "7.4.0") >= 0) ? exec("pecl install ffi") : true;'
-      - php -r '(version_compare(PHP_VERSION, "7.2.0") >= 0) ? exec("wget https://github.com/swoole/swoole-src/archive/v4.6.0.tar.gz") : exec("wget https://github.com/swoole/swoole-src/archive/v4.5.4.tar.gz");'
-      - php -r '(version_compare(PHP_VERSION, "7.2.0") >= 0) ? exec("tar -zxvf v4.6.0.tar.gz") : exec("tar -zxvf v4.5.4.tar.gz");'
-      - php -r '(version_compare(PHP_VERSION, "7.2.0") >= 0) ? exec("mv swoole-src-4.6.0 swoole-src") : exec("mv swoole-src-4.5.4 swoole-src");'
+      - php -r 'if (version_compare(PHP_VERSION, "7.4.0") >= 0) exec("pecl install ffi");'
+      - php -r 'if (version_compare(PHP_VERSION, "7.2.0") >= 0) exec("wget https://github.com/swoole/swoole-src/archive/v4.6.0.tar.gz") else exec("wget https://github.com/swoole/swoole-src/archive/v4.5.4.tar.gz");'
+      - php -r 'if (version_compare(PHP_VERSION, "7.2.0") >= 0) exec("tar -zxvf v4.6.0.tar.gz") else exec("tar -zxvf v4.5.4.tar.gz");'
+      - php -r 'if (version_compare(PHP_VERSION, "7.2.0") >= 0) exec("mv swoole-src-4.6.0 swoole-src") else exec("mv swoole-src-4.5.4 swoole-src");'
       - cd swoole-src
       - phpize
       - ./configure
