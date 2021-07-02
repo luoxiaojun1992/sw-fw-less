@@ -7,7 +7,7 @@ php:
 before_script:
       - wget https://github.com/swoole/swoole-src/archive/refs/tags/v4.5.4.tar.gz
       - tar -zxvf v4.5.4.tar.gz
-      - cd swoole-src-4.4.0
+      - cd swoole-src-4.5.0
       - phpize
       - ./configure
       - make -j 2
