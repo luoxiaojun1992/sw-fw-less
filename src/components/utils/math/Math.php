@@ -61,7 +61,8 @@ class Math
             "void VectorDiv(float vector1[], float vector2[], int size, float result[]);" . PHP_EOL .
             "void VectorSub(float vector1[], float vector2[], int size, float result[]);" . PHP_EOL .
             "void VectorAbs(int vector1[], int size, int result[]);" . PHP_EOL .
-            "void VectorCeil(float vector1[], int size, float result[]);",
+            "void VectorCeil(float vector1[], int size, float result[]);" . PHP_EOL .
+            "void VectorFloor(float vector1[], int size, float result[]);",
             $ffiPath
         );
     }
@@ -393,6 +394,37 @@ class Math
 
         $result = $this->createCFloatNumbers($numbersCount);
         $udf->VectorCeil($vector1, $numbersCount, $result);
+
+        if (!$newUdf) {
+            Scheduler::withoutPreemptive(function () use ($udf) {
+                array_push($this->udfPool, $udf);
+            });
+        }
+
+        return $result;
+    }
+
+    public function vectorFloor($vector1, $numbersCount)
+    {
+        if ((!Runtime::supportFFI()) || (!$this->ffiPath)) {
+            $result = [];
+            for ($i = 0; $i < $numbersCount; ++$i) {
+                $result[$i] = floor($vector1[$i]);
+            }
+            return $result;
+        }
+
+        $newUdf = false;
+        $udf = Scheduler::withoutPreemptive(function () {
+            return array_pop($this->udfPool);
+        });
+        if (!$udf) {
+            $newUdf = true;
+            $udf = $this->createUdf($this->ffiPath);
+        }
+
+        $result = $this->createCFloatNumbers($numbersCount);
+        $udf->VectorFloor($vector1, $numbersCount, $result);
 
         if (!$newUdf) {
             Scheduler::withoutPreemptive(function () use ($udf) {

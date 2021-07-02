@@ -264,3 +264,26 @@ void VectorCeil(float vector1[], int size, float result[]) {
         result[i] = ceilRes[i];
     }
 }
+
+void VectorFloor(float vector1[], int size, float result[]) {
+    __m128 mVector1;
+    __m128 mFloor;
+
+    float op1[size];
+    float floorRes[size];
+
+    int i = 0;
+    for (i = 0; i < size; ++i) {
+        op1[i] = vector1[i];
+    }
+
+    mVector1 = _mm_loadu_ps(op1);
+
+    mFloor = _mm_floor_ps(mVector1);
+
+    _mm_storeu_ps(floorRes, mFloor);
+
+    for (i = 0; i < size; ++i) {
+        result[i] = floorRes[i];
+    }
+}
