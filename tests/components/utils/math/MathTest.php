@@ -105,7 +105,7 @@ class MathTest extends \PHPUnit\Framework\TestCase
     {
         $mathUtil = \SwFwLess\components\utils\math\Math::create();
 
-        $arrCount = 4096;
+        $arrCount = 4096; // less than 4097 (error)
 
         $testArr1 = range(1, $arrCount);
         $testArr2 = range(1, $arrCount);
