@@ -7,8 +7,8 @@ php:
       - '8.0'
 before_script:
       - php -r 'if (version_compare(PHP_VERSION, "7.4.0") >= 0) echo exec("pecl install ffi"), PHP_EOL;'
-      - php -r 'if (version_compare(PHP_VERSION, "7.2.0") >= 0) echo exec("wget https://github.com/swoole/swoole-src/archive/v4.6.0.tar.gz"), PHP_EOL; else exec("wget https://github.com/swoole/swoole-src/archive/v4.5.4.tar.gz"), PHP_EOL;'
-      - php -r 'if (version_compare(PHP_VERSION, "7.2.0") >= 0) echo exec("tar -zxvf v4.6.0.tar.gz"), PHP_EOL; else exec("tar -zxvf v4.5.4.tar.gz"), PHP_EOL;'
+      - php -r 'if (version_compare(PHP_VERSION, "7.2.0") >= 0) echo exec("wget https://github.com/swoole/swoole-src/archive/v4.6.0.tar.gz"), PHP_EOL; else echo exec("wget https://github.com/swoole/swoole-src/archive/v4.5.4.tar.gz"), PHP_EOL;'
+      - php -r 'if (version_compare(PHP_VERSION, "7.2.0") >= 0) echo exec("tar -zxvf v4.6.0.tar.gz"), PHP_EOL; else echo exec("tar -zxvf v4.5.4.tar.gz"), PHP_EOL;'
       - php -r 'if (version_compare(PHP_VERSION, "7.2.0") >= 0) echo exec("mv swoole-src-4.6.0 swoole-src"), PHP_EOL; else echo exec("mv swoole-src-4.5.4 swoole-src"), PHP_EOL;'
       - cd swoole-src
       - phpize
