@@ -113,8 +113,8 @@ class MathTest extends \PHPUnit\Framework\TestCase
             $vector2[2] = $testArr2[$i + 2];
             $vector2[3] = $testArr2[$i + 3];
 
-            $sumVector = $mathUtil->vectorSub($vector1, $vector2, 4);
-            foreach ($sumVector as $elementDiff) {
+            $diffVector = $mathUtil->vectorSub($vector1, $vector2, 4);
+            foreach ($diffVector as $elementDiff) {
                 $diff[] = $elementDiff;
             }
         }
