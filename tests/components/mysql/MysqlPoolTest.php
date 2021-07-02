@@ -4,7 +4,7 @@ use Mockery as M;
 
 class MysqlPoolTest extends \PHPUnit\Framework\TestCase
 {
-    public function tearDown()
+    public function afterTest()
     {
         parent::tearDown();
 
@@ -104,5 +104,7 @@ class MysqlPoolTest extends \PHPUnit\Framework\TestCase
             0,
             $mysqlPool->countPool()
         );
+
+        $this->afterTest();
     }
 }

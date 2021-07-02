@@ -4,7 +4,7 @@ use Mockery as M;
 
 class RedisPoolTest extends \PHPUnit\Framework\TestCase
 {
-    public function tearDown()
+    public function afterTest()
     {
         parent::tearDown();
 
@@ -104,5 +104,7 @@ class RedisPoolTest extends \PHPUnit\Framework\TestCase
             0,
             $redisPool->countPool()
         );
+
+        $this->afterTest();
     }
 }

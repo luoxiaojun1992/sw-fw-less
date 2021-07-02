@@ -4,7 +4,7 @@ use Mockery as M;
 
 class RateLimitTest extends \PHPUnit\Framework\TestCase
 {
-    public function tearDown()
+    public function afterTest()
     {
         parent::tearDown();
 
@@ -90,5 +90,7 @@ class RateLimitTest extends \PHPUnit\Framework\TestCase
             $totalThrottle - $nextThrottle,
             $remaining
         );
+
+        $this->afterTest();
     }
 }

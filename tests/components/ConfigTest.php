@@ -4,7 +4,7 @@ use Mockery as M;
 
 class ConfigTest extends \PHPUnit\Framework\TestCase
 {
-    public function tearDown()
+    public function afterTest()
     {
         parent::tearDown();
         \SwFwLess\components\Config::clear();
@@ -44,6 +44,8 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
             'bar2',
             \SwFwLess\components\Config::get('foo2')
         );
+
+        $this->afterTest();
     }
 
     public function testSetAndForget()
@@ -82,6 +84,8 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
         $this->assertFalse(
             \SwFwLess\components\Config::has('foo2')
         );
+
+        $this->afterTest();
     }
 
     public function testSetAndHas()
@@ -105,6 +109,8 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue(
             \SwFwLess\components\Config::has('foo2')
         );
+
+        $this->afterTest();
     }
 
     public function testSetGetAndForget()
@@ -168,6 +174,8 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
             'defaultBar2',
             \SwFwLess\components\Config::get('foo', 'defaultBar2')
         );
+
+        $this->afterTest();
     }
 
     public function testGetDefault()
@@ -194,5 +202,7 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
             'bar_6',
             \SwFwLess\components\Config::get('foo6', 'bar_6')
         );
+
+        $this->afterTest();
     }
 }

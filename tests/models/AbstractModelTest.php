@@ -2,7 +2,7 @@
 
 class AbstractModelTest extends \PHPUnit\Framework\TestCase
 {
-    public function setUp()
+    public function beforeTest()
     {
         parent::setUp();
         \SwFwLess\components\Config::initByArr([
@@ -11,7 +11,7 @@ class AbstractModelTest extends \PHPUnit\Framework\TestCase
         \SwFwLess\components\event\EventProvider::bootWorker();
     }
 
-    protected function tearDown()
+    protected function afterTest()
     {
         parent::tearDown();
         \SwFwLess\components\event\Event::clearInstance();
@@ -27,6 +27,8 @@ class AbstractModelTest extends \PHPUnit\Framework\TestCase
 
     public function testEvent()
     {
+        $this->beforeTest();
+
         $testModel = $this->getTestModel();
 
         $this->assertNull($testModel->id);
@@ -36,5 +38,7 @@ class AbstractModelTest extends \PHPUnit\Framework\TestCase
 
         $this->assertEquals(1, $testModel->id);
         $this->assertEquals('bar', $testModel->foo);
+
+        $this->afterTest();
     }
 }
