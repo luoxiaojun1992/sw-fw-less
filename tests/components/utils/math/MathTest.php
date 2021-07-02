@@ -231,4 +231,32 @@ class MathTest extends \PHPUnit\Framework\TestCase
             $this->assertNan($value);
         }
     }
+
+    public function testVectorAbs()
+    {
+        $mathUtil = \SwFwLess\components\utils\math\Math::create();
+
+        $arrCount = 100000;
+
+        $testArr1 = range(1, $arrCount);
+        $absRes = [];
+
+        $vector1 = $mathUtil->createCIntNumbers(4);
+
+        for ($i = 0; $i < $arrCount; $i = $i + 4) {
+            $vector1[0] = $testArr1[$i];
+            $vector1[1] = -1 * $testArr1[$i + 1];
+            $vector1[2] = $testArr1[$i + 2];
+            $vector1[3] = -1 * $testArr1[$i + 3];
+
+            $absVector = $mathUtil->vectorAbs($vector1, 4);
+            foreach ($absVector as $elementAbs) {
+                $absRes[] = $elementAbs;
+            }
+        }
+
+        foreach ($absRes as $i => $value) {
+            $this->assertEquals($i + 1, $value);
+        }
+    }
 }
