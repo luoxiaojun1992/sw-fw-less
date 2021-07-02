@@ -132,11 +132,7 @@ class MathTest extends \PHPUnit\Framework\TestCase
         }
 
         foreach ($product as $i => $value) {
-            if (($i >= 4097) && ((($i + 1) % 2) !== 0)) {
-                $this->assertEquals(floatval(pow($i + 1, 2)) - 1, $value);
-            } else {
-                $this->assertEquals(floatval(pow($i + 1, 2)), $value);
-            }
+            $this->assertEquals(floatval(pow($i + 1, 2)), $value);
         }
     }
 }
