@@ -17,9 +17,9 @@ before_script:
       - make install
       - echo "extension=swoole.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
       - cd ..
-      - wget http://pecl.php.net/get/redis-4.0.0.tgz
-      - tar -zxvf redis-4.0.0.tgz
-      - cd redis-4.0.0
+      - wget http://pecl.php.net/get/redis-5.3.4.tgz
+      - tar -zxvf redis-5.3.4.tgz
+      - cd redis-5.3.4
       - phpize
       - ./configure
       - make -j 2
