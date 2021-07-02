@@ -59,16 +59,25 @@ class Math
 
     public function createCNumbers($count)
     {
+        if (!Runtime::supportFFI()) {
+            return [];
+        }
         return \FFI::new('double['.((string)$count).']');
     }
 
     public function createCFloatNumbers($count)
     {
+        if (!Runtime::supportFFI()) {
+            return [];
+        }
         return \FFI::new('float['.((string)$count).']');
     }
 
     public function createCIntNumbers($count)
     {
+        if (!Runtime::supportFFI()) {
+            return [];
+        }
         return \FFI::new('int['.((string)$count).']');
     }
 
