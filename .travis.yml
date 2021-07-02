@@ -5,9 +5,9 @@ php:
       - '7.3'
       - '7.4'
 before_script:
-      - wget https://github.com/swoole/swoole-src/archive/refs/tags/v4.5.4.tar.gz
+      - wget https://github.com/swoole/swoole-src/archive/v4.5.4.tar.gz
       - tar -zxvf v4.5.4.tar.gz
-      - cd swoole-src-4.5.0
+      - cd swoole-src-4.5.4
       - phpize
       - ./configure
       - make -j 2
