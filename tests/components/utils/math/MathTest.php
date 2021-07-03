@@ -259,4 +259,60 @@ class MathTest extends \PHPUnit\Framework\TestCase
             $this->assertEquals($i + 1, $value);
         }
     }
+
+    public function testVectorCeil()
+    {
+        $mathUtil = \SwFwLess\components\utils\math\Math::create();
+
+        $arrCount = 100000;
+
+        $testArr1 = range(1, $arrCount);
+        $ceilRes = [];
+
+        $vector1 = $mathUtil->createCFloatNumbers(4);
+
+        for ($i = 0; $i < $arrCount; $i = $i + 4) {
+            $vector1[0] = $testArr1[$i] + 0.3;
+            $vector1[1] = $testArr1[$i + 1] + 0.3;
+            $vector1[2] = $testArr1[$i + 2] + 0.3;
+            $vector1[3] = $testArr1[$i + 3] + 0.3;
+
+            $ceilVector = $mathUtil->vectorCeil($vector1, 4);
+            foreach ($ceilVector as $elementCeil) {
+                $ceilRes[] = $elementCeil;
+            }
+        }
+
+        foreach ($ceilRes as $i => $value) {
+            $this->assertEquals(floatval($i + 1 + 1), $value);
+        }
+    }
+
+    public function testVectorFloor()
+    {
+        $mathUtil = \SwFwLess\components\utils\math\Math::create();
+
+        $arrCount = 100000;
+
+        $testArr1 = range(1, $arrCount);
+        $floorRes = [];
+
+        $vector1 = $mathUtil->createCFloatNumbers(4);
+
+        for ($i = 0; $i < $arrCount; $i = $i + 4) {
+            $vector1[0] = $testArr1[$i] + 0.5;
+            $vector1[1] = $testArr1[$i + 1] + 0.5;
+            $vector1[2] = $testArr1[$i + 2] + 0.5;
+            $vector1[3] = $testArr1[$i + 3] + 0.5;
+
+            $floorVector = $mathUtil->vectorFloor($vector1, 4);
+            foreach ($floorVector as $elementFloor) {
+                $floorRes[] = $elementFloor;
+            }
+        }
+
+        foreach ($floorRes as $i => $value) {
+            $this->assertEquals(floatval($i + 1), $value);
+        }
+    }
 }
