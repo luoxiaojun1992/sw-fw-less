@@ -6,7 +6,7 @@ php:
       - '7.4'
       - '8.0'
 before_script:
-      - php -r 'if ((version_compare(PHP_VERSION, "7.4.0") >= 0) && (version_compare(PHP_VERSION, "7.5.0") < 0)) echo exec("wget https://github.com/php/php-src/archive/php-7.4.21.tar.gz && tar -zxvf php-src-php-7.4.21.tar.gz" && cd php-src-php-7.4.21/ext/ffi && phpize && make -j 2 && make install && echo \"extension=ffi.so\" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini"), PHP_EOL;'
+      - php -r 'if ((version_compare(PHP_VERSION, "7.4.0") >= 0) && (version_compare(PHP_VERSION, "7.5.0") < 0)) echo exec("wget https://github.com/php/php-src/archive/php-7.4.21.tar.gz && tar -zxvf php-src-php-7.4.21.tar.gz && cd php-src-php-7.4.21/ext/ffi && phpize && make -j 2 && make install && echo \"extension=ffi.so\" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini"), PHP_EOL;'
       - php -r 'if (version_compare(PHP_VERSION, "7.2.0") >= 0) echo exec("wget https://github.com/swoole/swoole-src/archive/v4.6.0.tar.gz"), PHP_EOL; else echo exec("wget https://github.com/swoole/swoole-src/archive/v4.5.4.tar.gz"), PHP_EOL;'
       - php -r 'if (version_compare(PHP_VERSION, "7.2.0") >= 0) echo exec("tar -zxvf v4.6.0.tar.gz"), PHP_EOL; else echo exec("tar -zxvf v4.5.4.tar.gz"), PHP_EOL;'
       - php -r 'if (version_compare(PHP_VERSION, "7.2.0") >= 0) echo exec("mv swoole-src-4.6.0 swoole-src"), PHP_EOL; else echo exec("mv swoole-src-4.5.4 swoole-src"), PHP_EOL;'
