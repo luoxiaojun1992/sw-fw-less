@@ -315,4 +315,53 @@ class MathTest extends \PHPUnit\Framework\TestCase
             $this->assertEquals(floatval($i + 1), $value);
         }
     }
+
+    public function testVectorRound()
+    {
+        $mathUtil = \SwFwLess\components\utils\math\Math::create();
+
+        $arrCount = 100000;
+
+        $testArr1 = range(1, $arrCount);
+
+        $roundRes = [];
+
+        $vector1 = $mathUtil->createCFloatNumbers(4);
+
+        for ($i = 0; $i < $arrCount; $i = $i + 4) {
+            $vector1[0] = $testArr1[$i] + 0.5;
+            $vector1[1] = $testArr1[$i + 1] + 0.5;
+            $vector1[2] = $testArr1[$i + 2] + 0.5;
+            $vector1[3] = $testArr1[$i + 3] + 0.5;
+
+            $roundVector = $mathUtil->vectorRound($vector1, 4);
+            foreach ($roundVector as $elementRound) {
+                $roundRes[] = $elementRound;
+            }
+        }
+
+        foreach ($roundRes as $i => $value) {
+            $this->assertGreaterThanOrEqual(floatval($i + 1), $value);
+        }
+
+        $roundRes = [];
+
+        $vector1 = $mathUtil->createCFloatNumbers(4);
+
+        for ($i = 0; $i < $arrCount; $i = $i + 4) {
+            $vector1[0] = $testArr1[$i] + 0.3;
+            $vector1[1] = $testArr1[$i + 1] + 0.3;
+            $vector1[2] = $testArr1[$i + 2] + 0.3;
+            $vector1[3] = $testArr1[$i + 3] + 0.3;
+
+            $roundVector = $mathUtil->vectorRound($vector1, 4);
+            foreach ($roundVector as $elementRound) {
+                $roundRes[] = $elementRound;
+            }
+        }
+
+        foreach ($roundRes as $i => $value) {
+            $this->assertGreaterThanOrEqual(floatval($i + 1), $value);
+        }
+    }
 }
