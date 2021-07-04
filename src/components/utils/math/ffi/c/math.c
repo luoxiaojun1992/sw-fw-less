@@ -287,3 +287,26 @@ void VectorFloor(float vector1[], int size, float result[]) {
         result[i] = floorRes[i];
     }
 }
+
+void VectorRound(float vector1[], int size, float result[]) {
+    __m128 mVector1;
+    __m128 mRound;
+
+    float op1[size];
+    float roundRes[size];
+
+    int i = 0;
+    for (i = 0; i < size; ++i) {
+        op1[i] = vector1[i];
+    }
+
+    mVector1 = _mm_loadu_ps(op1);
+
+    mRound = _mm_round_ps(mVector1, _MM_FROUND_TO_NEAREST_INT |_MM_FROUND_NO_EXC);
+
+    _mm_storeu_ps(roundRes, mRound);
+
+    for (i = 0; i < size; ++i) {
+        result[i] = roundRes[i];
+    }
+}
