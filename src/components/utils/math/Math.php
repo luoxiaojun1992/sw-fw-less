@@ -52,7 +52,8 @@ class Math
             "void VectorSub(float vector1[], float vector2[], int size, float result[]);" . PHP_EOL .
             "void VectorAbs(int vector1[], int size, int result[]);" . PHP_EOL .
             "void VectorCeil(float vector1[], int size, float result[]);" . PHP_EOL .
-            "void VectorFloor(float vector1[], int size, float result[]);",
+            "void VectorFloor(float vector1[], int size, float result[]);" . PHP_EOL .
+            "void VectorRound(float vector1[], int size, float result[]);",
             $ffiPath
         );
     }
@@ -263,6 +264,22 @@ class Math
 
         $result = $this->createCFloatNumbers($numbersCount);
         $this->udf->VectorFloor($vector1, $numbersCount, $result);
+
+        return $result;
+    }
+
+    public function vectorRound($vector1, $numbersCount)
+    {
+        if ((!Runtime::supportFFI()) || (!$this->ffiPath)) {
+            $result = [];
+            for ($i = 0; $i < $numbersCount; ++$i) {
+                $result[$i] = round($vector1[$i]);
+            }
+            return $result;
+        }
+
+        $result = $this->createCFloatNumbers($numbersCount);
+        $this->udf->VectorRound($vector1, $numbersCount, $result);
 
         return $result;
     }

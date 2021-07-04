@@ -18,6 +18,7 @@ namespace SwFwLess\facades;
  * @method static vectorAbs($vector1, $numbersCount)
  * @method static vectorCeil($vector1, $numbersCount)
  * @method static vectorFloor($vector1, $numbersCount)
+ * @method static vectorRound($vector1, $numbersCount)
  *
  * @package SwFwLess\facades
  */

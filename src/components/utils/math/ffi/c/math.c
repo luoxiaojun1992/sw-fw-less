@@ -302,7 +302,7 @@ void VectorRound(float vector1[], int size, float result[]) {
 
     mVector1 = _mm_loadu_ps(op1);
 
-    mRound = _mm_round_ps(mVector1, _MM_FROUND_TO_NEAREST_INT |_MM_FROUND_NO_EXC);
+    mRound = _mm_round_ps(mVector1, (_MM_FROUND_TO_NEAREST_INT |_MM_FROUND_NO_EXC));
 
     _mm_storeu_ps(roundRes, mRound);
 

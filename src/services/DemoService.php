@@ -390,6 +390,17 @@ class DemoService extends BaseService
             $vectorFloor[] = $elementFloor;
         }
 
+        $numbersCount = 4;
+        $vector1 = Math::createCFloatNumbers($numbersCount);
+        for ($i = 0; $i < $numbersCount; ++$i) {
+            $vector1[$i] = ($i + 1 + 0.3);
+        }
+        $cVectorRound = Math::vectorRound($vector1, $numbersCount);
+        $vectorRound = [];
+        foreach ($cVectorRound as $elementRound) {
+            $vectorRound[] = $elementRound;
+        }
+
         return Response::json(
             [
                 'sum' => Math::sum(null, 100000, $cNumbers),
@@ -405,6 +416,7 @@ class DemoService extends BaseService
                 'vector_abs' => $vectorAbs,
                 'vector_ceil' => $vectorCeil,
                 'vector_floor' => $vectorFloor,
+                'vector_round' => $vectorRound,
             ]
         );
     }
