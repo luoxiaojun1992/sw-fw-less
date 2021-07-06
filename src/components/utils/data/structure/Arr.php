@@ -66,6 +66,13 @@ class Arr
         $arr[$key] = $value;
     }
 
+    public static function arrSetWithoutNull(&$arr, $key, $value)
+    {
+        if (!is_null($value)) {
+            static::arrSet($arr, $key, $value);
+        }
+    }
+
     /**
      * @param $arr
      * @param $key
