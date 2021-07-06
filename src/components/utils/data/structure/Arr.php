@@ -299,8 +299,13 @@ class Arr
      * @param null $column
      * @return array
      */
-    public static function mapping($arr, $keyColumn, $column = null)
+    public static function mapping($arr, $keyColumn = null, $column = null)
     {
         return array_column($arr, $column, $keyColumn);
+    }
+
+    public static function mappingFilter($arr, $filter, $keyColumn = null, $column = null)
+    {
+        return static::mapping(array_filter($arr, $filter), $keyColumn, $column);
     }
 }

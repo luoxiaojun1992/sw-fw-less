@@ -6,6 +6,22 @@ use SwFwLess\components\utils\data\structure\Arr;
 
 class ArrTest extends \PHPUnit\Framework\TestCase
 {
+    public function testArrSet()
+    {
+        $arr = ['foo' => 'bar'];
+        Arr::arrSet($arr, 'foo', 'newBar2');
+        $this->assertEquals(
+            'newBar2',
+            $arr['foo']
+        );
+
+        $arr = ['foo' => 'bar'];
+        Arr::arrSet($arr, 'foo', null);
+        $this->assertNull(
+            $arr['foo']
+        );
+    }
+
     public function testArrSetWithoutNull()
     {
         $arr = ['foo' => 'bar'];
@@ -19,19 +35,6 @@ class ArrTest extends \PHPUnit\Framework\TestCase
         Arr::arrSetWithoutNull($arr, 'foo', 'newBar');
         $this->assertEquals(
             'newBar',
-            $arr['foo']
-        );
-
-        $arr = ['foo' => 'bar'];
-        Arr::arrSet($arr, 'foo', 'newBar2');
-        $this->assertEquals(
-            'newBar2',
-            $arr['foo']
-        );
-
-        $arr = ['foo' => 'bar'];
-        Arr::arrSet($arr, 'foo', null);
-        $this->assertNull(
             $arr['foo']
         );
     }
@@ -65,5 +68,133 @@ class ArrTest extends \PHPUnit\Framework\TestCase
             'row1 col1 value' => ['col1' => 'row1 col1 value', 'col2' => 'row1 col2 value'],
             'row2 col1 value' => ['col1' => 'row2 col1 value', 'col2' => 'row2 col2 value'],
         ], Arr::mapping($origArr, 'col1'));
+
+        $this->assertEquals([
+            'row1 col2 value',
+            'row2 col2 value',
+        ], Arr::mapping($origArr, null, 'col2'));
+
+        $this->assertEquals([
+            ['col1' => 'row1 col1 value', 'col2' => 'row1 col2 value'],
+            ['col1' => 'row2 col1 value', 'col2' => 'row2 col2 value'],
+        ], Arr::mapping($origArr));
+    }
+
+    public function testMappingFilter()
+    {
+        $origArr = [
+            ['col1' => 'row1 col1 value', 'col2' => 'row1 col2 value'],
+            ['col1' => 'row2 col1 value', 'col2' => 'row2 col2 value'],
+        ];
+
+        $this->assertEquals([
+            'row1 col1 value' => 'row1 col2 value',
+            'row2 col1 value' => 'row2 col2 value',
+        ], Arr::mappingFilter(
+            $origArr,
+            function ($row) {
+                return true;
+            },
+            'col1', 'col2'
+        ));
+
+        $this->assertEquals([
+            'row1 col1 value' => ['col1' => 'row1 col1 value', 'col2' => 'row1 col2 value'],
+            'row2 col1 value' => ['col1' => 'row2 col1 value', 'col2' => 'row2 col2 value'],
+        ], Arr::mappingFilter(
+            $origArr,
+            function ($row) {
+                return true;
+            }, 'col1'
+        ));
+
+        $this->assertEquals([
+            'row1 col2 value',
+            'row2 col2 value',
+        ], Arr::mappingFilter(
+            $origArr,
+            function ($row) {
+                return true;
+            },
+            null, 'col2'
+        ));
+
+        $this->assertEquals([
+            ['col1' => 'row1 col1 value', 'col2' => 'row1 col2 value'],
+            ['col1' => 'row2 col1 value', 'col2' => 'row2 col2 value'],
+        ], Arr::mappingFilter(
+            $origArr,
+            function ($row) {
+                return true;
+            }
+        ));
+
+        $this->assertEquals([], Arr::mappingFilter(
+            $origArr,
+            function ($row) {
+                return false;
+            },
+            'col1', 'col2'
+        ));
+
+        $this->assertEquals([], Arr::mappingFilter(
+            $origArr,
+            function ($row) {
+                return false;
+            }, 'col1'
+        ));
+
+        $this->assertEquals([], Arr::mappingFilter(
+            $origArr,
+            function ($row) {
+                return false;
+            },
+            null, 'col2'
+        ));
+
+        $this->assertEquals([], Arr::mappingFilter(
+            $origArr,
+            function ($row) {
+                return false;
+            }
+        ));
+
+        $this->assertEquals([
+            'row1 col1 value' => 'row1 col2 value',
+        ], Arr::mappingFilter(
+            $origArr,
+            function ($row) {
+                return $row['col2'] !== 'row2 col2 value';
+            },
+            'col1', 'col2'
+        ));
+
+        $this->assertEquals([
+            'row1 col1 value' => ['col1' => 'row1 col1 value', 'col2' => 'row1 col2 value'],
+        ], Arr::mappingFilter(
+            $origArr,
+            function ($row) {
+                return $row['col2'] !== 'row2 col2 value';
+            }, 'col1'
+        ));
+
+        $this->assertEquals([
+            'row1 col2 value',
+        ], Arr::mappingFilter(
+            $origArr,
+            function ($row) {
+                return $row['col2'] !== 'row2 col2 value';
+            },
+            null, 'col2'
+        ));
+
+        $this->assertEquals([
+            ['col1' => 'row1 col1 value', 'col2' => 'row1 col2 value'],
+        ], Arr::mappingFilter(
+            $origArr,
+            function ($row) {
+                return $row['col2'] !== 'row2 col2 value';
+            }
+        ));
     }
 }
