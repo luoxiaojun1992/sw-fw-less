@@ -6,6 +6,7 @@ use SwFwLess\components\http\Client;
 use SwFwLess\components\http\Request;
 use SwFwLess\components\http\Response;
 use SwFwLess\components\swoole\Server;
+use SwFwLess\components\utils\data\structure\Arr;
 use SwFwLess\facades\Math;
 use SwFwLess\middlewares\AbstractMiddleware;
 
@@ -113,16 +114,48 @@ class Middleware extends AbstractMiddleware
                 $cpuCalType = $faultData['cal_type'] ?? 'add';
                 $cpuCalTimes = $faultData['cal_times'] ?? 10000;
                 for ($i = 0; $i < $cpuCalTimes; ++$i) {
-                    $vector1 = Math::createCFloatNumbers(4);
-                    $vector2 = Math::createCFloatNumbers(4);
-                    for ($vectorI = 0; $vectorI < 4; ++$vectorI) {
-                        $vector1[$vectorI] = mt_rand(100000, 999999);
-                        $vector2[$vectorI] = mt_rand(100000, 999999);
-                    }
-                    if ($cpuCalType === 'add') {
-                        Math::vectorAdd($vector1, $vector2, 4);
-                    } elseif ($cpuCalType === 'mul') {
-                        Math::vectorMul($vector1, $vector2, 4);
+                    if (Arr::safeInArray($cpuCalType, ['add', 'sub', 'mul', 'div', 'cmp'])) {
+                        $vector1 = Math::createCFloatNumbers(4);
+                        $vector2 = Math::createCFloatNumbers(4);
+                        for ($vectorI = 0; $vectorI < 4; ++$vectorI) {
+                            $vector1[$vectorI] = floatval(mt_rand(100000, 999999));
+                            $vector2[$vectorI] = floatval(mt_rand(100000, 999999));
+                        }
+                        if ($cpuCalType === 'add') {
+                            Math::vectorAdd($vector1, $vector2, 4);
+                        } elseif ($cpuCalType === 'sub') {
+                            Math::vectorSub($vector1, $vector2, 4);
+                        } elseif ($cpuCalType === 'mul') {
+                            Math::vectorMul($vector1, $vector2, 4);
+                        } elseif ($cpuCalType === 'div') {
+                            Math::vectorDiv($vector1, $vector2, 4);
+                        } elseif ($cpuCalType === 'cmp') {
+                            Math::vectorCmp($vector1, $vector2, 4);
+                        }
+                    } elseif (Arr::safeInArray($cpuCalType, ['sqrt', 'rcp', 'ceil', 'floor', 'round'])) {
+                        $vector1 = Math::createCFloatNumbers(4);
+                        for ($vectorI = 0; $vectorI < 4; ++$vectorI) {
+                            $vector1[$vectorI] = floatval(mt_rand(100000, 999999));
+                        }
+                        if ($cpuCalType === 'sqrt') {
+                            Math::vectorSqrt($vector1, 4);
+                        } elseif ($cpuCalType === 'rcp') {
+                            Math::vectorRcp($vector1, 4);
+                        } elseif ($cpuCalType === 'ceil') {
+                            Math::vectorCeil($vector1, 4);
+                        } elseif ($cpuCalType === 'floor') {
+                            Math::vectorFloor($vector1, 4);
+                        } elseif ($cpuCalType === 'round') {
+                            Math::vectorRound($vector1, 4);
+                        }
+                    } elseif (Arr::safeInArray($cpuCalType, ['abs'])) {
+                        $vector1 = Math::createCIntNumbers(4);
+                        for ($vectorI = 0; $vectorI < 4; ++$vectorI) {
+                            $vector1[$vectorI] = mt_rand(100000, 999999);
+                        }
+                        if ($cpuCalType === 'abs') {
+                            Math::vectorAbs($vector1, 4);
+                        }
                     }
                 }
                 return null;
