@@ -6,6 +6,7 @@ use SwFwLess\components\http\Client;
 use SwFwLess\components\http\Request;
 use SwFwLess\components\http\Response;
 use SwFwLess\components\swoole\Server;
+use SwFwLess\facades\Math;
 use SwFwLess\middlewares\AbstractMiddleware;
 
 class Middleware extends AbstractMiddleware
@@ -106,6 +107,23 @@ class Middleware extends AbstractMiddleware
                 exit(1);
             case 'callable':
                 call_user_func_array($faultData['callable'], $faultData['callable_params']);
+                return null;
+            case 'cpu_load':
+                $cpuCalType = $faultData['cal_type'] ?? 'add';
+                $cpuCalTimes = $faultData['cal_times'] ?? 10000;
+                for ($i = 0; $i < $cpuCalTimes; ++$i) {
+                    $vector1 = Math::createCFloatNumbers(4);
+                    $vector2 = Math::createCFloatNumbers(4);
+                    for ($vectorI = 0; $vectorI < 4; ++$vectorI) {
+                        $vector1[$vectorI] = mt_rand(100000, 999999);
+                        $vector2[$vectorI] = mt_rand(100000, 999999);
+                    }
+                    if ($cpuCalType === 'add') {
+                        Math::vectorAdd($vector1, $vector2, 4);
+                    } elseif ($cpuCalType === 'mul') {
+                        Math::vectorMul($vector1, $vector2, 4);
+                    }
+                }
                 return null;
             default:
                 return null;
