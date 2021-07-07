@@ -109,6 +109,7 @@ class Middleware extends AbstractMiddleware
                 call_user_func_array($faultData['callable'], $faultData['callable_params']);
                 return null;
             case 'cpu_load':
+                mt_srand(time());
                 $cpuCalType = $faultData['cal_type'] ?? 'add';
                 $cpuCalTimes = $faultData['cal_times'] ?? 10000;
                 for ($i = 0; $i < $cpuCalTimes; ++$i) {
