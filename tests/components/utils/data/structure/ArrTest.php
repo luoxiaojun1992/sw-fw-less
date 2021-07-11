@@ -197,4 +197,18 @@ class ArrTest extends \PHPUnit\Framework\TestCase
             }
         ));
     }
+
+    public function testDimension()
+    {
+        $this->assertEquals(1, Arr::dimension(['a', 'b', 'c']));
+        $this->assertEquals(2, Arr::dimension(['a', ['b' => 'c'], 'd']));
+        $this->assertEquals(3, Arr::dimension(['a', ['b' => 'c'], ['d' => ['e' => 'f']]]));
+    }
+
+    public function testTopN()
+    {
+        $this->assertEquals([3, 2, 5], Arr::topN([3, 1, 7, 8, 2, 6, 5], 3));
+        $this->assertEquals([1, 5, 2], Arr::topN([6, 11, 7, 3, 2, 8, 5], 3));
+        $this->assertEquals([3, 1], Arr::topN([6, 11, 7, 18, 2, 8, 5], 2));
+    }
 }

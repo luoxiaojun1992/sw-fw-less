@@ -308,4 +308,32 @@ class Arr
     {
         return static::mapping(array_filter($arr, $filter), $keyColumn, $column);
     }
+
+    public static function dimension($arr)
+    {
+        $maxSubArrDepth = 0;
+        foreach ($arr as $item) {
+            if (is_array($item)) {
+                $subArrDepth = static::dimension($item);
+                if ($subArrDepth > $maxSubArrDepth) {
+                    $maxSubArrDepth = $subArrDepth;
+                }
+            }
+        }
+        return $maxSubArrDepth + 1;
+    }
+
+    public static function topN($arr, $n)
+    {
+        $priorityQueue = new \SplPriorityQueue();
+        $priorityQueue->setExtractFlags(\SplPriorityQueue::EXTR_DATA);
+        foreach ($arr as $i => $item) {
+            $priorityQueue->insert($i, $item);
+        }
+        $topIndexList = [];
+        for ($j = 0; $j < $n; ++$j) {
+            $topIndexList[] = $priorityQueue->extract();
+        }
+        return $topIndexList;
+    }
 }
