@@ -115,6 +115,21 @@ class ArrTest extends \PHPUnit\Framework\TestCase
         );
     }
 
+    public function testDoubleVal()
+    {
+        $intArr = Arr::doubleVal(['bar' => '1', 'foo' => '2']);
+        $this->assertTrue(
+            ['bar' => 1.0, 'foo' => 2.0] ===
+            $intArr
+        );
+
+        $intArr = Arr::doubleVal(['foo' => '1', 'bar' => '2']);
+        $this->assertTrue(
+            ['foo' => 1.0, 'bar' => 2.0] ===
+            $intArr
+        );
+    }
+
     public function testStringVal()
     {
         $strArr = Arr::stringVal(['bar' => 1, 'foo' => 2]);
