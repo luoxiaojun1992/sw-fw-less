@@ -223,9 +223,7 @@ class App
                 Container::make($middlewareClass) :
                 new $middlewareClass);
 
-            if (is_null($firstMiddlewareConcrete)) {
-                $firstMiddlewareConcrete = $middlewareConcrete;
-            }
+            $firstMiddlewareConcrete = $firstMiddlewareConcrete ?? $middlewareConcrete;
 
             $middlewareConcrete->setParametersAndOptions(
                 [$appRequest],
@@ -335,11 +333,11 @@ class App
         $swfResponse = call_user_func($callback);
 
         $content = $swfResponse->getContent();
-        if (!$content && ob_get_length() > 0) {
+        if ($content || (ob_get_length() <= 0)) {
+            ob_end_flush();
+        } else {
             $swfResponse->setContent(ob_get_contents());
             ob_end_clean();
-        } else {
-            ob_end_flush();
         }
 
         return $swfResponse;
@@ -353,12 +351,12 @@ class App
     {
         $httpCode = $swfResponse->getStatus();
 
-        if (isset($swRequest->header['content-type'])) {
-            if (substr($swRequest->header['content-type'], 0, 16) === 'application/grpc') {
-                list($grpcStatus, $grpcMessage) = Status::statusAndMsg($httpCode);
-                $swfResponse->trailer('grpc-status', $grpcStatus);
-                $swfResponse->trailer('grpc-message', urlencode(urlencode($grpcMessage)));
-            }
+        if (isset($swRequest->header['content-type']) &&
+            (substr($swRequest->header['content-type'], 0, 16) === 'application/grpc')
+        ) {
+            list($grpcStatus, $grpcMessage) = Status::statusAndMsg($httpCode);
+            $swfResponse->trailer('grpc-status', $grpcStatus);
+            $swfResponse->trailer('grpc-message', urlencode(urlencode($grpcMessage)));
         }
 
         $swResponse->status($httpCode);
@@ -367,16 +365,15 @@ class App
             $swResponse->header($key, $value);
         }
 
-        if (isset($swRequest->header['te'])) {
-            if (substr($swRequest->header['te'], 0, 8) === 'trailers') {
-                if ($trailers = $swfResponse->getTrailers()) {
-                    $trailerHeader = implode(', ', array_keys($trailers));
-                    $swfResponse->header('trailer', $trailerHeader);
-                    $swResponse->header('trailer', $trailerHeader);
-                    foreach ($trailers as $key => $value) {
-                        $swResponse->trailer($key, $value);
-                    }
-                }
+        if (isset($swRequest->header['te']) &&
+            (substr($swRequest->header['te'], 0, 8) === 'trailers') &&
+            ($trailers = $swfResponse->getTrailers())
+        ) {
+            $trailerHeader = implode(', ', array_keys($trailers));
+            $swfResponse->header('trailer', $trailerHeader);
+            $swResponse->header('trailer', $trailerHeader);
+            foreach ($trailers as $key => $value) {
+                $swResponse->trailer($key, $value);
             }
         }
 

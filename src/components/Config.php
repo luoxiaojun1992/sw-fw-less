@@ -39,17 +39,13 @@ class Config
     public static function get($key, $default = null)
     {
         return Scheduler::withoutPreemptive(function () use ($key, $default) {
-            if (is_string($key)) {
-                if (array_key_exists($key, self::$configCache)) {
-                    return self::$configCache[$key];
-                }
+            if (is_string($key) && array_key_exists($key, self::$configCache)) {
+                return self::$configCache[$key];
             }
 
-            if (!is_string($key) && !is_array($key) && !is_int($key)) {
-                return $default;
-            }
-
-            if (Helper::nestedArrHas(static::$config, $key)) {
+            if ((is_string($key) || is_array($key) || is_int($key)) &&
+                Helper::nestedArrHas(static::$config, $key)
+            ) {
                 $config = Helper::nestedArrGet(static::$config, $key, $default);
                 if (is_string($key)) {
                     self::$configCache[$key] = $config;
