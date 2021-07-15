@@ -32,32 +32,24 @@ class KernelProvider extends AbstractProvider
     protected static function classify()
     {
         foreach (static::$providers as $providers) {
-            $appProviders = [];
-            $workerProviders = [];
-            $requestProviders = [];
-
             foreach ($providers as $provider) {
                 $providerReflection = new \ReflectionClass($provider);
                 if ($providerReflection->implementsInterface(ProviderContract::class)) {
-                    $appProviders[] = $provider;
-                    $workerProviders[] = $provider;
-                    $requestProviders[] = $provider;
+                    static::$appProviders[] = $provider;
+                    static::$workerProviders[] = $provider;
+                    static::$requestProviders[] = $provider;
                 } else{
                     if ($providerReflection->implementsInterface(AppProviderContract::class)) {
-                        $appProviders[] = $provider;
+                        static::$appProviders[] = $provider;
                     }
                     if ($providerReflection->implementsInterface(WorkerProviderContract::class)) {
-                        $workerProviders[] = $provider;
+                        static::$workerProviders[] = $provider;
                     }
                     if ($providerReflection->implementsInterface(RequestProviderContract::class)) {
-                        $requestProviders[] = $provider;
+                        static::$requestProviders[] = $provider;
                     }
                 }
             }
-
-            static::$appProviders[] = $appProviders;
-            static::$workerProviders[] = $workerProviders;
-            static::$requestProviders[] = $requestProviders;
         }
     }
 
@@ -71,7 +63,7 @@ class KernelProvider extends AbstractProvider
      */
     private static function mergeProviders($configProviders, $composerProviders)
     {
-        return [$configProviders, $composerProviders];
+        return array_merge($configProviders, $composerProviders);
     }
 
     protected static function excludedComposerProviders()
@@ -125,10 +117,8 @@ class KernelProvider extends AbstractProvider
     {
         parent::bootApp();
 
-        foreach (static::$appProviders as $providers) {
-            foreach ($providers as $provider) {
-                call_user_func([$provider, 'bootApp']);
-            }
+        foreach (static::$appProviders as $provider) {
+            call_user_func([$provider, 'bootApp']);
         }
     }
 
@@ -139,10 +129,8 @@ class KernelProvider extends AbstractProvider
     {
         parent::bootWorker();
 
-        foreach (static::$workerProviders as $providers) {
-            foreach ($providers as $provider) {
-                call_user_func([$provider, 'bootWorker']);
-            }
+        foreach (static::$workerProviders as $provider) {
+            call_user_func([$provider, 'bootWorker']);
         }
     }
 
@@ -150,10 +138,8 @@ class KernelProvider extends AbstractProvider
     {
         parent::bootRequest();
 
-        foreach (static::$requestProviders as $providers) {
-            foreach ($providers as $provider) {
-                call_user_func([$provider, 'bootRequest']);
-            }
+        foreach (static::$requestProviders as $provider) {
+            call_user_func([$provider, 'bootRequest']);
         }
     }
 
@@ -161,10 +147,8 @@ class KernelProvider extends AbstractProvider
     {
         parent::shutdownApp();
 
-        foreach (static::$appProviders as $providers) {
-            foreach ($providers as $provider) {
-                call_user_func([$provider, 'shutdownApp']);
-            }
+        foreach (static::$appProviders as $provider) {
+            call_user_func([$provider, 'shutdownApp']);
         }
     }
 
@@ -172,10 +156,8 @@ class KernelProvider extends AbstractProvider
     {
         parent::shutdownWorker();
 
-        foreach (static::$workerProviders as $providers) {
-            foreach ($providers as $provider) {
-                call_user_func([$provider, 'shutdownWorker']);
-            }
+        foreach (static::$workerProviders as $provider) {
+            call_user_func([$provider, 'shutdownWorker']);
         }
     }
 
@@ -183,10 +165,8 @@ class KernelProvider extends AbstractProvider
     {
         parent::shutdownResponse();
 
-        foreach (static::$requestProviders as $providers) {
-            foreach ($providers as $provider) {
-                call_user_func([$provider, 'shutdownResponse']);
-            }
+        foreach (static::$requestProviders as $provider) {
+            call_user_func([$provider, 'shutdownResponse']);
         }
     }
 }
