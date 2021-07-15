@@ -31,23 +31,21 @@ class KernelProvider extends AbstractProvider
      */
     protected static function classify()
     {
-        foreach (static::$providers as $providers) {
-            foreach ($providers as $provider) {
-                $providerReflection = new \ReflectionClass($provider);
-                if ($providerReflection->implementsInterface(ProviderContract::class)) {
+        foreach (static::$providers as $provider) {
+            $providerReflection = new \ReflectionClass($provider);
+            if ($providerReflection->implementsInterface(ProviderContract::class)) {
+                static::$appProviders[] = $provider;
+                static::$workerProviders[] = $provider;
+                static::$requestProviders[] = $provider;
+            } else {
+                if ($providerReflection->implementsInterface(AppProviderContract::class)) {
                     static::$appProviders[] = $provider;
+                }
+                if ($providerReflection->implementsInterface(WorkerProviderContract::class)) {
                     static::$workerProviders[] = $provider;
+                }
+                if ($providerReflection->implementsInterface(RequestProviderContract::class)) {
                     static::$requestProviders[] = $provider;
-                } else{
-                    if ($providerReflection->implementsInterface(AppProviderContract::class)) {
-                        static::$appProviders[] = $provider;
-                    }
-                    if ($providerReflection->implementsInterface(WorkerProviderContract::class)) {
-                        static::$workerProviders[] = $provider;
-                    }
-                    if ($providerReflection->implementsInterface(RequestProviderContract::class)) {
-                        static::$requestProviders[] = $provider;
-                    }
                 }
             }
         }
