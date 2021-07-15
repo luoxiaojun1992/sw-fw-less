@@ -92,15 +92,12 @@ trait Handler
 
     protected function formatResponse($response)
     {
-        if ($response instanceof Response) {
-            return $response;
-        }
+        $response = ($response instanceof Response) ? $response :
+            (is_string($response) ? Response::output($response) : (
+                is_array($response) ? Response::json($response) : $response
+            ));
 
-        if (is_array($response)) {
-            return Response::json($response);
-        } elseif (is_string($response)) {
-            return Response::output($response);
-        } elseif ($response instanceof Message) {
+        if (($response instanceof Response) || ($response instanceof Message)) {
             return $response;
         }
 
