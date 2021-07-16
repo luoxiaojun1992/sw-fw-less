@@ -6,6 +6,7 @@ use Cron\CronExpression;
 use SwFwLess\components\config\apollo\ClientBuilder;
 use SwFwLess\components\functions;
 use SwFwLess\components\grpc\Status;
+use SwFwLess\components\http\Response;
 use SwFwLess\components\provider\KernelProvider;
 use SwFwLess\facades\Container;
 use SwFwLess\facades\Log;
@@ -209,12 +210,15 @@ class App
 
         //Middleware
         $middlewareNames = functions\config('middleware.middleware');
+
         $middlewareNames[] = \SwFwLess\middlewares\Route::class;
         /** @var \SwFwLess\middlewares\MiddlewareContract[]|\SwFwLess\middlewares\AbstractMiddleware[] $middlewareConcretes */
         $prevMiddlewareConcrete = null;
         $firstMiddlewareConcrete = null;
         foreach ($middlewareNames as $i => $middlewareName) {
-            list($middlewareClass, $middlewareOptions) = ($middlewareName === \SwFwLess\middlewares\Route::class) ?
+            $isRouteMiddleware = $middlewareName === \SwFwLess\middlewares\Route::class;
+
+            list($middlewareClass, $middlewareOptions) = $isRouteMiddleware ?
                 [$middlewareName, null] :
                 Parser::parseMiddlewareName($middlewareName);
 
@@ -227,13 +231,11 @@ class App
 
             $middlewareConcrete->setParametersAndOptions(
                 [$appRequest],
-                $middlewareConcrete instanceof \SwFwLess\middlewares\Route ?
+                $isRouteMiddleware ?
                     $this->httpRouteDispatcher :
                     $middlewareOptions
             );
-            if (!is_null($prevMiddlewareConcrete)) {
-                $prevMiddlewareConcrete->setNext($middlewareConcrete);
-            }
+            (!is_null($prevMiddlewareConcrete)) && ($prevMiddlewareConcrete->setNext($middlewareConcrete));
             $prevMiddlewareConcrete = $middlewareConcrete;
         }
 
