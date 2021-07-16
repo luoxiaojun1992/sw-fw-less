@@ -63,18 +63,11 @@ class ObjectPool
      */
     public function pick($class)
     {
-        if (!isset($this->pool[$class])) {
-            return null;
-        }
         $object = Scheduler::withoutPreemptive(function () use ($class) {
-            return array_pop($this->pool[$class]);
+            return array_pop(($this->pool[$class]) ?? []);
         });
-        if (!$object) {
-            $object = $this->createObject($class);
-            $object->setReleaseToPool(false);
-        } else {
-            $object->setReleaseToPool(true);
-        }
+        $object = $object ?: ($this->pool[$class]) ?? $this->createObject($class);
+        $object ? $object->setReleaseToPool(false) : null;
         return $object;
     }
 
@@ -83,18 +76,14 @@ class ObjectPool
      */
     public function release($object)
     {
-        if ($object) {
-            if ($object instanceof Poolable) {
-                if ($object->needRelease()) {
-                    Scheduler::withoutPreemptive(function () use ($object) {
-                        $class = get_class($object);
-                        if (isset($this->pool[$class])) {
-                            $object->reset();
-                            $this->pool[$class][] = $object;
-                        }
-                    });
+        if ($object && ($object instanceof Poolable) && ($object->needRelease())) {
+            Scheduler::withoutPreemptive(function () use ($object) {
+                $class = get_class($object);
+                if (isset($this->pool[$class])) {
+                    $object->reset();
+                    $this->pool[$class][] = $object;
                 }
-            }
+            });
         }
     }
 
