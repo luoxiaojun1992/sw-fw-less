@@ -45,21 +45,15 @@ class Route extends AbstractMiddleware
                 Container::make($controllerName) :
                 new $controllerName
             );
-        if ($controller instanceof \SwFwLess\services\BaseService) {
-            $controller->setRequestAndHandlerAndParameters(
-                $appRequest,
-                $action,
-                $parameters
-            );
-        } else {
-            $controller->setHandlerAndParameters($action, $parameters);
-        }
+        ($controller instanceof \SwFwLess\services\BaseService) ? ($controller->setRequestAndHandlerAndParameters(
+            $appRequest,
+            $action,
+            $parameters
+        )) : ($controller->setHandlerAndParameters($action, $parameters));
 
         //Middleware
         $middlewareNames = \SwFwLess\components\functions\config('middleware.routeMiddleware');
-        if (isset($controllerAction[3])) {
-            $middlewareNames = array_merge($middlewareNames, $controllerAction[3]);
-        }
+        isset($controllerAction[3]) && ($middlewareNames = array_merge($middlewareNames, $controllerAction[3]));
         $firstMiddlewareConcrete = null;
         $prevMiddlewareConcrete = null;
         foreach ($middlewareNames as $i => $middlewareName) {
@@ -78,14 +72,10 @@ class Route extends AbstractMiddleware
                 [$appRequest],
                 $middlewareOptions
             );
-            if (!is_null($prevMiddlewareConcrete)) {
-                $prevMiddlewareConcrete->setNext($middlewareConcrete);
-            }
+            (!is_null($prevMiddlewareConcrete)) && $prevMiddlewareConcrete->setNext($middlewareConcrete);
             $prevMiddlewareConcrete = $middlewareConcrete;
         }
-        if (!is_null($prevMiddlewareConcrete)) {
-            $prevMiddlewareConcrete->setNext($controller);
-        }
+        (!is_null($prevMiddlewareConcrete)) && $prevMiddlewareConcrete->setNext($controller);
         return $firstMiddlewareConcrete ?? $controller;
     }
 
