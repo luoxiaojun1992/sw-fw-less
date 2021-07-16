@@ -16,12 +16,12 @@ class Container
 
     public static function diSwitch()
     {
-        return \SwFwLess\components\functions\config('di_switch', App::DEFAULT_DI_SWITCH);
+        return \SwFwLess\components\Config::get('di_switch', App::DEFAULT_DI_SWITCH);
     }
 
     public static function routeDiSwitch()
     {
-        return static::diSwitch() && \SwFwLess\components\functions\config('route_di_switch');
+        return static::diSwitch() && \SwFwLess\components\Config::get('route_di_switch');
     }
 
     /**

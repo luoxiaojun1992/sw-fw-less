@@ -67,7 +67,7 @@ class ObjectPool
             return isset($this->pool[$class]) ? array_pop($this->pool[$class]) : null;
         });
         $object = $object ?: ($this->pool[$class]) ?? $this->createObject($class);
-        $object ? $object->setReleaseToPool(false) : null;
+        $object && ($object->setReleaseToPool(false));
         return $object;
     }
 

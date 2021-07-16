@@ -96,7 +96,9 @@ class Arr
      */
     public static function nestedArrHas($arr, $keys)
     {
-        if (!is_array($arr)) {
+        if (is_array($arr)) {
+            //
+        } else {
             return false;
         }
 
@@ -108,10 +110,8 @@ class Arr
             $keys = explode('.', $keys);
         } elseif (is_int($keys)) {
             $keys = [$keys];
-        } else {
-            if (!is_array($keys)) {
-                return false;
-            }
+        } elseif (!is_array($keys)) {
+            return false;
         }
 
         $existed = false;
