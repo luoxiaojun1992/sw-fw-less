@@ -47,9 +47,7 @@ class Config
                 Helper::nestedArrHas(static::$config, $key)
             ) {
                 $config = Helper::nestedArrGet(static::$config, $key, $default);
-                if (is_string($key)) {
-                    self::$configCache[$key] = $config;
-                }
+                is_string($key) && (self::$configCache[$key] = $config);
             } else {
                 $config = $default;
             }

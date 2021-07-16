@@ -313,9 +313,7 @@ class Request implements Poolable
         $swfRequest = ObjectPool::pick(static::class);
         if ($swfRequest) {
             $cid = $swfRequest->getCid();
-            if (!is_null($cid)) {
-                static::release($cid, false);
-            }
+            (!is_null($cid)) && static::release($cid, false);
             static::register($swfRequest);
             $swfRequest->cid = Coroutine::getCid();
         } else {
