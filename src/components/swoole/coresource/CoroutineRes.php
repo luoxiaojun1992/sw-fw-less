@@ -33,13 +33,10 @@ class CoroutineRes
 
         Scheduler::withoutPreemptive(function () use ($cid, $className, $releaseToPool) {
             if (isset(self::$coroutineRes[$cid][$className])) {
-                if ($releaseToPool) {
-                    if (is_object(self::$coroutineRes[$cid][$className])) {
-                        if (self::$coroutineRes[$cid][$className] instanceof Poolable) {
-                            ObjectPool::release(self::$coroutineRes[$cid][$className]);
-                        }
-                    }
-                }
+                ($releaseToPool &&
+                    is_object(self::$coroutineRes[$cid][$className]) &&
+                    (self::$coroutineRes[$cid][$className] instanceof Poolable)
+                ) && ObjectPool::release(self::$coroutineRes[$cid][$className]);
                 unset(self::$coroutineRes[$cid][$className]);
             }
         });
