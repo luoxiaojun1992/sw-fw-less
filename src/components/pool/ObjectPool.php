@@ -64,7 +64,7 @@ class ObjectPool
     public function pick($class)
     {
         $object = Scheduler::withoutPreemptive(function () use ($class) {
-            return array_pop(($this->pool[$class]) ?? []);
+            return isset($this->pool[$class]) ? array_pop($this->pool[$class]) : null;
         });
         $object = $object ?: ($this->pool[$class]) ?? $this->createObject($class);
         $object ? $object->setReleaseToPool(false) : null;
