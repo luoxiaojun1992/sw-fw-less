@@ -21,14 +21,7 @@ class Arr
      */
     public static function arrHas($arr, $key)
     {
-        if (!is_array($arr)) {
-            return false;
-        }
-        if (!is_string($key) && !is_int($key)) {
-            return false;
-        }
-
-        return array_key_exists($key, $arr);
+        return ((!is_array($arr)) || (!is_string($key) && !is_int($key))) ? false : array_key_exists($key, $arr);
     }
 
     /**
@@ -39,14 +32,8 @@ class Arr
      */
     public static function arrGet($arr, $key, $default = null)
     {
-        if (!is_array($arr)) {
-            return $default;
-        }
-        if (!is_string($key) && !is_int($key)) {
-            return $default;
-        }
-
-        return static::arrHas($arr, $key) ? $arr[$key] : $default;
+        return ((!is_array($arr)) || ((!is_string($key)) && (!is_int($key)))) ? $default :
+            (static::arrHas($arr, $key) ? $arr[$key] : $default);
     }
 
     /**
@@ -139,7 +126,9 @@ class Arr
      */
     public static function nestedArrGet($arr, $keys, $default = null)
     {
-        if (!is_array($arr)) {
+        if (is_array($arr)) {
+            //
+        } else {
             return $default;
         }
 
@@ -151,10 +140,8 @@ class Arr
             $keys = explode('.', $keys);
         } elseif (is_int($keys)) {
             $keys = [$keys];
-        } else {
-            if (!is_array($keys)) {
-                return $default;
-            }
+        } elseif (!is_array($keys)) {
+            return $default;
         }
 
         $subConfig = $arr;
