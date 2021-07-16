@@ -41,7 +41,7 @@ class Route extends AbstractMiddleware
         /** @var AbstractMiddleware|BaseService|GrpcUnaryService $controller */
         $controller = ObjectPool::pick($controllerName) ?:
             (
-                $routeDiSwitch ?
+            $routeDiSwitch ?
                 Container::make($controllerName) :
                 new $controllerName
             );
@@ -72,9 +72,7 @@ class Route extends AbstractMiddleware
                 Container::make($middlewareClass) :
                 new $middlewareClass);
 
-            if (is_null($firstMiddlewareConcrete)) {
-                $firstMiddlewareConcrete = $middlewareConcrete;
-            }
+            $firstMiddlewareConcrete = $firstMiddlewareConcrete ?? $middlewareConcrete;
 
             $middlewareConcrete->setParametersAndOptions(
                 [$appRequest],
@@ -88,11 +86,7 @@ class Route extends AbstractMiddleware
         if (!is_null($prevMiddlewareConcrete)) {
             $prevMiddlewareConcrete->setNext($controller);
         }
-        if (is_null($firstMiddlewareConcrete)) {
-            $firstMiddlewareConcrete = $controller;
-        }
-
-        return $firstMiddlewareConcrete;
+        return $firstMiddlewareConcrete ?? $controller;
     }
 
     protected function selectRouteCacheKeyCache(
@@ -100,13 +94,15 @@ class Route extends AbstractMiddleware
     )
     {
         foreach (self::$routeCacheKeyCache as $cachedMethod => $cachedUriJson) {
-            if ($requestMethodFilter($cachedMethod)) {
-                foreach (array_reverse($cachedUriJson, true) as $cachedUri => $cachedJson) {
-                    $slicedJsonCache[$cachedMethod][$cachedUri] = $cachedJson;
-                    ++$slicedJsonCacheCount;
-                    if ($slicedJsonCacheCount >= static::$routeCacheKeyCacheCapacity) {
-                        break;
-                    }
+            foreach ((
+            $requestMethodFilter($cachedMethod) ?
+                array_reverse($cachedUriJson, true) :
+                []
+            ) as $cachedUri => $cachedJson) {
+                $slicedJsonCache[$cachedMethod][$cachedUri] = $cachedJson;
+                ++$slicedJsonCacheCount;
+                if ($slicedJsonCacheCount >= static::$routeCacheKeyCacheCapacity) {
+                    break;
                 }
             }
         }
