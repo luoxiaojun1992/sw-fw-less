@@ -78,7 +78,9 @@ trait Handler
     public function call()
     {
         try {
+            //inline optimization, see static::getHandlerAndParameters()
             list($handler, $parameters) = [$this->handler ?? static::DEFAULT_HANDLER, $this->parameters];
+            //inline optimization, see SwFwLess\components\di\Container::routeDiSwitch()
             return $this->formatResponse(
                 ((\SwFwLess\components\Config::get('di_switch', App::DEFAULT_DI_SWITCH)) &&
                     (\SwFwLess\components\Config::get('route_di_switch'))) ?
