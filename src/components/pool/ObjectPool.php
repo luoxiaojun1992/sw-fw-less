@@ -64,6 +64,8 @@ class ObjectPool
         $object = Scheduler::withoutPreemptive(function () use ($class) {
             return isset($this->pool[$class]) ? array_pop($this->pool[$class]) : null;
         });
+        //inline optimization, see SwFwLess\components\di\Container::routeDiSwitch()
+        //inline optimization, see static::createObject()
         $object = $object ?: ($this->pool[$class]) ?? (
             ((\SwFwLess\components\Config::get('di_switch', App::DEFAULT_DI_SWITCH)) &&
                 (\SwFwLess\components\Config::get('route_di_switch'))) ?
