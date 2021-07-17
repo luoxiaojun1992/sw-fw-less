@@ -103,10 +103,11 @@ class Route extends AbstractMiddleware
     public function handle(Request $request)
     {
         $requestUri = $request->uri();
-        if (false !== $pos = strpos($requestUri, '?')) {
-            $requestUri = substr($requestUri, 0, $pos);
-        }
-        $requestUri = Url::decode($requestUri);
+        $requestUri = Url::decode(
+            (false !== ($pos = strpos($requestUri, '?'))) ?
+                substr($requestUri, 0, $pos) :
+                $requestUri
+        );
 
         $routeInfo = Scheduler::withoutPreemptive(function () use ($request, $requestUri) {
             $requestMethod = $request->method();
