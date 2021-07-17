@@ -2,6 +2,7 @@
 
 namespace SwFwLess\components\pool;
 
+use SwFwLess\bootstrap\App;
 use SwFwLess\components\swoole\Scheduler;
 use SwFwLess\facades\Container;
 
@@ -49,8 +50,7 @@ class ObjectPool
      */
     public function createObject($class)
     {
-        $routeDiSwitch = \SwFwLess\components\di\Container::diSwitch();
-        return $routeDiSwitch ?
+        return (\SwFwLess\components\di\Container::diSwitch()) ?
             Container::make($class) :
             new $class;
     }
@@ -64,7 +64,11 @@ class ObjectPool
         $object = Scheduler::withoutPreemptive(function () use ($class) {
             return isset($this->pool[$class]) ? array_pop($this->pool[$class]) : null;
         });
-        $object = $object ?: ($this->pool[$class]) ?? $this->createObject($class);
+        $object = $object ?: ($this->pool[$class]) ?? (
+            ((\SwFwLess\components\Config::get('di_switch', App::DEFAULT_DI_SWITCH)) &&
+                (\SwFwLess\components\Config::get('route_di_switch'))) ?
+                Container::make($class) :
+                new $class);
         $object && ($object->setReleaseToPool(false));
         return $object;
     }

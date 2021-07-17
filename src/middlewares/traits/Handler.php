@@ -3,6 +3,7 @@
 namespace SwFwLess\middlewares\traits;
 
 use Google\Protobuf\Internal\Message;
+use SwFwLess\bootstrap\App;
 use SwFwLess\components\http\Response;
 use SwFwLess\exceptions\HttpException;
 use SwFwLess\facades\Container;
@@ -77,9 +78,10 @@ trait Handler
     public function call()
     {
         try {
-            list($handler, $parameters) = $this->getHandlerAndParameters();
+            list($handler, $parameters) = [$this->handler ?? static::DEFAULT_HANDLER, $this->parameters];
             return $this->formatResponse(
-                \SwFwLess\components\di\Container::routeDiSwitch() ?
+                ((\SwFwLess\components\Config::get('di_switch', App::DEFAULT_DI_SWITCH)) &&
+                    (\SwFwLess\components\Config::get('route_di_switch'))) ?
                     Container::call([$this, $handler], $parameters) :
                     call_user_func_array([$this, $handler], $parameters)
             );
@@ -94,7 +96,7 @@ trait Handler
     {
         $response = ($response instanceof Response) ? $response :
             (is_string($response) ? Response::output($response) : (
-                is_array($response) ? Response::json($response) : $response
+            is_array($response) ? Response::json($response) : $response
             ));
 
         if (($response instanceof Response) || ($response instanceof Message)) {
