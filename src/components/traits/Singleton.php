@@ -18,10 +18,6 @@ trait Singleton
      */
     public static function create()
     {
-        if (self::$instance instanceof self) {
-            return self::$instance;
-        }
-
-        return self::$instance = new self();
+        return (self::$instance instanceof self) ? (self::$instance) : (self::$instance = new self());
     }
 }

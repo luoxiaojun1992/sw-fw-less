@@ -4,6 +4,7 @@ namespace SwFwLess\bootstrap;
 
 use Cron\CronExpression;
 use SwFwLess\components\config\apollo\ClientBuilder;
+use SwFwLess\components\event\Event;
 use SwFwLess\components\functions;
 use SwFwLess\components\grpc\Status;
 use SwFwLess\components\http\Response;
@@ -388,7 +389,7 @@ class App
 
     private function swResponseWithEvents($callback, \SwFwLess\components\http\Response $swfResponse)
     {
-        functions\event(new \Cake\Event\Event(
+        Event::create()->dispatch(new \Cake\Event\Event(
             static::EVENT_RESPONSING,
             null,
             [
@@ -400,7 +401,7 @@ class App
 
         call_user_func($callback);
 
-        functions\event(new \Cake\Event\Event(
+        Event::create()->dispatch(new \Cake\Event\Event(
             static::EVENT_RESPONSED,
             null,
             [
