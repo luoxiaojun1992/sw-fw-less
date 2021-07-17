@@ -7,10 +7,10 @@ use SwFwLess\components\config\apollo\ClientBuilder;
 use SwFwLess\components\functions;
 use SwFwLess\components\grpc\Status;
 use SwFwLess\components\http\Response;
+use SwFwLess\components\pool\ObjectPool;
 use SwFwLess\components\provider\KernelProvider;
 use SwFwLess\facades\Container;
 use SwFwLess\facades\Log;
-use SwFwLess\facades\ObjectPool;
 use SwFwLess\facades\RateLimit;
 use SwFwLess\middlewares\Parser;
 use Swoole\Http\Server;
@@ -223,7 +223,7 @@ class App
                 Parser::parseMiddlewareName($middlewareName);
 
             /** @var \SwFwLess\middlewares\AbstractMiddleware $middlewareConcrete */
-            $middlewareConcrete = ObjectPool::pick($middlewareClass) ?: ($routeDiSwitch ?
+            $middlewareConcrete = ObjectPool::create()->pick($middlewareClass) ?: ($routeDiSwitch ?
                 Container::make($middlewareClass) :
                 new $middlewareClass);
 

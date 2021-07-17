@@ -5,9 +5,9 @@ namespace SwFwLess\middlewares\traits;
 use Google\Protobuf\Internal\Message;
 use SwFwLess\bootstrap\App;
 use SwFwLess\components\http\Response;
+use SwFwLess\components\pool\ObjectPool;
 use SwFwLess\exceptions\HttpException;
 use SwFwLess\facades\Container;
-use SwFwLess\facades\ObjectPool;
 
 trait Handler
 {
@@ -78,9 +78,7 @@ trait Handler
     public function call()
     {
         try {
-            //inline optimization, see static::getHandlerAndParameters()
             list($handler, $parameters) = [$this->handler ?? static::DEFAULT_HANDLER, $this->parameters];
-            //inline optimization, see SwFwLess\components\di\Container::routeDiSwitch()
             return $this->formatResponse(
                 ((\SwFwLess\components\Config::get('di_switch', App::DEFAULT_DI_SWITCH)) &&
                     (\SwFwLess\components\Config::get('route_di_switch'))) ?
@@ -90,7 +88,7 @@ trait Handler
         } catch (\Throwable $e) {
             throw $e;
         } finally {
-            ObjectPool::release($this);
+            ObjectPool::create()->release($this);
         }
     }
 

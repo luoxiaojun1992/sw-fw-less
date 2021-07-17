@@ -4,10 +4,10 @@ namespace SwFwLess\middlewares;
 
 use SwFwLess\components\http\Request;
 use SwFwLess\components\http\Response;
+use SwFwLess\components\pool\ObjectPool;
 use SwFwLess\components\swoole\Scheduler;
 use SwFwLess\components\utils\http\Url;
 use SwFwLess\facades\Container;
-use SwFwLess\facades\ObjectPool;
 use SwFwLess\middlewares\traits\Parser;
 use FastRoute\Dispatcher;
 use SwFwLess\services\BaseService;
@@ -38,8 +38,9 @@ class Route extends AbstractMiddleware
         $action = $controllerAction[2];
         $parameters = $routeInfo[2];
         $routeDiSwitch = \SwFwLess\components\di\Container::routeDiSwitch();
+        $objectPool = ObjectPool::create();
         /** @var AbstractMiddleware|BaseService|GrpcUnaryService $controller */
-        $controller = ObjectPool::pick($controllerName) ?:
+        $controller = $objectPool->pick($controllerName) ?:
             (
             $routeDiSwitch ?
                 Container::make($controllerName) :
@@ -62,7 +63,7 @@ class Route extends AbstractMiddleware
             );
 
             /** @var \SwFwLess\middlewares\AbstractMiddleware $middlewareConcrete */
-            $middlewareConcrete = ObjectPool::pick($middlewareClass) ?: ($routeDiSwitch ?
+            $middlewareConcrete = $objectPool->pick($middlewareClass) ?: ($routeDiSwitch ?
                 Container::make($middlewareClass) :
                 new $middlewareClass);
 
