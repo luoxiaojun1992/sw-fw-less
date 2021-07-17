@@ -19,15 +19,13 @@ class ObjectPool
      */
     public static function create($config = null)
     {
-        if (self::$instance instanceof self) {
-            return self::$instance;
-        }
-
-        if (is_array($config) && !empty($config['switch'])) {
-            return self::$instance = new self($config);
-        } else {
-            return null;
-        }
+        return (self::$instance instanceof self) ?
+            (self::$instance) :
+            (
+            (is_array($config) && (!empty($config['switch']))) ?
+                (self::$instance = new self($config)) :
+                null
+            );
     }
 
     /**
