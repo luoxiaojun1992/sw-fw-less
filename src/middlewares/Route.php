@@ -168,6 +168,7 @@ class Route extends AbstractMiddleware
                 return Response::output('');
         }
 
-        return $this->next();
+        //inline optimization, see static::next()
+        return $this->next->call();
     }
 }

@@ -14,7 +14,7 @@ abstract class AbstractMiddleware implements MiddlewareContract, Poolable
     /**
      * @var MiddlewareContract
      */
-    private $next;
+    protected $next;
 
     private $options;
 
