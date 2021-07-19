@@ -3,10 +3,12 @@
 namespace SwFwLess\bootstrap;
 
 use Cron\CronExpression;
+use SwFwLess\components\Config;
 use SwFwLess\components\config\apollo\ClientBuilder;
 use SwFwLess\components\event\Event;
 use SwFwLess\components\functions;
 use SwFwLess\components\grpc\Status;
+use SwFwLess\components\http\Response;
 use SwFwLess\components\pool\ObjectPool;
 use SwFwLess\components\provider\KernelProvider;
 use SwFwLess\facades\Container;
@@ -206,10 +208,12 @@ class App
     {
         $appRequest = \SwFwLess\components\http\Request::fromSwRequest($request);
 
-        $routeDiSwitch = \SwFwLess\components\di\Container::routeDiSwitch();
+        //inline optimization, see SwFwLess\components\di\Container::routeDiSwitch()
+        $routeDiSwitch = (\SwFwLess\components\Config::get('di_switch', App::DEFAULT_DI_SWITCH)) &&
+            (\SwFwLess\components\Config::get('route_di_switch'));
 
         //Middleware
-        $middlewareNames = functions\config('middleware.middleware');
+        $middlewareNames = Config::get('middleware.middleware');
 
         $middlewareNames[] = \SwFwLess\middlewares\Route::class;
         /** @var \SwFwLess\middlewares\MiddlewareContract[]|\SwFwLess\middlewares\AbstractMiddleware[] $middlewareConcretes */

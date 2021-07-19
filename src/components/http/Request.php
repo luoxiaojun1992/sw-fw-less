@@ -4,9 +4,9 @@ namespace SwFwLess\components\http;
 
 use SwFwLess\components\Helper;
 use SwFwLess\components\http\traits\Tracer;
+use SwFwLess\components\pool\ObjectPool;
 use SwFwLess\components\pool\Poolable;
 use SwFwLess\components\swoole\coresource\traits\CoroutineRes;
-use SwFwLess\facades\ObjectPool;
 use Swoole\Coroutine;
 
 class Request implements Poolable
@@ -310,7 +310,7 @@ class Request implements Poolable
     public static function fromSwRequest($swRequest)
     {
         /** @var static $swfRequest */
-        $swfRequest = ObjectPool::pick(static::class);
+        $swfRequest = ObjectPool::create()->pick(static::class);
         if ($swfRequest) {
             $cid = $swfRequest->getCid();
             (!is_null($cid)) && static::release($cid, false);
