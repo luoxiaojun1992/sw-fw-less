@@ -343,7 +343,7 @@ class App
         $swfResponse = call_user_func($callback);
 
         $content = $swfResponse->getContent();
-        if ($content || (ob_get_length() <= 0)) {
+        if (($content !== null) || (ob_get_length() <= 0)) {
             ob_end_flush();
         } else {
             $swfResponse->setContent(ob_get_contents());
