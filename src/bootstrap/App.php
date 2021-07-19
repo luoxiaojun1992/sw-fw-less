@@ -56,15 +56,20 @@ class App
         );
 
         $serverConfig = [
-            'reactor_num' => functions\config('server.reactor_num'),
-            'worker_num' => functions\config('server.worker_num'),
+            'reactor_num' => functions\config('server.reactor_num', swoole_cpu_num() * 2),
+            'worker_num' => functions\config('server.worker_num', swoole_cpu_num() * 2),
             'daemonize' => functions\config('server.daemonize'),
-            'backlog' => functions\config('server.backlog'),
+            'backlog' => functions\config('server.backlog', 128),
             'max_request' => functions\config('server.max_request'),
-            'dispatch_mode' => functions\config('server.dispatch_mode'),
+            'dispatch_mode' => functions\config('server.dispatch_mode', 2),
             'open_http2_protocol' => functions\config('server.open_http2_protocol'),
             'task_worker_num' => functions\config('server.task_worker_num'),
             'task_enable_coroutine' => functions\config('server.task_enable_coroutine'),
+            'open_tcp_nodelay' => functions\config('server.open_tcp_nodelay', true),
+            'tcp_fastopen' => functions\config('server.tcp_fastopen', true),
+            'max_coroutine' => functions\config('server.max_coroutine', 3000),
+            'open_cpu_affinity' => functions\config('server.open_cpu_affinity', true),
+            'socket_buffer_size' => functions\config('server.socket_buffer_size', 2 * 1024 * 1024)
         ];
         if (!empty($pidFile = functions\config('server.pid_file'))) {
             $serverConfig['pid_file'] = $pidFile;
