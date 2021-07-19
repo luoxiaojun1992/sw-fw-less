@@ -8,6 +8,7 @@ use SwFwLess\components\config\apollo\ClientBuilder;
 use SwFwLess\components\event\Event;
 use SwFwLess\components\functions;
 use SwFwLess\components\grpc\Status;
+use SwFwLess\components\http\Response;
 use SwFwLess\components\pool\ObjectPool;
 use SwFwLess\components\provider\KernelProvider;
 use SwFwLess\facades\Container;
@@ -243,7 +244,7 @@ class App
                     $this->httpRouteDispatcher :
                     $middlewareOptions
             );
-            (!is_null($prevMiddlewareConcrete)) && ($prevMiddlewareConcrete->setNext($middlewareConcrete));
+            ($prevMiddlewareConcrete !== null) && ($prevMiddlewareConcrete->setNext($middlewareConcrete));
             $prevMiddlewareConcrete = $middlewareConcrete;
         }
 

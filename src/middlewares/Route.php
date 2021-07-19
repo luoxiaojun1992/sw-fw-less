@@ -73,10 +73,10 @@ class Route extends AbstractMiddleware
                 [$appRequest],
                 $middlewareOptions
             );
-            (!is_null($prevMiddlewareConcrete)) && $prevMiddlewareConcrete->setNext($middlewareConcrete);
+            ($prevMiddlewareConcrete !== null) && $prevMiddlewareConcrete->setNext($middlewareConcrete);
             $prevMiddlewareConcrete = $middlewareConcrete;
         }
-        (!is_null($prevMiddlewareConcrete)) && $prevMiddlewareConcrete->setNext($controller);
+        ($prevMiddlewareConcrete !== null) && $prevMiddlewareConcrete->setNext($controller);
         return $firstMiddlewareConcrete ?? $controller;
     }
 
