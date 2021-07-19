@@ -2,6 +2,7 @@
 
 namespace SwFwLess\middlewares;
 
+use SwFwLess\components\Config;
 use SwFwLess\components\swoole\Scheduler;
 
 class Parser
@@ -36,7 +37,7 @@ class Parser
                 }
             }
 
-            $result[0] = \SwFwLess\components\functions\config('middleware.aliases')[$result[0]] ??
+            $result[0] = (Config::get('middleware.aliases')[$result[0]]) ??
                 $result[0];
 
             return $result;
