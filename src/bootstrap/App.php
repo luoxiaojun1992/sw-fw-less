@@ -400,7 +400,7 @@ class App
             ]
         ));
 
-        $responsingAt = microtime(true) * 1000;
+        $responsingAt = microtime(true);
 
         call_user_func($callback);
 
@@ -409,7 +409,7 @@ class App
             null,
             [
                 'response' => $swfResponse,
-                'time' => microtime(true) * 1000 - $responsingAt,
+                'time' => (microtime(true) - $responsingAt) * 1000,
             ]
         ));
     }
