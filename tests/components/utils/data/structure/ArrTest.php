@@ -55,12 +55,39 @@ class ArrTest extends \PHPUnit\Framework\TestCase
         );
     }
 
+    public function testNestedArrSet()
+    {
+        $arr = ['foo' => 1, 'bar' => 2, 'qux' => 4];
+        Arr::nestedArrSet($arr, 'baz', 3);
+        $this->assertTrue(
+            ['foo' => 1, 'bar' => 2, 'qux' => 4, 'baz' => 3] ===
+            $arr
+        );
+
+        $arr = [
+            'foo' => ['bar' => ['baz' => ['qux' => 1]]],
+            'bar' => ['foo' => ['baz' => ['qux' => 2]]],
+            'baz' => ['foo' => ['bar' => ['qux' => 3]]],
+            'qux' => 4
+        ];
+        Arr::nestedArrSet($arr, 'bar.foo', ['baz' => ['qux' => 2]]);
+        $this->assertTrue(
+            [
+                'foo' => ['bar' => ['baz' => ['qux' => 1]]],
+                'bar' => ['foo' => ['baz' => ['qux' => 2]]],
+                'baz' => ['foo' => ['bar' => ['qux' => 3]]],
+                'qux' => 4
+            ] ===
+            $arr
+        );
+    }
+
     public function testNestedArrForget()
     {
         $arr = ['foo' => 1, 'bar' => 2, 'baz' => 3, 'qux' => 4];
         Arr::nestedArrForget($arr, 'foo');
-        $this->assertEquals(
-            ['bar' => 2, 'baz' => 3, 'qux' => 4],
+        $this->assertTrue(
+            ['bar' => 2, 'baz' => 3, 'qux' => 4] ===
             $arr
         );
 
@@ -71,13 +98,13 @@ class ArrTest extends \PHPUnit\Framework\TestCase
             'qux' => 4
         ];
         Arr::nestedArrForget($arr, 'bar.foo');
-        $this->assertEquals(
+        $this->assertTrue(
             [
                 'foo' => ['bar' => ['baz' => ['qux' => 1]]],
                 'bar' => [],
                 'baz' => ['foo' => ['bar' => ['qux' => 3]]],
                 'qux' => 4
-            ],
+            ] ===
             $arr
         );
     }
