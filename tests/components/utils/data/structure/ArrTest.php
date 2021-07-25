@@ -3,6 +3,7 @@
 namespace SwFwLessTests;
 
 use SwFwLess\components\utils\data\structure\Arr;
+use SwFwLess\components\utils\data\structure\variable\MetasyntacticVars;
 
 class ArrTest extends \PHPUnit\Framework\TestCase
 {
@@ -57,10 +58,15 @@ class ArrTest extends \PHPUnit\Framework\TestCase
 
     public function testNestedArrSet()
     {
-        $arr = ['foo' => 1, 'bar' => 2, 'qux' => 4];
-        Arr::nestedArrSet($arr, 'baz', 3);
+        $arr = [
+            MetasyntacticVars::FOO => 1, MetasyntacticVars::BAR => 2, MetasyntacticVars::QUX => 4
+        ];
+        Arr::nestedArrSet($arr, MetasyntacticVars::BAZ, 3);
         $this->assertTrue(
-            ['foo' => 1, 'bar' => 2, 'qux' => 4, 'baz' => 3] ===
+            [
+                MetasyntacticVars::FOO => 1, MetasyntacticVars::BAR => 2,
+                MetasyntacticVars::QUX => 4, MetasyntacticVars::BAZ => 3
+            ] ===
             $arr
         );
 
