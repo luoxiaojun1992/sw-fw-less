@@ -55,6 +55,33 @@ class ArrTest extends \PHPUnit\Framework\TestCase
         );
     }
 
+    public function testNestedArrForget()
+    {
+        $arr = ['foo' => 1, 'bar' => 2, 'baz' => 3, 'qux' => 4];
+        Arr::nestedArrForget($arr, 'foo');
+        $this->assertEquals(
+            ['bar' => 2, 'baz' => 3, 'qux' => 4],
+            $arr
+        );
+
+        $arr = [
+            'foo' => ['bar' => ['baz' => ['qux' => 1]]],
+            'bar' => ['foo' => ['baz' => ['qux' => 2]]],
+            'baz' => ['foo' => ['bar' => ['qux' => 3]]],
+            'qux' => 4
+        ];
+        Arr::nestedArrForget($arr, 'bar.foo');
+        $this->assertEquals(
+            [
+                'foo' => ['bar' => ['baz' => ['qux' => 1]]],
+                'bar' => [],
+                'baz' => ['foo' => ['bar' => ['qux' => 3]]],
+                'qux' => 4
+            ],
+            $arr
+        );
+    }
+
     public function testArrayColumnUnique()
     {
         $this->assertTrue(
