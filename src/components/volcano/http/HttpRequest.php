@@ -27,10 +27,12 @@ class HttpRequest implements OperatorInterface
 
     public function next()
     {
-        $request = $this->requests[$this->cursor];
-        $response = (new HttpClient())->send($request, $this->swfRequest);
-        ++$this->cursor;
-        return $response;
+        while (isset($this->requests[$this->cursor])) {
+            $request = $this->requests[$this->cursor];
+            $response = (new HttpClient())->send($request, $this->swfRequest);
+            ++$this->cursor;
+            yield $response;
+        }
     }
 
     public function close()

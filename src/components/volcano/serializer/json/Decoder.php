@@ -17,6 +17,10 @@ class Decoder implements OperatorInterface
     public function next()
     {
         // TODO: Implement next() method.
+        foreach ($this->nextOperator->next() as $response) {
+            $data = [];
+            yield $data;
+        }
     }
 
     public function close()
