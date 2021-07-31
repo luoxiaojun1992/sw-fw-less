@@ -2,6 +2,7 @@
 
 namespace SwFwLess\components\volcano\serializer\json;
 
+use SwFwLess\components\Helper;
 use SwFwLess\components\volcano\OperatorInterface;
 
 class Decoder implements OperatorInterface
@@ -16,10 +17,8 @@ class Decoder implements OperatorInterface
 
     public function next()
     {
-        // TODO: Implement next() method.
         foreach ($this->nextOperator->next() as $response) {
-            $data = [];
-            yield $data;
+            yield Helper::jsonDecode((string)($response->getBody()));
         }
     }
 
