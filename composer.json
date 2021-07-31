@@ -23,7 +23,7 @@
         "luoxiaojun/grpc": "dev-master",
         "luoxiaojun1992/monolog-co-stream-handler": "~1.0",
         "monolog/monolog": "^1",
-        "nesbot/carbon": "^1.26.3",
+        "nesbot/carbon": "^1.26.3|^2.0",
         "nikic/fast-route": "^1",
         "opis/closure": "^3.3",
         "php-di/php-di": "~6.0",
