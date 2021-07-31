@@ -1,6 +1,6 @@
 <?php
 
-namespace SwFwLessTests;
+namespace SwFwLessTests\components\utils\data\structure;
 
 use SwFwLess\components\utils\data\structure\Arr;
 use SwFwLess\components\utils\data\structure\variable\MetasyntacticVars;
