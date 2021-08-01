@@ -64,6 +64,7 @@ class ObjectPool
         $object = Scheduler::withoutPreemptive(function () use ($class) {
             return isset($this->pool[$class]) ? array_pop($this->pool[$class]) : null;
         });
+        $releaseToPool = $object ? true : false;
         //inline optimization, see SwFwLess\components\di\Container::routeDiSwitch()
         //inline optimization, see static::createObject()
         $object = $object ?: ($this->pool[$class]) ?? (
@@ -71,7 +72,7 @@ class ObjectPool
                 (\SwFwLess\components\Config::get('route_di_switch'))) ?
                 Container::make($class) :
                 new $class);
-        $object && ($object->setReleaseToPool(false));
+        $object->setReleaseToPool($releaseToPool);
         return $object;
     }
 
