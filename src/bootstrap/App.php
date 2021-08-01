@@ -68,10 +68,25 @@ class App
             'tcp_fastopen' => functions\config('server.tcp_fastopen', true),
             'max_coroutine' => functions\config('server.max_coroutine', 3000),
             'open_cpu_affinity' => functions\config('server.open_cpu_affinity', true),
-            'socket_buffer_size' => functions\config('server.socket_buffer_size', 2 * 1024 * 1024)
+            'socket_buffer_size' => functions\config('server.socket_buffer_size', 2 * 1024 * 1024),
+            'enable_static_handler' => functions\config('server.enable_static_handler', false),
+            'document_root' => functions\config('server.document_root', APP_BASE_PATH . 'static'),
+            'http_autoindex' => functions\config('server.http_autoindex', false),
+            'http_index_files' => functions\config('server.http_index_files', []),
+            'static_handler_locations' => [],
         ];
         if (!empty($pidFile = functions\config('server.pid_file'))) {
             $serverConfig['pid_file'] = $pidFile;
+        }
+        if (functions\config('monitor.switch')) {
+            $serverConfig['enable_static_handler'] = true;
+            $serverConfig['http_autoindex'] = true;
+            if (!in_array('index.html', $serverConfig['http_index_files'])) {
+                $serverConfig['http_index_files'][] = 'index.html';
+            }
+            $serverConfig['static_handler_locations'][] = functions\config(
+                'monitor.url', '/tools/monitor'
+            );
         }
         $this->swHttpServer->set($serverConfig);
 
