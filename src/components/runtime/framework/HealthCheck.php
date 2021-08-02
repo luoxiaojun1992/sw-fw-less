@@ -67,6 +67,6 @@ class HealthCheck
 
     protected function checkWorkerNum()
     {
-        return ($this->swServer->stats()['worker_num'])=== ($this->serverConfig['worker_num']);
+        return ($this->swServer->stats()['worker_num']) === ($this->serverConfig['worker_num']);
     }
 }
