@@ -1,6 +1,6 @@
 <?php
 
-namespace SwFwLess\components\utils\bitmap\bitarray;
+namespace SwFwLess\components\utils\data\structure\bitmap\bitarray;
 
 /**
  * Class BitIntArr
@@ -12,7 +12,6 @@ namespace SwFwLess\components\utils\bitmap\bitarray;
  * Bitmap index starts from 1.
  *
  * @package SwFwLess\components\utils
- * @deprecated
  */
 class BitIntArr
 {
