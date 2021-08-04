@@ -19,9 +19,15 @@ class Trace extends AbstractMiddleware
         } elseif ($duration >= 0.001) {
             $formattedDuration = round($duration * 1000, 2);
             $durationUnit = 'ms';
-        } else {
+        } elseif ($duration >= 0.000001) {
             $formattedDuration = round($duration * 1000000, 2);
             $durationUnit = 'us';
+        } elseif ($duration >= 0.000000001) {
+            $formattedDuration = round($duration * 1000000000, 2);
+            $durationUnit = 'ns';
+        } else {
+            $formattedDuration = round($duration * 1000000000000, 2);
+            $durationUnit = 'ps';
         }
         return [$formattedDuration, $durationUnit];
     }
