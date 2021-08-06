@@ -7,9 +7,6 @@ use SwFwLess\components\container\Container;
 class AbstractContext
 {
     /** @var self */
-    protected $parentContext;
-
-    /** @var self */
     protected $childContext;
 
     /** @var Container */
@@ -27,7 +24,6 @@ class AbstractContext
     public function withParent(AbstractContext $parentContext)
     {
         $parentContext->childContext = $this;
-        $this->parentContext = $parentContext;
         return $this;
     }
 
@@ -79,8 +75,8 @@ class AbstractContext
         return $this;
     }
 
-    public function parentContext()
+    public function childContext()
     {
-        return $this->parentContext;
+        return $this->childContext;
     }
 }

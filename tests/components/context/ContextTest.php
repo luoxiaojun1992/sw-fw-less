@@ -6,6 +6,7 @@ class ContextTest extends \PHPUnit\Framework\TestCase
     {
         $parentContext = \SwFwLess\components\context\Context::create()
             ->setAll(['id' => 1])
+            ->set('foo', 'bar')
             ->withReturn(function ($data, $childData) {
                 $this->assertEquals(['child return data'], $childData);
                 $this->assertEquals('return_data', $data);
@@ -14,32 +15,31 @@ class ContextTest extends \PHPUnit\Framework\TestCase
 
         $context = \SwFwLess\components\context\Context::create()->withParent($parentContext)
             ->setAll(['id' => 2])
-            ->set('foo', 'bar')
             ->withReturn(function ($data, $childData) {
                 $this->assertEquals([], $childData);
                 $this->assertEquals('return_data', $data);
                 return 'child return data';
             });
 
-        $this->assertTrue($context->has('id'));
-        $this->assertEquals(2, $context->get('id'));
-        $context->forget('id');
-        $this->assertFalse($context->has('id'));
-        $this->assertNull($context->get('id'));
+        $this->assertTrue($parentContext->has('id'));
+        $this->assertEquals(1, $parentContext->get('id'));
+        $parentContext->forget('id');
+        $this->assertFalse($parentContext->has('id'));
+        $this->assertNull($parentContext->get('id'));
 
-        $this->assertTrue($context->has('foo'));
-        $this->assertEquals('bar', $context->get('foo'));
-        $context->clear();
-        $this->assertFalse($context->has('foo'));
-        $this->assertNull($context->get('foo'));
+        $this->assertTrue($parentContext->has('foo'));
+        $this->assertEquals('bar', $parentContext->get('foo'));
+        $parentContext->clear();
+        $this->assertFalse($parentContext->has('foo'));
+        $this->assertNull($parentContext->get('foo'));
 
         $this->assertEquals(['child return data'], $context->returnContext('return_data'));
         $this->assertEquals(['child return data', 'return data'], $parentContext->returnContext('return_data'));
 
-        $this->assertTrue($context->parentContext()->has('id'));
-        $this->assertEquals(1, $context->parentContext()->get('id'));
-        $context->parentContext()->forget('id');
-        $this->assertFalse($context->parentContext()->has('id'));
-        $this->assertNull($context->parentContext()->get('id'));
+        $this->assertTrue($parentContext->childContext()->has('id'));
+        $this->assertEquals(2, $parentContext->childContext()->get('id'));
+        $parentContext->childContext()->forget('id');
+        $this->assertFalse($parentContext->childContext()->has('id'));
+        $this->assertNull($parentContext->childContext()->get('id'));
     }
 }
