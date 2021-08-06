@@ -9,6 +9,9 @@ class AbstractContext
     /** @var self */
     protected $parentContext;
 
+    /** @var self */
+    protected $childContext;
+
     /** @var Container */
     protected $container;
 
@@ -23,6 +26,7 @@ class AbstractContext
 
     public function withParent(AbstractContext $parentContext)
     {
+        $parentContext->childContext = $this;
         $this->parentContext = $parentContext;
         return $this;
     }
@@ -35,7 +39,14 @@ class AbstractContext
 
     public function returnContext($data = null)
     {
-        return call_user_func($this->returnCallback, $data);
+        if (!is_null($this->childContext)) {
+            $childReturn = $this->childContext->returnContext($data);
+        } else {
+            $childReturn = [];
+        }
+        return ($childReturn !== false) ?
+            array_merge($childReturn, ((array)call_user_func($this->returnCallback, $data, $childReturn))) :
+            false;
     }
 
     public function set($id, $res)

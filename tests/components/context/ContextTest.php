@@ -5,14 +5,20 @@ class ContextTest extends \PHPUnit\Framework\TestCase
     public function testDataOperation()
     {
         $parentContext = \SwFwLess\components\context\Context::create()
-            ->setAll(['id' => 1]);
+            ->setAll(['id' => 1])
+            ->withReturn(function ($data, $childData) {
+                $this->assertEquals(['child return data'], $childData);
+                $this->assertEquals('return_data', $data);
+                return 'return data';
+            });
 
         $context = \SwFwLess\components\context\Context::create()->withParent($parentContext)
             ->setAll(['id' => 2])
             ->set('foo', 'bar')
-            ->withReturn(function ($data) {
+            ->withReturn(function ($data, $childData) {
+                $this->assertEquals([], $childData);
                 $this->assertEquals('return_data', $data);
-                return 'received';
+                return 'child return data';
             });
 
         $this->assertTrue($context->has('id'));
@@ -27,7 +33,8 @@ class ContextTest extends \PHPUnit\Framework\TestCase
         $this->assertFalse($context->has('foo'));
         $this->assertNull($context->get('foo'));
 
-        $this->assertEquals('received', $context->returnContext('return_data'));
+        $this->assertEquals(['child return data'], $context->returnContext('return_data'));
+        $this->assertEquals(['child return data', 'return data'], $parentContext->returnContext('return_data'));
 
         $this->assertTrue($context->parentContext()->has('id'));
         $this->assertEquals(1, $context->parentContext()->get('id'));
