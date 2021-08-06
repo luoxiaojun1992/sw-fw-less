@@ -39,11 +39,7 @@ class AbstractContext
 
     public function returnContext($data = null)
     {
-        if (!is_null($this->childContext)) {
-            $childReturn = $this->childContext->returnContext($data);
-        } else {
-            $childReturn = [];
-        }
+        $childReturn = (!is_null($this->childContext)) ? $this->childContext->returnContext($data) : [];
         return ($childReturn !== false) ?
             array_merge($childReturn, ((array)call_user_func($this->returnCallback, $data, $childReturn))) :
             false;
