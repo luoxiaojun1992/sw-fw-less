@@ -13,6 +13,7 @@ use SwFwLess\components\provider\KernelProvider;
 use SwFwLess\facades\Container;
 use SwFwLess\facades\Log;
 use SwFwLess\facades\RateLimit;
+use SwFwLess\middlewares\ClosureMiddleware;
 use SwFwLess\middlewares\Parser;
 use Swoole\Http\Server;
 use Swoole\Server\Task;
@@ -239,11 +240,18 @@ class App
         $prevMiddlewareConcrete = null;
         $firstMiddlewareConcrete = null;
         foreach ($middlewareNames as $i => $middlewareName) {
-            $isRouteMiddleware = $middlewareName === \SwFwLess\middlewares\Route::class;
+            $isClosureMiddleware = is_callable($middlewareName);
+            $isRouteMiddleware = (
+                (!$isClosureMiddleware) && ($middlewareName === \SwFwLess\middlewares\Route::class)
+            );
 
             list($middlewareClass, $middlewareOptions) = $isRouteMiddleware ?
                 [$middlewareName, null] :
-                Parser::parseMiddlewareName($middlewareName);
+                (
+                    $isClosureMiddleware ?
+                        [ClosureMiddleware::class, $middlewareName] :
+                        Parser::parseMiddlewareName($middlewareName)
+                );
 
             /** @var \SwFwLess\middlewares\AbstractMiddleware $middlewareConcrete */
             $middlewareConcrete = ObjectPool::create()->pick($middlewareClass) ?: ($routeDiSwitch ?
