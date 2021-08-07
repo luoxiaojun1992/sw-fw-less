@@ -58,9 +58,13 @@ class Route extends AbstractMiddleware
         $firstMiddlewareConcrete = null;
         $prevMiddlewareConcrete = null;
         foreach ($middlewareNames as $i => $middlewareName) {
-            list($middlewareClass, $middlewareOptions) = \SwFwLess\middlewares\Parser::parseMiddlewareName(
-                $middlewareName
-            );
+            $isClosureMiddleware = is_callable($middlewareName);
+
+            list($middlewareClass, $middlewareOptions) = $isClosureMiddleware ?
+                [ClosureMiddleware::class, $middlewareName] :
+                \SwFwLess\middlewares\Parser::parseMiddlewareName(
+                    $middlewareName
+                );
 
             /** @var \SwFwLess\middlewares\AbstractMiddleware $middlewareConcrete */
             $middlewareConcrete = $objectPool->pick($middlewareClass) ?: ($routeDiSwitch ?
