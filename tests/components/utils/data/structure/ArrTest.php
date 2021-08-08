@@ -364,4 +364,39 @@ class ArrTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue([1, 5, 2] === Arr::topN([6, 11, 7, 3, 2, 8, 5], 3));
         $this->assertTrue([3, 1] === Arr::topN([6, 11, 7, 18, 2, 8, 5], 2));
     }
+
+    public function testIsAssoc()
+    {
+        $this->assertFalse(Arr::isAssoc([MetasyntacticVars::FOO, MetasyntacticVars::BAR]));
+        $this->assertFalse(Arr::isAssoc(
+            [
+                1 => MetasyntacticVars::FOO,
+                2 => MetasyntacticVars::BAR
+            ]
+        ));
+        $this->assertFalse(Arr::isAssoc(
+            [
+                '0' => MetasyntacticVars::FOO,
+                '1' => MetasyntacticVars::BAR
+            ]
+        ));
+        $this->assertFalse(Arr::isAssoc(
+            [
+                '1' => MetasyntacticVars::FOO,
+                '2' => MetasyntacticVars::BAR
+            ]
+        ));
+        $this->assertTrue(
+            Arr::isAssoc([
+                MetasyntacticVars::FOO => MetasyntacticVars::FOO,
+                MetasyntacticVars::BAR => MetasyntacticVars::BAR,
+            ])
+        );
+        $this->assertTrue(
+            Arr::isAssoc([
+                MetasyntacticVars::FOO => MetasyntacticVars::FOO,
+                2 => MetasyntacticVars::BAR,
+            ])
+        );
+    }
 }

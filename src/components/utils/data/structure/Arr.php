@@ -323,4 +323,16 @@ class Arr
         }
         return $topIndexList;
     }
+
+    public static function isAssoc($arr)
+    {
+        $isAssoc = false;
+        foreach ($arr as $key => $item) {
+            if (is_string($key)) {
+                $isAssoc = true;
+                break;
+            }
+        }
+        return $isAssoc;
+    }
 }
