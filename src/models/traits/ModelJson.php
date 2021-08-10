@@ -2,6 +2,11 @@
 
 namespace SwFwLess\models\traits;
 
+/**
+ * Trait ModelJson
+ * @package SwFwLess\models\traits
+ * @deprecated
+ */
 trait ModelJson
 {
     /**

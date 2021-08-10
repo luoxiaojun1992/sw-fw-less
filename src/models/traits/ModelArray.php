@@ -2,6 +2,11 @@
 
 namespace SwFwLess\models\traits;
 
+/**
+ * Trait ModelArray
+ * @package SwFwLess\models\traits
+ * @deprecated
+ */
 trait ModelArray
 {
     /**

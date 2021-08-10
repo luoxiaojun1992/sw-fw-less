@@ -4,17 +4,13 @@ namespace SwFwLess\models;
 
 use SwFwLess\components\container\Container;
 use SwFwLess\components\swoole\Scheduler;
-use SwFwLess\models\traits\ModelArray;
 use SwFwLess\models\traits\ModelAttributes;
 use SwFwLess\models\traits\ModelEvents;
-use SwFwLess\models\traits\ModelJson;
 
-abstract class AbstractModel extends Container implements \JsonSerializable, \ArrayAccess
+abstract class AbstractModel extends Container
 {
-    use ModelArray;
     use ModelAttributes;
     use ModelEvents;
-    use ModelJson;
 
     protected static $primaryKey = 'id';
     protected static $incrPrimaryKey = true;
