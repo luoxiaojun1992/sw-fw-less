@@ -9,6 +9,21 @@ class AbstractContainer
 {
     protected $data = [];
 
+    public function __set($name, $value)
+    {
+        $this->set($name, $value);
+    }
+
+    public function __unset($name)
+    {
+        $this->forget($name);
+    }
+
+    public function __get($name)
+    {
+        return $this->get($name);
+    }
+
     public function set($id, $res)
     {
         $setter = 'set' . Helper::snake2Camel($id);
@@ -55,6 +70,15 @@ class AbstractContainer
             $this->set($key, $datum);
         }
         return $this;
+    }
+
+    public function getData()
+    {
+        $data = [];
+        foreach ($this->data as $key => $datum) {
+            $data[$key] = $this->get($key);
+        }
+        return $data;
     }
 
     public function clear()

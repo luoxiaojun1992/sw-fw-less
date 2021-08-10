@@ -59,7 +59,7 @@ abstract class AbstractEsModel extends AbstractModel
 
         $primaryKey = static::$primaryKey;
         $indexBuilder = static::index();
-        foreach ($this->attributes as $attributeName => $attributeValue) {
+        foreach ($this->data as $attributeName => $attributeValue) {
             if ($attributeName == $primaryKey) {
                 $indexBuilder->id($attributeValue);
             }
@@ -88,7 +88,7 @@ abstract class AbstractEsModel extends AbstractModel
 
         $primaryKey = static::$primaryKey;
         $indexBuilder = static::index();
-        foreach ($this->attributes as $attributeName => $attributeValue) {
+        foreach ($this->data as $attributeName => $attributeValue) {
             if ($attributeName == $primaryKey) {
                 continue;
             }

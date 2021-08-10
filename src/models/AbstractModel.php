@@ -2,13 +2,14 @@
 
 namespace SwFwLess\models;
 
+use SwFwLess\components\container\Container;
 use SwFwLess\components\swoole\Scheduler;
 use SwFwLess\models\traits\ModelArray;
 use SwFwLess\models\traits\ModelAttributes;
 use SwFwLess\models\traits\ModelEvents;
 use SwFwLess\models\traits\ModelJson;
 
-abstract class AbstractModel implements \JsonSerializable, \ArrayAccess
+abstract class AbstractModel extends Container implements \JsonSerializable, \ArrayAccess
 {
     use ModelArray;
     use ModelAttributes;
@@ -107,7 +108,7 @@ abstract class AbstractModel implements \JsonSerializable, \ArrayAccess
 
     protected function syncOriginalAttributes()
     {
-        $this->originalAttributes = $this->attributes;
+        $this->originalAttributes = $this->data;
     }
 
     protected function finishSave()
@@ -127,7 +128,7 @@ abstract class AbstractModel implements \JsonSerializable, \ArrayAccess
                 return false;
             }
 
-            foreach ($this->attributes as $key => $value) {
+            foreach ($this->data as $key => $value) {
                 if (array_key_exists($key, $this->originalAttributes)) {
                     if ($this->originalAttributes[$key] !== $value) {
                         return true;

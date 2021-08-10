@@ -92,7 +92,7 @@ abstract class AbstractMysqlModel extends AbstractModel
         }
 
         $insertBuilder = static::insert();
-        foreach ($this->attributes as $attributeName => $attribute) {
+        foreach ($this->data as $attributeName => $attribute) {
             $insertBuilder->col($attributeName)->bindValue(':' . $attributeName, $this->{$attributeName});
         }
         if (static::$incrPrimaryKey) {
@@ -133,7 +133,7 @@ abstract class AbstractMysqlModel extends AbstractModel
             return false;
         }
 
-        $attributes = $this->attributes;
+        $attributes = $this->data;
 
         if (count($attributes) < 1) {
             return false;

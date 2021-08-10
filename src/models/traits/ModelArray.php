@@ -71,6 +71,6 @@ trait ModelArray
      */
     public function toArray()
     {
-        return $this->attributes;
+        return $this->data;
     }
 }
