@@ -2,6 +2,11 @@
 
 namespace SwFwLess\entities;
 
+/**
+ * Class BaseEntity
+ * @package SwFwLess\entities
+ * @deprecated
+ */
 class BaseEntity
 {
     protected $attributes;
