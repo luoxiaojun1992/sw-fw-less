@@ -79,11 +79,6 @@ abstract class AbstractModel extends Container
         return $this;
     }
 
-    protected function syncOriginalAttributes()
-    {
-        $this->originalAttributes = $this->data;
-    }
-
     protected function finishSave()
     {
         $this->fireEvent('saved');

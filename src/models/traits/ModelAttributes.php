@@ -50,4 +50,9 @@ trait ModelAttributes
     {
         return $this->has($name);
     }
+
+    protected function syncOriginalAttributes()
+    {
+        $this->originalAttributes = $this->data;
+    }
 }
