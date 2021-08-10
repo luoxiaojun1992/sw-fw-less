@@ -49,29 +49,6 @@ abstract class AbstractModel extends Container implements \JsonSerializable, \Ar
     }
 
     /**
-     * @param $name
-     * @return mixed|null
-     */
-    public function __get($name)
-    {
-        return $this->getAttribute($name);
-    }
-
-    /**
-     * @param $name
-     * @param $value
-     */
-    public function __set($name, $value)
-    {
-        $this->setAttribute($name, $value);
-    }
-
-    public function __unset($name)
-    {
-        $this->removeAttribute($name);
-    }
-
-    /**
      * @param $primaryValue
      * @return AbstractModel
      */
