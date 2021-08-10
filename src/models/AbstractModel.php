@@ -65,6 +65,11 @@ abstract class AbstractModel implements \JsonSerializable, \ArrayAccess
         $this->setAttribute($name, $value);
     }
 
+    public function __unset($name)
+    {
+        $this->removeAttribute($name);
+    }
+
     /**
      * @param $primaryValue
      * @return AbstractModel

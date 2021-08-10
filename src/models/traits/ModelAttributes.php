@@ -31,9 +31,12 @@ trait ModelAttributes
 
         $setter = 'set' . Helper::snake2Camel($name);
         if (method_exists($this, $setter)) {
-            call_user_func_array([$this, $setter], [$value]);
+            if (call_user_func_array([$this, $setter], [$value]) !== false) {
+                $this->justSaved = false;
+            }
         } else {
             $this->attributes[$name] = $value;
+            $this->justSaved = false;
         }
 
         return $this;
@@ -57,9 +60,12 @@ trait ModelAttributes
     {
         $setter = 'remove' . Helper::snake2Camel($name);
         if (method_exists($this, $setter)) {
-            call_user_func([$this, $setter]);
+            if (call_user_func([$this, $setter]) !== false) {
+                $this->justSaved = false;
+            }
         } else {
             unset($this->attributes[$name]);
+            $this->justSaved = false;
         }
     }
 
