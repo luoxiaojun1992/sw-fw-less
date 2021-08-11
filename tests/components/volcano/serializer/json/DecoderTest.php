@@ -16,7 +16,7 @@ class DecoderTest extends \PHPUnit\Framework\TestCase
     public function getHttpRequest()
     {
         require_once __DIR__ . '/../../../../stubs/components/volcano/http/HttpRequest.php';
-        return new HttpRequest();
+        return HttpRequest::create();
     }
 
     public function getPsrResponse()
@@ -43,9 +43,9 @@ class DecoderTest extends \PHPUnit\Framework\TestCase
             $httpRequest->addMockResponse($psrResponse);
         }
 
-        $executor = (new Executor())->setPlan(
-            (new Decoder())->setNext(
-                (new ResponseExtractor())->setNext($httpRequest)
+        $executor = Executor::create()->setPlan(
+            Decoder::create()->setNext(
+                ResponseExtractor::create()->setNext($httpRequest)
             )
         );
 

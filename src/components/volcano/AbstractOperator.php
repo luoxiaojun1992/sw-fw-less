@@ -17,4 +17,9 @@ abstract class AbstractOperator implements OperatorInterface
     {
         return [];
     }
+
+    public static function create($info = [])
+    {
+        return new static();
+    }
 }
