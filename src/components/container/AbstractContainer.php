@@ -170,4 +170,9 @@ class AbstractContainer implements \ArrayAccess, \JsonSerializable
     {
         return $this->toArray();
     }
+
+    public function __toString()
+    {
+        return Helper::jsonEncode($this->data);
+    }
 }
