@@ -12,4 +12,9 @@ abstract class AbstractOperator implements OperatorInterface
         $this->nextOperator = $nextOperator;
         return $this;
     }
+
+    public function info()
+    {
+        return [];
+    }
 }

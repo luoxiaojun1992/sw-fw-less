@@ -36,6 +36,7 @@ class Executor extends AbstractOperator
         }
         return [
             'class' => get_class($operator),
+            'info' => $operator->info(),
             'sub_operator' => $this->explainOperator($operator->nextOperator)
         ];
     }

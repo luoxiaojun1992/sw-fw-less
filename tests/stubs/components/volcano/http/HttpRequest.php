@@ -22,4 +22,11 @@ class HttpRequest extends \SwFwLess\components\volcano\http\HttpRequest
         $this->mockResponse[] = $response;
         return $this;
     }
+
+    public function info()
+    {
+        $info = parent::info();
+        $info['request_count'] = count($this->mockResponse);
+        return $info;
+    }
 }

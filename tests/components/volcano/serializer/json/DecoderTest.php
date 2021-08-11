@@ -52,10 +52,16 @@ class DecoderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(
             [
                 'class' => Decoder::class,
+                'info' => [],
                 'sub_operator' => [
                     'class' => ResponseExtractor::class,
+                    'info' => [],
                     'sub_operator' => [
                         'class' => HttpRequest::class,
+                        'info' => [
+                            'pre_request' => false,
+                            'request_count' => 3,
+                        ],
                         'sub_operator' => null,
                     ]
                 ]

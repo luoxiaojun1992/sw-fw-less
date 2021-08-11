@@ -20,6 +20,9 @@ class HttpRequest extends AbstractOperator
 
     protected $swfRequest;
 
+    //TODO
+    protected $preRequest = false;
+
     public function open()
     {
         // TODO: Implement open() method.
@@ -69,5 +72,13 @@ class HttpRequest extends AbstractOperator
         }
         $request->withHeaders($headers);
         $this->requests[] = $request;
+    }
+
+    public function info()
+    {
+        return [
+            'pre_request' => $this->preRequest,
+            'request_count' => count($this->requests),
+        ];
     }
 }
