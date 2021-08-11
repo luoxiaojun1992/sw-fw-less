@@ -3,13 +3,10 @@
 namespace SwFwLess\components\volcano\serializer\json;
 
 use SwFwLess\components\Helper;
-use SwFwLess\components\volcano\OperatorInterface;
+use SwFwLess\components\volcano\AbstractOperator;
 
-class Decoder implements OperatorInterface
+class Decoder extends AbstractOperator
 {
-    /** @var OperatorInterface */
-    protected $nextOperator;
-
     public function open()
     {
         // TODO: Implement open() method.
@@ -25,11 +22,5 @@ class Decoder implements OperatorInterface
     public function close()
     {
         // TODO: Implement close() method.
-    }
-
-    public function setNext(OperatorInterface $nextOperator)
-    {
-        $this->nextOperator = $nextOperator;
-        return $this;
     }
 }

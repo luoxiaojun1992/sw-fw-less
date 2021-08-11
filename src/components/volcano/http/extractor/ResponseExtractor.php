@@ -2,13 +2,10 @@
 
 namespace SwFwLess\components\volcano\http\extractor;
 
-use SwFwLess\components\volcano\OperatorInterface;
+use SwFwLess\components\volcano\AbstractOperator;
 
-class ResponseExtractor implements OperatorInterface
+class ResponseExtractor extends AbstractOperator
 {
-    /** @var OperatorInterface */
-    protected $nextOperator;
-
     public function open()
     {
         // TODO: Implement open() method.
@@ -24,11 +21,5 @@ class ResponseExtractor implements OperatorInterface
     public function close()
     {
         // TODO: Implement close() method.
-    }
-
-    public function setNext(OperatorInterface $nextOperator)
-    {
-        $this->nextOperator = $nextOperator;
-        return $this;
     }
 }

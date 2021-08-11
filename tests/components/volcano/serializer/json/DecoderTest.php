@@ -4,6 +4,7 @@ namespace SwFwLessTests\components\volcanoo\serializer\json;
 
 use SwFwLess\components\Helper;
 use SwFwLess\components\utils\data\structure\variable\MetasyntacticVars;
+use SwFwLess\components\volcano\Executor;
 use SwFwLess\components\volcano\http\extractor\ResponseExtractor;
 use SwFwLess\components\volcano\serializer\json\Decoder;
 use SwFwLessTest\stubs\components\http\psr\PsrResponse;
@@ -42,13 +43,28 @@ class DecoderTest extends \PHPUnit\Framework\TestCase
             $httpRequest->addMockResponse($psrResponse);
         }
 
-        $decoder = new Decoder();
-        $decoder->setNext(
-            (new ResponseExtractor())->setNext($httpRequest)
+        $executor = (new Executor())->setPlan(
+            (new Decoder())->setNext(
+                (new ResponseExtractor())->setNext($httpRequest)
+            )
+        );
+
+        $this->assertEquals(
+            [
+                'class' => Decoder::class,
+                'sub_operator' => [
+                    'class' => ResponseExtractor::class,
+                    'sub_operator' => [
+                        'class' => HttpRequest::class,
+                        'sub_operator' => null,
+                    ]
+                ]
+            ],
+            $executor->explain()
         );
 
         $i = 0;
-        foreach ($decoder->next() as $data) {
+        foreach ($executor->execute() as $data) {
             $this->assertEquals(
                 [MetasyntacticVars::FOO => $i],
                 $data

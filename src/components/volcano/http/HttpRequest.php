@@ -3,7 +3,7 @@
 namespace SwFwLess\components\volcano\http;
 
 use SwFwLess\components\http\Client;
-use SwFwLess\components\volcano\OperatorInterface;
+use SwFwLess\components\volcano\AbstractOperator;
 use SwFwLess\components\zipkin\HttpClient;
 use Swlib\Http\BufferStream;
 use Swlib\Http\ContentType;
@@ -11,7 +11,7 @@ use Swlib\Saber\Request;
 use Swlib\Http\Uri;
 use Swlib\SaberGM;
 
-class HttpRequest implements OperatorInterface
+class HttpRequest extends AbstractOperator
 {
     /** @var Request[] */
     protected $requests = [];
