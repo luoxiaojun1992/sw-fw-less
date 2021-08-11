@@ -57,7 +57,10 @@ class Client
         return static::multiRequest($urls, 'DELETE', $swfRequest, $headers, $body, $bodyType);
     }
 
-    public static function multiRequest($urls, $method, $swfRequest = null, $headers = [], $body = null, $bodyType = self::JSON_BODY)
+    public static function multiRequest(
+        $urls, $method, $swfRequest = null, $headers = [], $body = null, $bodyType = self::JSON_BODY,
+        $bodyLength = null
+    )
     {
         $swfRequest = $swfRequest ?? \SwFwLess\components\functions\request();
 
@@ -95,6 +98,8 @@ class Client
                                         $body = (string)$body;
                                         break;
                                 }
+                                $bufferStream = (new BufferStream($bodyLength ?? strlen($body)));
+                                $bufferStream->write($body);
                                 $request->withBody(new BufferStream($body));
                             }
 

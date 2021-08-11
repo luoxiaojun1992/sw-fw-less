@@ -49,7 +49,9 @@ class HttpRequest extends AbstractOperator
         return $this;
     }
 
-    public function addRequest($url, $method, $headers = [], $body = null, $bodyType = Client::JSON_BODY)
+    public function addRequest(
+        $url, $method, $headers = [], $body = null, $bodyType = Client::JSON_BODY, $bodyLength = null
+    )
     {
         $request = SaberGM::psr()->withMethod($method)
             ->withUri(new Uri($url));
@@ -68,7 +70,9 @@ class HttpRequest extends AbstractOperator
                     $body = (string)$body;
                     break;
             }
-            $request->withBody(new BufferStream($body));
+            $bufferStream = new BufferStream($bodyLength ?? strlen($body));
+            $bufferStream->write($body);
+            $request->withBody($bufferStream);
         }
         $request->withHeaders($headers);
         $this->requests[] = $request;
