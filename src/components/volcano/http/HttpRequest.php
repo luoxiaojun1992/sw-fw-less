@@ -90,7 +90,7 @@ class HttpRequest extends AbstractOperator
             $requests[] = [
                 'url' => (string)($request->getUri()),
                 'method' => $request->getMethod(),
-                'headers' => $request->getHeaders(),
+                'headers' => $request->getHeaders(false, true),
                 'body' => $bodyContents,
                 'body_length' => $bodyLength,
             ];
@@ -110,7 +110,18 @@ class HttpRequest extends AbstractOperator
             if (isset($info['pre_request'])) {
                 $httpRequest->preRequest = $info['pre_request'];
             }
-            //todo
+            if (isset($info['requests'])) {
+                foreach ($info['requests'] as $request) {
+                    $httpRequest->addRequest(
+                        $request['url'],
+                        $request['method'],
+                        $request['headers'] ?? [],
+                        $request['body'] ?? null,
+                        Client::STRING_BODY,
+                        $request['body_length'] ?? null
+                    );
+                }
+            }
         }
         return $httpRequest;
     }
