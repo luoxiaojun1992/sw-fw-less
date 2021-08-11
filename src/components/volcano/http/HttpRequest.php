@@ -80,9 +80,25 @@ class HttpRequest extends AbstractOperator
 
     public function info()
     {
+        $requests = [];
+        foreach ($this->requests as $request) {
+            $body = $request->getBody();
+            $body = clone $body;
+            $bodyContents = $body->getContents();
+            $bodyLength = strlen($bodyContents);
+            $requests[] = [
+                'url' => (string)($request->getUri()),
+                'method' => $request->getMethod(),
+                'headers' => $request->getHeaders(),
+                'body' => $bodyContents,
+                'body_length' => $bodyLength,
+            ];
+        }
+
         return [
             'pre_request' => $this->preRequest,
             'request_count' => count($this->requests),
+            'requests' => $requests,
         ];
     }
 }

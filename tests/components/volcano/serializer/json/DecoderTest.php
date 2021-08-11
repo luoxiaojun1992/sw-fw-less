@@ -61,6 +61,7 @@ class DecoderTest extends \PHPUnit\Framework\TestCase
                         'info' => [
                             'pre_request' => false,
                             'request_count' => 3,
+                            'requests' => [],
                         ],
                         'sub_operator' => null,
                     ]
