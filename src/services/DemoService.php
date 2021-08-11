@@ -10,6 +10,11 @@ use SwFwLess\components\Helper;
 use SwFwLess\components\http\Client;
 use SwFwLess\components\http\Response;
 use SwFwLess\components\time\ntp\Time;
+use SwFwLess\components\utils\data\structure\variable\MetasyntacticVars;
+use SwFwLess\components\volcano\Executor;
+use SwFwLess\components\volcano\http\extractor\ResponseExtractor;
+use SwFwLess\components\volcano\http\HttpRequest;
+use SwFwLess\components\volcano\serializer\json\Decoder;
 use SwFwLess\facades\Alioss;
 use SwFwLess\facades\AMQPConnectionPool;
 use SwFwLess\facades\Cache;
@@ -112,6 +117,53 @@ class DemoService extends BaseService
         }, $aggResult);
 
         return Response::json($aggResult);
+    }
+
+    public function postJson()
+    {
+        return Response::json([MetasyntacticVars::FOO => $this->getRequest()->body()]);
+    }
+
+    public function volcano()
+    {
+        $executor = Executor::create()->setPlan(
+            Decoder::create()->setNext(
+                ResponseExtractor::create()->setNext(
+                    HttpRequest::create()->setSwfRequest($this->getRequest())
+                        ->addRequest(
+                            'http://127.0.0.1:9501/postjson',
+                            'POST',
+                            [],
+                            'bar',
+                            Client::STRING_BODY
+                        )
+                        ->addRequest(
+                            'http://127.0.0.1:9501/postjson',
+                            'POST',
+                            [],
+                            'bar',
+                            Client::STRING_BODY
+                        )
+                        ->addRequest(
+                            'http://127.0.0.1:9501/postjson',
+                            'POST',
+                            [],
+                            'bar',
+                            Client::STRING_BODY
+                        )
+                )
+            )
+        );
+        $plan = $executor->explain();
+        $data = [];
+        foreach ($executor->execute() as $subData) {
+            $data[] = $subData;
+        }
+
+        return Response::json([
+            'plan' => $plan,
+            'data' => $data,
+        ]);
     }
 
     public function es()

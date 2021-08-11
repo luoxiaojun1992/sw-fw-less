@@ -76,6 +76,7 @@ class HttpRequest extends AbstractOperator
         }
         $request->withHeaders($headers);
         $this->requests[] = $request;
+        return $this;
     }
 
     public function info()
