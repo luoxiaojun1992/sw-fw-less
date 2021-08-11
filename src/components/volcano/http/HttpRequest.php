@@ -101,4 +101,16 @@ class HttpRequest extends AbstractOperator
             'requests' => $requests,
         ];
     }
+
+    public static function create($info = [])
+    {
+        $httpRequest = parent::create($info);
+        if ($info) {
+            if (isset($info['pre_request'])) {
+                $httpRequest->preRequest = $info['pre_request'];
+            }
+            //todo
+        }
+        return $httpRequest;
+    }
 }
