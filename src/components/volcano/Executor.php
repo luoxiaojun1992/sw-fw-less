@@ -45,4 +45,20 @@ class Executor extends AbstractOperator
     {
         return $this->explainOperator($this->nextOperator);
     }
+
+    public static function restorePlan($executeInfo)
+    {
+        $operatorClass = $executeInfo['class'];
+        $operator = $operatorClass::create($executeInfo['info'] ?? []);
+        if (isset($executeInfo['sub_operator'])) {
+            $subOperator = static::restorePlan($executeInfo['sub_operator']);
+            $operator->setNext($subOperator);
+        }
+        return $operator;
+    }
+
+    public static function restore($executeInfo)
+    {
+        return (new static)->setPlan(static::restorePlan($executeInfo));
+    }
 }

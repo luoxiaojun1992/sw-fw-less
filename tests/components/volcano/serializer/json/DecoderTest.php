@@ -70,6 +70,27 @@ class DecoderTest extends \PHPUnit\Framework\TestCase
             $executor->explain()
         );
 
+        $this->assertEquals(
+            [
+                'class' => Decoder::class,
+                'info' => [],
+                'sub_operator' => [
+                    'class' => ResponseExtractor::class,
+                    'info' => [],
+                    'sub_operator' => [
+                        'class' => HttpRequest::class,
+                        'info' => [
+                            'pre_request' => false,
+                            'request_count' => 0,
+                            'requests' => [],
+                        ],
+                        'sub_operator' => null,
+                    ]
+                ]
+            ],
+            Executor::restore($executor->explain())->explain()
+        );
+
         $i = 0;
         foreach ($executor->execute() as $data) {
             $this->assertEquals(
