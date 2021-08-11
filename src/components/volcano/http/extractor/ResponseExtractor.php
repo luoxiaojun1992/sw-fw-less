@@ -1,11 +1,10 @@
 <?php
 
-namespace SwFwLess\components\volcano\serializer\json;
+namespace SwFwLess\components\volcano\http\extractor;
 
-use SwFwLess\components\Helper;
 use SwFwLess\components\volcano\OperatorInterface;
 
-class Decoder implements OperatorInterface
+class ResponseExtractor implements OperatorInterface
 {
     /** @var OperatorInterface */
     protected $nextOperator;
@@ -17,8 +16,8 @@ class Decoder implements OperatorInterface
 
     public function next()
     {
-        foreach ($this->nextOperator->next() as $str) {
-            yield Helper::jsonDecode($str);
+        foreach ($this->nextOperator->next() as $response) {
+            yield ((string)($response->getBody()));
         }
     }
 

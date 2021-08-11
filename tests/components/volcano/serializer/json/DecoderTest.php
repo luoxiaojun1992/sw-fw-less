@@ -4,6 +4,7 @@ namespace SwFwLessTests\components\volcanoo\serializer\json;
 
 use SwFwLess\components\Helper;
 use SwFwLess\components\utils\data\structure\variable\MetasyntacticVars;
+use SwFwLess\components\volcano\http\extractor\ResponseExtractor;
 use SwFwLess\components\volcano\serializer\json\Decoder;
 use SwFwLessTest\stubs\components\http\psr\PsrResponse;
 use SwFwLessTest\stubs\components\http\psr\PsrStream;
@@ -42,7 +43,9 @@ class DecoderTest extends \PHPUnit\Framework\TestCase
         }
 
         $decoder = new Decoder();
-        $decoder->setNext($httpRequest);
+        $decoder->setNext(
+            (new ResponseExtractor())->setNext($httpRequest)
+        );
 
         $i = 0;
         foreach ($decoder->next() as $data) {
