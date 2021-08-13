@@ -9,16 +9,20 @@ class Str
      *
      * @param  string  $haystack
      * @param  string|array  $needles
+     * @param  int $offset
+     * @param  bool $caseSensitive
      * @return bool
      */
-    public static function contains($haystack, $needles)
+    public static function contains($haystack, $needles, $offset = 0, $caseSensitive = true)
     {
         foreach ((array) $needles as $needle) {
             if ($needle === '') {
                 return true;
             }
 
-            if (mb_strpos($haystack, $needle) !== false) {
+            if ($caseSensitive && (mb_strpos($haystack, $needle, $offset) !== false)) {
+                return true;
+            } elseif ((!$caseSensitive) && (mb_stripos($haystack, $needle, $offset) !== false)) {
                 return true;
             }
         }
