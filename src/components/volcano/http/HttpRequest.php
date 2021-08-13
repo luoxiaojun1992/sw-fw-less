@@ -23,6 +23,9 @@ class HttpRequest extends AbstractOperator
     //TODO
     protected $preRequest = false;
 
+    //TODO
+    protected $requestTraceConfig = [];
+
     public function open()
     {
         // TODO: Implement open() method.
