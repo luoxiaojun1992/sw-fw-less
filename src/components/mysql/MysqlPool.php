@@ -2,7 +2,6 @@
 
 namespace SwFwLess\components\mysql;
 
-use Carbon\Carbon;
 use SwFwLess\components\Helper;
 use Cake\Event\Event as CakeEvent;
 use SwFwLess\components\swoole\Scheduler;
