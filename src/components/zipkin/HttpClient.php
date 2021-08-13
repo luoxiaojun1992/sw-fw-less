@@ -25,6 +25,7 @@ class HttpClient
      * @param string $spanName
      * @param bool $injectSpanCtx
      * @param bool $flushTracing
+     * @param bool $withTrace
      * @return mixed|\Psr\Http\Message\ResponseInterface|null
      * @throws \Throwable
      */
@@ -33,13 +34,19 @@ class HttpClient
         $swfRequest = null,
         $spanName = null,
         $injectSpanCtx = true,
-        $flushTracing = false
+        $flushTracing = false,
+        $withTrace = false
     )
     {
+        $request = $saberRequest;
+
+        if (!$withTrace) {
+            return $request->exec()->recv();
+        }
+
         $swfRequest = $swfRequest ?? \SwFwLess\components\functions\request();
         /** @var Tracer $swfTracer */
         $swfTracer = $swfRequest->getTracer();
-        $request = $saberRequest;
         $path = $request->getUri()->getPath();
 
         return $swfTracer->clientSpan(

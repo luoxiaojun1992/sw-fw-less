@@ -59,7 +59,7 @@ class Client
 
     public static function multiRequest(
         $urls, $method, $swfRequest = null, $headers = [], $body = null, $bodyType = self::JSON_BODY,
-        $bodyLength = null
+        $bodyLength = null, $withTrace = false
     )
     {
         $swfRequest = $swfRequest ?? \SwFwLess\components\functions\request();
@@ -76,9 +76,12 @@ class Client
         $exceptions = [];
         foreach ($urls as $id => $url) {
             go(
-                function () use (&$aggResult, $id, $url, $chan, $method, $headers, $body, $bodyType, $swfRequest, &$exceptions) {
+                function () use (&$aggResult, $id, $url, $chan, $method, $headers, $body, $bodyType, $swfRequest,
+                    &$exceptions, $bodyLength, $withTrace
+                ) {
                     Scheduler::withoutPreemptive(function () use (
-                        &$aggResult, $id, $url, $method, $headers, $body, $bodyType, $swfRequest, &$exceptions
+                        &$aggResult, $id, $url, $method, $headers, $body, $bodyType, $swfRequest, &$exceptions,
+                        $bodyLength, $withTrace
                     ) {
                         try {
                             $request = SaberGM::psr()->withMethod($method)
@@ -105,7 +108,7 @@ class Client
 
                             $request->withHeaders($headers);
 
-                            $aggResult[$id] = (new HttpClient())->send($request, $swfRequest);
+                            $aggResult[$id] = (new HttpClient())->send($request, $swfRequest, $withTrace);
                         } catch (\Throwable $e) {
                             array_push($exceptions, $e);
                         }
