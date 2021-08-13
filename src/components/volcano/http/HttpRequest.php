@@ -23,7 +23,6 @@ class HttpRequest extends AbstractOperator
     //TODO
     protected $preRequest = false;
 
-    //TODO
     protected $requestTraceConfig = [];
 
     public function open()
@@ -35,7 +34,13 @@ class HttpRequest extends AbstractOperator
     {
         while (isset($this->requests[$this->cursor])) {
             $request = $this->requests[$this->cursor];
-            $response = (new HttpClient())->send($request, $this->swfRequest);
+            $requestTraceConfig = $this->requestTraceConfig[$this->cursor];
+            $response = (new HttpClient())->send(
+                $request, $this->swfRequest, $requestTraceConfig['span_name'] ?? null,
+                $requestTraceConfig['inject_span_ctx'] ?? true,
+                $requestTraceConfig['flushing_trace'] ?? false,
+                $requestTraceConfig['with_trace'] ?? false
+            );
             ++$this->cursor;
             yield $response;
         }
@@ -53,7 +58,8 @@ class HttpRequest extends AbstractOperator
     }
 
     public function addRequest(
-        $url, $method, $headers = [], $body = null, $bodyType = Client::JSON_BODY, $bodyLength = null
+        $url, $method, $headers = [], $body = null, $bodyType = Client::JSON_BODY, $bodyLength = null,
+        $spanName = null, $injectSpanCtx = true, $flushingTrace = false, $withTrace = false
     )
     {
         $request = SaberGM::psr()->withMethod($method)
@@ -79,13 +85,19 @@ class HttpRequest extends AbstractOperator
         }
         $request->withHeaders($headers);
         $this->requests[] = $request;
+        $this->requestTraceConfig[] = [
+            'span_name' => $spanName,
+            'inject_span_ctx' => $injectSpanCtx,
+            'flushing_trace' => $flushingTrace,
+            'with_trace' => $withTrace,
+        ];
         return $this;
     }
 
     public function info()
     {
         $requests = [];
-        foreach ($this->requests as $request) {
+        foreach ($this->requests as $i => $request) {
             $body = $request->getBody();
             $body = clone $body;
             $bodyContents = $body->getContents();
@@ -96,6 +108,7 @@ class HttpRequest extends AbstractOperator
                 'headers' => $request->getHeaders(false, true),
                 'body' => $bodyContents,
                 'body_length' => $bodyLength,
+                'trace_config' => $this->requestTraceConfig[$i],
             ];
         }
 
@@ -114,7 +127,7 @@ class HttpRequest extends AbstractOperator
                 $httpRequest->preRequest = $info['pre_request'];
             }
             if (isset($info['requests'])) {
-                foreach ($info['requests'] as $request) {
+                foreach ($info['requests'] as $i => $request) {
                     $httpRequest->addRequest(
                         $request['url'],
                         $request['method'],
@@ -123,6 +136,7 @@ class HttpRequest extends AbstractOperator
                         Client::STRING_BODY,
                         $request['body_length'] ?? null
                     );
+                    $httpRequest->requestTraceConfig[$i] = $request['trace_config'];
                 }
             }
         }
