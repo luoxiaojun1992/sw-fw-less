@@ -60,8 +60,13 @@ class DecoderTest extends \PHPUnit\Framework\TestCase
                         'class' => HttpRequest::class,
                         'info' => [
                             'pre_request' => false,
-                            'request_count' => 3,
                             'requests' => [],
+                            'request_count' => 3,
+                            'mock_response' => [
+                                Helper::jsonEncode([MetasyntacticVars::FOO => 0]),
+                                Helper::jsonEncode([MetasyntacticVars::FOO => 1]),
+                                Helper::jsonEncode([MetasyntacticVars::FOO => 2]),
+                            ],
                         ],
                         'sub_operator' => null,
                     ]
@@ -81,8 +86,13 @@ class DecoderTest extends \PHPUnit\Framework\TestCase
                         'class' => HttpRequest::class,
                         'info' => [
                             'pre_request' => false,
-                            'request_count' => 0,
                             'requests' => [],
+                            'request_count' => 3,
+                            'mock_response' => [
+                                Helper::jsonEncode([MetasyntacticVars::FOO => 0]),
+                                Helper::jsonEncode([MetasyntacticVars::FOO => 1]),
+                                Helper::jsonEncode([MetasyntacticVars::FOO => 2]),
+                            ],
                         ],
                         'sub_operator' => null,
                     ]
