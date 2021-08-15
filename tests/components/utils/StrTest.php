@@ -34,6 +34,27 @@ class StrTest extends \PHPUnit\Framework\TestCase
         $this->assertFalse(\SwFwLess\components\utils\Str::contains('abc', 'AC', 0, false));
         $this->assertFalse(\SwFwLess\components\utils\Str::contains('abc', 'aC', 0, false));
 
+        $this->assertTrue(\SwFwLess\components\utils\Str::contains('abc', '', 0));
+        $this->assertTrue(\SwFwLess\components\utils\Str::contains('abc', '', 1));
+        $this->assertTrue(\SwFwLess\components\utils\Str::contains('abc', '', 2));
+        $this->assertTrue(\SwFwLess\components\utils\Str::contains('abc', 'a', 0));
+        $this->assertFalse(\SwFwLess\components\utils\Str::contains('abc', 'a', 1));
+        $this->assertFalse(\SwFwLess\components\utils\Str::contains('abc', 'a', 2));
+        $this->assertTrue(\SwFwLess\components\utils\Str::contains('abc', 'b', 0));
+        $this->assertTrue(\SwFwLess\components\utils\Str::contains('abc', 'b', 1));
+        $this->assertFalse(\SwFwLess\components\utils\Str::contains('abc', 'b', 2));
+        $this->assertTrue(\SwFwLess\components\utils\Str::contains('abc', 'c', 0));
+        $this->assertTrue(\SwFwLess\components\utils\Str::contains('abc', 'c', 1));
+        $this->assertTrue(\SwFwLess\components\utils\Str::contains('abc', 'c', 2));
+        $this->assertFalse(\SwFwLess\components\utils\Str::contains('abc', 'c', 3));
+        $this->assertTrue(\SwFwLess\components\utils\Str::contains('abc', 'ab', 0));
+        $this->assertFalse(\SwFwLess\components\utils\Str::contains('abc', 'ab', 1));
+        $this->assertTrue(\SwFwLess\components\utils\Str::contains('abc', 'bc', 0));
+        $this->assertTrue(\SwFwLess\components\utils\Str::contains('abc', 'bc', 1));
+        $this->assertFalse(\SwFwLess\components\utils\Str::contains('abc', 'bc', 2));
+        $this->assertTrue(\SwFwLess\components\utils\Str::contains('abc', 'abc', 0));
+        $this->assertFalse(\SwFwLess\components\utils\Str::contains('abc', 'abc', 1));
+
         $this->assertTrue(\SwFwLess\components\utils\Str::contains('你好，世界', ''));
         $this->assertTrue(\SwFwLess\components\utils\Str::contains('你好，世界', '你'));
         $this->assertTrue(\SwFwLess\components\utils\Str::contains('你好，世界', '好'));
