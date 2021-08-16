@@ -23,8 +23,8 @@ class Counter
 
     public static function reload()
     {
+        $workerId = Server::getInstance()->worker_id;
         foreach (self::$swTable as $key => $row) {
-            $workerId = Server::getInstance()->worker_id;
             if ($row['worker_id'] == $workerId) {
                 self::$swTable->set($key, ['count' => 0, 'worker_id' => $workerId]);
             }
