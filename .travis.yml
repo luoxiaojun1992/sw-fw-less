@@ -27,4 +27,5 @@ before_script:
       - echo "extension=redis.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
       - cd ..
       - composer install -vvv
+      - composer require "ezyang/htmlpurifier:^4.5" -vvv
 script: ./vendor/bin/phpunit tests

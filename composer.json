@@ -14,8 +14,8 @@
         "ext-swoole": ">=4.4.0",
         "aura/sqlquery": "^2",
         "bt51/ntp": "~0.1.0",
-        "cakephp/event": "3.7.1",
-        "cakephp/validation": "~3",
+        "cakephp/event": "~3.7.1|~4",
+        "cakephp/validation": "~3|~4",
         "dragonmantank/cron-expression": "^2.3",
         "filp/whoops": "~2.1@stable",
         "league/flysystem": "~1",
@@ -50,7 +50,8 @@
         "symfony/translation": "~4.0.0|~5.3.0",
         "huang-yi/swoole-watcher": "~0.0",
         "koala-framework/file-watcher": " ~1.0",
-        "symfony/var-dumper": "~3.0|~5.3.0"
+        "symfony/var-dumper": "~3.0|~5.3.0",
+        "ezyang/htmlpurifier": "^4.5"
     },
     "license": "apache-2.0",
     "authors": [
