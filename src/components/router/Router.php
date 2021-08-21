@@ -37,10 +37,13 @@ class Router implements Poolable
 
     public static function create(Request $appRequest, Dispatcher $dispatcher)
     {
-        return ObjectPool::create()->pick(static::class) ?: new static($appRequest, $dispatcher);
+        $router = ObjectPool::create()->pick(static::class) ?: new static($appRequest, $dispatcher);
+        $router->appRequest = $appRequest;
+        $router->dispatcher = $dispatcher;
+        return $router;
     }
 
-    public function __construct(Request $appRequest, Dispatcher $dispatcher)
+    public function __construct(?Request $appRequest = null, ?Dispatcher $dispatcher = null)
     {
         $this->appRequest = $appRequest;
         $this->dispatcher = $dispatcher;
