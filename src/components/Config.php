@@ -7,6 +7,8 @@ use SwFwLess\components\swoole\Scheduler;
 
 class Config
 {
+    const DEFAULT_CONFIG_FORMAT = 'array';
+
     private static $config = [];
 
     private static $configCache = [];

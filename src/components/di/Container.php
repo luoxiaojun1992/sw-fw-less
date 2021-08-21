@@ -2,13 +2,14 @@
 
 namespace SwFwLess\components\di;
 
-use SwFwLess\bootstrap\App;
 use SwFwLess\components\swoole\Scheduler;
 use SwFwLess\components\traits\Singleton;
 use DI\ContainerBuilder;
 
 class Container
 {
+    const DEFAULT_DI_SWITCH = true;
+
     use Singleton;
 
     /** @var \DI\Container  */
@@ -16,7 +17,7 @@ class Container
 
     public static function diSwitch()
     {
-        return \SwFwLess\components\Config::get('di_switch', App::DEFAULT_DI_SWITCH);
+        return \SwFwLess\components\Config::get('di_switch', static::DEFAULT_DI_SWITCH);
     }
 
     public static function routeDiSwitch()

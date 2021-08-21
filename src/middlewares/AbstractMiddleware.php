@@ -81,6 +81,7 @@ abstract class AbstractMiddleware implements MiddlewareContract, Poolable
         $this->handler = null;
         $this->setParameters([]);
         $this->releaseToPool = false;
+        return $this;
     }
 
     public function needRelease()

@@ -10,6 +10,7 @@ use SwFwLess\components\functions;
 use SwFwLess\components\grpc\Status;
 use SwFwLess\components\pool\ObjectPool;
 use SwFwLess\components\provider\KernelProvider;
+use SwFwLess\components\router\Router;
 use SwFwLess\facades\Container;
 use SwFwLess\facades\Log;
 use SwFwLess\facades\RateLimit;
@@ -30,11 +31,7 @@ class App
     const EVENT_RESPONSING = 'app.responsing';
     const EVENT_RESPONSED = 'app.responsed';
 
-    const DEFAULT_CONFIG_FORMAT = 'array';
-
     const RAW_FUNCTIONS_SWITCH = true;
-
-    const DEFAULT_DI_SWITCH = true;
 
     /** @var \Swoole\Http\Server */
     private $swHttpServer;
@@ -213,7 +210,9 @@ class App
         }
 
         //Init Config
-        $configFormat = defined('CONFIG_FORMAT') ? CONFIG_FORMAT : static::DEFAULT_CONFIG_FORMAT;
+        $configFormat = defined('CONFIG_FORMAT') ?
+            CONFIG_FORMAT :
+            Config::DEFAULT_CONFIG_FORMAT;
         \SwFwLess\components\Config::init(
             APP_BASE_PATH . 'config/app',
             $configFormat
@@ -224,25 +223,33 @@ class App
         KernelProvider::bootApp();
     }
 
+    private function getDirectRequestHandler($request)
+    {
+        $router = Router::create($request, $this->httpRouteDispatcher);
+        $router->parseRouteInfo();
+        return $router->createController();
+    }
+
     private function getRequestHandler($request)
     {
         $appRequest = \SwFwLess\components\http\Request::fromSwRequest($request);
 
         //inline optimization, see SwFwLess\components\di\Container::routeDiSwitch()
-        $routeDiSwitch = (\SwFwLess\components\Config::get('di_switch', App::DEFAULT_DI_SWITCH)) &&
+        $routeDiSwitch = (\SwFwLess\components\Config::get(
+            'di_switch', \SwFwLess\components\di\Container::DEFAULT_DI_SWITCH)) &&
             (\SwFwLess\components\Config::get('route_di_switch'));
 
         //Middleware
         $middlewareNames = Config::get('middleware.middleware');
 
-        $middlewareNames[] = \SwFwLess\middlewares\Route::class;
+        $middlewareNames[] = \SwFwLess\components\router\Middleware::class;
         /** @var \SwFwLess\middlewares\MiddlewareContract[]|\SwFwLess\middlewares\AbstractMiddleware[] $middlewareConcretes */
         $prevMiddlewareConcrete = null;
         $firstMiddlewareConcrete = null;
-        foreach ($middlewareNames as $i => $middlewareName) {
+        foreach ($middlewareNames as $middlewareName) {
             $isClosureMiddleware = is_callable($middlewareName);
             $isRouteMiddleware = (
-                (!$isClosureMiddleware) && ($middlewareName === \SwFwLess\middlewares\Route::class)
+                (!$isClosureMiddleware) && ($middlewareName === \SwFwLess\components\router\Middleware::class)
             );
 
             list($middlewareClass, $middlewareOptions) = $isRouteMiddleware ?
@@ -311,7 +318,9 @@ class App
         }
 
         //Init Config
-        $configFormat = defined('CONFIG_FORMAT') ? CONFIG_FORMAT : static::DEFAULT_CONFIG_FORMAT;
+        $configFormat = defined('CONFIG_FORMAT') ?
+            CONFIG_FORMAT :
+            Config::DEFAULT_CONFIG_FORMAT;
         \SwFwLess\components\Config::init(
             APP_BASE_PATH . 'config/app',
             $configFormat
@@ -350,7 +359,9 @@ class App
             clearstatcache();
 
             $this->swResponse($this->swfRequest(function () use ($request) {
-                return $this->getRequestHandler($request)->call();
+                return ((Config::get('middleware.switch', false)) ?
+                        $this->getRequestHandler($request) :
+                        $this->getDirectRequestHandler($request))->call();
             }), $response, $request);
         } catch (\Throwable $e) {
             $this->swResponse($this->swfRequest(function () use ($e) {

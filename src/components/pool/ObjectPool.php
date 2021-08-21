@@ -65,11 +65,11 @@ class ObjectPool
             return isset($this->pool[$class]) ? array_pop($this->pool[$class]) : null;
         });
         $releaseToPool = $object ? true : false;
-        //inline optimization, see SwFwLess\components\di\Container::routeDiSwitch()
+        //inline optimization, see SwFwLess\components\di\Container::diSwitch()
         //inline optimization, see static::createObject()
         $object = $object ?: ($this->pool[$class]) ?? (
-            ((\SwFwLess\components\Config::get('di_switch', App::DEFAULT_DI_SWITCH)) &&
-                (\SwFwLess\components\Config::get('route_di_switch'))) ?
+            (\SwFwLess\components\Config::get(
+                'di_switch', \SwFwLess\components\di\Container::DEFAULT_DI_SWITCH)) ?
                 Container::make($class) :
                 new $class);
         $object->setReleaseToPool($releaseToPool);
