@@ -226,8 +226,14 @@ class App
     private function getDirectRequestHandler($request)
     {
         $router = Router::create($request, $this->httpRouteDispatcher);
-        $router->parseRouteInfo();
-        return $router->createController();
+        try {
+            $router->parseRouteInfo();
+            return $router->createController();
+        } catch (\Throwable $e) {
+            throw $e;
+        } finally {
+            ObjectPool::create()->release($router);
+        }
     }
 
     private function getRequestHandler($request)

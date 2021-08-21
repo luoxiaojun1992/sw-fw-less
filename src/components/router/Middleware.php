@@ -61,7 +61,13 @@ class Middleware extends AbstractMiddleware
     {
         $this->router = Router::create($request, $this->getOptions());
 
-        $routeInfo = $this->router->parseRouteInfo();
+        try {
+            $routeInfo = $this->router->parseRouteInfo();
+        } catch (\Throwable $e) {
+            throw $e;
+        } finally {
+            ObjectPool::create()->release($this->router);
+        }
 
         switch ($routeInfo[0]) {
             case Dispatcher::NOT_FOUND:
