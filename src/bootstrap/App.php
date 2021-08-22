@@ -225,7 +225,10 @@ class App
 
     private function getDirectRequestHandler($request)
     {
-        $router = Router::create($request, $this->httpRouteDispatcher);
+        $router = Router::create(
+            \SwFwLess\components\http\Request::fromSwRequest($request),
+            $this->httpRouteDispatcher
+        );
         try {
             $router->parseRouteInfo();
             return $router->createController();
@@ -242,7 +245,7 @@ class App
 
         //inline optimization, see SwFwLess\components\di\Container::routeDiSwitch()
         $routeDiSwitch = (\SwFwLess\components\Config::get(
-            'di_switch', \SwFwLess\components\di\Container::DEFAULT_DI_SWITCH)) &&
+                'di_switch', \SwFwLess\components\di\Container::DEFAULT_DI_SWITCH)) &&
             (\SwFwLess\components\Config::get('route_di_switch'));
 
         //Middleware
@@ -261,9 +264,9 @@ class App
             list($middlewareClass, $middlewareOptions) = $isRouteMiddleware ?
                 [$middlewareName, null] :
                 (
-                    $isClosureMiddleware ?
-                        [ClosureMiddleware::class, $middlewareName] :
-                        Parser::parseMiddlewareName($middlewareName)
+                $isClosureMiddleware ?
+                    [ClosureMiddleware::class, $middlewareName] :
+                    Parser::parseMiddlewareName($middlewareName)
                 );
 
             /** @var \SwFwLess\middlewares\AbstractMiddleware $middlewareConcrete */
@@ -366,8 +369,8 @@ class App
 
             $this->swResponse($this->swfRequest(function () use ($request) {
                 return ((Config::get('middleware.switch', false)) ?
-                        $this->getRequestHandler($request) :
-                        $this->getDirectRequestHandler($request))->call();
+                    $this->getRequestHandler($request) :
+                    $this->getDirectRequestHandler($request))->call();
             }), $response, $request);
         } catch (\Throwable $e) {
             $this->swResponse($this->swfRequest(function () use ($e) {
