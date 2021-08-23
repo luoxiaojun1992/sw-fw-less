@@ -76,5 +76,9 @@ class StrTest extends \PHPUnit\Framework\TestCase
             \SwFwLess\components\utils\Str::split('abcdef', '')
             === ['a', 'b', 'c', 'd', 'e', 'f']
         );
+        $this->assertTrue(
+            \SwFwLess\components\utils\Str::split('a@b@c@d@e@f', '@')
+            === ['a', 'b', 'c', 'd', 'e', 'f']
+        );
     }
 }
