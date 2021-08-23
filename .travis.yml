@@ -28,4 +28,5 @@ before_script:
       - cd ..
       - composer install -vvv
       - composer require "ezyang/htmlpurifier:^4.5" -vvv
+      - composer require "symfony/translation:~4.0.0|~5.3.0" -vvv
 script: ./vendor/bin/phpunit tests
