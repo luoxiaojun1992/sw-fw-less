@@ -69,4 +69,12 @@ class StrTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue(\SwFwLess\components\utils\Str::contains('你好，世界 Hello World', '世界'));
         $this->assertTrue(\SwFwLess\components\utils\Str::contains('你好，世界 Hello World', '世界 Hello'));
     }
+
+    public function testSplit()
+    {
+        $this->assertTrue(
+            \SwFwLess\components\utils\Str::split('abcdef', '')
+            === ['a', 'b', 'c', 'd', 'e', 'f']
+        );
+    }
 }

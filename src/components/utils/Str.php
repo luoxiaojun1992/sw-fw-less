@@ -29,4 +29,12 @@ class Str
 
         return false;
     }
+
+    public static function split($str, $separator)
+    {
+        if ($separator === '') {
+            return preg_split('/(?<!^)(?!$)/', $str);
+        }
+        return explode($separator, $str);
+    }
 }
