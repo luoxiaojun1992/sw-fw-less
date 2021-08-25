@@ -13,7 +13,7 @@ use SwFwLess\components\storage\Storage;
  * @method static string path($relativePath)
  * @method static string appPath()
  * @method static string storagePath()
- * @method static Filesystem prepare($writeFlags = LOCK_EX, $linkHandling = Local::DISALLOW_LINKS, $permissions = [])
+ * @method static Filesystem prepare($writeFlags = LOCK_EX, $linkHandling = Local::DISALLOW_LINKS, $permissions = [], $root = null)
  * @package SwFwLess\facades
  */
 class File extends AbstractFacade

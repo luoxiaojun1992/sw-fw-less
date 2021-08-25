@@ -20,6 +20,11 @@ class File
         $this->config = Config::get('storage');
     }
 
+    public static function clearInstance()
+    {
+        static::$instance = null;
+    }
+
     /**
      * @return File|null
      */

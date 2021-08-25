@@ -2,6 +2,9 @@
 
 namespace SwFwLess\components\utils;
 
+use League\Flysystem\Adapter\Local;
+use SwFwLess\facades\File;
+
 class FilesystemUtil
 {
     /**
@@ -18,5 +21,20 @@ class FilesystemUtil
         }
 
         return $fileOrDirList;
+    }
+
+    public static function size($filePath)
+    {
+        return (new \SplFileInfo($filePath))->getSize();
+    }
+
+    public static function mimetype($filePath)
+    {
+        return File::prepare(
+            LOCK_SH,
+            Local::DISALLOW_LINKS,
+            [],
+            dirname($filePath)
+        )->getMimetype(basename($filePath));
     }
 }
