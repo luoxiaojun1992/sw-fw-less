@@ -15,7 +15,7 @@ class FilesystemUtilTest extends TestCase
         $fileNames = [];
         foreach ($files as $file) {
             if (is_file($file)) {
-                $fileNames[] = basename($file);
+                $fileNames[] = strtolower(basename($file));
             }
         }
         $this->assertTrue(
@@ -29,6 +29,18 @@ class FilesystemUtilTest extends TestCase
             7229,
             FilesystemUtil::size(
                 __DIR__ . '/../../stubs/components/utils/filesystem_util/6905700.jpeg'
+            )
+        );
+    }
+
+    public function testExtension()
+    {
+        $this->assertEquals(
+            'jpeg',
+            strtolower(
+                FilesystemUtil::extension(
+                    __DIR__ . '/../../stubs/components/utils/filesystem_util/6905700.jpeg'
+                )
             )
         );
     }

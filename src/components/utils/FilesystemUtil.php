@@ -28,6 +28,11 @@ class FilesystemUtil
         return (new \SplFileInfo($filePath))->getSize();
     }
 
+    public static function extension($filePath)
+    {
+        return (new \SplFileInfo($filePath))->getExtension();
+    }
+
     public static function mimetype($filePath)
     {
         return File::prepare(
