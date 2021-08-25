@@ -74,9 +74,7 @@ class File
      */
     public function storagePath()
     {
-        return isset($this->config['storage_path']) ?
-            $this->config['storage_path'] :
-            $this->path('runtime/storage/');
+        return ($this->config['storage_path']) ?? ($this->path('runtime/storage/'));
     }
 
     /**
