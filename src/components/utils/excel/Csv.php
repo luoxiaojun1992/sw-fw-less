@@ -12,6 +12,10 @@ class Csv
     /** @var \SplTempFileObject */
     protected $writeBuffer;
 
+    protected $readBufferMemory = 2097152; //2MB
+
+    protected $writeBufferMemory = 2097152; //2MB
+
     protected $writeBufferSize = 0;
 
     protected $maxReadBufferSize = 20;
@@ -35,11 +39,14 @@ class Csv
      * @param bool $readable
      * @param bool $writable
      * @param bool $withBom
+     * @param int $readBufferMemory
+     * @param int $writeBufferMemory
      * @return Csv
      * @throws \Exception
      */
     public static function createFromFilePath(
-        $filePath, $readable = false, $writable = true, $withBom = false
+        $filePath, $readable = false, $writable = true, $withBom = false,
+        $readBufferMemory = 2097152, $writeBufferMemory = 2097152
     )
     {
         if ($readable && $writable) {
@@ -48,8 +55,30 @@ class Csv
 
         return (new static())->setReadable($readable)
             ->setWritable($writable)
+            ->setReadBufferMemory($readBufferMemory)
+            ->setWriteBufferMemory($writeBufferMemory)
             ->withBom($withBom)
             ->setFile($filePath);
+    }
+
+    /**
+     * @param int $readBufferMemory
+     * @return $this
+     */
+    public function setReadBufferMemory(int $readBufferMemory)
+    {
+        $this->readBufferMemory = $readBufferMemory;
+        return $this;
+    }
+
+    /**
+     * @param int $writeBufferMemory
+     * @return $this
+     */
+    public function setWriteBufferMemory(int $writeBufferMemory)
+    {
+        $this->writeBufferMemory = $writeBufferMemory;
+        return $this;
     }
 
     /**
