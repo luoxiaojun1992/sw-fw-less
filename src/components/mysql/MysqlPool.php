@@ -68,9 +68,11 @@ class MysqlPool
 
     /**
      * @param string|null $connectionName
+     * @param callable $callback
      * @return MysqlWrapper mixed
+     * @throws \Throwable
      */
-    public function pick($connectionName = null)
+    public function pick($connectionName = null, $callback = null)
     {
         if (is_null($connectionName)) {
             $connectionName = $this->config['default'];
@@ -91,6 +93,16 @@ class MysqlPool
 
             if ($this->config['pool_change_event']) {
                 $this->poolChange(-1);
+            }
+        }
+
+        if (!is_null($callback)) {
+            try {
+                return call_user_func($callback, $pdo);
+            } catch (\Throwable $e) {
+                throw $e;
+            } finally {
+                $this->release($pdo);
             }
         }
 
