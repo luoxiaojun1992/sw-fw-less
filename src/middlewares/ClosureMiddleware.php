@@ -10,10 +10,10 @@ class ClosureMiddleware extends AbstractMiddleware
     public function handle(Request $request)
     {
         $handler = $this->getOptions();
-        $next = function () {
-            return $this->next();
-        };
-        $parameters = [$request, $next];
+        $parameters = [
+            $request,
+            [$this, 'next']
+        ];
 
         return ((\SwFwLess\components\Config::get(
             'di_switch', \SwFwLess\components\di\Container::DEFAULT_DI_SWITCH)) &&
