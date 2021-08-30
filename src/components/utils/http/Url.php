@@ -12,6 +12,13 @@ class Url
 
     protected static $decodedCacheCapacity = 100;
 
+    public static function clearDecodedCache()
+    {
+        static::$decodedCache = [];
+        static::$decodedCacheCount = 0;
+        static::$decodedCacheCapacity = 100;
+    }
+
     public static function decode($url)
     {
         return Scheduler::withoutPreemptive(function () use ($url) {

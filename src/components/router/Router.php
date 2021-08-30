@@ -35,6 +35,16 @@ class Router implements Poolable
 
     private $releaseToPool = false;
 
+    public static function clearRouteCache()
+    {
+        static::$routeCacheKeyCache = [];
+        static::$routeCacheKeyCacheCount = 0;
+        static::$routeCacheKeyCacheCapacity = 100;
+        static::$cachedRouteInfo = [];
+        static::$cachedRouteInfoCount = 0;
+        static::$cachedRouteInfoCapacity = 100;
+    }
+
     public static function create(Request $appRequest, Dispatcher $dispatcher)
     {
         $router = ObjectPool::create()->pick(static::class) ?: new static($appRequest, $dispatcher);

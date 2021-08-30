@@ -14,6 +14,11 @@ class ObjectPool
 
     private $config = [];
 
+    public static function clearInstance()
+    {
+        static::$instance = null;
+    }
+
     /**
      * @param null $config
      * @return ObjectPool|null
