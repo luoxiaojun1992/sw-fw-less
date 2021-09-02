@@ -6,8 +6,8 @@ use SwFwLess\components\container\Container;
 
 class AbstractContext
 {
-    /** @var self */
-    protected $childContext;
+    /** @var self[] */
+    protected $contextChildren = [];
 
     /** @var Container */
     protected $container;
@@ -23,7 +23,7 @@ class AbstractContext
 
     public function withParent(AbstractContext $parentContext)
     {
-        $parentContext->childContext = $this;
+        $parentContext->contextChildren[] = $this;
         return $this;
     }
 
@@ -35,10 +35,15 @@ class AbstractContext
 
     public function returnContext($data = null)
     {
-        $childReturn = (!is_null($this->childContext)) ? $this->childContext->returnContext($data) : [];
-        return ($childReturn !== false) ?
-            array_merge($childReturn, ((array)call_user_func($this->returnCallback, $data, $childReturn))) :
-            false;
+        $returnData = [];
+        foreach ($this->contextChildren as $contextChild) {
+            if (($childReturnData = $contextChild->returnContext($data)) === false) {
+                return false;
+            }
+            $returnData = array_merge($returnData, $childReturnData);
+        }
+        $currentReturnData = call_user_func($this->returnCallback, $data, $returnData);
+        return ($currentReturnData === false) ? false : array_merge($returnData, (array)$currentReturnData);
     }
 
     public function set($id, $res)
@@ -75,8 +80,13 @@ class AbstractContext
         return $this;
     }
 
-    public function childContext()
+    public function childContext($id = 0)
     {
-        return $this->childContext;
+        return $this->contextChildren[$id] ?? null;
+    }
+
+    public function contextChildren()
+    {
+        return $this->contextChildren;
     }
 }
