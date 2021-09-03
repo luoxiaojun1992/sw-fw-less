@@ -402,40 +402,40 @@ class ArrTest extends \PHPUnit\Framework\TestCase
 
     public function testSwapNums()
     {
-        $this->assertEquals(
-            [2, 1],
+        $this->assertTrue(
+            [2, 1] ===
             Arr::swapNums([1, 2], 0, 1)
         );
-        $this->assertEquals(
-            [-2, -1],
+        $this->assertTrue(
+            [-2, -1] ===
             Arr::swapNums([-1, -2], 0, 1)
         );
-        $this->assertEquals(
-            [2, -1],
+        $this->assertTrue(
+            [2, -1] ===
             Arr::swapNums([-1, 2], 0, 1)
         );
-        $this->assertEquals(
-            [-2, 1],
+        $this->assertTrue(
+            [-2, 1] ===
             Arr::swapNums([1, -2], 0, 1)
         );
-        $this->assertEquals(
-            [0, 0],
+        $this->assertTrue(
+            [0, 0] ===
             Arr::swapNums([0, 0], 0, 1)
         );
-        $this->assertEquals(
-            [0, 1],
+        $this->assertTrue(
+            [0, 1] ===
             Arr::swapNums([1, 0], 0, 1)
         );
-        $this->assertEquals(
-            [0, -1],
+        $this->assertTrue(
+            [0, -1] ===
             Arr::swapNums([-1, 0], 0, 1)
         );
-        $this->assertEquals(
-            [2, 0],
+        $this->assertTrue(
+            [2, 0] ===
             Arr::swapNums([0, 2], 0, 1)
         );
-        $this->assertEquals(
-            [-2, 0],
+        $this->assertTrue(
+            [-2, 0] ===
             Arr::swapNums([0, -2], 0, 1)
         );
     }
