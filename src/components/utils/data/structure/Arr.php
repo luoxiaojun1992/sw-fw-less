@@ -335,4 +335,12 @@ class Arr
         }
         return $isAssoc;
     }
+
+    public static function swapNums($arr, $index, $anotherIndex)
+    {
+        $arr[$index] += $arr[$anotherIndex];
+        $arr[$anotherIndex] = $arr[$index] - $arr[$anotherIndex];
+        $arr[$index] -= $arr[$anotherIndex];
+        return $arr;
+    }
 }
