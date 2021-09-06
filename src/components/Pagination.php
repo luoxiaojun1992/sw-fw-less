@@ -12,8 +12,8 @@ namespace SwFwLess\components;
  */
 class Pagination
 {
-    private $total;
-    private $perPageTotal;
+    private $total = 0;
+    private $perPageTotal = 10;
     private $pageNum = 1;
     private $offset;
     private $currentPageTotal;
