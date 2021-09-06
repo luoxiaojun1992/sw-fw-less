@@ -145,16 +145,6 @@ class Pagination
     }
 
     /**
-     * @param mixed $currentPageTotal
-     * @return $this
-     */
-    public function setCurrentPageTotal($currentPageTotal)
-    {
-        $this->currentPageTotal = $currentPageTotal;
-        return $this;
-    }
-
-    /**
      * @param $render
      * @return $this
      */
