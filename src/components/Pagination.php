@@ -13,10 +13,11 @@ namespace SwFwLess\components;
 class Pagination
 {
     private $total;
-    private $per_page;
-    private $page_num = 1;
+    private $perPageTotal;
+    private $pageNum = 1;
     private $offset;
-    private $page_total;
+    private $currentPageTotal;
+    private $pageTotal;
 
     /**
      * @var callable|null $render
@@ -30,28 +31,35 @@ class Pagination
      */
     public function calculate()
     {
-        $this->page_total = intval(ceil($this->total / $this->per_page));
-        $this->offset = ($this->page_num - 1) * $this->per_page;
+        $this->pageTotal = intval(ceil($this->total / $this->perPageTotal));
+        $this->offset = ($this->pageNum - 1) * $this->perPageTotal;
+        if ($this->pageNum < $this->pageTotal) {
+            $this->currentPageTotal = $this->perPageTotal;
+        } elseif ($this->pageNum === $this->pageTotal) {
+            $this->currentPageTotal = ($this->total % $this->perPageTotal) ?: $this->perPageTotal;
+        } else {
+            $this->currentPageTotal = 0;
+        }
         return $this;
     }
 
     /**
      * Fix pagination params
      *
-     * @param int $current_page_count
+     * @param int $currentPageTotal
      * @return $this
      */
-    public function fix($current_page_count)
+    public function fix($currentPageTotal)
     {
-        $current_total = ($this->page_num - 1) * $this->per_page + $current_page_count;
-        if ($current_total > $this->total) {
-            if ($current_page_count > 0) {
-                $this->total = $current_total;
+        $currentTotal = ($this->pageNum - 1) * $this->perPageTotal + $currentPageTotal;
+        if ($currentTotal > $this->total) {
+            if ($currentPageTotal > 0) {
+                $this->total = $currentTotal;
                 $this->calculate();
             }
-        } elseif ($current_total < $this->total) {
-            if ($current_page_count < $this->per_page) {
-                $this->total = $current_total;
+        } elseif ($currentTotal < $this->total) {
+            if ($currentPageTotal < $this->perPageTotal) {
+                $this->total = $currentTotal;
                 $this->calculate();
             }
         }
@@ -77,12 +85,12 @@ class Pagination
     }
 
     /**
-     * @param int $per_page
+     * @param int $perPageTotal
      * @return $this
      */
-    public function setPerPage($per_page)
+    public function setPerPage($perPageTotal)
     {
-        $this->per_page = $per_page;
+        $this->perPageTotal = $perPageTotal;
         return $this;
     }
 
@@ -91,16 +99,16 @@ class Pagination
      */
     public function getPerPage()
     {
-        return $this->per_page;
+        return $this->perPageTotal;
     }
 
     /**
-     * @param $page_num
+     * @param $pageNum
      * @return $this
      */
-    public function setPageNum($page_num)
+    public function setPageNum($pageNum)
     {
-        $this->page_num = $page_num;
+        $this->pageNum = $pageNum;
         return $this;
     }
 
@@ -109,7 +117,7 @@ class Pagination
      */
     public function getPageNum()
     {
-        return $this->page_num;
+        return $this->pageNum;
     }
 
     /**
@@ -125,7 +133,25 @@ class Pagination
      */
     public function getPageTotal()
     {
-        return $this->page_total;
+        return $this->pageTotal;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCurrentPageTotal()
+    {
+        return $this->currentPageTotal;
+    }
+
+    /**
+     * @param mixed $currentPageTotal
+     * @return $this
+     */
+    public function setCurrentPageTotal($currentPageTotal)
+    {
+        $this->currentPageTotal = $currentPageTotal;
+        return $this;
     }
 
     /**
@@ -148,11 +174,12 @@ class Pagination
         if (is_callable($this->render)) {
             return call_user_func_array($this->render, [
                 'total' => $this->total,
-                'per_page' => $this->per_page,
-                'page_num' => $this->page_num,
-                'page_total' => $this->page_total,
-                'next_page' => $this->page_num < $this->page_total ? $this->page_num + 1 : $this->page_total,
-                'prev_page' => $this->page_num > 1 ? $this->page_num - 1 : 1
+                'per_page' => $this->perPageTotal,
+                'page_num' => $this->pageNum,
+                'page_total' => $this->pageTotal,
+                'current_page_total' => $this->currentPageTotal,
+                'next_page' => $this->pageNum < $this->pageTotal ? $this->pageNum + 1 : $this->pageTotal,
+                'prev_page' => $this->pageNum > 1 ? $this->pageNum - 1 : 1
             ]);
         }
         return null;
