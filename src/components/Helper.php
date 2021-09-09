@@ -4,6 +4,7 @@ namespace SwFwLess\components;
 
 use SwFwLess\bootstrap\App;
 use SwFwLess\components\utils\data\structure\Arr;
+use SwFwLess\facades\Cache;
 
 class Helper
 {
@@ -253,5 +254,23 @@ class Helper
     public static function runningInSwoole()
     {
         return static::sapi() === 'swoole';
+    }
+
+    public static function withCache($callback, $cacheKey, $ttl = 0)
+    {
+        $cache = Cache::get($cacheKey);
+        if ($cache !== false) {
+            return $cache;
+        }
+
+        $cache = call_user_func($callback);
+        if (is_array($cache)) {
+            $cache = json_encode($cache);
+        }
+        $cache = (string)$cache;
+
+        Cache::set($cacheKey, $cache, $ttl);
+
+        return $cache;
     }
 }
