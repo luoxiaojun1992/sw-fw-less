@@ -256,6 +256,12 @@ class Helper
         return static::sapi() === 'swoole';
     }
 
+    /**
+     * @param $callback
+     * @param $cacheKey
+     * @param int $ttl
+     * @return bool|string
+     */
     public static function withCache($callback, $cacheKey, $ttl = 0)
     {
         $cache = Cache::get($cacheKey);
