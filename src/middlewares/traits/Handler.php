@@ -100,7 +100,7 @@ trait Handler
                     (
                         is_array($response) ? Response::json($response) :
                             (
-                                ($response instanceof \Stringable) ? ((string)$response) :
+                                ($response instanceof \Stringable) ? Response::output((string)$response) :
                                     $response
                             )
                     )
