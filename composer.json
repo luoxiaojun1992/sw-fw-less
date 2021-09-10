@@ -30,7 +30,6 @@
         "ramsey/uuid": "~3",
         "swlib/saber": "^1",
         "symfony/console": "~3.3.0|~5.3.0",
-        "symfony/polyfill-php80": "~1.23.1",
         "vlucas/phpdotenv": "~2.2"
     },
     "suggest": {
