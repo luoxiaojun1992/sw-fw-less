@@ -3,10 +3,11 @@
 namespace SwFwLess\components\zipkin;
 
 use SwFwLess\components\http\Request;
+use SwFwLess\components\utils\data\structure\Arr;
 use Zipkin\Propagation\Getter;
 use Zipkin\Propagation\Setter;
 
-final class SwfRequestHeaders implements Getter, Setter
+final class GrpcRequestHeaders implements Getter, Setter
 {
     /**
      * {@inheritdoc}
@@ -16,7 +17,9 @@ final class SwfRequestHeaders implements Getter, Setter
     public function get($carrier, $key)
     {
         $lKey = strtolower($key);
-        return $carrier->hasHeader($lKey) ? $carrier->header($lKey) : null;
+
+        return (Arr::isAssoc($carrier)) ? ($carrier['options']['headers'][$lKey] ?? null) :
+            ($carrier[2]['headers'][$lKey] ?? null);
     }
 
     /**
@@ -28,9 +31,14 @@ final class SwfRequestHeaders implements Getter, Setter
     public function put(&$carrier, $key, $value)
     {
         $lKey = strtolower($key);
-        if (!is_array($carrier->getSwRequest()->header)) {
-            $carrier->getSwRequest()->header = [];
+
+        if (Arr::isAssoc($carrier)) {
+            $carrier['options']['headers'][$lKey] = $value;
+        } else {
+            if (!isset($carrier[1])) {
+                $carrier[1] = [];
+            }
+            $carrier[2]['headers'][$lKey] = $value;
         }
-        $carrier->getSwRequest()->header[$lKey] = $value;
     }
 }

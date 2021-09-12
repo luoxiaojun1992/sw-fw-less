@@ -43,6 +43,7 @@ class Tracer
     const RUNTIME_PHP_SAPI = 'runtime.php.sapi';
     const FRAMEWORK_VERSION = 'framework.version';
     const HTTP_QUERY_STRING = 'http.query_string';
+    const GRPC = 'grpc';
 
     private $serviceName = 'Sw-Fw-Less';
     private $endpointUrl = 'http://localhost:9411/api/v2/spans';
@@ -377,6 +378,18 @@ class Tracer
     {
         $injector = $this->getTracing()->getPropagation()->getInjector(new RequestHeaders());
         $injector($context, $request);
+    }
+
+    /**
+     * Inject trace context to psr request
+     *
+     * @param TraceContext $context
+     * @param array $grpcRequest
+     */
+    public function injectContextToGrpcRequest($context, &$grpcRequest)
+    {
+        $injector = $this->getTracing()->getPropagation()->getInjector(new GrpcRequestHeaders());
+        $injector($context, $grpcRequest);
     }
 
     /**
