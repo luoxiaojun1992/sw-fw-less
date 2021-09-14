@@ -56,6 +56,9 @@ class Middleware extends AbstractMiddleware
         $path = $psrRequest->getUri()->getPath();
         return $swfTracer->serverSpan($this->getSpanName($swfTracer, $request, $psrRequest), function (Span $span) use ($request, $psrRequest, $swfTracer, $path) {
             if ($span->getContext()->isSampled()) {
+                if ($request->isGrpc()) {
+                    $swfTracer->addTag($span, Tracer::GRPC, 'grpc');
+                }
                 $swfTracer->addTag($span, HTTP_HOST, $psrRequest->getUri()->getHost());
                 $swfTracer->addTag($span, HTTP_PATH, $path);
                 $swfTracer->addTag($span, Tracer::HTTP_QUERY_STRING, (string)$psrRequest->getUri()->getQuery());
