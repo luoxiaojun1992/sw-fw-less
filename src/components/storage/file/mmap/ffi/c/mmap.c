@@ -28,6 +28,8 @@ int WriteFile(const char *pathname, const char *content) {
     return 0;
 }
 
+//todo AppendFile
+
 char * ReadFile(const char *pathname) {
     int fd;
     fd = open(pathname, O_RDWR);
