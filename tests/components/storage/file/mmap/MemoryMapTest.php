@@ -27,6 +27,15 @@ class MemoryMapTest extends TestCase
         $this->assertEquals($testContent, $fileContent);
 
         unlink($filePath);
+    }
 
+    public function testReadFile()
+    {
+        $this->assertEquals(
+            'test content',
+            MemoryMap::readFile(
+                __DIR__ . '/../../../../stubs/components/storage/file/mmap/test.txt'
+            )
+        );
     }
 }

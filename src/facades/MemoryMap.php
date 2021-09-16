@@ -6,6 +6,7 @@ namespace SwFwLess\facades;
  * Class Math
  *
  * @method static writeFile($filepath, $content)
+ * @method static readFile($filepath)
  *
  * @package SwFwLess\facades
  */

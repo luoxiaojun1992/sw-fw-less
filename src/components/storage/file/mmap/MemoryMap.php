@@ -43,7 +43,8 @@ class MemoryMap
     protected function createUdf($ffiPath)
     {
         return \FFI::cdef(
-            "int WriteFile(const char *pathname, const char *content);",
+            "int WriteFile(const char *pathname, const char *content);" . PHP_EOL .
+            "char * ReadFile(const char *pathname);",
             $ffiPath
         );
     }
@@ -58,6 +59,16 @@ class MemoryMap
         )->write(basename($filepath), $content);
     }
 
+    protected function nativeReadFile($filepath)
+    {
+        return File::prepare(
+            LOCK_EX,
+            Local::DISALLOW_LINKS,
+            [],
+            dirname($filepath)
+        )->read(basename($filepath));
+    }
+
     public function writeFile($filepath, $content)
     {
         if (!Runtime::supportFFI()) {
@@ -69,5 +80,18 @@ class MemoryMap
         }
 
         return !((bool)($this->udf->WriteFile($filepath, $content)));
+    }
+
+    public function readFile($filepath)
+    {
+        if (!Runtime::supportFFI()) {
+            return $this->nativeReadFile($filepath);
+        }
+
+        if (!$this->ffiPath) {
+            return $this->nativeReadFile($filepath);
+        }
+
+        return \FFI::string($this->udf->ReadFile($filepath));
     }
 }
