@@ -33,23 +33,35 @@ class MemoryMapTest extends TestCase
     {
         $filePath = __DIR__ . '/../../../../output/test_mmap_append.txt';
         touch($filePath);
+        $testContent = 'test content';
         file_put_contents($filePath, 'test content');
+        $startTime = time();
+        while (($fileContent = file_get_contents($filePath)) !== 'test content') {
+            if (time() - $startTime > 5) {
+                break;
+            }
+        }
+        $this->assertEquals(
+            $testContent,
+            $fileContent
+        );
+
         $this->assertTrue(MemoryMap::appendFile(
             $filePath,
-            ' test content'
+            ' ' . $testContent
         ));
 
-        $testContent = 'test content test content';
+        $doubleTestContent = ($testContent . ' ' . $testContent);
 
         $startTime = time();
-        while (($fileContent = file_get_contents($filePath)) !== $testContent) {
+        while (($fileContent = file_get_contents($filePath)) !== $doubleTestContent) {
             if (time() - $startTime > 5) {
                 break;
             }
         }
 
         $this->assertEquals(
-            $testContent,
+            $doubleTestContent,
             $fileContent
         );
 
