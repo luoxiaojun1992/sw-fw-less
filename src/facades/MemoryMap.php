@@ -7,6 +7,7 @@ namespace SwFwLess\facades;
  *
  * @method static writeFile($filepath, $content)
  * @method static readFile($filepath)
+ * @method static appendFile($filepath, $content)
  *
  * @package SwFwLess\facades
  */

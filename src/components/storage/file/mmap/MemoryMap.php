@@ -44,7 +44,8 @@ class MemoryMap
     {
         return \FFI::cdef(
             "int WriteFile(const char *pathname, const char *content);" . PHP_EOL .
-            "char * ReadFile(const char *pathname);",
+            "char * ReadFile(const char *pathname);" . PHP_EOL .
+            "int AppendFile(const char *pathname, const char *content);",
             $ffiPath
         );
     }
@@ -57,6 +58,18 @@ class MemoryMap
             [],
             dirname($filepath)
         )->write(basename($filepath), $content);
+    }
+
+    protected function nativeAppendFile($filepath, $content)
+    {
+        $currentContent = $this->nativeReadFile($filepath);
+        if ($currentContent === false) {
+            return false;
+        }
+        return $this->nativeWriteFile(
+            $filepath,
+            $currentContent . $content
+        );
     }
 
     protected function nativeReadFile($filepath)
@@ -93,5 +106,18 @@ class MemoryMap
         }
 
         return \FFI::string($this->udf->ReadFile($filepath));
+    }
+
+    public function appendFile($filepath, $content)
+    {
+        if (!Runtime::supportFFI()) {
+            return $this->nativeAppendFile($filepath, $content);
+        }
+
+        if (!$this->ffiPath) {
+            return $this->nativeAppendFile($filepath, $content);
+        }
+
+        return !((bool)($this->udf->AppendFile($filepath, $content)));
     }
 }
