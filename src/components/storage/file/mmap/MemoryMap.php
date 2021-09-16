@@ -68,6 +68,6 @@ class MemoryMap
             return $this->nativeWriteFile($filepath, $content);
         }
 
-        return $this->udf->WriteFile($filepath, $content);
+        return !((bool)($this->udf->WriteFile($filepath, $content)));
     }
 }

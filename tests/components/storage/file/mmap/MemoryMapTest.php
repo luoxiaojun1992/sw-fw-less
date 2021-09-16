@@ -12,10 +12,10 @@ class MemoryMapTest extends TestCase
         $filePath = __DIR__ . '/../../../../output/test_mmap.txt';
         touch($filePath);
         $testContent = 'test content';
-        MemoryMap::writeFile(
+        $this->assertTrue(MemoryMap::writeFile(
             $filePath,
             $testContent
-        );
+        ));
 
         $startTime = time();
         while (($fileContent = file_get_contents($filePath)) !== $testContent) {
