@@ -2,7 +2,6 @@
 
 namespace SwFwLess\components\utils\math;
 
-use SwFwLess\components\swoole\Scheduler;
 use SwFwLess\components\utils\OS;
 use SwFwLess\components\utils\Runtime;
 

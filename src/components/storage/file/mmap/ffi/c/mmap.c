@@ -29,7 +29,3 @@ int WriteFile(const char *pathname, const char *content) {
 
     return 0;
 }
-
-int main() {
-    return WriteFile("/Users/luoxiaojun/php/sw-fw-less/src/components/storage/file/mmap/ffi/c/test.txt", "123456789");
-}
