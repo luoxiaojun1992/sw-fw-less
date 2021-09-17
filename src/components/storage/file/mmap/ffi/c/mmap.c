@@ -10,7 +10,7 @@ int WriteFile(const char *pathname, const char *content) {
     map_size = strlen(content);
 
     int fd;
-    fd = open(pathname, O_RDWR);
+    fd = open(pathname, O_RDWR|O_CREAT);
     if (fd < 0) {
         return 1;
     }
@@ -34,7 +34,7 @@ int WriteFile(const char *pathname, const char *content) {
 
 int AppendFile(const char *pathname, const char *content) {
     int fd;
-    fd = open(pathname, O_RDWR);
+    fd = open(pathname, O_RDWR|O_CREAT);
     if (fd < 0) {
         return 1;
     }

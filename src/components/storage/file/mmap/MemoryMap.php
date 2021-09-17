@@ -57,19 +57,17 @@ class MemoryMap
             Local::DISALLOW_LINKS,
             [],
             dirname($filepath)
-        )->write(basename($filepath), $content);
+        )->put(basename($filepath), $content);
     }
 
     protected function nativeAppendFile($filepath, $content)
     {
-        $currentContent = $this->nativeReadFile($filepath);
-        if ($currentContent === false) {
-            return false;
-        }
-        return $this->nativeWriteFile(
-            $filepath,
-            $currentContent . $content
-        );
+        return File::prepare(
+            LOCK_EX|FILE_APPEND,
+            Local::DISALLOW_LINKS,
+            [],
+            dirname($filepath)
+        )->put(basename($filepath), $content);
     }
 
     protected function nativeReadFile($filepath)

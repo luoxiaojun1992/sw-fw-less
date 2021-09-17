@@ -10,7 +10,6 @@ class MemoryMapTest extends TestCase
     public function testWriteFile()
     {
         $filePath = __DIR__ . '/../../../../output/test_mmap.txt';
-        touch($filePath);
         $testContent = 'test content';
         $this->assertTrue(MemoryMap::writeFile(
             $filePath,
