@@ -5,9 +5,9 @@ namespace SwFwLess\facades;
 /**
  * Class Math
  *
- * @method static writeFile($filepath, $content)
- * @method static readFile($filepath)
- * @method static appendFile($filepath, $content)
+ * @method static writeFile($filepath, $content, $native = false)
+ * @method static readFile($filepath, $native = false)
+ * @method static appendFile($filepath, $content, $native = false)
  *
  * @package SwFwLess\facades
  */
