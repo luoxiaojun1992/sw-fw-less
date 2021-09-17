@@ -80,8 +80,12 @@ class MemoryMap
         )->read(basename($filepath));
     }
 
-    public function writeFile($filepath, $content)
+    public function writeFile($filepath, $content, $native = false)
     {
+        if ($native) {
+            return $this->nativeWriteFile($filepath, $content);
+        }
+
         if (!Runtime::supportFFI()) {
             return $this->nativeWriteFile($filepath, $content);
         }
@@ -93,8 +97,12 @@ class MemoryMap
         return !((bool)($this->udf->WriteFile($filepath, $content)));
     }
 
-    public function readFile($filepath)
+    public function readFile($filepath, $native = false)
     {
+        if ($native) {
+            return $this->nativeReadFile($filepath);
+        }
+
         if (!Runtime::supportFFI()) {
             return $this->nativeReadFile($filepath);
         }
@@ -106,8 +114,12 @@ class MemoryMap
         return \FFI::string($this->udf->ReadFile($filepath));
     }
 
-    public function appendFile($filepath, $content)
+    public function appendFile($filepath, $content, $native = false)
     {
+        if ($native) {
+            return $this->nativeAppendFile($filepath, $content);
+        }
+
         if (!Runtime::supportFFI()) {
             return $this->nativeAppendFile($filepath, $content);
         }
