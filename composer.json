@@ -52,7 +52,8 @@
         "huang-yi/swoole-watcher": "~0.0",
         "koala-framework/file-watcher": " ~1.0",
         "symfony/var-dumper": "~3.0|~5.3.0",
-        "ezyang/htmlpurifier": "^4.5"
+        "ezyang/htmlpurifier": "^4.5",
+        "robgridley/flysystem-smb": "~1.0.3"
     },
     "license": "apache-2.0",
     "authors": [
