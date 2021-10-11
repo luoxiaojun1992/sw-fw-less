@@ -6,6 +6,7 @@ use SwFwLess\components\Config;
 use SwFwLess\components\storage\alioss\Alioss;
 use SwFwLess\components\storage\file\File;
 use SwFwLess\components\storage\qiniu\Qiniu;
+use SwFwLess\components\storage\samba\Samba;
 
 class Storage
 {
@@ -36,5 +37,10 @@ class Storage
     public static function qiniu()
     {
         return Qiniu::create();
+    }
+
+    public static function samba()
+    {
+        return Samba::create();
     }
 }
