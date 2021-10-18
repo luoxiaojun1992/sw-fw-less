@@ -160,7 +160,6 @@ class RedisPool
         if ($this->config['connections'][$connectionName]['passwd']) {
             $redis->auth($this->config['connections'][$connectionName]['passwd']);
         }
-        //todo support pconnect method
         $redis->setOption(\Redis::OPT_PREFIX, $this->config['connections'][$connectionName]['prefix']);
         $redis->select($this->config['connections'][$connectionName]['db']);
         return (new RedisWrapper())->setRedis($redis)
