@@ -3,6 +3,7 @@
 namespace SwFwLess\components;
 
 use SwFwLess\bootstrap\App;
+use SwFwLess\bootstrap\Kernel;
 use SwFwLess\components\utils\data\structure\Arr;
 use SwFwLess\facades\Cache;
 
@@ -224,28 +225,47 @@ class Helper
     }
 
     /**
+     * @return Kernel
+     */
+    public static function app()
+    {
+        return Kernel::getApp();
+    }
+
+    /**
      * @return string
      */
     public static function appVersion()
     {
-        return App::VERSION;
+        return Kernel::VERSION;
     }
 
     /**
      * @return string
      */
+    public static function commandVersion()
+    {
+        return Kernel::VERSION;
+    }
+
+    /**
+     * Server SAPI Name
+     *
+     * @return string
+     */
     public static function sapi()
     {
-        return App::SAPI === 'swoole' ? App::SAPI : php_sapi_name();
+        return Kernel::getApp()->sapi();
     }
 
     /**
      * @return bool
+     * @deprecated
      */
     public static function runningInConsole()
     {
         $sapiName = static::sapi();
-        return $sapiName === 'cli' || $sapiName === 'phpdbg';
+        return Arr::safeInArray($sapiName, ['cli', 'phpdbg']);
     }
 
     /**
@@ -253,7 +273,7 @@ class Helper
      */
     public static function runningInSwoole()
     {
-        return static::sapi() === 'swoole';
+        return static::sapi() === App::SAPI;
     }
 
     /**

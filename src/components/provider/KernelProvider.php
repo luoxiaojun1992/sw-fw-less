@@ -6,6 +6,8 @@ class KernelProvider extends AbstractProvider
 {
     private static $providers = [];
 
+    private static $commandProviders = [];
+
     private static $appProviders = [];
 
     private static $workerProviders = [];
@@ -34,10 +36,14 @@ class KernelProvider extends AbstractProvider
         foreach (static::$providers as $provider) {
             $providerReflection = new \ReflectionClass($provider);
             if ($providerReflection->implementsInterface(ProviderContract::class)) {
+                static::$commandProviders[] = $provider;
                 static::$appProviders[] = $provider;
                 static::$workerProviders[] = $provider;
                 static::$requestProviders[] = $provider;
             } else {
+                if ($providerReflection->implementsInterface(CommandProviderContract::class)) {
+                    static::$commandProviders[] = $provider;
+                }
                 if ($providerReflection->implementsInterface(AppProviderContract::class)) {
                     static::$appProviders[] = $provider;
                 }
@@ -108,9 +114,15 @@ class KernelProvider extends AbstractProvider
         return $providers;
     }
 
-    /**
-     * @throws \ReflectionException
-     */
+    public static function bootCommand()
+    {
+        parent::bootCommand();
+
+        foreach (static::$commandProviders as $provider) {
+            call_user_func([$provider, 'bootCommand']);
+        }
+    }
+
     public static function bootApp()
     {
         parent::bootApp();
@@ -120,9 +132,6 @@ class KernelProvider extends AbstractProvider
         }
     }
 
-    /**
-     * @throws \ReflectionException
-     */
     public static function bootWorker()
     {
         parent::bootWorker();

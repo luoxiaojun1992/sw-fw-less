@@ -20,18 +20,15 @@ use Swoole\Http\Server;
 use Swoole\Server\Task;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
-class App
+class App extends Kernel
 {
     use \SwFwLess\middlewares\traits\Parser;
-
-    const VERSION = '0.1.0';
 
     const SAPI = 'swoole';
 
     const EVENT_RESPONSING = 'app.responsing';
     const EVENT_RESPONSED = 'app.responsed';
 
-    const RAW_FUNCTIONS_SWITCH = true;
 
     /** @var \Swoole\Http\Server */
     private $swHttpServer;
@@ -45,7 +42,7 @@ class App
      */
     public function __construct()
     {
-        $this->bootstrap();
+        parent::__construct();
 
         $this->swHttpServer = new \Swoole\Http\Server(
             functions\config('server.host'),
@@ -94,20 +91,6 @@ class App
         $this->swHttpServer->on('request', [$this, 'swHttpRequest']);
         $this->swHttpServer->on('shutdown', [$this, 'swHttpShutdown']);
         $this->swHttpServer->on('task', [$this, 'swTask']);
-    }
-
-    /**
-     * @throws \Exception
-     */
-    private function checkEnvironment()
-    {
-        if (!extension_loaded('swoole')) {
-            throw new \Exception('Swoole extension is not installed.');
-        }
-
-        if (version_compare(PHP_VERSION, '7.1') < 0) {
-            throw new \Exception('PHP7.1+ is not installed.');
-        }
     }
 
     private function loadRouter()
@@ -190,36 +173,12 @@ class App
      * @param bool $reboot
      * @throws \Exception
      */
-    private function bootstrap($reboot = false)
+    protected function bootstrap($reboot = false)
     {
-        $this->checkEnvironment();
+        $this->setSapi(static::SAPI);
 
-        $functionsWithoutNamespace = defined('RAW_FUNCTIONS') ? RAW_FUNCTIONS : static::RAW_FUNCTIONS_SWITCH;
-        if ($functionsWithoutNamespace) {
-            include_once __DIR__ . '/../components/old_functions.php';
-        }
+        parent::bootstrap($reboot);
 
-        //Load Env
-        if (file_exists(APP_BASE_PATH . '.env')) {
-            $dotEnv = (new \Dotenv\Dotenv(APP_BASE_PATH));
-            if ($reboot) {
-                $dotEnv->overload();
-            } else {
-                $dotEnv->load();
-            }
-        }
-
-        //Init Config
-        $configFormat = defined('CONFIG_FORMAT') ?
-            CONFIG_FORMAT :
-            Config::DEFAULT_CONFIG_FORMAT;
-        \SwFwLess\components\Config::init(
-            APP_BASE_PATH . 'config/app',
-            $configFormat
-        );
-
-        //Boot providers
-        KernelProvider::init(functions\config('providers'));
         KernelProvider::bootApp();
     }
 
