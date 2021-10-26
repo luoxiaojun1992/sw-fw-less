@@ -3,12 +3,20 @@
 namespace SwFwLess\bootstrap;
 
 use SwFwLess\components\provider\KernelProvider;
+use Symfony\Component\Console\Application;
 
 class Command extends Kernel
 {
+    /**
+     * @var Application
+     */
+    protected $symfonyApplication;
+
     public function __construct()
     {
         parent::__construct();
+
+        $this->symfonyApplication = new Application();
     }
 
     /**
@@ -27,5 +35,7 @@ class Command extends Kernel
     public function run()
     {
         echo 'Developing...', PHP_EOL;
+
+        $this->symfonyApplication->run();
     }
 }
