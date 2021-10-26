@@ -3,11 +3,13 @@
 namespace SwFwLess\bootstrap;
 
 use Cron\CronExpression;
+use FastRoute\Dispatcher;
 use SwFwLess\components\Config;
 use SwFwLess\components\config\apollo\ClientBuilder;
 use SwFwLess\components\event\Event;
 use SwFwLess\components\functions;
 use SwFwLess\components\grpc\Status;
+use SwFwLess\components\http\Response;
 use SwFwLess\components\pool\ObjectPool;
 use SwFwLess\components\provider\KernelProvider;
 use SwFwLess\components\router\Router;
@@ -189,8 +191,35 @@ class App extends Kernel
             $this->httpRouteDispatcher
         );
         try {
-            $router->parseRouteInfo();
-            return $router->createController();
+            $routeInfo = $router->parseRouteInfo();
+            $response = null;
+            switch ($routeInfo[0]) {
+                case Dispatcher::NOT_FOUND:
+                    // ... 404 Not Found
+                    $response = Response::output('', 404);
+                    break;
+                case Dispatcher::METHOD_NOT_ALLOWED:
+                    // ... 405 Method Not Allowed
+                    $response = Response::output('', 405);
+                    break;
+                case Dispatcher::FOUND:
+                    return $router->createController();
+                    break;
+                default:
+                    $response = Response::output('');
+            }
+            return new Class($response){
+                protected $response;
+
+                public function __construct($response)
+                {
+                    $this->response = $response;
+                }
+
+                public function call() {
+                    return $this->response;
+                }
+            };
         } catch (\Throwable $e) {
             throw $e;
         } finally {
