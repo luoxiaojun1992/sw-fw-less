@@ -16,8 +16,6 @@ class Command extends Kernel
     public function __construct()
     {
         parent::__construct();
-
-        $this->symfonyApplication = new Application();
     }
 
     /**
@@ -32,6 +30,7 @@ class Command extends Kernel
 
         KernelProvider::bootCommand();
 
+        $this->symfonyApplication = new Application();
         $this->symfonyApplication->addCommands(
             [
                 new TinkerCommand(),
@@ -41,8 +40,6 @@ class Command extends Kernel
 
     public function run()
     {
-        echo 'Developing...', PHP_EOL;
-
         $this->symfonyApplication->run();
     }
 }
