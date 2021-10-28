@@ -2,6 +2,7 @@
 
 namespace SwFwLess\bootstrap;
 
+use SwFwLess\commands\TinkerCommand;
 use SwFwLess\components\provider\KernelProvider;
 use Symfony\Component\Console\Application;
 
@@ -30,6 +31,12 @@ class Command extends Kernel
         parent::bootstrap($reboot);
 
         KernelProvider::bootCommand();
+
+        $this->symfonyApplication->addCommands(
+            [
+                new TinkerCommand(),
+            ]
+        );
     }
 
     public function run()

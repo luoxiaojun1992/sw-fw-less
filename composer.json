@@ -27,6 +27,7 @@
         "nikic/fast-route": "^1",
         "opis/closure": "^3.3",
         "php-di/php-di": "~6.0",
+        "psy/psysh": "~0.10.4",
         "ramsey/uuid": "~3",
         "swlib/saber": "^1",
         "symfony/console": "~3.3.0|~5.3.0",
