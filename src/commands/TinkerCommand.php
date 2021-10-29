@@ -18,5 +18,7 @@ class TinkerCommand extends AbstractCommand
 
         // And go!
         call_user_func(\Psy\bin());
+
+        return 1;
     }
 }

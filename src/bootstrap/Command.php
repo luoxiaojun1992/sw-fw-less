@@ -4,6 +4,7 @@ namespace SwFwLess\bootstrap;
 
 use SwFwLess\commands\TinkerCommand;
 use SwFwLess\components\provider\KernelProvider;
+use SwFwLess\components\utils\FilesystemUtil;
 use Symfony\Component\Console\Application;
 
 class Command extends Kernel
@@ -36,6 +37,14 @@ class Command extends Kernel
                 new TinkerCommand(),
             ]
         );
+
+        $customCommandPaths = FilesystemUtil::scanDir(APP_BASE_PATH . 'app/commands/*Command.php');
+
+        foreach ($customCommandPaths as $commandPath) {
+            $commandName = basename($commandPath, '.php');
+            $commandNameWithNamespace = 'App\\commands\\' . $commandName;
+            $this->symfonyApplication->add(new $commandNameWithNamespace);
+        }
     }
 
     public function run()
