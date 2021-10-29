@@ -21,7 +21,7 @@ class Kernel
      */
     public static function getApp()
     {
-        return self::$app;
+        return static::$app;
     }
 
     /**
@@ -29,7 +29,7 @@ class Kernel
      */
     public static function setApp(Kernel $app): void
     {
-        self::$app = $app;
+        static::$app = $app;
     }
 
     /**
@@ -38,13 +38,18 @@ class Kernel
      */
     public function __construct()
     {
-        static::setApp($this);
+        Kernel::setApp($this);
         $this->bootstrap();
     }
 
     public function sapi()
     {
         return $this->sapi;
+    }
+
+    public function version()
+    {
+        return Kernel::VERSION;
     }
 
     public function setSapi($sapi)
