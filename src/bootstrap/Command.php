@@ -34,6 +34,11 @@ class Command extends Kernel
 
         $this->symfonyApplication = new Application();
 
+        $this->registerCommands();
+    }
+
+    protected function registerCommands()
+    {
         $this->registerKernelCommands();
         $this->registerCustomCommands();
         $this->registerConfiguredCommands();
