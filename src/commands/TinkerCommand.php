@@ -2,14 +2,11 @@
 
 namespace SwFwLess\commands;
 
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
-
 class TinkerCommand extends AbstractCommand
 {
     public $signature = 'tinker';
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function handle()
     {
         $_SERVER['argv'] = [];
         $_SERVER['argc'] = 0;
@@ -18,7 +15,5 @@ class TinkerCommand extends AbstractCommand
 
         // And go!
         call_user_func(\Psy\bin());
-
-        return 1;
     }
 }
