@@ -2,6 +2,7 @@
 
 namespace SwFwLess\bootstrap;
 
+use SwFwLess\commands\ConfigCommand;
 use SwFwLess\commands\ServerCommand;
 use SwFwLess\commands\TinkerCommand;
 use SwFwLess\components\Config;
@@ -51,6 +52,7 @@ class Command extends Kernel
             [
                 new TinkerCommand(),
                 new ServerCommand(),
+                new ConfigCommand(),
             ]
         );
     }
