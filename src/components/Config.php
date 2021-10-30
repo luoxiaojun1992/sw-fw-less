@@ -33,6 +33,11 @@ class Config
         static::$config = Parser::getArrConfig($configPath, $format);
     }
 
+    public static function all()
+    {
+        return static::$config;
+    }
+
     /**
      * @param mixed $key
      * @param mixed $default
