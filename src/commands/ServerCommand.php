@@ -8,6 +8,6 @@ class ServerCommand extends AbstractCommand
 
     protected function handle()
     {
-        shell_exec(APP_BASE_PATH . 'start.php');
+        system('/usr/bin/env php ' . APP_BASE_PATH . 'start.php');
     }
 }
