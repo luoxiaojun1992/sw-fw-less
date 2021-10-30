@@ -2,6 +2,7 @@
 
 namespace SwFwLess\bootstrap;
 
+use SwFwLess\commands\ServerCommand;
 use SwFwLess\commands\TinkerCommand;
 use SwFwLess\components\Config;
 use SwFwLess\components\provider\KernelProvider;
@@ -49,6 +50,7 @@ class Command extends Kernel
         $this->symfonyApplication->addCommands(
             [
                 new TinkerCommand(),
+                new ServerCommand(),
             ]
         );
     }
