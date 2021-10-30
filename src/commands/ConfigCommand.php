@@ -23,6 +23,11 @@ class ConfigCommand extends AbstractCommand
     protected function handle()
     {
         $configKey = $this->input->getOption('key');
-        return is_null($configKey) ? Config::all() : Config::get($configKey);
+        $config = is_null($configKey) ? Config::all() : Config::get($configKey);
+        if (class_exists('Symfony\Component\VarDumper\VarDumper')) {
+            \Symfony\Component\VarDumper\VarDumper::dump($config);
+        } else {
+            $this->output->writeln('<info>' . print_r($config, true) . '</info>');
+        }
     }
 }
