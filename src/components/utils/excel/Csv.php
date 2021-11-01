@@ -36,7 +36,6 @@ class Csv
 
     protected $withBom = false;
 
-    //todo developing
     protected $enableMemoryMapping = false;
 
     /**
