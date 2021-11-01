@@ -5,6 +5,15 @@
 #include <sys/mman.h>
 #include <string.h>
 
+int OpenFile(const char *pathname) {
+    int fd;
+    return open(pathname, O_RDWR|O_CREAT);
+}
+
+int CloseFile(int fd) {
+    return close(fd);
+}
+
 int WriteFile(const char *pathname, const char *content) {
     int map_size;
     map_size = strlen(content);

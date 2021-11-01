@@ -34,6 +34,9 @@ class Csv
 
     protected $withBom = false;
 
+    //todo developing
+    protected $enableMemoryMapping = false;
+
     /**
      * @param $filePath
      * @param bool $readable
