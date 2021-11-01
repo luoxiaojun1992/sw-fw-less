@@ -8,14 +8,17 @@ class CsvTest extends \PHPUnit\Framework\TestCase
     public function testPutCsv()
     {
         $this->putCsv();
+        $this->putCsv(false, true);
         $this->putCsv(true);
+        $this->putCsv(true, true);
     }
 
     /**
      * @param false $withBom
+     * @param false $enableMemoryMapping
      * @throws Exception
      */
-    public function putCsv($withBom = false)
+    public function putCsv($withBom = false, $enableMemoryMapping = false)
     {
         $filePath = __DIR__ . '/../../../output/test.csv';
 
@@ -26,7 +29,8 @@ class CsvTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue(touch($filePath));
 
         $csvFile = \SwFwLess\components\utils\excel\Csv::createFromFilePath(
-            $filePath, false, true, $withBom
+            $filePath, false, true, $withBom, 2097152,
+            2097152, $enableMemoryMapping
         );
 
         $rowCount = 10000;

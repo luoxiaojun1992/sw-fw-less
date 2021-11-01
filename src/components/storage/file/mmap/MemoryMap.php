@@ -43,11 +43,35 @@ class MemoryMap
     protected function createUdf($ffiPath)
     {
         return \FFI::cdef(
+            "int OpenFile(const char *pathname);" . PHP_EOL .
+            "int CloseFile(int fd);" . PHP_EOL .
+            "int WriteFileByFd(int fd, const char *content);" . PHP_EOL .
             "int WriteFile(const char *pathname, const char *content);" . PHP_EOL .
             "char * ReadFile(const char *pathname);" . PHP_EOL .
+            "int AppendFileByFd(int fd, const char *content);" . PHP_EOL .
             "int AppendFile(const char *pathname, const char *content);",
             $ffiPath
         );
+    }
+
+    public function openFile($filepath)
+    {
+        return $this->udf->OpenFile($filepath);
+    }
+
+    public function closeFile($fd)
+    {
+        return $this->udf->CloseFile($fd);
+    }
+
+    public function writeFileByFd($fd, $content)
+    {
+        return $this->udf->WriteFileByFd($fd, $content);
+    }
+
+    public function appendFileByFd($fd, $content)
+    {
+        return $this->udf->AppendFileByFd($fd, $content);
     }
 
     protected function nativeWriteFile($filepath, $content)

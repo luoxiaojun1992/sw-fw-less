@@ -5,6 +5,10 @@ namespace SwFwLess\facades;
 /**
  * Class Math
  *
+ * @method static openFile($filepath)
+ * @method static closeFile($fd)
+ * @method static writeFileByFd($fd, $content)
+ * @method static appendFileByFd($fd, $content)
  * @method static writeFile($filepath, $content, $native = false)
  * @method static readFile($filepath, $native = false)
  * @method static appendFile($filepath, $content, $native = false)

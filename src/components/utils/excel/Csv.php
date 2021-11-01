@@ -2,6 +2,8 @@
 
 namespace SwFwLess\components\utils\excel;
 
+use SwFwLess\facades\MemoryMap;
+
 class Csv
 {
     const BOM = "\u{FEFF}";
@@ -44,12 +46,14 @@ class Csv
      * @param bool $withBom
      * @param int $readBufferMemory
      * @param int $writeBufferMemory
+     * @param bool $enableMemoryMapping
      * @return Csv
      * @throws \Exception
      */
     public static function createFromFilePath(
         $filePath, $readable = false, $writable = true, $withBom = false,
-        $readBufferMemory = 2097152, $writeBufferMemory = 2097152
+        $readBufferMemory = 2097152, $writeBufferMemory = 2097152,
+        $enableMemoryMapping = false
     )
     {
         if ($readable && $writable) {
@@ -61,7 +65,16 @@ class Csv
             ->setReadBufferMemory($readBufferMemory)
             ->setWriteBufferMemory($writeBufferMemory)
             ->withBom($withBom)
+            ->setEnableMemoryMapping($enableMemoryMapping)
             ->setFile($filePath);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isEnableMemoryMapping(): bool
+    {
+        return $this->enableMemoryMapping;
     }
 
     /**
@@ -135,6 +148,16 @@ class Csv
     }
 
     /**
+     * @param bool $enableMemoryMapping
+     * @return $this
+     */
+    public function setEnableMemoryMapping(bool $enableMemoryMapping)
+    {
+        $this->enableMemoryMapping = $enableMemoryMapping;
+        return $this;
+    }
+
+    /**
      * @param $filePath
      * @return $this
      * @throws \Exception
@@ -144,14 +167,28 @@ class Csv
         if ($this->writable) {
             $this->writeBuffer = new \SplTempFileObject();
             $this->filePath = $filePath;
-            $this->writeFp = fopen($filePath, 'w');
-            if ($this->writeFp === false) {
-                throw new \Exception('Failed to open file [' . $filePath . ']');
-            }
-            if ($this->withBom) {
-                $writeBomRes = fwrite($this->writeFp, static::BOM);
-                if ($writeBomRes === false) {
-                    throw new \Exception('Failed to write bom header');
+
+            if ($this->isEnableMemoryMapping()) {
+                $this->writeFp = MemoryMap::openFile($filePath);
+                if ($this->writeFp < 0) {
+                    throw new \Exception('Failed to open file [' . $filePath . ']');
+                }
+                if ($this->withBom) {
+                    $writeBomRes = MemoryMap::writeFileByFd($this->writeFp, static::BOM);
+                    if ($writeBomRes > 0) {
+                        throw new \Exception('Failed to write bom header');
+                    }
+                }
+            } else {
+                $this->writeFp = fopen($filePath, 'w');
+                if ($this->writeFp === false) {
+                    throw new \Exception('Failed to open file [' . $filePath . ']');
+                }
+                if ($this->withBom) {
+                    $writeBomRes = fwrite($this->writeFp, static::BOM);
+                    if ($writeBomRes === false) {
+                        throw new \Exception('Failed to write bom header');
+                    }
                 }
             }
         }
@@ -287,9 +324,16 @@ class Csv
             $bufferContent .= $line;
         }
         if ($bufferContent) {
-            $flushRes = fwrite($this->writeFp, $bufferContent);
-            if ($flushRes === false) {
-                throw new \Exception('Failed to write buffer');
+            if ($this->isEnableMemoryMapping()) {
+                $flushRes = MemoryMap::appendFileByFd($this->writeFp, $bufferContent);
+                if ($flushRes > 0) {
+                    throw new \Exception('Failed to write buffer');
+                }
+            } else {
+                $flushRes = fwrite($this->writeFp, $bufferContent);
+                if ($flushRes === false) {
+                    throw new \Exception('Failed to write buffer');
+                }
             }
             $this->writeBuffer = new \SplTempFileObject();
             $this->writeBufferSize = 0;
@@ -312,9 +356,16 @@ class Csv
         }
 
         if (!is_null($this->writeFp)) {
-            $closeWriteFpRes = fclose($this->writeFp);
-            if ($closeWriteFpRes === false) {
-                throw new \Exception('Failed to close file');
+            if ($this->isEnableMemoryMapping()) {
+                $closeWriteFpRes = MemoryMap::closeFile($this->writeFp);
+                if ($closeWriteFpRes > 0) {
+                    throw new \Exception('Failed to close file');
+                }
+            } else {
+                $closeWriteFpRes = fclose($this->writeFp);
+                if ($closeWriteFpRes === false) {
+                    throw new \Exception('Failed to close file');
+                }
             }
             $this->writeFp = null;
         }
