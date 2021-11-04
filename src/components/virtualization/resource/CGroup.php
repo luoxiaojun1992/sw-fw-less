@@ -27,10 +27,7 @@ class CGroup
     public static function delCGroup($type, $name)
     {
         $subCGroupDir = static::subCGroupDir($type, $name);
-        if (shell_exec('rm -rf ' . $subCGroupDir) === false) {
-            return false;
-        }
-        return rmdir($subCGroupDir);
+        return shell_exec('rm -rf ' . $subCGroupDir) !== false;
     }
 
     public static function createSubCGroup($type, $name, $pid = null)

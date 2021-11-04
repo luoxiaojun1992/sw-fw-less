@@ -53,9 +53,8 @@ class Provider implements AppProviderContract, WorkerProviderContract
                 $cGroupName = static::getVirtualizationName($virtualizationConfig);
                 if (Memory::subCGroupExists($cGroupName)) {
                     Memory::delCGroup($cGroupName);
-                } else {
-                    Memory::createCGroup($cGroupName);
                 }
+                Memory::createCGroup($cGroupName);
             }
         }
     }
