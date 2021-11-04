@@ -14,7 +14,9 @@ abstract class AbstractModel extends Container
 
     protected static $primaryKey = 'id';
     protected static $incrPrimaryKey = true;
-    protected static $bootedLock = [true];
+    protected static $globalBootedLock = [true];
+    protected static $bootedModels = [];
+    protected static $bootOnce = true;
 
     protected $newRecord = true;
     protected $justSaved = false;
@@ -29,7 +31,7 @@ abstract class AbstractModel extends Container
     protected static function bootedLock()
     {
         return Scheduler::withoutPreemptive(function () {
-            return array_pop(static::$bootedLock);
+            return array_pop(static::$globalBootedLock);
         });
     }
 
@@ -39,8 +41,17 @@ abstract class AbstractModel extends Container
             static::setFilter();
         }
 
-        if (method_exists(static::class, 'boot')) {
-            call_user_func([static::class, 'boot']);
+        if ((!static::$bootOnce) || (!Scheduler::withoutPreemptive(function () {
+            return array_key_exists(static::class, static::$bootedModels);
+        }))) {
+            if (static::$bootOnce) {
+                Scheduler::withoutPreemptive(function () {
+                    static::$bootedModels[static::class] = true;
+                });
+            }
+            if (method_exists(static::class, 'boot')) {
+                call_user_func([static::class, 'boot']);
+            }
         }
     }
 
