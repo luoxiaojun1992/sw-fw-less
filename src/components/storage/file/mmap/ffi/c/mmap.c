@@ -17,7 +17,11 @@ int WriteFileByFd(int fd, const char *content) {
     int map_size;
     map_size = strlen(content);
 
-    ftruncate(fd, map_size);
+    int ftruncateRes;
+    ftruncateRes = ftruncate(fd, map_size);
+    if (ftruncateRes != 0) {
+        return ftruncateRes;
+    }
 
     void *p_map;
     p_map = mmap(NULL, map_size, PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0);
@@ -25,10 +29,18 @@ int WriteFileByFd(int fd, const char *content) {
         return 1;
     }
     memcpy(p_map, content, map_size);
-    msync(p_map, map_size, MS_ASYNC);
-    munmap(p_map, map_size);
 
-    return 0;
+    int msyncRes;
+    msyncRes = msync(p_map, map_size, MS_ASYNC);
+
+    int munmapRes;
+    munmapRes = munmap(p_map, map_size);
+
+    if (msyncRes != 0) {
+        return msyncRes;
+    }
+
+    return munmapRes;
 }
 
 int WriteFile(const char *pathname, const char *content) {
@@ -38,21 +50,42 @@ int WriteFile(const char *pathname, const char *content) {
         return 1;
     }
 
-    WriteFileByFd(fd, content);
+    int writeFileByFdRes;
+    writeFileByFdRes = WriteFileByFd(fd, content);
 
-    CloseFile(fd);
+    int closeFileRes;
+    closeFileRes = CloseFile(fd);
 
-    return 0;
+    if (writeFileByFdRes != 0) {
+        return writeFileByFdRes;
+    }
+
+    return closeFileRes;
 }
 
 int AppendFileByFd(int fd, const char *content) {
     struct stat sb;
-    fstat(fd, &sb);
+
+    int fstatRes;
+    fstatRes = fstat(fd, &sb);
+    if (fstatRes != 0) {
+        return fstatRes;
+    }
 
     int map_size;
     map_size = strlen(content) + sb.st_size;
-    lseek(fd, strlen(content) - 1, SEEK_END);
-    write(fd, "1", 1);
+
+    int lseekRes;
+    lseekRes = lseek(fd, strlen(content) - 1, SEEK_END);
+    if (lseekRes < 0) {
+        return lseekRes;
+    }
+
+    int writeRes;
+    writeRes = write(fd, "1", 1);
+    if (writeRes < 1) {
+        return 1;
+    }
 
     void *p_map;
     p_map = mmap(NULL, map_size, PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0);
@@ -60,10 +93,18 @@ int AppendFileByFd(int fd, const char *content) {
         return 1;
     }
     memcpy(p_map + sb.st_size, content, strlen(content));
-    msync(p_map, map_size, MS_ASYNC);
-    munmap(p_map, map_size);
 
-    return 0;
+    int msyncRes;
+    msyncRes = msync(p_map, map_size, MS_ASYNC);
+
+    int munmapRes;
+    munmapRes = munmap(p_map, map_size);
+
+    if (msyncRes != 0) {
+        return msyncRes;
+    }
+
+    return munmapRes;
 }
 
 int AppendFile(const char *pathname, const char *content) {
@@ -73,11 +114,17 @@ int AppendFile(const char *pathname, const char *content) {
         return 1;
     }
 
-    AppendFileByFd(fd, content);
+    int appendFileByFdRes;
+    appendFileByFdRes = AppendFileByFd(fd, content);
 
-    CloseFile(fd);
+    int closeFileRes;
+    closeFileRes = CloseFile(fd);
 
-    return 0;
+    if (appendFileByFdRes != 0) {
+        return appendFileByFdRes;
+    }
+
+    return closeFileRes;
 }
 
 char * ReadFile(const char *pathname) {
@@ -88,7 +135,12 @@ char * ReadFile(const char *pathname) {
     }
 
     struct stat sb;
-    fstat(fd, &sb);
+    int fstatRes;
+    fstatRes = fstat(fd, &sb);
+    if (fstatRes != 0) {
+        close(fd);
+        return NULL;
+    }
 
     void *p_map;
     p_map = mmap(NULL, sb.st_size, PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0);
@@ -97,7 +149,11 @@ char * ReadFile(const char *pathname) {
         return NULL;
     }
 
-    close(fd);
+    int closeRes;
+    closeRes = close(fd);
+    if (closeRes != 0) {
+        return NULL;
+    }
 
     return (char *)p_map;
 }

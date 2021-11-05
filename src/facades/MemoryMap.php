@@ -3,7 +3,7 @@
 namespace SwFwLess\facades;
 
 /**
- * Class Math
+ * Class MemoryMap
  *
  * @method static openFile($filepath)
  * @method static closeFile($fd)

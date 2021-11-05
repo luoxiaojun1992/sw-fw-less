@@ -23,6 +23,7 @@ class MemoryMapTest extends TestCase
             if (time() - $startTime > 5) {
                 break;
             }
+            sleep(1);
         }
 
         $this->assertEquals($testContent, $fileContent);
@@ -52,6 +53,7 @@ class MemoryMapTest extends TestCase
             if (time() - $startTime > 5) {
                 break;
             }
+            sleep(1);
         }
 
         $this->assertEquals($testContent, $fileContent);
@@ -73,6 +75,7 @@ class MemoryMapTest extends TestCase
             if (time() - $startTime > 5) {
                 break;
             }
+            sleep(1);
         }
         $this->assertEquals(
             $testContent,
@@ -91,6 +94,7 @@ class MemoryMapTest extends TestCase
             if (time() - $startTime > 5) {
                 break;
             }
+            sleep(1);
         }
 
         $this->assertEquals(
@@ -119,6 +123,7 @@ class MemoryMapTest extends TestCase
             if (time() - $startTime > 5) {
                 break;
             }
+            sleep(1);
         }
         $this->assertEquals(
             $testContent,
@@ -138,6 +143,7 @@ class MemoryMapTest extends TestCase
             if (time() - $startTime > 5) {
                 break;
             }
+            sleep(1);
         }
 
         $this->assertEquals(
