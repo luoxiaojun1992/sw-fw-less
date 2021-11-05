@@ -42,13 +42,13 @@ abstract class AbstractModel extends Container
         }
 
         if ((!static::$bootOnce) || (!Scheduler::withoutPreemptive(function () {
-            return array_key_exists(static::class, static::$bootedModels);
-        }))) {
-            if (static::$bootOnce) {
-                Scheduler::withoutPreemptive(function () {
-                    static::$bootedModels[static::class] = true;
-                });
+            if (!array_key_exists(static::class, static::$bootedModels)) {
+                static::$bootedModels[static::class] = true;
+                return false;
+            } else {
+                return true;
             }
+        }))) {
             if (method_exists(static::class, 'boot')) {
                 call_user_func([static::class, 'boot']);
             }
