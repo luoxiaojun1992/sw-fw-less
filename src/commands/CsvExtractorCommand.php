@@ -29,14 +29,14 @@ class CsvExtractorCommand extends AbstractCommand
     {
         $this->addOption(
             'file_path',
-            'f',
+            'file_path',
             InputOption::VALUE_OPTIONAL,
             'CSV file path',
             $this->csvFilePath
         );
         $this->addOption(
             'with_bom',
-            'b',
+            'with_bom',
             InputOption::VALUE_OPTIONAL,
             'If with bom',
             $this->withBom
@@ -85,7 +85,7 @@ class CsvExtractorCommand extends AbstractCommand
         );
         $this->addOption(
             'handler',
-            'h',
+            'handler',
             InputOption::VALUE_OPTIONAL,
             'Csv handler'
         );
