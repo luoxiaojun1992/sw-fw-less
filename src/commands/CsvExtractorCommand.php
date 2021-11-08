@@ -121,7 +121,10 @@ class CsvExtractorCommand extends AbstractCommand
             } else {
                 $handler = [$this, 'csvHandler'];
             }
-            call_user_func_array($handler, ['line' => $line]);
+            $output = call_user_func_array($handler, ['line' => $line]);
+            if (!is_null($output)) {
+                $this->output->writeln($output);
+            }
         }
     }
 }
