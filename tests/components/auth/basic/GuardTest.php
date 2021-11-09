@@ -9,7 +9,7 @@ use SwFwLessTest\stubs\components\auth\basic\UserProvider;
 class GuardTest extends TestCase
 {
     /**
-     * @return SwRequest
+     * @return \SwRequest
      */
     private function createSwRequest()
     {
