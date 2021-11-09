@@ -2,10 +2,10 @@
 
 namespace SwFwLess\components\auth\token;
 
-use SwFwLess\components\auth\GuardContract;
+use SwFwLess\components\auth\AbstractGuard;
 use SwFwLess\components\http\Request;
 
-class Guard implements GuardContract
+class Guard extends AbstractGuard
 {
     /**
      * @param Request $credentialCarrier

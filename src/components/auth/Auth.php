@@ -65,7 +65,8 @@ class Auth
         $guardName = $guardName ?? $config['guard'];
         $guardConfig = $config['guards'][$guardName];
         /** @var GuardContract $guard */
-        $guard = new $guardConfig['guard'];
+        $guardClass = $guardConfig['guard'];
+        $guard = new $guardClass($guardConfig);
 
         $userProvider = new $guardConfig['user_provider'];
 

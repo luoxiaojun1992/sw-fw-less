@@ -86,7 +86,7 @@ class Jwt
         $data->setAudience($host);
         $data->setId($this->config['jid']);
 
-        if ($result = $token->validate($data)) {
+        if ($token->validate($data)) {
             return $token;
         }
 

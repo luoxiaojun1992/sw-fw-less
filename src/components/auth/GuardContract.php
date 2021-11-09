@@ -4,6 +4,8 @@ namespace SwFwLess\components\auth;
 
 interface GuardContract
 {
+    public function __construct($config = []);
+
     /**
      * @param $credentialCarrier
      * @param $credentialKey
