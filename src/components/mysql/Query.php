@@ -2,7 +2,7 @@
 
 namespace SwFwLess\components\mysql;
 
-use SwFwLess\components\utils\Variable;
+use SwFwLess\components\utils\data\structure\variable\Variable;
 use SwFwLess\facades\MysqlPool;
 use Aura\SqlQuery\QueryFactory;
 use Aura\SqlQuery\QueryInterface;
@@ -417,6 +417,41 @@ class Query
         $this->auraQuery->where('(' . $sql . ')');
         $this->auraQuery->bindValue(':begin', $begin);
         $this->auraQuery->bindValue(':end', $end);
+        return $this;
+    }
+
+    public function bulkInsert($rows)
+    {
+        $this->auraQuery->addRows($rows);
+        return $this;
+    }
+
+    public function bulkUpdate($rows, $conditions)
+    {
+        $columnValuesMapping = [];
+        $columnValuesConditions = [];
+
+        foreach ($rows as $rowNum => $row) {
+            foreach ($row as $col => $value) {
+                $columnValuesMapping[$col][] = $value;
+                $columnValuesConditions[$col][] = $conditions[$rowNum];
+            }
+        }
+
+        foreach ($columnValuesMapping as $col => $values) {
+            $valueExpr = 'CASE';
+            $valueBranchExpr = [];
+            foreach ($values as $valueIndex => $value) {
+                $valuePlaceholder = ':' . $col . '_' . ((string)$valueIndex);
+                $valueBranchExpr[] = ' WHEN ' .
+                    ($columnValuesConditions[$col][$valueIndex]) .
+                    ' THEN ' . $valuePlaceholder;
+                $this->auraQuery->bindValue($valuePlaceholder, $value);
+            }
+            $valueExpr = $valueExpr . implode('', $valueBranchExpr);
+            $this->auraQuery->set($col, $valueExpr);
+        }
+
         return $this;
     }
 
