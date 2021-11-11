@@ -2,6 +2,7 @@
 
 namespace SwFwLess\services\internals;
 
+use SwFwLess\components\database\Database;
 use SwFwLess\components\http\Response;
 use SwFwLess\components\swoole\counter\Counter;
 use SwFwLess\components\swoole\Server;
@@ -36,8 +37,7 @@ class MonitorService extends BaseService
             'redis' => \SwFwLess\components\functions\config('redis.pool_change_event') &&
             \SwFwLess\components\functions\config('redis.report_pool_change') ?
                 Counter::get('monitor:pool:redis') : RedisPool::countPool(),
-            'db_conn' => \SwFwLess\components\functions\config('database.pool_change_event') &&
-            \SwFwLess\components\functions\config('database.report_pool_change') ?
+            'db_conn' => (Database::poolChangeEvent() && Database::reportPoolChange()) ?
                 Counter::get('monitor:pool:db_conn') : DBConnectionPool::countPool(),
             'log' => [
                 'pool' => Log::countPool(),

@@ -8,7 +8,7 @@ class DatabaseProvider implements WorkerProviderContract
 {
     public static function bootWorker()
     {
-        ConnectionPool::create(\SwFwLess\components\functions\config('database'));
+        ConnectionPool::create(Database::config());
     }
 
     public static function shutdownWorker()
