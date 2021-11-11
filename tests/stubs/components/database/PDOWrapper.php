@@ -3,10 +3,15 @@
 namespace SwFwLessTest\stubs\components\database;
 
 use SwFwLess\components\database\PDOWrapper as basePDOWrapper;
+use function DI\value;
 
 class PDOWrapper extends basePDOWrapper
 {
     protected $mockData;
+
+    protected $testStatement;
+
+    protected $testLastPdoStatement;
 
     /**
      * @param $mockData
@@ -16,6 +21,22 @@ class PDOWrapper extends basePDOWrapper
     {
         $this->mockData = $mockData;
         return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getTestStatement()
+    {
+        return $this->testStatement;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getTestLastPdoStatement()
+    {
+        return $this->testLastPdoStatement;
     }
 
     public function reconnect()
@@ -32,7 +53,8 @@ class PDOWrapper extends basePDOWrapper
 
     public function prepare($statement, array $driver_options = array())
     {
-        return $this->getTestPDOStatement();
+        $this->testStatement = $statement;
+        return ($this->testLastPdoStatement = $this->getTestPDOStatement());
     }
 
     public function lastInsertId ($name = null)

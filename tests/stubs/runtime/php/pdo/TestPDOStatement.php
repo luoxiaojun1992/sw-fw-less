@@ -4,6 +4,8 @@ class TestPDOStatement
 {
     protected $mockData = [];
 
+    protected $testBindingValues = [];
+
     /**
      * @param array $mockData
      * @return $this
@@ -36,6 +38,7 @@ class TestPDOStatement
 
     public function bindValue ($parameter, $value, $data_type = PDO::PARAM_STR)
     {
+        $this->testBindingValues[$parameter] = ['value' => $value, 'data_type' => $data_type];
         return true;
     }
 }
