@@ -8,7 +8,7 @@ use SwFwLess\components\swoole\Scheduler;
 
 class ConnectionPool
 {
-    const EVENT_PDO_POOL_CHANGE = 'pdo.pool.change';
+    const EVENT_DB_CONN_POOL_CHANGE = 'db_conn.pool.change';
 
     protected static $instance;
 
@@ -64,7 +64,7 @@ class ConnectionPool
     protected function poolChange($count)
     {
         \SwFwLess\components\functions\event(
-            new CakeEvent(static::EVENT_PDO_POOL_CHANGE,
+            new CakeEvent(static::EVENT_DB_CONN_POOL_CHANGE,
                 null,
                 ['count' => $count]
             )
