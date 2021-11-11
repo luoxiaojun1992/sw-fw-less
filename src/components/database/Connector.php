@@ -9,7 +9,7 @@ class Connector
     public static function connectionName($connectionName = null)
     {
         if (is_null($connectionName)) {
-            $connectionName = Config::get('database.default');
+            $connectionName = Config::get('database.default', '');
         }
         return $connectionName;
     }
