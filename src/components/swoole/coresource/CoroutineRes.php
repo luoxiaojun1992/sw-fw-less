@@ -49,6 +49,8 @@ class CoroutineRes
         Scheduler::withoutPreemptive(function () use ($cid) {
             if (isset(self::$coroutineRes[$cid])) {
                 foreach (self::$coroutineRes[$cid] as $coroutineRes) {
+                    is_object($coroutineRes) && ($coroutineRes instanceof CoroutineResable) &&
+                    ($coroutineRes->reset());
                     is_object($coroutineRes) && ($coroutineRes instanceof Poolable) &&
                     (ObjectPool::release($coroutineRes));
                 }

@@ -12,6 +12,7 @@ use SwFwLess\components\mysql\MysqlWrapper;
  * @method static MysqlWrapper getConnect($needRelease = true, $connectionName = null)
  * @method static int countPool()
  * @package SwFwLess\facades
+ * @deprecated
  */
 class MysqlPool extends AbstractFacade
 {

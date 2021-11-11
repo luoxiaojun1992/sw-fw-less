@@ -1,23 +1,27 @@
 <?php
 
-use Mockery as M;
+namespace SwFwLessTest\components\database;
 
-class MysqlPoolTest extends \PHPUnit\Framework\TestCase
+use Mockery as M;
+use SwFwLessTest\stubs\components\database\ConnectionPool;
+use SwFwLessTest\stubs\components\database\PDOWrapper;
+
+class ConnectionPoolTest extends \PHPUnit\Framework\TestCase
 {
     public function afterTest()
     {
         parent::tearDown();
 
-        require_once __DIR__ . '/../../stubs/components/mysql/MysqlPool.php';
+        require_once __DIR__ . '/../../stubs/components/database/ConnectionPool.php';
 
-        MysqlPool::clearInstance();
+        ConnectionPool::clearInstance();
     }
 
-    protected function getTestMysqlPool($mysqlConfig = null)
+    protected function getTestConnectionPool($dbConfig = null)
     {
-        require_once __DIR__ . '/../../stubs/components/mysql/MysqlPool.php';
+        require_once __DIR__ . '/../../stubs/components/database/ConnectionPool.php';
 
-        return MysqlPool::create($mysqlConfig);
+        return ConnectionPool::create($dbConfig);
     }
 
     public function testPickAndRelease()
@@ -31,10 +35,11 @@ class MysqlPoolTest extends \PHPUnit\Framework\TestCase
 
         $poolSize = 5;
 
-        $mysqlConfig = [
-            'default' => \SwFwLess\components\functions\env('MYSQL_DEFAULT', 'default'),
+        $dbConfig = [
+            'default' => 'default',
             'connections' => [
                 'default' => [
+                    'driver' => 'mysql',
                     'dsn' => 'mysql:dbname=sw_test;host=127.0.0.1',
                     'username' => 'root',
                     'passwd' => null,
@@ -55,17 +60,17 @@ class MysqlPoolTest extends \PHPUnit\Framework\TestCase
             'report_pool_change' => 0,
         ];
 
-        $mysqlPool = $this->getTestMysqlPool($mysqlConfig);
+        $connectionPool = $this->getTestConnectionPool($dbConfig);
 
         $this->assertEquals(
             $poolSize,
-            $mysqlPool->countPool()
+            $connectionPool->countPool()
         );
 
-        $pdo = $mysqlPool->pick();
+        $pdo = $connectionPool->pick();
 
         $this->assertInstanceOf(
-            TestPDO::class,
+            PDOWrapper::class,
             $pdo
         );
 
@@ -75,34 +80,34 @@ class MysqlPoolTest extends \PHPUnit\Framework\TestCase
 
         $this->assertEquals(
             $poolSize - 1,
-            $mysqlPool->countPool()
+            $connectionPool->countPool()
         );
 
-        $mysqlPool->release($pdo);
+        $connectionPool->release($pdo);
 
         $this->assertEquals(
             $poolSize,
-            $mysqlPool->countPool()
+            $connectionPool->countPool()
         );
 
         for ($i = 0; $i < $poolSize; ++$i) {
-            $mysqlPool->pick();
+            $connectionPool->pick();
         }
 
         $this->assertEquals(
             0,
-            $mysqlPool->countPool()
+            $connectionPool->countPool()
         );
 
-        $pdo = $mysqlPool->pick();
+        $pdo = $connectionPool->pick();
 
         $this->assertFalse($pdo->isNeedRelease());
 
-        $mysqlPool->release($pdo);
+        $connectionPool->release($pdo);
 
         $this->assertEquals(
             0,
-            $mysqlPool->countPool()
+            $connectionPool->countPool()
         );
 
         $this->afterTest();

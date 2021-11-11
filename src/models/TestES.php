@@ -2,7 +2,7 @@
 
 namespace SwFwLess\models;
 
-class Test extends AbstractEsModel
+class TestES extends AbstractEsModel
 {
     protected static $index = 'test';
     protected static $type = 'test';

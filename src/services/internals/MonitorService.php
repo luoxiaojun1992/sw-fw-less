@@ -9,7 +9,7 @@ use SwFwLess\facades\AMQPConnectionPool;
 use SwFwLess\facades\HbasePool;
 use SwFwLess\facades\HealthCheck;
 use SwFwLess\facades\Log;
-use SwFwLess\facades\MysqlPool;
+use SwFwLess\facades\DBConnectionPool;
 use SwFwLess\facades\ObjectPool;
 use SwFwLess\facades\RedisPool;
 use SwFwLess\services\BaseService;
@@ -36,9 +36,9 @@ class MonitorService extends BaseService
             'redis' => \SwFwLess\components\functions\config('redis.pool_change_event') &&
             \SwFwLess\components\functions\config('redis.report_pool_change') ?
                 Counter::get('monitor:pool:redis') : RedisPool::countPool(),
-            'mysql' => \SwFwLess\components\functions\config('mysql.pool_change_event') &&
-            \SwFwLess\components\functions\config('mysql.report_pool_change') ?
-                Counter::get('monitor:pool:mysql') : MysqlPool::countPool(),
+            'db_conn' => \SwFwLess\components\functions\config('database.pool_change_event') &&
+            \SwFwLess\components\functions\config('database.report_pool_change') ?
+                Counter::get('monitor:pool:db_conn') : DBConnectionPool::countPool(),
             'log' => [
                 'pool' => Log::countPool(),
                 'record_buffer' => Log::countRecordBuffer(),

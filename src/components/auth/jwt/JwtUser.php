@@ -1,11 +1,11 @@
 <?php
 
-namespace SwFwLess\models;
+namespace SwFwLess\components\auth\jwt;
 
-use SwFwLess\components\auth\jwt\UserProviderContract;
 use SwFwLess\facades\Jwt;
+use SwFwLess\models\AbstractPDOModel;
 
-class JwtUser extends AbstractMysqlModel implements UserProviderContract
+class JwtUser extends AbstractPDOModel implements UserProviderContract
 {
     public function retrieveByToken($authToken, $swfRequest = null)
     {

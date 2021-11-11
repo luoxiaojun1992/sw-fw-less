@@ -1,16 +1,12 @@
 <?php
 
-namespace SwFwLess\components\mysql;
+namespace SwFwLess\components\database;
 
 use SwFwLess\components\utils\data\structure\variable\Variable;
-use SwFwLess\facades\MysqlPool;
 use Aura\SqlQuery\QueryFactory;
 use Aura\SqlQuery\QueryInterface;
 use Cake\Event\Event;
 
-/**
- * @deprecated
- */
 class Query
 {
     const EVENT_EXECUTING = 'query.executing';
@@ -49,63 +45,76 @@ class Query
 
     private $retryWhenError = false;
 
+    protected $connectionConfig;
+
+    /** @var ConnectionPool */
+    protected $connectionPool;
+
     /**
-     * @param string $db
      * @param null|string $connectionName
-     * @return QueryFactory|Query
+     * @return QueryFactory|Query|null
      */
-    public static function create($db = 'mysql', $connectionName = null)
+    public static function create($connectionName = null)
     {
-        return new static($db, $connectionName);
+        $connectionName = Connector::connectionName($connectionName);
+
+        $connectionConfig = Connector::config($connectionName);
+
+        if (is_null($connectionConfig)) {
+            return null;
+        }
+
+        return new static(
+            $connectionName,
+            $connectionConfig,
+            ConnectionPool::create()
+        );
     }
 
     /**
-     * @param string $db
      * @param string $connectionName
      * @return \Aura\SqlQuery\Common\SelectInterface|static|QueryInterface
      */
-    public static function select($db = 'mysql', $connectionName = null)
+    public static function select($connectionName = null)
     {
-        return static::create($db, $connectionName)->newSelect();
+        return static::create($connectionName)->newSelect();
     }
 
     /**
-     * @param string $db
      * @param string $connectionName
      * @return \Aura\SqlQuery\Common\UpdateInterface|static|QueryInterface
      */
-    public static function update($db = 'mysql', $connectionName = null)
+    public static function update($connectionName = null)
     {
-        return static::create($db, $connectionName)->newUpdate();
+        return static::create($connectionName)->newUpdate();
     }
 
     /**
-     * @param string $db
      * @param string $connectionName
      * @return \Aura\SqlQuery\Common\InsertInterface|static|QueryInterface
      */
-    public static function insert($db = 'mysql', $connectionName = null)
+    public static function insert($connectionName = null)
     {
-        return static::create($db, $connectionName)->newInsert();
+        return static::create($connectionName)->newInsert();
     }
 
     /**
-     * @param string $db
      * @param string $connectionName
      * @return \Aura\SqlQuery\Common\DeleteInterface|static|QueryInterface
      */
-    public static function delete($db = 'mysql', $connectionName = null)
+    public static function delete($connectionName = null)
     {
-        return static::create($db, $connectionName)->newDelete();
+        return static::create($connectionName)->newDelete();
     }
 
-    public function __construct($db, $connectionName)
+    public function __construct($connectionName, $connectionConfig, ConnectionPool $connectionPool)
     {
-        $this->db = $db;
-        $this->connectionName = static::connectionName($this->db, $connectionName);
-        $this->tablePrefix = static::tablePrefix($this->db, $this->connectionName);
-
-        $this->auraQuery = new QueryFactory($db);
+        $this->connectionName = $connectionName;
+        $this->connectionConfig = $connectionConfig;
+        $this->db = $connectionConfig['driver'] ?? 'mysql';
+        $this->tablePrefix = $connectionConfig['table_prefix'] ?? '';
+        $this->auraQuery = new QueryFactory($this->db);
+        $this->connectionPool = $connectionPool;
     }
 
     /**
@@ -129,14 +138,14 @@ class Query
     }
 
     /**
-     * @param MysqlWrapper|\PDO $pdo
+     * @param PDOWrapper|\PDO $pdo
      * @param int $mode
      * @param string|null $sql
      * @param array|null $bindValues
      * @return array|int|mixed|null
      * @throws \Exception
      */
-    private function _doMysqlExecute($pdo, $mode = self::QUERY_TYPE_FETCH, $sql = null, $bindValues = null)
+    private function _doDBExecute($pdo, $mode = self::QUERY_TYPE_FETCH, $sql = null, $bindValues = null)
     {
         /** @var \PDOStatement $pdoStatement */
         $pdoStatement = $pdo->prepare($this->setSql($sql ?? ($this->auraQuery->getStatement()))->getSql());
@@ -207,7 +216,7 @@ class Query
     }
 
     /**
-     * @param MysqlWrapper|null|\PDO $pdo
+     * @param PDOWrapper|null|\PDO $pdo
      * @param $mode
      * @param bool $retry
      * @param string|null $sql
@@ -215,7 +224,7 @@ class Query
      * @return mixed
      * @throws \Exception
      */
-    private function mysqlExecute(
+    private function dbExecute(
         $pdo = null, $mode = self::QUERY_TYPE_FETCH, $retry = false, $sql = null, $bindValues = null
     )
     {
@@ -224,17 +233,17 @@ class Query
         }
 
         try {
-            /** @var MysqlWrapper|\PDO $pdo $pdo */
-            $pdo = $pdo ?: MysqlPool::pick($this->connectionName);
+            /** @var PDOWrapper|\PDO $pdo $pdo */
+            $pdo = $pdo ?: $this->connectionPool->pick($this->connectionName);
 
-            return $this->_doMysqlExecute($pdo, $mode, $sql, $bindValues);
+            return $this->_doDBExecute($pdo, $mode, $sql, $bindValues);
         } catch (\PDOException $e) {
             if ($pdo) {
                 return $pdo->handleExecuteException(
                     $e,
                     $retry,
                     function () use ($pdo, $mode, $sql, $bindValues) {
-                        return $this->_doMysqlExecute($pdo, $mode, $sql, $bindValues);
+                        return $this->_doDBExecute($pdo, $mode, $sql, $bindValues);
                     }
                 );
             }
@@ -248,13 +257,18 @@ class Query
     }
 
     /**
-     * @param MysqlWrapper $pdo
+     * @param PDOWrapper $pdo
      */
     private function releasePDO($pdo)
     {
         if ($this->needRelease) {
-            MysqlPool::release($pdo);
+            $this->connectionPool->release($pdo);
         }
+    }
+
+    protected function getExecutor($db)
+    {
+        return [$this, 'dbExecute'];
     }
 
     /**
@@ -285,14 +299,12 @@ class Query
         if (is_null($bindValues)) {
             $bindValues = $this->auraQuery->getBindValues();
         }
-        $method = $this->db . 'Execute';
-        if (method_exists($this, $method)) {
-            return $this->executeWithEvents(function () use ($method, $pdo, $mode, $retry, $sql, $bindValues) {
-                return call_user_func_array([$this, $method], [$pdo, $mode, $retry, $sql, $bindValues]);
-            }, $mode);
-        }
-
-        return null;
+        return $this->executeWithEvents(function () use ($pdo, $mode, $retry, $sql, $bindValues) {
+            return call_user_func_array(
+                $this->getExecutor($this->db),
+                [$pdo, $mode, $retry, $sql, $bindValues]
+            );
+        }, $mode);
     }
 
     /**
@@ -567,7 +579,7 @@ class Query
     }
 
     /**
-     * @return mixed
+     * @return \PDO|PDOWrapper
      */
     public function getPdo()
     {
@@ -575,7 +587,7 @@ class Query
     }
 
     /**
-     * @param $pdo
+     * @param \PDO|PDOWrapper $pdo
      * @return $this
      */
     public function setPdo($pdo)
@@ -651,23 +663,5 @@ class Query
             $bind
         );
         return $this;
-    }
-
-    public static function tablePrefix($db, $connectionName): string
-    {
-        return \SwFwLess\components\functions\config(
-            $db . '.connections.' . $connectionName . '.table_prefix', ''
-        );
-    }
-
-    public static function connectionName($db, $connectionName = null): string
-    {
-        if (is_null($connectionName)) {
-            $connectionName = \SwFwLess\components\functions\config(
-                $db . '.default', ''
-            );
-        }
-
-        return $connectionName;
     }
 }

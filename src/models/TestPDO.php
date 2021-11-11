@@ -2,7 +2,7 @@
 
 namespace SwFwLess\models;
 
-class Member extends AbstractMysqlModel
+class TestPDO extends AbstractPDOModel
 {
     protected static $table = 'member';
 }

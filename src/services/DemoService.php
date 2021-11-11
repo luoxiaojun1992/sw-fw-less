@@ -27,8 +27,8 @@ use SwFwLess\facades\Math;
 use SwFwLess\facades\Qiniu;
 use SwFwLess\facades\RedisPool;
 use SwFwLess\facades\Translator;
-use SwFwLess\models\Member;
-use SwFwLess\models\Test;
+use SwFwLess\models\TestPDO;
+use SwFwLess\models\TestES;
 use Cake\Validation\Validator;
 use Hbase\HbaseClient;
 use Phalcon\Validation;
@@ -89,7 +89,7 @@ class DemoService extends BaseService
 
     public function mysql()
     {
-        $queryResult = Member::select()
+        $queryResult = TestPDO::select()
             ->cols(['*'])
             ->where('id in (1, 2)')
             ->limit(2)
@@ -168,7 +168,7 @@ class DemoService extends BaseService
 
     public function es()
     {
-        $models = Test::query()->filterTerm('foo', 'bar')->search();
+        $models = TestES::query()->filterTerm('foo', 'bar')->search();
 
         return Response::json($models);
     }

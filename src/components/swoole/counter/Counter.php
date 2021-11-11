@@ -3,7 +3,6 @@
 namespace SwFwLess\components\swoole\counter;
 
 use SwfwLess\components\swoole\Server;
-use SwFwLess\facades\Container;
 use Swoole\Table;
 
 class Counter
@@ -50,7 +49,7 @@ class Counter
         $count = 0;
 
         foreach (self::$swTable as $id => $row) {
-            if ($id === $key . ':' . $row['worker_id']) {
+            if ($id === ($key . ':' . $row['worker_id'])) {
                 $count += $row['count'];
             }
         }

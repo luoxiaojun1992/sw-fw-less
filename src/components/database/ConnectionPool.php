@@ -1,60 +1,62 @@
 <?php
 
-namespace SwFwLess\components\mysql;
+namespace SwFwLess\components\database;
 
 use SwFwLess\components\Helper;
 use Cake\Event\Event as CakeEvent;
 use SwFwLess\components\swoole\Scheduler;
 
-/**
- * @deprecated
- */
-class MysqlPool
+class ConnectionPool
 {
-    const EVENT_MYSQL_POOL_CHANGE = 'mysql.pool.change';
+    const EVENT_PDO_POOL_CHANGE = 'pdo.pool.change';
 
     protected static $instance;
 
-    /** @var MysqlWrapper[][] */
-    private $pdoPool = [];
+    /** @var PDOWrapper[][] */
+    private $connectionPool = [];
 
     protected $config = [];
+
+    /** @var Connector */
+    protected $connector;
 
     public static function clearInstance()
     {
         static::$instance = null;
     }
 
-    public static function create($mysqlConfig = null)
+    public static function create($dbConfig = null)
     {
         if (static::$instance instanceof static) {
             return static::$instance;
         }
 
-        if (is_array($mysqlConfig) && !empty($mysqlConfig['switch'])) {
-            return static::$instance = new static($mysqlConfig);
+        if (is_array($dbConfig) && !empty($dbConfig['switch'])) {
+            return static::$instance = new static($dbConfig, new Connector());
         } else {
             return null;
         }
     }
 
     /**
-     * Mysql constructor.
-     * @param array $mysqlConfig
+     * ConnectionPool constructor.
+     * @param array $dbConfig
+     * @param Connector $connector
      */
-    public function __construct($mysqlConfig)
+    public function __construct($dbConfig, $connector)
     {
-        $this->config = $mysqlConfig;
+        $this->config = $dbConfig;
+        $this->connector = $connector;
 
-        foreach ($mysqlConfig['connections'] as $connectionName => $mysqlConnection) {
-            for ($i = 0; $i < $mysqlConnection['pool_size']; ++$i) {
+        foreach ($this->config['connections'] as $connectionName => $dbConnection) {
+            for ($i = 0; $i < $dbConnection['pool_size']; ++$i) {
                 if (!is_null($connection = $this->getConnect(true, $connectionName))) {
-                    $this->pdoPool[$connectionName][] = $connection;
+                    $this->connectionPool[$connectionName][] = $connection;
                 }
             }
 
-            if ($mysqlConfig['pool_change_event']) {
-                $this->poolChange($mysqlConnection['pool_size']);
+            if ($this->config['pool_change_event']) {
+                $this->poolChange($dbConnection['pool_size']);
             }
         }
     }
@@ -62,7 +64,7 @@ class MysqlPool
     protected function poolChange($count)
     {
         \SwFwLess\components\functions\event(
-            new CakeEvent(static::EVENT_MYSQL_POOL_CHANGE,
+            new CakeEvent(static::EVENT_PDO_POOL_CHANGE,
                 null,
                 ['count' => $count]
             )
@@ -72,7 +74,7 @@ class MysqlPool
     /**
      * @param string|null $connectionName
      * @param callable $callback
-     * @return MysqlWrapper mixed
+     * @return PDOWrapper mixed
      * @throws \Throwable
      */
     public function pick($connectionName = null, $callback = null)
@@ -80,12 +82,12 @@ class MysqlPool
         if (is_null($connectionName)) {
             $connectionName = $this->config['default'];
         }
-        if (!isset($this->pdoPool[$connectionName])) {
+        if (!isset($this->connectionPool[$connectionName])) {
             return null;
         }
-        /** @var MysqlWrapper $pdo */
+        /** @var PDOWrapper $pdo */
         $pdo = Scheduler::withoutPreemptive(function () use ($connectionName) {
-            return array_pop($this->pdoPool[$connectionName]);
+            return array_pop($this->connectionPool[$connectionName]);
         });
         if (!$pdo) {
             $pdo = $this->getConnect(false, $connectionName);
@@ -113,7 +115,7 @@ class MysqlPool
     }
 
     /**
-     * @param MysqlWrapper|\PDO $pdo
+     * @param PDOWrapper|\PDO $pdo
      */
     public function release($pdo)
     {
@@ -133,7 +135,7 @@ class MysqlPool
                 $pdo->setRetry(false);
 
                 Scheduler::withoutPreemptive(function () use ($pdo) {
-                    $this->pdoPool[$pdo->getConnectionName()][] = $pdo;
+                    $this->connectionPool[$pdo->getConnectionName()][] = $pdo;
                 });
                 if ($this->config['pool_change_event']) {
                     $this->poolChange(1);
@@ -145,7 +147,7 @@ class MysqlPool
     /**
      * @param bool $needRelease
      * @param string|null $connectionName
-     * @return MysqlWrapper
+     * @return PDOWrapper
      */
     public function getConnect($needRelease = true, $connectionName = null)
     {
@@ -156,22 +158,16 @@ class MysqlPool
             return null;
         }
 
-        $pdo = new \PDO(
-            $this->config['connections'][$connectionName]['dsn'],
-            $this->config['connections'][$connectionName]['username'],
-            $this->config['connections'][$connectionName]['passwd'],
-            $this->config['connections'][$connectionName]['options']
+        $connection = $this->connector->connect(
+            $this->config['connections'][$connectionName]
         );
-        return (new MysqlWrapper())->setPDO($pdo)
-            ->setLastConnectedAt()
-            ->setLastActivityAt()
-            ->setNeedRelease($needRelease)
+        return $connection->setNeedRelease($needRelease)
             ->setConnectionName($connectionName)
-            ->setIdleTimeout($this->config['connections'][$connectionName]['idle_timeout'] ?? 500);
+            ->setConnectionPool($this);
     }
 
     /**
-     * @param MysqlWrapper $pdo
+     * @param PDOWrapper $pdo
      * @param \PDOException $e
      */
     private function handleRollbackException($pdo, \PDOException $e)
@@ -191,7 +187,7 @@ class MysqlPool
     public function countPool()
     {
         $sum = 0;
-        foreach ($this->pdoPool as $connections) {
+        foreach ($this->connectionPool as $connections) {
             $sum += count($connections);
         }
         return $sum;

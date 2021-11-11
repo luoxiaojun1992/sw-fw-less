@@ -1,15 +1,12 @@
 <?php
 
-namespace SwFwLess\components\mysql;
+namespace SwFwLess\components\database;
 
-use SwFwLess\models\AbstractMysqlModel;
+use SwFwLess\models\AbstractPDOModel;
 
-/**
- * @deprecated
- */
 class ModelQuery extends Query
 {
-    /** @var AbstractMysqlModel */
+    /** @var AbstractPDOModel */
     public $modelClass;
 
     /**
@@ -27,7 +24,7 @@ class ModelQuery extends Query
      * @param bool|null $retry
      * @param string|null $sql
      * @param array|null $bindValues
-     * @return AbstractMysqlModel|null
+     * @return AbstractPDOModel|null
      * @throws \Exception
      */
     public function first($pdo = null, $retry = null, $sql = null, $bindValues = null)
@@ -42,7 +39,7 @@ class ModelQuery extends Query
      * @param bool|null $retry
      * @param string|null $sql
      * @param array|null $bindValues
-     * @return AbstractMysqlModel[]|array
+     * @return AbstractPDOModel[]|array
      * @throws \Exception
      */
     public function get($pdo = null, $retry = null, $sql = null, $bindValues = null)

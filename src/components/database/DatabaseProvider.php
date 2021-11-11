@@ -1,17 +1,14 @@
 <?php
 
-namespace SwFwLess\components\mysql;
+namespace SwFwLess\components\database;
 
 use SwFwLess\components\provider\WorkerProviderContract;
 
-/**
- * @deprecated
- */
-class MysqlProvider implements WorkerProviderContract
+class DatabaseProvider implements WorkerProviderContract
 {
     public static function bootWorker()
     {
-        MysqlPool::create(\SwFwLess\components\functions\config('mysql'));
+        ConnectionPool::create(\SwFwLess\components\functions\config('database'));
     }
 
     public static function shutdownWorker()

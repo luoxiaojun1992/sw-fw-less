@@ -192,7 +192,6 @@ class App extends Kernel
         );
         try {
             $routeInfo = $router->parseRouteInfo();
-            $response = null;
             switch ($routeInfo[0]) {
                 case Dispatcher::NOT_FOUND:
                     // ... 404 Not Found
@@ -204,7 +203,6 @@ class App extends Kernel
                     break;
                 case Dispatcher::FOUND:
                     return $router->createController();
-                    break;
                 default:
                     $response = Response::output('');
             }

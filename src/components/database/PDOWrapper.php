@@ -1,18 +1,15 @@
 <?php
 
-namespace SwFwLess\components\mysql;
+namespace SwFwLess\components\database;
 
 use Carbon\Carbon;
 use Carbon\CarbonInterface;
+use SwFwLess\components\database\traits\PDOTransaction;
 use SwFwLess\components\Helper;
-use SwFwLess\components\mysql\traits\MysqlTransaction;
 
-/**
- * @deprecated
- */
-class MysqlWrapper
+class PDOWrapper
 {
-    use MysqlTransaction;
+    use PDOTransaction;
 
     const MAX_BIG_QUERY_TIMES = 1000000;
 
@@ -24,6 +21,9 @@ class MysqlWrapper
     private $idleTimeout = 500; //seconds
     private $lastConnectedAt;
     private $lastActivityAt;
+
+    /** @var ConnectionPool */
+    protected $connectionPool;
 
     public $bigQueryTimes = 0;
 
@@ -154,6 +154,24 @@ class MysqlWrapper
     }
 
     /**
+     * @return ConnectionPool
+     */
+    public function getConnectionPool(): ConnectionPool
+    {
+        return $this->connectionPool;
+    }
+
+    /**
+     * @param ConnectionPool $connectionPool
+     * @return $this
+     */
+    public function setConnectionPool(ConnectionPool $connectionPool)
+    {
+        $this->connectionPool = $connectionPool;
+        return $this;
+    }
+
+    /**
      * @return bool
      */
     public function exceedIdleTimeout()
@@ -220,7 +238,7 @@ class MysqlWrapper
     public function reconnect()
     {
         return $this->setPDO(
-            \SwFwLess\facades\MysqlPool::getConnect(false, $this->getConnectionName())->getPDO()
+            $this->getConnectionPool()->getConnect(false, $this->getConnectionName())->getPDO()
         )->setLastConnectedAt()->setLastActivityAt()->setBigQueryTimes(0);
     }
 

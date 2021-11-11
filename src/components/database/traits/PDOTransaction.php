@@ -1,13 +1,10 @@
 <?php
 
-namespace SwFwLess\components\mysql\traits;
+namespace SwFwLess\components\database\traits;
 
 use SwFwLess\components\Helper;
 
-/**
- * @deprecated
- */
-trait MysqlTransaction
+trait PDOTransaction
 {
     private $transactionLevel = 0;
 
