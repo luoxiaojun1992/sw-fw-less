@@ -7,6 +7,14 @@ class TestPDOStatement
     protected $testBindingValues = [];
 
     /**
+     * @return array
+     */
+    public function getTestBindingValues(): array
+    {
+        return $this->testBindingValues;
+    }
+
+    /**
      * @param array $mockData
      * @return $this
      */

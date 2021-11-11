@@ -77,9 +77,21 @@ class QueryTest extends \PHPUnit\Framework\TestCase
         $query = $this->getQuery()->newInsert();
         $query->col('name')->bindValue(':name', 'Foo');
         $query->setMockData($mockData);
-        $result = $query->write($this->getTestPDOWrapper()->setMockData($mockData));
+        $testPDOWrapper = $this->getTestPDOWrapper();
+        $result = $query->write($testPDOWrapper->setMockData($mockData));
         $this->assertEquals(1, $result);
         $this->assertEquals(1, $query->getLastInsertId());
+        $this->assertIsString($testPDOWrapper->getTestStatement());
+        $testPDOStatement = $testPDOWrapper->getTestLastPdoStatement();
+        $this->assertTrue(
+            $testPDOStatement->getTestBindingValues() ===
+            [
+                ':name' => [
+                    'value' => 'Foo',
+                    'data_type' => \PDO::PARAM_STR,
+                ]
+            ]
+        );
 
         //Update
         $mockData = [
@@ -91,8 +103,24 @@ class QueryTest extends \PHPUnit\Framework\TestCase
         $query->bindValue(':primaryValue', 1);
         $query->col('name')->bindValue(':name', 'Bar');
         $query->setMockData($mockData);
-        $result = $query->write($this->getTestPDOWrapper()->setMockData($mockData));
+        $testPDOWrapper = $this->getTestPDOWrapper();
+        $result = $query->write($testPDOWrapper->setMockData($mockData));
         $this->assertEquals(1, $result);
+        $this->assertIsString($testPDOWrapper->getTestStatement());
+        $testPDOStatement = $testPDOWrapper->getTestLastPdoStatement();
+        $this->assertTrue(
+            $testPDOStatement->getTestBindingValues() ===
+            [
+                ':primaryValue' => [
+                    'value' => 1,
+                    'data_type' => \PDO::PARAM_INT,
+                ],
+                ':name' => [
+                    'value' => 'Bar',
+                    'data_type' => \PDO::PARAM_STR,
+                ]
+            ]
+        );
 
         //Delete
         $mockData = [
@@ -102,8 +130,20 @@ class QueryTest extends \PHPUnit\Framework\TestCase
         $query = $this->getQuery()->newDelete();
         $query->where("`id` = :primaryValue");
         $query->bindValue(':primaryValue', 1);
-        $query->write($this->getTestPDOWrapper()->setMockData($mockData));
+        $testPDOWrapper = $this->getTestPDOWrapper();
+        $query->write($testPDOWrapper->setMockData($mockData));
         $this->assertEquals(1, $result);
+        $this->assertIsString($testPDOWrapper->getTestStatement());
+        $testPDOStatement = $testPDOWrapper->getTestLastPdoStatement();
+        $this->assertTrue(
+            $testPDOStatement->getTestBindingValues() ===
+            [
+                ':primaryValue' => [
+                    'value' => 1,
+                    'data_type' => \PDO::PARAM_INT,
+                ],
+            ]
+        );
 
         $this->afterTest();
     }
@@ -121,10 +161,22 @@ class QueryTest extends \PHPUnit\Framework\TestCase
         $query->cols(['id', 'name']);
         $query->where('`id` = :primaryValue');
         $query->bindValue(':primaryValue', 1);
-        $result = $query->first($this->getTestPDOWrapper()->setMockData($mockData));
+        $testPDOWrapper = $this->getTestPDOWrapper();
+        $result = $query->first($testPDOWrapper->setMockData($mockData));
         $this->assertEquals(
             $mockData[0],
             $result
+        );
+        $this->assertIsString($testPDOWrapper->getTestStatement());
+        $testPDOStatement = $testPDOWrapper->getTestLastPdoStatement();
+        $this->assertTrue(
+            $testPDOStatement->getTestBindingValues() ===
+            [
+                ':primaryValue' => [
+                    'value' => 1,
+                    'data_type' => \PDO::PARAM_INT,
+                ]
+            ]
         );
 
         //Get
@@ -136,10 +188,22 @@ class QueryTest extends \PHPUnit\Framework\TestCase
         $query->cols(['id', 'name']);
         $query->where('`id` = :primaryValue');
         $query->bindValue(':primaryValue', 1);
-        $result = $query->get($this->getTestPDOWrapper()->setMockData($mockData));
+        $testPDOWrapper = $this->getTestPDOWrapper();
+        $result = $query->get($testPDOWrapper->setMockData($mockData));
         $this->assertEquals(
             $mockData,
             $result
+        );
+        $this->assertIsString($testPDOWrapper->getTestStatement());
+        $testPDOStatement = $testPDOWrapper->getTestLastPdoStatement();
+        $this->assertTrue(
+            $testPDOStatement->getTestBindingValues() ===
+            [
+                ':primaryValue' => [
+                    'value' => 1,
+                    'data_type' => \PDO::PARAM_INT,
+                ]
+            ]
         );
 
         $this->afterTest();

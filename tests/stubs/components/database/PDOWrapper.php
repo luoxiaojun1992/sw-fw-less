@@ -11,6 +11,7 @@ class PDOWrapper extends basePDOWrapper
 
     protected $testStatement;
 
+    /** @var \TestPDOStatement */
     protected $testLastPdoStatement;
 
     /**
