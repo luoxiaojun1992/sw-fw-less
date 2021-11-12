@@ -20,4 +20,14 @@ class Database
     {
         return Config::get('database.report_pool_change');
     }
+
+    public static function initConnectionPool()
+    {
+        ConnectionPool::create(static::config());
+    }
+
+    public static function init()
+    {
+        static::initConnectionPool();
+    }
 }
