@@ -18,7 +18,7 @@ namespace SwFwLess\facades;
 class CLog extends AbstractFacade
 {
     /**
-     * @return \SwFwLess\components\traits\Singleton|\SwFwLess\components\log\ffi\Log|null
+     * @return \SwFwLess\components\log\ffi\Log|null
      * @throws \Exception
      */
     protected static function getAccessor()

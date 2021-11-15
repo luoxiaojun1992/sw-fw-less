@@ -38,6 +38,21 @@ class Ann
         }
     }
 
+    public function createCDoubleNumbers($count)
+    {
+        return \FFI::new('double[' . ((string)$count) . ']');
+    }
+
+    public function createCConstDoubleNumbers($count)
+    {
+        return \FFI::new('const double[' . ((string)$count) . ']');
+    }
+
+    public function createCDoubleNumbersPointerArray($count)
+    {
+        return \FFI::new('double* [' . ((string)$count) . ']');
+    }
+
     protected function createUdf($ffiPath)
     {
         return \FFI::cdef(
@@ -46,8 +61,44 @@ class Ann
         );
     }
 
-    public function trainAndPredictOnce()
+    public function trainAndPredictOnce(
+        $input, $output, $sampleTotal, $testInput, $inputs, $hiddenLayers, $hidden,
+        $outputs, $learningRate, $epochs
+    )
     {
-        //TODO
+        $cInput = $this->createCDoubleNumbersPointerArray($sampleTotal);
+        foreach ($input as $row => $numbers) {
+            $cInputNumbersVarName = 'cInputNumbers' . $row;
+            $$cInputNumbersVarName = $this->createCDoubleNumbers($inputs);
+            foreach ($numbers as $col => $number) {
+                $$cInputNumbersVarName[$col] = $number;
+            }
+            $cInput[$row] = \FFI::cast('double*', \FFI::addr($$cInputNumbersVarName));
+        }
+
+        $cOutput = $this->createCDoubleNumbersPointerArray($sampleTotal);
+        foreach ($output as $row => $numbers) {
+            $cOutputNumbersVarName = 'cOutputNumbers' . $row;
+            $$cOutputNumbersVarName = $this->createCDoubleNumbers($outputs);
+            foreach ($numbers as $col => $number) {
+                $$cOutputNumbersVarName[$col] = $number;
+            }
+            $cOutput[$row] = \FFI::cast('double*', \FFI::addr($$cOutputNumbersVarName));
+        }
+
+        $cTestInput = $this->createCDoubleNumbers($inputs);
+        foreach ($testInput as $i => $number) {
+            $cTestInput[$i] = $number;
+        }
+
+        $cTestOutput = $this->createCDoubleNumbers($outputs);
+
+        $this->udf->TrainAndPredictOnce(
+            $cInput, $cOutput, $sampleTotal, $cTestInput,
+            $cTestOutput, $inputs, $hiddenLayers, $hidden,
+            $outputs, $learningRate, $epochs
+        );
+
+        return $cTestOutput;
     }
 }

@@ -30,13 +30,13 @@ int TrainAndPredictOnce(const double** input, const double** output, const int s
 //    const double input[4][2] = {{0, 0}, {0, 1}, {1, 0}, {1, 1}};
 //    const double* inputPointer[4];
 //    for (i = 0; i < 4; ++i) {
-//        inputPointer[i] = &(input[i]);
+//        inputPointer[i] = (const double*)(&(input[i]));
 //    }
 //
 //    const double output[4][1] = {{0}, {1}, {1}, {0}};
 //    const double* outputPointer[4];
 //    for (i = 0; i < 4; ++i) {
-//        outputPointer[i] = &(output[i]);
+//        outputPointer[i] = (const double*)(&(output[i]));
 //    }
 //
 //    const double test_input[2] = {0, 1};
@@ -44,7 +44,8 @@ int TrainAndPredictOnce(const double** input, const double** output, const int s
 //
 //    TrainAndPredictOnce(inputPointer, outputPointer, 4, test_input, test_output, 2, 1, 2, 1, 3, 500);
 //
-//    printf("%.1f", test_output[0]);
+//    printf("%f\r\n", test_output[0]);
+//    printf("%1.f\r\n", test_output[0]);
 //
 //    return 0;
 //}

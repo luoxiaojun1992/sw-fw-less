@@ -18,7 +18,7 @@ namespace SwFwLess\facades;
 class MemoryMap extends AbstractFacade
 {
     /**
-     * @return \SwFwLess\components\traits\Singleton|\SwFwLess\components\storage\file\mmap\MemoryMap|null
+     * @return \SwFwLess\components\storage\file\mmap\MemoryMap|null
      * @throws \Exception
      */
     protected static function getAccessor()
