@@ -181,10 +181,8 @@ class Query
             }
             switch ($mode) {
                 case static::QUERY_TYPE_FETCH:
-                    $row = $result ? $pdoStatement->fetch(\PDO::FETCH_ASSOC) : [];
-                    $pdo->setLastActivityAt();
-                    return $row;
                 case static::QUERY_TYPE_FETCH_ALL:
+                    $queryResult = [];
                     if ($result) {
                         $queryResult = $pdoStatement->fetchAll(\PDO::FETCH_ASSOC);
 
@@ -198,10 +196,13 @@ class Query
                         }
 
                         $pdo->setLastActivityAt();
-                        return $queryResult;
                     }
 
-                    return [];
+                    if ($mode === static::QUERY_TYPE_FETCH) {
+                        return $queryResult[0] ?? null;
+                    } else {
+                        return $queryResult;
+                    }
                 case static::QUERY_TYPE_WRITE:
                     if ($this->hasSequence) {
                         $this->setLastInsertId($pdo->lastInsertId($this->sequence));

@@ -31,7 +31,7 @@ class ModelQuery extends Query
     {
         $result = parent::first($pdo, $retry, $sql, $bindValues);
         $modelClass = $this->modelClass;
-        return $result ? (new $modelClass)->setAttributes($result)->setNewRecord(false) : null;
+        return $result ?? ((new $modelClass)->setAttributes($result)->setNewRecord(false));
     }
 
     /**
