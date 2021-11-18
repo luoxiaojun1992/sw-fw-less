@@ -101,8 +101,6 @@ class FilesystemUtilTest extends TestCase
         );
         Config::clear();
         File::clearInstance();
-
-        //todo
     }
 
     public function testMimeType()
