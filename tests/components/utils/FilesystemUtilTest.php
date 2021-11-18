@@ -43,6 +43,66 @@ class FilesystemUtilTest extends TestCase
                 )
             )
         );
+        $this->assertEquals(
+            'jpg',
+            strtolower(
+                FilesystemUtil::extension(
+                    __DIR__ . '/../../stubs/components/utils/filesystem_util/6905700.jpg'
+                )
+            )
+        );
+        $this->assertEquals(
+            'jpg',
+            strtolower(
+                FilesystemUtil::extension(
+                    __DIR__ . '/../../stubs/components/utils/filesystem_util/1_b.jpg'
+                )
+            )
+        );
+    }
+
+    public function testRealExtension()
+    {
+        Config::initByArr([
+            'storage' => [
+                'switch' => 1,
+                'types' => ['file'],
+            ]
+        ]);
+        $this->assertEquals(
+            'jpeg',
+            strtolower(
+                FilesystemUtil::realExtension(
+                    __DIR__ . '/../../stubs/components/utils/filesystem_util/6905700.jpeg'
+                )
+            )
+        );
+        $this->assertEquals(
+            'jpeg',
+            strtolower(
+                FilesystemUtil::realExtension(
+                    __DIR__ . '/../../stubs/components/utils/filesystem_util/6905700.jpg'
+                )
+            )
+        );
+        $this->assertEquals(
+            'jpeg',
+            strtolower(
+                FilesystemUtil::realExtension(
+                    __DIR__ . '/../../stubs/components/utils/filesystem_util/1_b.jpg'
+                )
+            )
+        );
+        $this->assertNull(
+            FilesystemUtil::realExtension(
+                __DIR__ . '/../../stubs/components/utils/filesystem_util/1_b.jpg',
+                'image/jpg'
+            )
+        );
+        Config::clear();
+        File::clearInstance();
+
+        //todo
     }
 
     public function testMimeType()

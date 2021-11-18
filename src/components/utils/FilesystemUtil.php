@@ -807,9 +807,9 @@ class FilesystemUtil
         return (new \SplFileInfo($filePath))->getExtension();
     }
 
-    public static function realExtension($filePath)
+    public static function realExtension($filePath, $mimeType = null)
     {
-        $mimeType = static::mimetype($filePath);
+        $mimeType = $mimeType ?? (static::mimetype($filePath));
         return static::$mimeTypeExtensionMap[$mimeType] ?? null;
     }
 
