@@ -7,6 +7,7 @@ use SwFwLess\components\http\traits\Tracer;
 use SwFwLess\components\pool\ObjectPool;
 use SwFwLess\components\pool\Poolable;
 use SwFwLess\components\swoole\coresource\traits\CoroutineRes;
+use SwFwLess\components\utils\runtime\Swoole;
 use Swoole\Coroutine;
 
 class Request implements Poolable
@@ -75,23 +76,69 @@ class Request implements Poolable
     }
 
     /**
-     * @param $name
+     * @param null $name
      * @param null $default
-     * @return null
+     * @return string|array|null
      */
-    public function get($name, $default = null)
+    public function get($name = null, $default = null)
     {
-        return Helper::arrGet($this->getSwRequest()->get, $name, $default);
+        return is_null($name) ?
+            $this->getSwRequest()->get :
+            Helper::arrGet($this->getSwRequest()->get, $name, $default);
+    }
+
+    /**
+     * @param $getParams
+     * @return $this
+     */
+    public function setAllGet($getParams)
+    {
+        $this->getSwRequest()->get = $getParams;
+        return $this;
     }
 
     /**
      * @param $name
+     * @param $value
+     * @return $this
+     */
+    public function setGet($name, $value)
+    {
+        Helper::arrSet($this->getSwRequest()->get, $name, $value);
+        return $this;
+    }
+
+    /**
+     * @param null $name
      * @param null $default
      * @return null
      */
-    public function post($name, $default = null)
+    public function post($name = null, $default = null)
     {
-        return Helper::arrGet($this->getSwRequest()->post, $name, $default);
+        return is_null($name) ?
+            $this->getSwRequest()->post :
+            Helper::arrGet($this->getSwRequest()->post, $name, $default);
+    }
+
+    /**
+     * @param $postParams
+     * @return $this
+     */
+    public function setAllPost($postParams)
+    {
+        $this->getSwRequest()->post = $postParams;
+        return $this;
+    }
+
+    /**
+     * @param $name
+     * @param $value
+     * @return $this
+     */
+    public function setPost($name, $value)
+    {
+        Helper::arrSet($this->getSwRequest()->post, $name, $value);
+        return $this;
     }
 
     /**

@@ -51,12 +51,46 @@ class RequestTest extends \PHPUnit\Framework\TestCase
         $swRequest->{$paramType}['FOO'] = 'BAR';
         $this->assertEquals('bar', $swfRequest->{$paramType}('foo'));
         $this->assertEquals('BAR', $swfRequest->{$paramType}('FOO'));
+        $this->assertTrue(
+            ['foo' => 'bar', 'FOO' => 'BAR'] ===
+            ($swfRequest->{$paramType}())
+        );
 
         $swfRequest = $this->createSwfRequest();
         $this->assertEquals(null, $swfRequest->{$paramType}('foo'));
+        $this->assertEquals(null, $swfRequest->{$paramType}('FOO'));
+        $this->assertNull($swfRequest->{$paramType}());
 
         $swfRequest = $this->createSwfRequest();
         $this->assertEquals('default', $swfRequest->{$paramType}('foo', 'default'));
+        $this->assertEquals('default', $swfRequest->{$paramType}('FOO', 'default'));
+        $this->assertNull($swfRequest->{$paramType}());
+    }
+
+    private function tSetParam($paramType)
+    {
+        $swRequest = $this->createSwRequest();
+        $swRequest->{$paramType} = [];
+
+        $swfRequest = $this->createSwfRequest($swRequest);
+        $this->assertEquals(null, $swfRequest->{$paramType}('foo'));
+        $this->assertEquals(null, $swfRequest->{$paramType}('FOO'));
+
+        $paramSetMethod = 'set' . ucfirst($paramType);
+        $swfRequest->{$paramSetMethod}('foo', 'bar');
+        $swfRequest->{$paramSetMethod}('FOO', 'BAR');
+        $this->assertEquals('bar', $swfRequest->{$paramType}('foo'));
+        $this->assertEquals('BAR', $swfRequest->{$paramType}('FOO'));
+
+        $swRequest = $this->createSwRequest();
+        $swRequest->{$paramType} = [];
+        $swfRequest = $this->createSwfRequest($swRequest);
+        $setAllParamMethod = 'setAll' . ucfirst($paramType);
+        $swfRequest->{$setAllParamMethod}(['foo' => 'bar', 'FOO' => 'BAR']);
+        $this->assertTrue(
+            ['foo' => 'bar', 'FOO' => 'BAR'] ===
+            ($swfRequest->{$paramType}())
+        );
     }
 
     public function testGet()
@@ -64,9 +98,19 @@ class RequestTest extends \PHPUnit\Framework\TestCase
         $this->tParam('get');
     }
 
+    public function testSetGet()
+    {
+        $this->tSetParam('get');
+    }
+
     public function testPost()
     {
         $this->tParam('post');
+    }
+
+    public function testSetPost()
+    {
+        $this->tSetParam('post');
     }
 
     public function testFile()

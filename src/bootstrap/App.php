@@ -103,6 +103,7 @@ class App extends Kernel
          */
         $this->httpRouteDispatcher = \FastRoute\simpleDispatcher(function (\FastRoute\RouteCollector $r) {
             $routerConfig = functions\config('router');
+            //todo support resource router
             foreach ($routerConfig['single'] as $router) {
                 array_unshift($router[2], $router[1]);
                 $r->addRoute($router[0], $router[1], $router[2]);

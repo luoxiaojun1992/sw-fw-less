@@ -3,7 +3,7 @@
 namespace SwFwLess\components\ai\ann\ffi;
 
 use SwFwLess\components\utils\OS;
-use SwFwLess\components\utils\Runtime;
+use SwFwLess\components\utils\runtime\PHPRuntime;
 
 class Ann
 {
@@ -24,7 +24,7 @@ class Ann
     {
         $this->config = $config;
 
-        if (Runtime::supportFFI()) {
+        if (PHPRuntime::supportFFI()) {
             $osType = OS::type();
             if ($osType === OS::OS_LINUX) {
                 $this->ffiPath = __DIR__ . '/c/build/linux/libcann.so';
