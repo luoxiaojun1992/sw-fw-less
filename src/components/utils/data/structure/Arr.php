@@ -343,4 +343,9 @@ class Arr
         $arr[$index] -= $arr[$anotherIndex];
         return $arr;
     }
+
+    public static function isArrayElement(&$arr, $key)
+    {
+        return isset($arr[$key]) && is_array($arr[$key]);
+    }
 }

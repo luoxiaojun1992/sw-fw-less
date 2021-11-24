@@ -439,4 +439,19 @@ class ArrTest extends \PHPUnit\Framework\TestCase
             Arr::swapNums([0, -2], 0, 1)
         );
     }
+
+    public function testIsArrayElement()
+    {
+        $arr = ['sub_arr' => []];
+        $this->assertTrue(Arr::isArrayElement($arr, 'sub_arr'));
+
+        $arr = ['sub_arr' => false];
+        $this->assertFalse(Arr::isArrayElement($arr, 'sub_arr'));
+
+        $arr = ['sub_arr' => null];
+        $this->assertFalse(Arr::isArrayElement($arr, 'sub_arr'));
+
+        $arr = [];
+        $this->assertFalse(Arr::isArrayElement($arr, 'sub_arr'));
+    }
 }
