@@ -13,6 +13,7 @@ use SwFwLess\components\http\Response;
 use SwFwLess\components\pool\ObjectPool;
 use SwFwLess\components\provider\KernelProvider;
 use SwFwLess\components\router\Router;
+use SwFwLess\components\utils\data\structure\Arr;
 use SwFwLess\facades\Container;
 use SwFwLess\facades\Log;
 use SwFwLess\facades\RateLimit;
@@ -103,18 +104,46 @@ class App extends Kernel
          */
         $this->httpRouteDispatcher = \FastRoute\simpleDispatcher(function (\FastRoute\RouteCollector $r) {
             $routerConfig = functions\config('router');
-            //todo support resource router
-            foreach ($routerConfig['single'] as $router) {
-                array_unshift($router[2], $router[1]);
-                $r->addRoute($router[0], $router[1], $router[2]);
+            if (Arr::isArrayElement($routerConfig, 'single')) {
+                foreach ($routerConfig['single'] as $router) {
+                    array_unshift($router[2], $router[1]);
+                    $r->addRoute($router[0], $router[1], $router[2]);
+                }
             }
-            foreach ($routerConfig['group'] as $prefix => $routers) {
-                $r->addGroup($prefix, function (\FastRoute\RouteCollector $r) use ($routers, $prefix) {
-                    foreach ($routers as $router) {
-                        array_unshift($router[2], '/' . trim($prefix, '/') . '/' . trim($router[1], '/'));
-                        $r->addRoute($router[0], $router[1], $router[2]);
+            if (Arr::isArrayElement($routerConfig, 'resource')) {
+                foreach ($routerConfig['resource'] as $router) {
+                    $resourceMethodMap = [
+                        'index' => 'GET',
+                        'show' => 'GET',
+                        'store' => 'POST',
+                        'update' => 'PUT',
+                        'destroy' => 'DELETE',
+                    ];
+                    foreach (array_keys($resourceMethodMap) as $resourceMethod) {
+                        if (Arr::safeInArray($resourceMethod, ['index', 'store'])) {
+                            $resourceRequestUri = $router[0];
+                        } else {
+                            $resourceRequestUri = rtrim($router[0], '/') . '/{id}';
+                        }
+                        $resourceReqMethod = $resourceMethodMap[$resourceMethod];
+                        $r->addRoute(
+                            $resourceReqMethod, $resourceRequestUri,
+                            [$resourceRequestUri, $router[1], $resourceMethod, $router[2] ?? []]
+                        );
                     }
-                });
+                    array_unshift($router[2], $router[1]);
+                    $r->addRoute($router[0], $router[1], $router[2]);
+                }
+            }
+            if (Arr::isArrayElement($routerConfig, 'group')) {
+                foreach ($routerConfig['group'] as $prefix => $routers) {
+                    $r->addGroup($prefix, function (\FastRoute\RouteCollector $r) use ($routers, $prefix) {
+                        foreach ($routers as $router) {
+                            array_unshift($router[2], '/' . trim($prefix, '/') . '/' . trim($router[1], '/'));
+                            $r->addRoute($router[0], $router[1], $router[2]);
+                        }
+                    });
+                }
             }
             if (functions\config('monitor.switch')) {
                 $r->addGroup('/internal', function (\FastRoute\RouteCollector $r) {
