@@ -9,12 +9,8 @@ class XSSProtector extends AbstractMiddleware
 {
     public function handle(Request $request)
     {
-        $getParams = $request->get();
-        $request->setAllGet($this->filter($getParams));
-
-        $postParams = $request->post();
-        $request->setAllPost($this->filter($postParams));
-
+        $request->setAllGet($this->filter($request->get()));
+        $request->setAllPost($this->filter($request->post()));
         return $this->next();
     }
 
