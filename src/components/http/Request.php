@@ -83,7 +83,7 @@ class Request implements Poolable
     public function get($name = null, $default = null)
     {
         return is_null($name) ?
-            $this->getSwRequest()->get :
+            (($this->getSwRequest()->get) ?? []) :
             Helper::arrGet($this->getSwRequest()->get, $name, $default);
     }
 
@@ -116,7 +116,7 @@ class Request implements Poolable
     public function post($name = null, $default = null)
     {
         return is_null($name) ?
-            $this->getSwRequest()->post :
+            (($this->getSwRequest()->post) ?? []) :
             Helper::arrGet($this->getSwRequest()->post, $name, $default);
     }
 
@@ -142,12 +142,15 @@ class Request implements Poolable
     }
 
     /**
-     * @param $name
+     * @param null $name
+     * @param null $default
      * @return null
      */
-    public function file($name)
+    public function file($name = null, $default = null)
     {
-        return Helper::arrGet($this->getSwRequest()->files, $name, null);
+        return is_null($name) ?
+            (($this->getSwRequest()->files) ?? []) :
+            Helper::arrGet($this->getSwRequest()->files, $name, $default);
     }
 
     /**
@@ -180,7 +183,7 @@ class Request implements Poolable
      */
     public function all()
     {
-        return array_merge((array)$this->getSwRequest()->get, (array)$this->getSwRequest()->post, (array)$this->getSwRequest()->files);
+        return array_merge($this->get(), $this->post(), $this->file());
     }
 
     /**
@@ -341,10 +344,10 @@ class Request implements Poolable
 
         return ServerRequestFactory::fromGlobals(
             $this->getSwRequest()->server ?? [],
-            $this->getSwRequest()->get ?? [],
+            $this->get(),
             $parsedBody ?? [],
             $this->getSwRequest()->cookie ?? [],
-            $this->getSwRequest()->files ?? [],
+            $this->file(),
             $this->getSwRequest()->header ?? [],
             $rawBody
         );

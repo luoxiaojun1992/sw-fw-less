@@ -59,12 +59,12 @@ class RequestTest extends \PHPUnit\Framework\TestCase
         $swfRequest = $this->createSwfRequest();
         $this->assertEquals(null, $swfRequest->{$paramType}('foo'));
         $this->assertEquals(null, $swfRequest->{$paramType}('FOO'));
-        $this->assertNull($swfRequest->{$paramType}());
+        $this->assertEquals([], $swfRequest->{$paramType}());
 
         $swfRequest = $this->createSwfRequest();
         $this->assertEquals('default', $swfRequest->{$paramType}('foo', 'default'));
         $this->assertEquals('default', $swfRequest->{$paramType}('FOO', 'default'));
-        $this->assertNull($swfRequest->{$paramType}());
+        $this->assertEquals([], $swfRequest->{$paramType}());
     }
 
     private function tSetParam($paramType)
