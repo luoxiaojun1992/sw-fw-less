@@ -328,10 +328,6 @@ class Arr
 
     public static function isAssoc($arr)
     {
-        if (Version::greaterThanOrEquals('8.1.0')) {
-            return call_user_func('array_is_list', $arr);
-        }
-
         $isAssoc = false;
         foreach ($arr as $key => $item) {
             if (is_string($key)) {
