@@ -376,6 +376,12 @@ class ArrTest extends \PHPUnit\Framework\TestCase
         ));
         $this->assertFalse(Arr::isAssoc(
             [
+                2 => MetasyntacticVars::FOO,
+                1 => MetasyntacticVars::BAR
+            ]
+        ));
+        $this->assertFalse(Arr::isAssoc(
+            [
                 '0' => MetasyntacticVars::FOO,
                 '1' => MetasyntacticVars::BAR
             ]
