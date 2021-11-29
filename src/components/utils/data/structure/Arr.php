@@ -2,8 +2,6 @@
 
 namespace SwFwLess\components\utils\data\structure;
 
-use SwFwLess\components\utils\runtime\php\Version;
-
 class Arr
 {
     /**
