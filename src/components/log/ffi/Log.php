@@ -3,7 +3,7 @@
 namespace SwFwLess\components\log\ffi;
 
 use SwFwLess\components\utils\OS;
-use SwFwLess\components\utils\runtime\PHPRuntime;
+use SwFwLess\components\utils\runtime\php\FFI;
 
 class Log
 {
@@ -31,7 +31,7 @@ class Log
     {
         $this->config = $config;
 
-        if (PHPRuntime::supportFFI()) {
+        if (FFI::support()) {
             $osType = OS::type();
             if ($osType === OS::OS_LINUX) {
                 $this->ffiPath = __DIR__ . '/c/build/linux/libclog.so';

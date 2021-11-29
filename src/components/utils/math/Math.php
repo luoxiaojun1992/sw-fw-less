@@ -3,7 +3,7 @@
 namespace SwFwLess\components\utils\math;
 
 use SwFwLess\components\utils\OS;
-use SwFwLess\components\utils\runtime\PHPRuntime;
+use SwFwLess\components\utils\runtime\php\FFI;
 
 class Math
 {
@@ -24,7 +24,7 @@ class Math
     {
         $this->config = $config;
 
-        if (PHPRuntime::supportFFI()) {
+        if (FFI::support()) {
             $osType = OS::type();
             if ($osType === OS::OS_LINUX) {
                 $this->ffiPath = __DIR__ . '/ffi/c/linux/libcmath.so';
@@ -59,7 +59,7 @@ class Math
 
     public function createCNumbers($count)
     {
-        if (!PHPRuntime::supportFFI()) {
+        if (!FFI::support()) {
             return [];
         }
         return \FFI::new('double['.((string)$count).']');
@@ -67,7 +67,7 @@ class Math
 
     public function createCFloatNumbers($count)
     {
-        if (!PHPRuntime::supportFFI()) {
+        if (!FFI::support()) {
             return [];
         }
         return \FFI::new('float['.((string)$count).']');
@@ -75,7 +75,7 @@ class Math
 
     public function createCIntNumbers($count)
     {
-        if (!PHPRuntime::supportFFI()) {
+        if (!FFI::support()) {
             return [];
         }
         return \FFI::new('int['.((string)$count).']');
@@ -89,7 +89,7 @@ class Math
             return array_sum($numbers);
         }
 
-        if (!PHPRuntime::supportFFI()) {
+        if (!FFI::support()) {
             return array_sum($numbers);
         }
 
@@ -109,7 +109,7 @@ class Math
 
     public function vectorAdd($vector1, $vector2, $numbersCount)
     {
-        if ((!PHPRuntime::supportFFI()) || (!$this->ffiPath)) {
+        if ((!FFI::support()) || (!$this->ffiPath)) {
             $result = [];
             for ($i = 0; $i < $numbersCount; ++$i) {
                 $result[$i] = ($vector1[$i] + $vector2[$i]);
@@ -125,7 +125,7 @@ class Math
 
     public function vectorSub($vector1, $vector2, $numbersCount)
     {
-        if ((!PHPRuntime::supportFFI()) || (!$this->ffiPath)) {
+        if ((!FFI::support()) || (!$this->ffiPath)) {
             $result = [];
             for ($i = 0; $i < $numbersCount; ++$i) {
                 $result[$i] = ($vector1[$i] - $vector2[$i]);
@@ -141,7 +141,7 @@ class Math
 
     public function vectorMul($vector1, $vector2, $numbersCount)
     {
-        if ((!PHPRuntime::supportFFI()) || (!$this->ffiPath)) {
+        if ((!FFI::support()) || (!$this->ffiPath)) {
             $result = [];
             for ($i = 0; $i < $numbersCount; ++$i) {
                 $result[$i] = ($vector1[$i] * $vector2[$i]);
@@ -157,7 +157,7 @@ class Math
 
     public function vectorDiv($vector1, $vector2, $numbersCount)
     {
-        if ((!PHPRuntime::supportFFI()) || (!$this->ffiPath)) {
+        if ((!FFI::support()) || (!$this->ffiPath)) {
             $result = [];
             for ($i = 0; $i < $numbersCount; ++$i) {
                 $result[$i] = ($vector1[$i] / $vector2[$i]);
@@ -173,7 +173,7 @@ class Math
 
     public function vectorSqrt($vector1, $numbersCount)
     {
-        if ((!PHPRuntime::supportFFI()) || (!$this->ffiPath)) {
+        if ((!FFI::support()) || (!$this->ffiPath)) {
             $result = [];
             for ($i = 0; $i < $numbersCount; ++$i) {
                 $result[$i] = sqrt($vector1[$i]);
@@ -189,7 +189,7 @@ class Math
 
     public function vectorCmp($vector1, $vector2, $numbersCount)
     {
-        if ((!PHPRuntime::supportFFI()) || (!$this->ffiPath)) {
+        if ((!FFI::support()) || (!$this->ffiPath)) {
             $result = [];
             for ($i = 0; $i < $numbersCount; ++$i) {
                 $result[$i] = (($vector1[$i] >= $vector2[$i]) ? NAN : 0);
@@ -205,7 +205,7 @@ class Math
 
     public function vectorRcp($vector1, $numbersCount)
     {
-        if ((!PHPRuntime::supportFFI()) || (!$this->ffiPath)) {
+        if ((!FFI::support()) || (!$this->ffiPath)) {
             $result = [];
             for ($i = 0; $i < $numbersCount; ++$i) {
                 $result[$i] = 1 / ($vector1[$i]);
@@ -221,7 +221,7 @@ class Math
 
     public function vectorAbs($vector1, $numbersCount)
     {
-        if ((!PHPRuntime::supportFFI()) || (!$this->ffiPath)) {
+        if ((!FFI::support()) || (!$this->ffiPath)) {
             $result = [];
             for ($i = 0; $i < $numbersCount; ++$i) {
                 $result[$i] = abs($vector1[$i]);
@@ -237,7 +237,7 @@ class Math
 
     public function vectorCeil($vector1, $numbersCount)
     {
-        if ((!PHPRuntime::supportFFI()) || (!$this->ffiPath)) {
+        if ((!FFI::support()) || (!$this->ffiPath)) {
             $result = [];
             for ($i = 0; $i < $numbersCount; ++$i) {
                 $result[$i] = ceil($vector1[$i]);
@@ -253,7 +253,7 @@ class Math
 
     public function vectorFloor($vector1, $numbersCount)
     {
-        if ((!PHPRuntime::supportFFI()) || (!$this->ffiPath)) {
+        if ((!FFI::support()) || (!$this->ffiPath)) {
             $result = [];
             for ($i = 0; $i < $numbersCount; ++$i) {
                 $result[$i] = floor($vector1[$i]);
@@ -269,7 +269,7 @@ class Math
 
     public function vectorRound($vector1, $numbersCount)
     {
-        if ((!PHPRuntime::supportFFI()) || (!$this->ffiPath)) {
+        if ((!FFI::support()) || (!$this->ffiPath)) {
             $result = [];
             for ($i = 0; $i < $numbersCount; ++$i) {
                 $result[$i] = round($vector1[$i]);

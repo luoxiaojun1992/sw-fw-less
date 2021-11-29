@@ -4,7 +4,7 @@ namespace SwFwLess\components\storage\file\mmap;
 
 use League\Flysystem\Adapter\Local;
 use SwFwLess\components\utils\OS;
-use SwFwLess\components\utils\runtime\PHPRuntime;
+use SwFwLess\components\utils\runtime\php\FFI;
 use SwFwLess\facades\File;
 
 class MemoryMap
@@ -26,7 +26,7 @@ class MemoryMap
     {
         $this->config = $config;
 
-        if (PHPRuntime::supportFFI()) {
+        if (FFI::support()) {
             $osType = OS::type();
             if ($osType === OS::OS_LINUX) {
                 $this->ffiPath = __DIR__ . '/ffi/c/linux/libcmmap.so';
@@ -110,7 +110,7 @@ class MemoryMap
             return $this->nativeWriteFile($filepath, $content);
         }
 
-        if (!PHPRuntime::supportFFI()) {
+        if (!FFI::support()) {
             return $this->nativeWriteFile($filepath, $content);
         }
 
@@ -127,7 +127,7 @@ class MemoryMap
             return $this->nativeReadFile($filepath);
         }
 
-        if (!PHPRuntime::supportFFI()) {
+        if (!FFI::support()) {
             return $this->nativeReadFile($filepath);
         }
 
@@ -144,7 +144,7 @@ class MemoryMap
             return $this->nativeAppendFile($filepath, $content);
         }
 
-        if (!PHPRuntime::supportFFI()) {
+        if (!FFI::support()) {
             return $this->nativeAppendFile($filepath, $content);
         }
 

@@ -2,11 +2,15 @@
 
 namespace SwFwLess\components\utils\runtime;
 
+use SwFwLess\components\utils\runtime\php\FFI;
+
+/**
+ * @deprecated
+ */
 class PHPRuntime
 {
     public static function supportFFI()
     {
-        return (version_compare(PHP_VERSION, '7.4.0') >= 0) &&
-            class_exists('\FFI');
+        return FFI::support();
     }
 }
