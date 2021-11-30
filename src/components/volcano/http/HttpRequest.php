@@ -4,12 +4,7 @@ namespace SwFwLess\components\volcano\http;
 
 use SwFwLess\components\http\Client;
 use SwFwLess\components\volcano\AbstractOperator;
-use SwFwLess\components\zipkin\HttpClient;
-use Swlib\Http\BufferStream;
-use Swlib\Http\ContentType;
 use Swlib\Saber\Request;
-use Swlib\Http\Uri;
-use Swlib\SaberGM;
 
 class HttpRequest extends AbstractOperator
 {
@@ -20,35 +15,45 @@ class HttpRequest extends AbstractOperator
 
     protected $swfRequest;
 
-    //TODO
     protected $preRequest = false;
+
+    protected $response = [];
+
+    protected $requestExceptions = [];
 
     protected $requestTraceConfig = [];
 
     public function open()
     {
-        // TODO: Implement open() method.
+        //
     }
 
     public function next()
     {
         while (isset($this->requests[$this->cursor])) {
-            $request = $this->requests[$this->cursor];
-            $requestTraceConfig = $this->requestTraceConfig[$this->cursor];
-            $response = (new HttpClient())->send(
-                $request, $this->swfRequest, $requestTraceConfig['span_name'] ?? null,
-                $requestTraceConfig['inject_span_ctx'] ?? true,
-                $requestTraceConfig['flushing_trace'] ?? false,
-                $requestTraceConfig['with_trace'] ?? false
-            );
-            ++$this->cursor;
-            yield $response;
+            if (isset($this->requestExceptions[$this->cursor])) {
+                throw $this->requestExceptions[$this->cursor];
+            }
+            if (isset($this->response[$this->cursor])) {
+                yield $this->response[$this->cursor];
+            } else {
+                $request = $this->requests[$this->cursor];
+                $requestTraceConfig = $this->requestTraceConfig[$this->cursor];
+                $response = Client::sendRequest(
+                    $request, $this->swfRequest, $requestTraceConfig['with_trace'] ?? false,
+                    $requestTraceConfig['span_name'] ?? null,
+                    $requestTraceConfig['inject_span_ctx'] ?? true,
+                    $requestTraceConfig['flushing_trace'] ?? false
+                );
+                ++$this->cursor;
+                yield $response;
+            }
         }
     }
 
     public function close()
     {
-        // TODO: Implement close() method.
+        //
     }
 
     public function setSwfRequest($swfRequest)
@@ -62,28 +67,9 @@ class HttpRequest extends AbstractOperator
         $spanName = null, $injectSpanCtx = true, $flushingTrace = false, $withTrace = false
     )
     {
-        $request = SaberGM::psr()->withMethod($method)
-            ->withUri(new Uri($url));
-
-        if (!is_null($body)) {
-            switch ($bodyType) {
-                case Client::JSON_BODY:
-                    $headers['Content-Type'] = ContentType::JSON;
-                    $body = json_encode($body);
-                    break;
-                case Client::FORM_BODY:
-                    $headers['Content-Type'] = ContentType::URLENCODE;
-                    $body = http_build_query($bodyType);
-                    break;
-                case Client::STRING_BODY:
-                    $body = (string)$body;
-                    break;
-            }
-            $bufferStream = new BufferStream($bodyLength ?? strlen($body));
-            $bufferStream->write($body);
-            $request->withBody($bufferStream);
-        }
-        $request->withHeaders($headers);
+        $request = Client::makeRequest(
+            $url, $method, $headers, $body, $bodyType, $bodyLength
+        );
         $this->requests[] = $request;
         $this->requestTraceConfig[] = [
             'span_name' => $spanName,
@@ -117,6 +103,16 @@ class HttpRequest extends AbstractOperator
             'request_count' => count($this->requests),
             'requests' => $requests,
         ];
+    }
+
+    public function preRequest()
+    {
+        list($this->response, $this->requestExceptions) = Client::sendMultiRequest(
+            $this->requests,
+            $this->swfRequest,
+            $this->requestTraceConfig
+        );
+        return $this;
     }
 
     public static function create($info = [])
