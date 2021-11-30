@@ -18,85 +18,102 @@ class Client
     const STRING_BODY = 'string';
 
     public static function get(
-        $url, $swfRequest = null, $headers = [], $bodyLength = null, $withTrace = false
+        $url, $swfRequest = null, $headers = [], $bodyLength = null, $withTrace = false,
+        $spanName = null, $injectSpanCtx = true, $flushingTrace = false
     )
     {
-        return static::multiGet($url, $swfRequest, $headers, $bodyLength, $withTrace);
+        return static::multiGet(
+            $url, $swfRequest, $headers, $bodyLength, $withTrace, $spanName,
+            $injectSpanCtx, $flushingTrace
+        );
     }
 
     public static function post(
         $url, $swfRequest = null, $headers = [], $body = null, $bodyType = self::JSON_BODY,
-        $bodyLength = null, $withTrace = false
+        $bodyLength = null, $withTrace = false, $spanName = null, $injectSpanCtx = true,
+        $flushingTrace = false
     )
     {
         return static::multiPost(
-            $url, $swfRequest, $headers, $body, $bodyType, $bodyLength, $withTrace
+            $url, $swfRequest, $headers, $body, $bodyType, $bodyLength, $withTrace,
+            $spanName, $injectSpanCtx, $flushingTrace
         );
     }
 
     public static function put(
         $url, $swfRequest = null, $headers = [], $body = null, $bodyType = self::JSON_BODY,
-        $bodyLength = null, $withTrace = false
+        $bodyLength = null, $withTrace = false, $spanName = null, $injectSpanCtx = true,
+        $flushingTrace = false
     )
     {
         return static::multiPut(
-            $url, $swfRequest, $headers, $body, $bodyType, $bodyLength, $withTrace
+            $url, $swfRequest, $headers, $body, $bodyType, $bodyLength, $withTrace,
+            $spanName, $injectSpanCtx, $flushingTrace
         );
     }
 
     public static function delete(
         $url, $swfRequest = null, $headers = [], $body = null, $bodyType = self::JSON_BODY,
-        $bodyLength = null, $withTrace = false
+        $bodyLength = null, $withTrace = false, $spanName = null, $injectSpanCtx = true,
+        $flushingTrace = false
     )
     {
         return static::multiDelete(
-            $url, $swfRequest, $headers, $body, $bodyType, $bodyLength, $withTrace
+            $url, $swfRequest, $headers, $body, $bodyType, $bodyLength, $withTrace,
+            $spanName, $injectSpanCtx, $flushingTrace
         );
     }
 
     public static function multiGet(
-        $urls, $swfRequest = null, $headers = [], $bodyLength = null, $withTrace = false
+        $urls, $swfRequest = null, $headers = [], $bodyLength = null, $withTrace = false,
+        $spanName = null, $injectSpanCtx = true, $flushingTrace = false
     )
     {
         return static::multiRequest(
             $urls, 'GET', $swfRequest, $headers, null, self::JSON_BODY,
-            $bodyLength, $withTrace
+            $bodyLength, $withTrace, $spanName, $injectSpanCtx, $flushingTrace
         );
     }
 
     public static function multiPost(
         $urls, $swfRequest = null, $headers = [], $body = null, $bodyType = self::JSON_BODY,
-        $bodyLength = null, $withTrace = false
+        $bodyLength = null, $withTrace = false, $spanName = null, $injectSpanCtx = true,
+        $flushingTrace = false
     )
     {
         return static::multiRequest(
-            $urls, 'POST', $swfRequest, $headers, $body, $bodyType, $bodyLength, $withTrace
+            $urls, 'POST', $swfRequest, $headers, $body, $bodyType, $bodyLength, $withTrace,
+            $spanName, $injectSpanCtx, $flushingTrace
         );
     }
 
     public static function multiPut(
         $urls, $swfRequest = null, $headers = [], $body = null, $bodyType = self::JSON_BODY,
-        $bodyLength = null, $withTrace = false
+        $bodyLength = null, $withTrace = false, $spanName = null, $injectSpanCtx = true,
+        $flushingTrace = false
     )
     {
         return static::multiRequest(
-            $urls, 'PUT', $swfRequest, $headers, $body, $bodyType, $bodyLength, $withTrace
+            $urls, 'PUT', $swfRequest, $headers, $body, $bodyType, $bodyLength, $withTrace,
+            $spanName, $injectSpanCtx, $flushingTrace
         );
     }
 
     public static function multiDelete(
         $urls, $swfRequest = null, $headers = [], $body = null, $bodyType = self::JSON_BODY,
-        $bodyLength = null, $withTrace = false
+        $bodyLength = null, $withTrace = false, $spanName = null, $injectSpanCtx = true,
+        $flushingTrace = false
     )
     {
         return static::multiRequest(
-            $urls, 'DELETE', $swfRequest, $headers, $body, $bodyType, $bodyLength, $withTrace
+            $urls, 'DELETE', $swfRequest, $headers, $body, $bodyType, $bodyLength, $withTrace,
+            $spanName, $injectSpanCtx, $flushingTrace
         );
     }
 
     public static function multiRequest(
         $urls, $method, $swfRequest = null, $headers = [], $body = null, $bodyType = self::JSON_BODY,
-        $bodyLength = null, $withTrace = false
+        $bodyLength = null, $withTrace = false, $spanName = null, $injectSpanCtx = true, $flushingTrace = false
     )
     {
         $swfRequest = $swfRequest ?? \SwFwLess\components\functions\request();
@@ -114,11 +131,11 @@ class Client
         foreach ($urls as $id => $url) {
             go(
                 function () use (&$aggResult, $id, $url, $chan, $method, $headers, $body, $bodyType, $swfRequest,
-                    &$exceptions, $bodyLength, $withTrace
+                    &$exceptions, $bodyLength, $withTrace, $spanName, $injectSpanCtx, $flushingTrace
                 ) {
                     Scheduler::withoutPreemptive(function () use (
                         &$aggResult, $id, $url, $method, $headers, $body, $bodyType, $swfRequest, &$exceptions,
-                        $bodyLength, $withTrace
+                        $bodyLength, $withTrace, $spanName, $injectSpanCtx, $flushingTrace
                     ) {
                         try {
                             $request = SaberGM::psr()->withMethod($method)
@@ -145,7 +162,10 @@ class Client
 
                             $request->withHeaders($headers);
 
-                            $aggResult[$id] = (new HttpClient())->send($request, $swfRequest, $withTrace);
+                            $aggResult[$id] = (new HttpClient())->send(
+                                $request, $swfRequest, $spanName, $injectSpanCtx,
+                                $flushingTrace, $withTrace
+                            );
                         } catch (\Throwable $e) {
                             array_push($exceptions, $e);
                         }
