@@ -392,6 +392,12 @@ class ArrTest extends \PHPUnit\Framework\TestCase
                 '2' => MetasyntacticVars::BAR
             ]
         ));
+        $this->assertFalse(Arr::isAssoc(
+            [
+                '2' => MetasyntacticVars::FOO,
+                '1' => MetasyntacticVars::BAR
+            ]
+        ));
         $this->assertTrue(
             Arr::isAssoc([
                 MetasyntacticVars::FOO => MetasyntacticVars::FOO,
@@ -400,6 +406,53 @@ class ArrTest extends \PHPUnit\Framework\TestCase
         );
         $this->assertTrue(
             Arr::isAssoc([
+                MetasyntacticVars::FOO => MetasyntacticVars::FOO,
+                2 => MetasyntacticVars::BAR,
+            ])
+        );
+    }
+
+    public function testIsList()
+    {
+        $this->assertTrue(Arr::isList([MetasyntacticVars::FOO, MetasyntacticVars::BAR]));
+        $this->assertTrue(Arr::isList(
+            [
+                1 => MetasyntacticVars::FOO,
+                2 => MetasyntacticVars::BAR
+            ]
+        ));
+        $this->assertTrue(Arr::isList(
+            [
+                2 => MetasyntacticVars::FOO,
+                1 => MetasyntacticVars::BAR
+            ]
+        ));
+        $this->assertTrue(Arr::isList(
+            [
+                '0' => MetasyntacticVars::FOO,
+                '1' => MetasyntacticVars::BAR
+            ]
+        ));
+        $this->assertTrue(Arr::isList(
+            [
+                '1' => MetasyntacticVars::FOO,
+                '2' => MetasyntacticVars::BAR
+            ]
+        ));
+        $this->assertTrue(Arr::isList(
+            [
+                '2' => MetasyntacticVars::FOO,
+                '1' => MetasyntacticVars::BAR
+            ]
+        ));
+        $this->assertFalse(
+            Arr::isList([
+                MetasyntacticVars::FOO => MetasyntacticVars::FOO,
+                MetasyntacticVars::BAR => MetasyntacticVars::BAR,
+            ])
+        );
+        $this->assertFalse(
+            Arr::isList([
                 MetasyntacticVars::FOO => MetasyntacticVars::FOO,
                 2 => MetasyntacticVars::BAR,
             ])

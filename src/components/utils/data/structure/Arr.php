@@ -336,6 +336,11 @@ class Arr
         return $isAssoc;
     }
 
+    public static function isList($arr)
+    {
+        return (!(static::isAssoc($arr)));
+    }
+
     public static function swapNums($arr, $index, $anotherIndex)
     {
         $arr[$index] += $arr[$anotherIndex];
