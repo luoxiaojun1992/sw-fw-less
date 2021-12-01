@@ -4,7 +4,6 @@ namespace SwFwLess\components\di;
 
 use DI\ContainerBuilder;
 use SwFwLess\components\Helper;
-use SwFwLess\components\runtime\framework\Serializer;
 use SwFwLess\components\swoole\Scheduler;
 use SwFwLess\components\traits\Singleton;
 use SwFwLess\components\utils\CallableUtil;
