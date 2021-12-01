@@ -7,6 +7,7 @@ use SwFwLess\components\Helper;
 use SwFwLess\components\runtime\framework\Serializer;
 use SwFwLess\components\swoole\Scheduler;
 use SwFwLess\components\traits\Singleton;
+use SwFwLess\components\utils\CallableUtil;
 use SwFwLess\components\zipkin\Tracer;
 use Zipkin\Span;
 
@@ -85,20 +86,7 @@ class Container
      */
     protected function callableToSpanName($callable)
     {
-        $spanName = 'callable';
-        if (is_array($callable)) {
-            $objectOrClass = $callable[0];
-            if (is_object($objectOrClass)) {
-                $spanName = get_class($objectOrClass);
-            } else {
-                $spanName = $objectOrClass;
-            }
-        } elseif (is_string($callable)) {
-            $spanName = $callable;
-        } elseif (is_object($callable)) {
-            $spanName = get_class($callable);
-        }
-
+        $spanName = CallableUtil::getName($callable);
         return str_replace('\\', '/', $spanName);
     }
 }
