@@ -2,6 +2,9 @@
 
 namespace SwFwLess\components\utils;
 
+/**
+ * @deprecated
+ */
 class Str
 {
     /**
@@ -15,26 +18,13 @@ class Str
      */
     public static function contains($haystack, $needles, $offset = 0, $caseSensitive = true)
     {
-        foreach ((array) $needles as $needle) {
-            if ($needle === '') {
-                return true;
-            }
-
-            if ($caseSensitive && (mb_strpos($haystack, $needle, $offset) !== false)) {
-                return true;
-            } elseif ((!$caseSensitive) && (mb_stripos($haystack, $needle, $offset) !== false)) {
-                return true;
-            }
-        }
-
-        return false;
+        return \SwFwLess\components\utils\data\structure\Str::contains(
+            $haystack, $needles, $offset, $caseSensitive
+        );
     }
 
     public static function split($str, $separator)
     {
-        if ($separator === '') {
-            return preg_split('/(?<!^)(?!$)/', $str);
-        }
-        return explode($separator, $str);
+        return \SwFwLess\components\utils\data\structure\Str::split($str, $separator);
     }
 }

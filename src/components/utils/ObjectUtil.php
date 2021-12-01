@@ -2,6 +2,9 @@
 
 namespace SwFwLess\components\utils;
 
+/**
+ * @deprecated
+ */
 class ObjectUtil
 {
     /**
@@ -10,10 +13,6 @@ class ObjectUtil
      */
     public static function toArray($object)
     {
-        if (is_object($object)) {
-            return array_map([static::class, __METHOD__], get_object_vars($object));
-        } else {
-            return $object;
-        }
+        return \SwFwLess\components\utils\data\structure\ObjectUtil::toArray($object);
     }
 }
