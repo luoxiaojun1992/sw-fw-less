@@ -9,7 +9,7 @@ class Decoder extends AbstractOperator
 {
     public function open()
     {
-        // TODO: Implement open() method.
+        //
     }
 
     public function next()
@@ -21,6 +21,6 @@ class Decoder extends AbstractOperator
 
     public function close()
     {
-        // TODO: Implement close() method.
+        //
     }
 }

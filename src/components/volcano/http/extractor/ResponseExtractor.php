@@ -8,7 +8,7 @@ class ResponseExtractor extends AbstractOperator
 {
     public function open()
     {
-        // TODO: Implement open() method.
+        //
     }
 
     public function next()
@@ -20,6 +20,6 @@ class ResponseExtractor extends AbstractOperator
 
     public function close()
     {
-        // TODO: Implement close() method.
+        //
     }
 }

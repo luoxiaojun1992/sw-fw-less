@@ -2,9 +2,10 @@
 
 namespace SwFwLess\components\di;
 
+use DI\ContainerBuilder;
 use SwFwLess\components\swoole\Scheduler;
 use SwFwLess\components\traits\Singleton;
-use DI\ContainerBuilder;
+use Zipkin\Span;
 
 class Container
 {
@@ -59,7 +60,7 @@ class Container
         $swfRequest = $swfRequest ?? \SwFwLess\components\functions\request();
         $spanName = $this->callableToSpanName($callable);
 
-        return $swfRequest->getTracer()->clientSpan($spanName, function () use ($callable, $parameters) {
+        return $swfRequest->getTracer()->clientSpan($spanName, function (Span $span) use ($callable, $parameters) {
             //todo add metrics
             return $this->call($callable, $parameters);
         });
