@@ -14,10 +14,15 @@ class ModelGenerator extends AbstractCommand
 
 namespace App\%s;
 
+use SwFwLess\models\AbstractPDOModel;
+
 class %s extends AbstractPDOModel
 {
     protected static $table = '%s';
+    
+    protected static $connectionName = %s;
 }
+
 EOF;
 
     public $signature = 'generator:model';
@@ -38,6 +43,13 @@ EOF;
             'Table name',
             null
         );
+        $this->addOption(
+            'connection',
+            'connection',
+            InputOption::VALUE_OPTIONAL,
+            'DB connection',
+            null
+        );
     }
 
     protected function handle()
@@ -45,13 +57,17 @@ EOF;
         $modelFilePath = $this->input->getOption('path');
 
         $modelFileDir = dirname($modelFilePath);
-        $modelNamespace = str_replace('/', '\\', trim('/', $modelFileDir));
+
+        $modelNamespace = str_replace('/', '\\', trim($modelFileDir, '/'));
 
         $modelClassName = basename($modelFilePath, '.php');
 
+        $connection = $this->input->getOption('connection');
+
         $modelFileContent = sprintf(
             static::MODEL_FILE_TPL, $modelNamespace, $modelClassName,
-            $this->input->getOption('table')
+            $this->input->getOption('table'),
+            is_null($connection) ? 'null' : ('\''. $connection . '\'')
         );
 
         if (File::prepare(
