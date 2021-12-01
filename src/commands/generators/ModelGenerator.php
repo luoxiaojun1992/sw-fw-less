@@ -20,7 +20,7 @@ class %s extends AbstractPDOModel
 }
 EOF;
 
-    public $signature = 'config';
+    public $signature = 'generator:model';
 
     protected function configure()
     {
