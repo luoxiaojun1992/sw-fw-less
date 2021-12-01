@@ -2,9 +2,10 @@
 
 namespace SwFwLess\components\storage;
 
+use SwFwLess\components\provider\CommandProviderContract;
 use SwFwLess\components\provider\WorkerProviderContract;
 
-class StorageProvider implements WorkerProviderContract
+class StorageProvider implements WorkerProviderContract, CommandProviderContract
 {
     public static function bootWorker()
     {
@@ -12,6 +13,16 @@ class StorageProvider implements WorkerProviderContract
     }
 
     public static function shutdownWorker()
+    {
+        //
+    }
+
+    public static function bootCommand()
+    {
+        Storage::init();
+    }
+
+    public static function shutdownCommand()
     {
         //
     }
