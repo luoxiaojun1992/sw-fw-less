@@ -4,6 +4,7 @@ namespace SwFwLess\components;
 
 use SwFwLess\bootstrap\App;
 use SwFwLess\bootstrap\Kernel;
+use SwFwLess\components\runtime\framework\Serializer;
 use SwFwLess\components\utils\data\structure\Arr;
 use SwFwLess\facades\Cache;
 
@@ -207,21 +208,36 @@ class Helper
     /**
      * @param $data
      * @param int $options
+     * @param int $depth
      * @return false|string
      */
-    public static function jsonEncode($data, $options = JSON_UNESCAPED_UNICODE)
+    public static function jsonEncode($data, $options = JSON_UNESCAPED_UNICODE, $depth = 512)
     {
-        return json_encode($data, $options);
+        return json_encode($data, $options, $depth);
     }
 
     /**
      * @param $data
      * @param bool $assoc
+     * @param int $depth
+     * @param int $flags
      * @return mixed
      */
-    public static function jsonDecode($data, $assoc = true)
+    public static function jsonDecode($data, $assoc = true, $depth = 512, $flags = 0)
     {
-        return json_decode($data, $assoc);
+        return json_decode($data, $assoc, $depth, $flags);
+    }
+
+    /**
+     * @param $data
+     * @param false $phpSerializer
+     * @return false|mixed|string
+     */
+    public static function serialize($data, $phpSerializer = false)
+    {
+        return ((!$phpSerializer) && Serializer::supportClosure()) ?
+            call_user_func('\Opis\Closure\serialize', $data) :
+            serialize($data);
     }
 
     /**
@@ -280,9 +296,13 @@ class Helper
      * @param $callback
      * @param $cacheKey
      * @param int $ttl
+     * @param int $jsonOptions
+     * @param int $jsonDepth
      * @return bool|string
      */
-    public static function withCache($callback, $cacheKey, $ttl = 0)
+    public static function withCache(
+        $callback, $cacheKey, $ttl = 0, $jsonOptions = JSON_UNESCAPED_UNICODE, $jsonDepth = 512
+    )
     {
         $cache = Cache::get($cacheKey);
         if ($cache !== false) {
@@ -291,7 +311,7 @@ class Helper
 
         $cache = call_user_func($callback);
         if (is_array($cache)) {
-            $cache = json_encode($cache);
+            $cache = static::jsonEncode($cache, $jsonOptions, $jsonDepth);
         }
         $cache = (string)$cache;
 

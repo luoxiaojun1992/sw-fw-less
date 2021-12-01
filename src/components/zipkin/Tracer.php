@@ -44,6 +44,7 @@ class Tracer
     const FRAMEWORK_VERSION = 'framework.version';
     const HTTP_QUERY_STRING = 'http.query_string';
     const GRPC = 'grpc';
+    const CALLABLE_PARAMETERS = 'callable.parameters';
 
     private $serviceName = 'Sw-Fw-Less';
     private $endpointUrl = 'http://localhost:9411/api/v2/spans';

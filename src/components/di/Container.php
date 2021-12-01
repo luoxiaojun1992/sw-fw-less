@@ -3,8 +3,11 @@
 namespace SwFwLess\components\di;
 
 use DI\ContainerBuilder;
+use SwFwLess\components\Helper;
+use SwFwLess\components\runtime\framework\Serializer;
 use SwFwLess\components\swoole\Scheduler;
 use SwFwLess\components\traits\Singleton;
+use SwFwLess\components\zipkin\Tracer;
 use Zipkin\Span;
 
 class Container
@@ -52,16 +55,26 @@ class Container
      * @param $callable
      * @param array $parameters
      * @param null $swfRequest
+     * @param bool $phpSerializer
      * @return mixed
      * @throws \Throwable
      */
-    public function callWithTrace($callable, $parameters = [], $swfRequest = null)
+    public function callWithTrace($callable, $parameters = [], $swfRequest = null, $phpSerializer = false)
     {
         $swfRequest = $swfRequest ?? \SwFwLess\components\functions\request();
         $spanName = $this->callableToSpanName($callable);
+        /** @var Tracer $swfTracer */
+        $swfTracer = $swfRequest->getTracer();
 
-        return $swfRequest->getTracer()->clientSpan($spanName, function (Span $span) use ($callable, $parameters) {
-            //todo add metrics
+        return $swfTracer->clientSpan($spanName, function (Span $span) use (
+            $callable, $parameters, $swfTracer, $phpSerializer
+        ) {
+            if ($span->getContext()->isSampled()) {
+                $swfTracer->addTag(
+                    $span, Tracer::CALLABLE_PARAMETERS,
+                    Helper::serialize($parameters, $phpSerializer)
+                );
+            }
             return $this->call($callable, $parameters);
         });
     }
