@@ -4,6 +4,7 @@ namespace SwFwLess\bootstrap;
 
 use SwFwLess\commands\ConfigCommand;
 use SwFwLess\commands\CsvExtractorCommand;
+use SwFwLess\commands\generators\FacadeGenerator;
 use SwFwLess\commands\generators\ModelGenerator;
 use SwFwLess\commands\generators\ServiceGenerator;
 use SwFwLess\commands\ServerCommand;
@@ -59,6 +60,7 @@ class Command extends Kernel
                 new CsvExtractorCommand(),
                 new ModelGenerator(),
                 new ServiceGenerator(),
+                new FacadeGenerator(),
             ]
         );
     }
