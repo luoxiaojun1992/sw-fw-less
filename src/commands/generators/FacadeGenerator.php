@@ -24,6 +24,7 @@ class %s extends AbstractFacade
         return null;
     }
 }
+
 EOF;
 
     public $signature = 'generator:facade';
