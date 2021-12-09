@@ -10,10 +10,10 @@ class Counter
     /** @var Table */
     private static $swTable;
 
-    public static function init()
+    public static function init($tableConfig = [])
     {
         if (!(self::$swTable instanceof Table)) {
-            self::$swTable = new Table(1024);
+            self::$swTable = new Table($tableConfig['size'] ?? 1024);
             self::$swTable->column('worker_id', Table::TYPE_INT, 8);
             self::$swTable->column('count', Table::TYPE_INT, 8);
             self::$swTable->create();

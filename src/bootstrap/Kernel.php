@@ -5,6 +5,7 @@ namespace SwFwLess\bootstrap;
 use SwFwLess\components\Config;
 use SwFwLess\components\functions;
 use SwFwLess\components\provider\KernelProvider;
+use SwFwLess\components\utils\runtime\php\Version;
 
 class Kernel
 {
@@ -67,7 +68,7 @@ class Kernel
             throw new \Exception('Swoole extension is not installed.');
         }
 
-        if (version_compare(PHP_VERSION, '7.1') < 0) {
+        if (Version::lessThan('7.1')) {
             throw new \Exception('PHP7.1+ is not installed.');
         }
     }
