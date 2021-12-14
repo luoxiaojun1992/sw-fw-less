@@ -17,6 +17,16 @@ class Atomic
         }
     }
 
+    public static function create($id, $initVal = 0)
+    {
+        return static::$atomicPool[$id] = new \Swoole\Atomic($initVal);
+    }
+
+    public static function put($id, $atomic)
+    {
+        static::$atomicPool[$id] = $atomic;
+    }
+
     public static function reload()
     {
         foreach (static::$atomicPool as $atomic) {
