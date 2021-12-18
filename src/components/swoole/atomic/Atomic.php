@@ -2,6 +2,8 @@
 
 namespace SwFwLess\components\swoole\atomic;
 
+use SwFwLess\components\swoole\Scheduler;
+
 class Atomic
 {
     /** @var \Swoole\Atomic[] */
@@ -19,12 +21,16 @@ class Atomic
 
     public static function create($id, $initVal = 0)
     {
-        return static::$atomicPool[$id] = new \Swoole\Atomic($initVal);
+        return Scheduler::withoutPreemptive(function () use ($id, $initVal) {
+            return static::$atomicPool[$id] = new \Swoole\Atomic($initVal);
+        });
     }
 
     public static function put($id, $atomic)
     {
-        static::$atomicPool[$id] = $atomic;
+        Scheduler::withoutPreemptive(function () use ($id, $atomic) {
+            static::$atomicPool[$id] = $atomic;
+        });
     }
 
     public static function reload()
@@ -40,6 +46,8 @@ class Atomic
      */
     public static function pick($id)
     {
-        return (static::$atomicPool[$id]) ?? null;
+        return Scheduler::withoutPreemptive(function () use ($id) {
+            return (static::$atomicPool[$id]) ?? null;
+        });
     }
 }
