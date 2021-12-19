@@ -164,7 +164,7 @@ class Csv
     public function setFile($filePath)
     {
         if ($this->writable) {
-            $this->writeBuffer = new \SplTempFileObject();
+            $this->writeBuffer = new \SplTempFileObject($this->writeBufferMemory);
             $this->filePath = $filePath;
 
             if ($this->isEnableMemoryMapping()) {
@@ -192,7 +192,7 @@ class Csv
             }
         }
         if ($this->readable) {
-            $this->readBuffer = new \SplTempFileObject();
+            $this->readBuffer = new \SplTempFileObject($this->readBufferMemory);
             $this->filePath = $filePath;
             $this->readFp = fopen($filePath, 'r');
             if ($this->readFp === false) {
@@ -243,7 +243,7 @@ class Csv
      */
     protected function refreshCsvBuffer($delimiter = ",", $enclosure = "\"", $escape = "\\")
     {
-        $this->readBuffer = new \SplTempFileObject();
+        $this->readBuffer = new \SplTempFileObject($this->readBufferMemory);
 
         for ($i = 0; $i < $this->maxReadBufferSize; ++$i) {
             if (!feof($this->readFp)) {
@@ -334,7 +334,7 @@ class Csv
                     throw new \Exception('Failed to write buffer');
                 }
             }
-            $this->writeBuffer = new \SplTempFileObject();
+            $this->writeBuffer = new \SplTempFileObject($this->writeBufferMemory);
             $this->writeBufferSize = 0;
         }
         return $this;
