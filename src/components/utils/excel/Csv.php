@@ -334,7 +334,10 @@ class Csv
                     throw new \Exception('Failed to write buffer');
                 }
             }
-            $this->writeBuffer = new \SplTempFileObject($this->writeBufferMemory);
+            if ($this->writeBuffer->ftruncate(0) === false) {
+                throw new \Exception('Failed to truncate buffer');
+            }
+            $this->writeBuffer->rewind();
             $this->writeBufferSize = 0;
         }
         return $this;
