@@ -19,8 +19,6 @@ class CsvBench
 
         mt_srand(time());
 
-        $startTime = microtime(true);
-
         for ($row = 0; $row < 100000; ++$row) {
             $rowData = [];
             for ($col = 0; $col < 10; ++$col) {
