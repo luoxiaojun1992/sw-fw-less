@@ -19,7 +19,7 @@ class MathBench
 
     public function benchFFISum()
     {
-        $mathUtil = \SwFwLess\components\utils\math\Math::create([
+        $mathUtil = Math::create([
             'sum_ffi_min_count' => 1000000,
         ]);
 
