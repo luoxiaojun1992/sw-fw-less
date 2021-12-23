@@ -60,16 +60,18 @@ class Csv
             throw new \Exception('Both writes and reads cannot be supported');
         }
 
-        return (new static())->setReadable($readable)
+        $instance = (new static())->setReadable($readable)
             ->setWritable($writable)
             ->setReadBufferMemory($readBufferMemory)
             ->setWriteBufferMemory($writeBufferMemory)
             ->withBom($withBom)
-            ->setEnableMemoryMapping($enableMemoryMapping)
-            ->setMemoryMap(
-                \SwFwLess\components\storage\file\mmap\MemoryMap::create([])
-            )
-            ->setFile($filePath);
+            ->setEnableMemoryMapping($enableMemoryMapping);
+        return (
+            ($instance->isEnableMemoryMapping()) ?
+            ($instance->setMemoryMap(
+                (\SwFwLess\components\storage\file\mmap\MemoryMap::create([]))
+            )) : $instance
+        )->setFile($filePath);
     }
 
     /**
