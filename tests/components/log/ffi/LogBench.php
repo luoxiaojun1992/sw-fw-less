@@ -7,7 +7,7 @@ use SwFwLess\facades\CLog;
 
 class LogBench
 {
-    public function benchLog()
+    public function benchCLog()
     {
         $logPath = __DIR__ . '/../../../output/bench_clog.log';
         if (file_exists($logPath)) {
@@ -15,8 +15,8 @@ class LogBench
         }
 
         for ($i = 0; $i < 1000; ++$i) {
-            CLog::log(
-                $logPath, 'test log ' . ((string)$i), Log::LEVEL_INFO
+            CLog::logInfo(
+                $logPath, 'bench log ' . ((string)$i)
             );
         }
 
