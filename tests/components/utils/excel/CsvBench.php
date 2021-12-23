@@ -6,7 +6,7 @@ class CsvBench
 {
     public function benchNativeCsv()
     {
-        $filePath = __DIR__ . '/../../../output/test_native_csv.csv';
+        $filePath = __DIR__ . '/../../../output/bench_native_csv.csv';
         if (file_exists($filePath)) {
             unlink($filePath);
         }
@@ -29,7 +29,7 @@ class CsvBench
 
     public function benchCsvUtil()
     {
-        $filePath = __DIR__ . '/../../../output/test_csv_util.csv';
+        $filePath = __DIR__ . '/../../../output/bench_csv_util.csv';
         if (file_exists($filePath)) {
             unlink($filePath);
         }
@@ -55,7 +55,7 @@ class CsvBench
 
     public function benchMemoryMappedCsvUtil()
     {
-        $filePath = __DIR__ . '/../../../output/test_mmap_csv_util.csv';
+        $filePath = __DIR__ . '/../../../output/bench_mmap_csv_util.csv';
         if (file_exists($filePath)) {
             unlink($filePath);
         }

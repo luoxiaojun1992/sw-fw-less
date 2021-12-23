@@ -21,6 +21,11 @@ class LogTest extends TestCase
 
     public function testLog()
     {
+        $logPath = $this->logPath();
+        if (file_exists($logPath)) {
+            unlink($logPath);
+        }
+
         foreach ([
             Log::LEVEL_TRACE,
             Log::LEVEL_DEBUG,
@@ -30,8 +35,6 @@ class LogTest extends TestCase
             Log::LEVEL_FATAL] as $logLevel) {
             $this->assertTrue($this->log('test ' . ((string)$logLevel), $logLevel));
         }
-
-        $logPath = $this->logPath();
 
         $expectedLogParts = [
             ['TRACE', ':0:', 'test', '0'],
