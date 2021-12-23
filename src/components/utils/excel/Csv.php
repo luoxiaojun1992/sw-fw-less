@@ -2,8 +2,6 @@
 
 namespace SwFwLess\components\utils\excel;
 
-use SwFwLess\facades\MemoryMap;
-
 class Csv
 {
     const BOM = "\u{FEFF}";
@@ -38,6 +36,9 @@ class Csv
 
     protected $enableMemoryMapping = false;
 
+    /** @var \SwFwLess\components\storage\file\mmap\MemoryMap */
+    protected $memoryMap;
+
     /**
      * @param $filePath
      * @param bool $readable
@@ -65,6 +66,9 @@ class Csv
             ->setWriteBufferMemory($writeBufferMemory)
             ->withBom($withBom)
             ->setEnableMemoryMapping($enableMemoryMapping)
+            ->setMemoryMap(
+                \SwFwLess\components\storage\file\mmap\MemoryMap::create([])
+            )
             ->setFile($filePath);
     }
 
@@ -156,6 +160,12 @@ class Csv
         return $this;
     }
 
+    public function setMemoryMap(\SwFwLess\components\storage\file\mmap\MemoryMap $memoryMap)
+    {
+        $this->memoryMap = $memoryMap;
+        return $this;
+    }
+
     /**
      * @param $filePath
      * @return $this
@@ -168,12 +178,12 @@ class Csv
             $this->filePath = $filePath;
 
             if ($this->isEnableMemoryMapping()) {
-                $this->writeFp = MemoryMap::openFile($filePath);
+                $this->writeFp = $this->memoryMap->openFile($filePath);
                 if ($this->writeFp < 0) {
                     throw new \Exception('Failed to open file [' . $filePath . ']');
                 }
                 if ($this->withBom) {
-                    $writeBomRes = MemoryMap::writeFileByFd($this->writeFp, static::BOM);
+                    $writeBomRes = $this->memoryMap->writeFileByFd($this->writeFp, static::BOM);
                     if ($writeBomRes > 0) {
                         throw new \Exception('Failed to write bom header');
                     }
@@ -324,7 +334,7 @@ class Csv
         }
         if ($bufferContent) {
             if ($this->isEnableMemoryMapping()) {
-                $flushRes = MemoryMap::appendFileByFd($this->writeFp, $bufferContent);
+                $flushRes = $this->memoryMap->appendFileByFd($this->writeFp, $bufferContent);
                 if ($flushRes > 0) {
                     throw new \Exception('Failed to write buffer');
                 }
@@ -359,7 +369,7 @@ class Csv
 
         if (!is_null($this->writeFp)) {
             if ($this->isEnableMemoryMapping()) {
-                $closeWriteFpRes = MemoryMap::closeFile($this->writeFp);
+                $closeWriteFpRes = $this->memoryMap->closeFile($this->writeFp);
                 if ($closeWriteFpRes > 0) {
                     throw new \Exception('Failed to close file');
                 }
