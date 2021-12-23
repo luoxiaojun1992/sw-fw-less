@@ -77,6 +77,6 @@ class CsvBench
             $csvFile->putCsv($rowData);
         }
 
-//        unlink($filePath);
+        unlink($filePath);
     }
 }
