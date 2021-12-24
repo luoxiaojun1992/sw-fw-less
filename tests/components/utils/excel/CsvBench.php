@@ -39,6 +39,7 @@ class CsvBench
             $filePath, false, true, false, 2097152,
             2097152, false
         );
+        $csvFile->setMaxWriteBufferSize(1000);
 
         mt_srand(time());
 

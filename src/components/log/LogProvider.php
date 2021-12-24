@@ -20,7 +20,7 @@ class LogProvider implements WorkerProviderContract
                 \SwFwLess\components\functions\config('log.buffer_max_size'),
                 \SwFwLess\components\functions\config('log.name'),
                 \SwFwLess\components\functions\config('log.reserve_days'),
-                \SwFwLess\components\functions\config('log.coroutine', true),
+                \SwFwLess\components\functions\config('log.coroutine', false),
                 \SwFwLess\components\functions\config('log.driver', Log::DRIVER_DEFAULT)
             );
         }

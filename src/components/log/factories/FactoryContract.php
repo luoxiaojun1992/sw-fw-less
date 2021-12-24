@@ -8,6 +8,6 @@ interface FactoryContract
 {
     public static function create(
         $logPath, $level = Logger::DEBUG, $syncLevels = [], $bubble = true,
-        $filePermission = null, $recordBufferMaxSize = 10, $coroutine = true, $streamPoolSize = 100
+        $filePermission = null, $recordBufferMaxSize = 10, $coroutine = false, $streamPoolSize = 100
     );
 }

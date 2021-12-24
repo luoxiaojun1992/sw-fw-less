@@ -37,7 +37,7 @@ class Log
 
     private $rotateLock = [true];
 
-    private $coroutine = true;
+    private $coroutine = false;
 
     private $driver = self::DRIVER_DEFAULT;
 
@@ -67,7 +67,7 @@ class Log
         $buffer_max_size = 10,
         $name = 'sw-fw-less',
         $reserve_days = 3,
-        $coroutine = true,
+        $coroutine = false,
         $driver = self::DRIVER_DEFAULT
     )
     {
@@ -106,7 +106,7 @@ class Log
         $buffer_max_size = 10,
         $name = 'sw-fw-less',
         $reserve_days = 3,
-        $coroutine = true,
+        $coroutine = false,
         $driver = self::DRIVER_DEFAULT
     )
     {

@@ -14,7 +14,7 @@ class LogBench
             unlink($logPath);
         }
 
-        for ($i = 0; $i < 1000; ++$i) {
+        for ($i = 0; $i < 10000; ++$i) {
             CLog::logInfo(
                 $logPath, 'bench log ' . ((string)$i)
             );

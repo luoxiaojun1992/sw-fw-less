@@ -15,7 +15,7 @@ class DriverFactory
 
     public static function create(
         $logPath, $driver = Log::DRIVER_DEFAULT, $level = Logger::DEBUG, $syncLevels = [], $bubble = true,
-        $filePermission = null, $recordBufferMaxSize = 10, $coroutine = true, $streamPoolSize = 100
+        $filePermission = null, $recordBufferMaxSize = 10, $coroutine = false, $streamPoolSize = 100
     )
     {
         $factory = static::FACTORY_MAPPINGS[$driver] ?? static::FACTORY_MAPPINGS[Log::DRIVER_DEFAULT];

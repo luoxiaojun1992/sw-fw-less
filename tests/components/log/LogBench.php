@@ -15,9 +15,19 @@ class LogBench
             unlink($logPath);
         }
         Config::set('log.switch', true);
-        \SwFwLess\components\log\Log::create($logPath);
+        \SwFwLess\components\log\Log::create(
+            $logPath,
+            Logger::DEBUG,
+            [],
+            100,
+            1000,
+            'sw-fw-less',
+            3,
+            true,
+            \SwFwLess\components\log\Log::DRIVER_CO_STREAM
+        );
 
-        for ($i = 0; $i < 1000; ++$i) {
+        for ($i = 0; $i < 10000; ++$i) {
             Log::info('bench log ' . ((string)$i));
         }
 
@@ -49,7 +59,7 @@ class LogBench
             \SwFwLess\components\log\Log::DRIVER_MEMORY_MAP
         );
 
-        for ($i = 0; $i < 1000; ++$i) {
+        for ($i = 0; $i < 10000; ++$i) {
             Log::info('bench log ' . ((string)$i));
         }
 
