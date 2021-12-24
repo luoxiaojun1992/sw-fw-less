@@ -5,6 +5,7 @@ namespace SwFwLess\components\log;
 use SwFwLess\components\Config;
 use Lxj\Monolog\Co\Stream\Handler;
 use Monolog\Logger;
+use SwFwLess\components\log\mmap\MonologMmapHandler;
 use SwFwLess\components\swoole\Scheduler;
 
 class Log
@@ -254,6 +255,8 @@ class Log
     {
         array_map(function ($handler) {
             if ($handler instanceof Handler) {
+                $handler->flush();
+            } elseif ($handler instanceof MonologMmapHandler) {
                 $handler->flush();
             }
         }, $this->logger->getHandlers());
