@@ -9,6 +9,10 @@ use SwFwLess\components\swoole\Scheduler;
 
 class Log
 {
+    const DRIVER_CO_STREAM = 1 << 0;
+    const DRIVER_MEMORY_MAP = 1 << 1;
+    const DRIVER_DEFAULT = self::DRIVER_CO_STREAM;
+
     private static $instance;
 
     /** @var Logger $logger */
@@ -32,6 +36,15 @@ class Log
 
     private $rotateLock = [true];
 
+    private $coroutine = true;
+
+    private $driver = self::DRIVER_DEFAULT;
+
+    public static function clearInstance()
+    {
+        static::$instance = null;
+    }
+
     /**
      * @param string $log_path
      * @param int $level
@@ -40,6 +53,8 @@ class Log
      * @param int $buffer_max_size
      * @param string $name
      * @param int $reserve_days
+     * @param bool $coroutine
+     * @param int $driver
      * @return Log
      * @throws \Exception
      */
@@ -50,7 +65,9 @@ class Log
         $pool_size = 100,
         $buffer_max_size = 10,
         $name = 'sw-fw-less',
-        $reserve_days = 3
+        $reserve_days = 3,
+        $coroutine = true,
+        $driver = self::DRIVER_DEFAULT
     )
     {
         if (self::$instance instanceof self) {
@@ -59,7 +76,8 @@ class Log
 
         if (Config::get('log.switch')) {
             return self::$instance = new self(
-                $log_path, $level, $syncLevels, $pool_size, $buffer_max_size, $name, $reserve_days
+                $log_path, $level, $syncLevels, $pool_size, $buffer_max_size, $name, $reserve_days,
+                $coroutine, $driver
             );
         } else {
             return null;
@@ -75,6 +93,8 @@ class Log
      * @param int $buffer_max_size
      * @param string $name
      * @param int $reserve_days
+     * @param bool $coroutine
+     * @param int $driver
      * @throws \Exception
      */
     public function __construct(
@@ -84,7 +104,9 @@ class Log
         $pool_size = 100,
         $buffer_max_size = 10,
         $name = 'sw-fw-less',
-        $reserve_days = 3
+        $reserve_days = 3,
+        $coroutine = true,
+        $driver = self::DRIVER_DEFAULT
     )
     {
         $this->logPath = $log_path;
@@ -94,6 +116,8 @@ class Log
         $this->bufferMaxSize = $buffer_max_size;
         $this->name = $name;
         $this->reserveDays = $reserve_days;
+        $this->coroutine = $coroutine;
+        $this->driver = $driver;
 
         $this->logger = $this->createLogger();
     }
@@ -106,14 +130,16 @@ class Log
     {
         $this->loggerDate = date('Ymd');
         $logPath = $this->getLogPath($this->loggerDate);
-        $handler = new Handler(
+        $handler = DriverFactory::create(
             $logPath,
+            $this->driver,
             $this->level,
             $this->syncLevels,
             true,
             null,
-            $this->poolSize,
-            $this->bufferMaxSize
+            $this->bufferMaxSize,
+            $this->coroutine,
+            $this->poolSize
         );
         $logger = new Logger($this->name);
         $logger->pushHandler($handler);
