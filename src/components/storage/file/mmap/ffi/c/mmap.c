@@ -72,11 +72,14 @@ int AppendFileByFd(int fd, const char *content) {
         return fstatRes;
     }
 
+    int contentLen;
+    contentLen = strlen(content);
+
     int map_size;
-    map_size = strlen(content) + sb.st_size;
+    map_size = contentLen + sb.st_size;
 
     int lseekRes;
-    lseekRes = lseek(fd, strlen(content) - 1, SEEK_END);
+    lseekRes = lseek(fd, contentLen - 1, SEEK_END);
     if (lseekRes < 0) {
         return lseekRes;
     }
@@ -92,7 +95,7 @@ int AppendFileByFd(int fd, const char *content) {
     if (p_map == MAP_FAILED) {
         return 1;
     }
-    memcpy(p_map + sb.st_size, content, strlen(content));
+    memcpy(p_map + sb.st_size, content, contentLen);
 
     int msyncRes;
     msyncRes = msync(p_map, map_size, MS_ASYNC);
