@@ -513,4 +513,21 @@ class ArrTest extends \PHPUnit\Framework\TestCase
         $arr = [];
         $this->assertFalse(Arr::isArrayElement($arr, 'sub_arr'));
     }
+
+    public function testFillSequence()
+    {
+        $arr = [1, 2, 6, 7, 8];
+        $sequence = [3, 4, 5];
+        $this->assertTrue(
+            [1, 2, 3, 4, 5, 6, 7, 8] ===
+            Arr::fillSequence($arr, 2, 0, $sequence)
+        );
+
+        $arr = [1, 1, 1, 1, 1];
+        $sequence = [2, 2, 2];
+        $this->assertTrue(
+            [1, 2, 2, 2, 1] ===
+            Arr::fillSequence($arr, 1, 3, $sequence)
+        );
+    }
 }

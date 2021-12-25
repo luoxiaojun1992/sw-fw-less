@@ -353,4 +353,11 @@ class Arr
     {
         return isset($arr[$key]) && is_array($arr[$key]);
     }
+
+    public static function fillSequence($arr, $startIndex, $count, $sequence)
+    {
+        $prevArr = array_slice($arr, 0, $startIndex);
+        $lastArr = array_slice($arr, $startIndex + $count);
+        return array_merge($prevArr, $sequence, $lastArr);
+    }
 }
