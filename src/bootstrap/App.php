@@ -135,6 +135,9 @@ class App extends Kernel
                     $r->addRoute($router[0], $router[1], $router[2]);
                 }
             }
+
+            //todo grpc router
+
             if (Arr::isArrayElement($routerConfig, 'group')) {
                 foreach ($routerConfig['group'] as $prefix => $routers) {
                     $r->addGroup($prefix, function (\FastRoute\RouteCollector $r) use ($routers, $prefix) {
