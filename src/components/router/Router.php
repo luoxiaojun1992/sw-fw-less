@@ -3,10 +3,12 @@
 namespace SwFwLess\components\router;
 
 use FastRoute\Dispatcher;
+use SwFwLess\components\functions;
 use SwFwLess\components\http\Request;
 use SwFwLess\components\pool\ObjectPool;
 use SwFwLess\components\pool\Poolable;
 use SwFwLess\components\swoole\Scheduler;
+use SwFwLess\components\utils\data\structure\Arr;
 use SwFwLess\components\utils\http\Url;
 use SwFwLess\facades\Container;
 use SwFwLess\middlewares\AbstractMiddleware;
@@ -43,6 +45,123 @@ class Router implements Poolable
         static::$cachedRouteInfo = [];
         static::$cachedRouteInfoCount = 0;
         static::$cachedRouteInfoCapacity = 100;
+    }
+
+    public static function createDispatcher()
+    {
+        return \FastRoute\simpleDispatcher(function (\FastRoute\RouteCollector $r) {
+            $routerConfig = functions\config('router');
+            if (Arr::isArrayElement($routerConfig, 'single')) {
+                foreach ($routerConfig['single'] as $router) {
+                    array_unshift($router[2], $router[1]);
+                    $r->addRoute($router[0], $router[1], $router[2]);
+                }
+            }
+            if (Arr::isArrayElement($routerConfig, 'resource')) {
+                foreach ($routerConfig['resource'] as $router) {
+                    $resourceMethodMap = [
+                        'index' => 'GET',
+                        'show' => 'GET',
+                        'store' => 'POST',
+                        'update' => 'PUT',
+                        'destroy' => 'DELETE',
+                    ];
+                    foreach (array_keys($resourceMethodMap) as $resourceMethod) {
+                        if (Arr::safeInArray($resourceMethod, ['index', 'store'])) {
+                            $resourceRequestUri = $router[0];
+                        } else {
+                            $resourceRequestUri = rtrim($router[0], '/') . '/{id}';
+                        }
+                        $resourceReqMethod = $resourceMethodMap[$resourceMethod];
+                        $r->addRoute(
+                            $resourceReqMethod, $resourceRequestUri,
+                            [$resourceRequestUri, $router[1], $resourceMethod, $router[2] ?? []]
+                        );
+                    }
+                }
+            }
+            if (Arr::isArrayElement($routerConfig, 'grpc')) {
+                foreach ($routerConfig['grpc'] as $package => $services) {
+                    foreach ($services as $service => $procedures) {
+                        foreach ($procedures as $procedure => $router) {
+                            $grpcRequestUri = '/' . trim($package, '/') .
+                                '.' . trim($service, '/') .
+                                '/' . trim($procedure, '/');
+                            $r->addRoute(
+                                'POST', $grpcRequestUri,
+                                [$grpcRequestUri, $router[0], $procedure, $router[1] ?? []]
+                            );
+                        }
+                    }
+                }
+            }
+            if (Arr::isArrayElement($routerConfig, 'group')) {
+                foreach ($routerConfig['group'] as $prefix => $routers) {
+                    $r->addGroup($prefix, function (\FastRoute\RouteCollector $r) use ($routers, $prefix) {
+                        foreach ($routers as $router) {
+                            array_unshift(
+                                $router[2], '/' . trim($prefix, '/') .
+                                '/' . trim($router[1], '/')
+                            );
+                            $r->addRoute($router[0], $router[1], $router[2]);
+                        }
+                    });
+                }
+            }
+            if (functions\config('monitor.switch')) {
+                $r->addGroup('/internal', function (\FastRoute\RouteCollector $r) {
+                    $r->addGroup('/monitor', function (\FastRoute\RouteCollector $r) {
+                        $r->addRoute(
+                            'GET',
+                            '/pool',
+                            ['/internal/monitor/pool', \SwFwLess\services\internals\MonitorService::class, 'pool']
+                        );
+                        $r->addRoute(
+                            'GET',
+                            '/swoole',
+                            ['/internal/monitor/swoole', \SwFwLess\services\internals\MonitorService::class, 'swoole']
+                        );
+                        $r->addRoute(
+                            'GET',
+                            '/memory',
+                            ['/internal/monitor/memory', \SwFwLess\services\internals\MonitorService::class, 'memory']
+                        );
+                        $r->addRoute(
+                            'GET',
+                            '/cpu',
+                            ['/internal/monitor/cpu', \SwFwLess\services\internals\MonitorService::class, 'cpu']
+                        );
+                        $r->addRoute(
+                            'GET',
+                            '/status',
+                            ['/internal/monitor/status', \SwFwLess\services\internals\MonitorService::class, 'status']
+                        );
+                    });
+                    $r->addRoute(
+                        'GET',
+                        '/log/flush',
+                        ['/internal/log/flush', \SwFwLess\services\internals\LogService::class, 'flush']
+                    );
+                    $chaosSwitch = functions\config('chaos.switch', false);
+                    if ($chaosSwitch) {
+                        $r->addGroup('/chaos', function (\FastRoute\RouteCollector $r) {
+                            $r->addGroup('/fault', function (\FastRoute\RouteCollector $r) {
+                                $r->addRoute(
+                                    'POST',
+                                    '/{id}',
+                                    ['/internal/chaos/fault/{id}', \SwFwLess\services\internals\ChaosService::class, 'injectFault']
+                                );
+                                $r->addRoute(
+                                    'GET',
+                                    '/{id}',
+                                    ['/internal/chaos/fault/{id}', \SwFwLess\services\internals\ChaosService::class, 'fetchFault']
+                                );
+                            });
+                        });
+                    }
+                });
+            }
+        });
     }
 
     public static function create(Request $appRequest, Dispatcher $dispatcher)
