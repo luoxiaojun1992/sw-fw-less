@@ -149,12 +149,18 @@ class Router implements Poolable
                                 $r->addRoute(
                                     'POST',
                                     '/{id}',
-                                    ['/internal/chaos/fault/{id}', \SwFwLess\services\internals\ChaosService::class, 'injectFault']
+                                    [
+                                        '/internal/chaos/fault/{id}', \SwFwLess\services\internals\ChaosService::class,
+                                        'injectFault'
+                                    ]
                                 );
                                 $r->addRoute(
                                     'GET',
                                     '/{id}',
-                                    ['/internal/chaos/fault/{id}', \SwFwLess\services\internals\ChaosService::class, 'fetchFault']
+                                    [
+                                        '/internal/chaos/fault/{id}', \SwFwLess\services\internals\ChaosService::class,
+                                        'fetchFault'
+                                    ]
                                 );
                             });
                         });
@@ -197,11 +203,12 @@ class Router implements Poolable
                 Container::make($controllerName) :
                 new $controllerName
             );
-        return ($controller instanceof \SwFwLess\services\BaseService) ? ($controller->setRequestAndHandlerAndParameters(
-            $appRequest,
-            $action,
-            $parameters
-        )) : ($controller->setHandlerAndParameters($action, $parameters));
+        return ($controller instanceof \SwFwLess\services\BaseService) ?
+            ($controller->setRequestAndHandlerAndParameters(
+                $appRequest,
+                $action,
+                $parameters
+            )) : ($controller->setHandlerAndParameters($action, $parameters));
     }
 
     public function parseRouteInfo()
@@ -249,7 +256,8 @@ class Router implements Poolable
                 ++self::$cachedRouteInfoCount;
                 if (self::$cachedRouteInfoCount > static::$cachedRouteInfoCapacity) {
                     self::$cachedRouteInfo = array_slice(
-                        self::$cachedRouteInfo, -1 * static::$cachedRouteInfoCapacity, null, true
+                        self::$cachedRouteInfo, -1 * static::$cachedRouteInfoCapacity, null,
+                        true
                     );
                     self::$cachedRouteInfoCount = static::$cachedRouteInfoCapacity;
                 }
