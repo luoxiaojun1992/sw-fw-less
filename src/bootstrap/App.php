@@ -131,18 +131,31 @@ class App extends Kernel
                             [$resourceRequestUri, $router[1], $resourceMethod, $router[2] ?? []]
                         );
                     }
-                    array_unshift($router[2], $router[1]);
-                    $r->addRoute($router[0], $router[1], $router[2]);
                 }
             }
-
-            //todo grpc router
-
+            if (Arr::isArrayElement($routerConfig, 'grpc')) {
+                foreach ($routerConfig['grpc'] as $package => $services) {
+                    foreach ($services as $service => $procedures) {
+                        foreach ($procedures as $procedure => $router) {
+                            $grpcRequestUri = '/' . trim($package, '/') .
+                                '.' . trim($service, '/') .
+                                '/' . trim($procedure, '/');
+                            $r->addRoute(
+                                'POST', $grpcRequestUri,
+                                [$grpcRequestUri, $router[0], $procedure, $router[1] ?? []]
+                            );
+                        }
+                    }
+                }
+            }
             if (Arr::isArrayElement($routerConfig, 'group')) {
                 foreach ($routerConfig['group'] as $prefix => $routers) {
                     $r->addGroup($prefix, function (\FastRoute\RouteCollector $r) use ($routers, $prefix) {
                         foreach ($routers as $router) {
-                            array_unshift($router[2], '/' . trim($prefix, '/') . '/' . trim($router[1], '/'));
+                            array_unshift(
+                                $router[2], '/' . trim($prefix, '/') .
+                                '/' . trim($router[1], '/')
+                            );
                             $r->addRoute($router[0], $router[1], $router[2]);
                         }
                     });
