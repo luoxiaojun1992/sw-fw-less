@@ -167,4 +167,18 @@ class DatetimeTest extends \PHPUnit\Framework\TestCase
             )
         );
     }
+
+    public function testRandomSleep()
+    {
+        $startTime = time();
+        \SwFwLess\components\utils\Datetime::randomSleep(1, 3);
+        $this->assertGreaterThanOrEqual(1, time() - $startTime);
+    }
+
+    public function testRandomUsleep()
+    {
+        $startTime = time();
+        \SwFwLess\components\utils\Datetime::randomUsleep(1000000, 3000000);
+        $this->assertGreaterThanOrEqual(1, time() - $startTime);
+    }
 }
