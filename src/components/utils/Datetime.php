@@ -417,4 +417,16 @@ class Datetime
     {
         return (static::toDateObj($endDate)->endOfDay()->diffInDays(static::toDateObj($startDate)->startOfDay()) + 1);
     }
+
+    public static function randomSleep($minSecs, $maxSecs)
+    {
+        mt_srand(time());
+        sleep(mt_rand($minSecs, $maxSecs));
+    }
+
+    public static function randomUsleep($minMicroSecs, $maxMicroSecs)
+    {
+        mt_srand(time());
+        usleep(mt_rand($minMicroSecs, $maxMicroSecs));
+    }
 }
