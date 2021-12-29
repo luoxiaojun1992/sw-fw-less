@@ -47,8 +47,8 @@ class App extends Kernel
         parent::__construct();
 
         $this->swHttpServer = new \Swoole\Http\Server(
-            functions\config('server.host'),
-            functions\config('server.port')
+            functions\config('server.host', '0.0.0.0'),
+            functions\config('server.port', 9501)
         );
 
         $serverConfig = [

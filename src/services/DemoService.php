@@ -103,10 +103,12 @@ class DemoService extends BaseService
     {
         $start = microtime(true);
 
+        $port = \SwFwLess\components\functions\config('server.port', 9501);
+
         $urls = [
-            'a' => 'http://127.0.0.1:9501/ping',
-            'b' => 'http://127.0.0.1:9501/ping',
-            'c' => 'http://127.0.0.1:9501/ping',
+            'a' => 'http://127.0.0.1:' . $port . '/ping',
+            'b' => 'http://127.0.0.1:' . $port . '/ping',
+            'c' => 'http://127.0.0.1:' . $port . '/ping',
         ];
 
         $aggResult = Client::multiGet($urls);
@@ -127,26 +129,28 @@ class DemoService extends BaseService
 
     public function volcano()
     {
+        $port = \SwFwLess\components\functions\config('server.port', 9501);
+
         $executor = Executor::create()->setPlan(
             Decoder::create()->setNext(
                 ResponseExtractor::create()->setNext(
                     HttpRequest::create()->setSwfRequest($this->getRequest())
                         ->addRequest(
-                            'http://127.0.0.1:9501/postjson',
+                            'http://127.0.0.1:' . $port . '/postjson',
                             'POST',
                             [],
                             'bar',
                             Client::STRING_BODY
                         )
                         ->addRequest(
-                            'http://127.0.0.1:9501/postjson',
+                            'http://127.0.0.1:' . $port . '/postjson',
                             'POST',
                             [],
                             'bar',
                             Client::STRING_BODY
                         )
                         ->addRequest(
-                            'http://127.0.0.1:9501/postjson',
+                            'http://127.0.0.1:' . $port . '/postjson',
                             'POST',
                             [],
                             'bar',
@@ -497,10 +501,12 @@ class DemoService extends BaseService
 
     public function nodeTimeOffset()
     {
+        $port = \SwFwLess\components\functions\config('server.port', 9501);
+
         return Response::json(
             [
                 'node_time_offset' => Clock::create(
-                    'http://127.0.0.1:9501/internal/time-api'
+                    'http://127.0.0.1:' . $port . '/internal/time-api'
                 )->measureNodesTimeOffset()
             ]
         );
