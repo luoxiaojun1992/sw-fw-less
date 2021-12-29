@@ -9,6 +9,7 @@ use SwFwLess\components\Config;
 use SwFwLess\components\Helper;
 use SwFwLess\components\http\Client;
 use SwFwLess\components\http\Response;
+use SwFwLess\components\time\Clock;
 use SwFwLess\components\time\ntp\Time;
 use SwFwLess\components\utils\data\structure\variable\MetasyntacticVars;
 use SwFwLess\components\volcano\Executor;
@@ -490,6 +491,17 @@ class DemoService extends BaseService
         return Response::json(
             [
                 'Hello world' => Translator::trans('Hello world', [], 'app', 'zh_CN')
+            ]
+        );
+    }
+
+    public function nodeTimeOffset()
+    {
+        return Response::json(
+            [
+                'node_time_offset' => Clock::create(
+                    'http://127.0.0.1:9501/internal/time-api'
+                )
             ]
         );
     }
