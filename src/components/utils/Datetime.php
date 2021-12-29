@@ -434,7 +434,7 @@ class Datetime
     {
         $minOffset = $sendTime - $receiveTime;
         $maxOffset = $sendTime + $rtt - $receiveTime;
-        $avgOffset = $sendTime + intval(floor($rtt / 2)) - $receiveTime;
+        $avgOffset = $sendTime + $rtt / 2 - $receiveTime;
 
         return compact('minOffset', 'maxOffset', 'avgOffset');
     }
