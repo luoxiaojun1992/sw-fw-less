@@ -50,7 +50,10 @@ class Manager
     {
         $clientBuilder = ClientBuilder::create();
         $clientBuilder->setHosts($this->config['connections'][$connection_name]['hosts']);
-        $clientBuilder->setLogger(Log::getLogger());
+        $logger = Log::getLogger();
+        if ($logger) {
+            $clientBuilder->setLogger($logger);
+        }
         $clientBuilder->setHandler(new GuzzleCoHandler(['timeout' => $this->config['connections'][$connection_name]['timeout']]));
         return $clientBuilder->build();
     }

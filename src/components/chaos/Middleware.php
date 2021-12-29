@@ -80,6 +80,7 @@ class Middleware extends AbstractMiddleware
                 $httpHeaders = $faultData['http_headers'];
                 $requestBody = $faultData['request_body'];
                 $bodyType = $faultData['request_body_type'];
+                //todo zipkin trace info
                 switch ($httpMethod) {
                     case 'GET':
                         Client::get($httpUrl, null, $httpHeaders);

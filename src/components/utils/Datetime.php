@@ -429,4 +429,13 @@ class Datetime
         mt_srand(time());
         usleep(mt_rand($minMicroSecs, $maxMicroSecs));
     }
+
+    public static function nodesTimeOffset($sendTime, $receiveTime, $rtt)
+    {
+        $minOffset = $sendTime - $receiveTime;
+        $maxOffset = $sendTime + $rtt - $receiveTime;
+        $avgOffset = $sendTime + intval(floor($rtt / 2)) - $receiveTime;
+
+        return compact('minOffset', 'maxOffset', 'avgOffset');
+    }
 }

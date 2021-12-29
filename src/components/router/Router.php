@@ -14,6 +14,7 @@ use SwFwLess\facades\Container;
 use SwFwLess\middlewares\AbstractMiddleware;
 use SwFwLess\services\BaseService;
 use SwFwLess\services\GrpcUnaryService;
+use SwFwLess\services\internals\DatetimeService;
 
 class Router implements Poolable
 {
@@ -108,9 +109,9 @@ class Router implements Poolable
                     });
                 }
             }
-            if (functions\config('monitor.switch')) {
-                $r->addGroup('/internal', function (\FastRoute\RouteCollector $r) {
-                    $r->addGroup('/monitor', function (\FastRoute\RouteCollector $r) {
+            $r->addGroup('/internal', function (\FastRoute\RouteCollector $r) {
+                $r->addGroup('/monitor', function (\FastRoute\RouteCollector $r) {
+                    if (functions\config('monitor.switch')) {
                         $r->addRoute(
                             'GET',
                             '/pool',
@@ -136,37 +137,49 @@ class Router implements Poolable
                             '/status',
                             ['/internal/monitor/status', \SwFwLess\services\internals\MonitorService::class, 'status']
                         );
-                    });
+                    }
+                });
+                if (functions\config('log.switch')) {
                     $r->addRoute(
                         'GET',
                         '/log/flush',
                         ['/internal/log/flush', \SwFwLess\services\internals\LogService::class, 'flush']
                     );
-                    $chaosSwitch = functions\config('chaos.switch', false);
-                    if ($chaosSwitch) {
-                        $r->addGroup('/chaos', function (\FastRoute\RouteCollector $r) {
-                            $r->addGroup('/fault', function (\FastRoute\RouteCollector $r) {
-                                $r->addRoute(
-                                    'POST',
-                                    '/{id}',
-                                    [
-                                        '/internal/chaos/fault/{id}', \SwFwLess\services\internals\ChaosService::class,
-                                        'injectFault'
-                                    ]
-                                );
-                                $r->addRoute(
-                                    'GET',
-                                    '/{id}',
-                                    [
-                                        '/internal/chaos/fault/{id}', \SwFwLess\services\internals\ChaosService::class,
-                                        'fetchFault'
-                                    ]
-                                );
-                            });
+                }
+                if (functions\config('chaos.switch', false)) {
+                    $r->addGroup('/chaos', function (\FastRoute\RouteCollector $r) {
+                        $r->addGroup('/fault', function (\FastRoute\RouteCollector $r) {
+                            $r->addRoute(
+                                'POST',
+                                '/{id}',
+                                [
+                                    '/internal/chaos/fault/{id}', \SwFwLess\services\internals\ChaosService::class,
+                                    'injectFault',
+                                ]
+                            );
+                            $r->addRoute(
+                                'GET',
+                                '/{id}',
+                                [
+                                    '/internal/chaos/fault/{id}', \SwFwLess\services\internals\ChaosService::class,
+                                    'fetchFault',
+                                ]
+                            );
                         });
-                    }
-                });
-            }
+                    });
+                }
+                if (functions\config('time_api_switch', false)) {
+                    $r->addRoute(
+                        'GET',
+                        '/time-api',
+                        [
+                            '/internal/time-api',
+                            DatetimeService::class,
+                            'timestamp',
+                        ]
+                    );
+                }
+            });
         });
     }
 

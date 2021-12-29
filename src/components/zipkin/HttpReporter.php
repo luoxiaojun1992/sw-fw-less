@@ -42,6 +42,7 @@ final class HttpReporter implements Reporter
      */
     public function report(array $spans)
     {
+        //todo json depth
         $payload = json_encode(array_map(function (Span $span) {
             return $span->toArray();
         }, $spans));
