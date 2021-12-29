@@ -82,7 +82,7 @@ class Clock
             throw new \Exception('Empty node time api response');
         }
 
-        $apiResponseArr = Helper::jsonDecode($apiResponse[0]);
+        $apiResponseArr = Helper::jsonDecode($apiResponse[0]->getBody());
         if (json_last_error() !== JSON_ERROR_NONE) {
             throw new \Exception(
                 'Empty node time api response error, response: ' .

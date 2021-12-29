@@ -501,7 +501,7 @@ class DemoService extends BaseService
             [
                 'node_time_offset' => Clock::create(
                     'http://127.0.0.1:9501/internal/time-api'
-                )
+                )->measureNodesTimeOffset()
             ]
         );
     }
