@@ -41,6 +41,7 @@
         "ext-redis": "*",
         "ext-curl": "*",
         "ext-smbclient": "*",
+        "ext-bcmath": "*",
         "luoxiaojun1992/laravel-elasticsearch": "~1.0",
         "elasticsearch/elasticsearch": "~6",
         "apache/thrift": "0.11.0",
