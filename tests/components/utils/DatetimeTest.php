@@ -193,5 +193,25 @@ class DatetimeTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(-0.010, $nodesTimeOffset['minOffset']);
         $this->assertEquals(0.0, $nodesTimeOffset['maxOffset']);
         $this->assertEquals(-0.005, $nodesTimeOffset['avgOffset']);
+
+        $sendTime = microtime(true);
+        $receiveTime = $sendTime + 0.005;
+        $rtt = 0.010;
+        $nodesTimeOffset = \SwFwLess\components\utils\Datetime::nodesTimeOffset(
+            $sendTime, $receiveTime, $rtt
+        );
+        $this->assertEquals(-0.005, $nodesTimeOffset['minOffset']);
+        $this->assertEquals(0.005, $nodesTimeOffset['maxOffset']);
+        $this->assertEquals(0, $nodesTimeOffset['avgOffset']);
+
+        $sendTime = microtime(true);
+        $receiveTime = $sendTime + 0.006;
+        $rtt = 0.010;
+        $nodesTimeOffset = \SwFwLess\components\utils\Datetime::nodesTimeOffset(
+            $sendTime, $receiveTime, $rtt
+        );
+        $this->assertEquals(-0.006, $nodesTimeOffset['minOffset']);
+        $this->assertEquals(0.004, $nodesTimeOffset['maxOffset']);
+        $this->assertEquals(-0.001, $nodesTimeOffset['avgOffset']);
     }
 }
