@@ -181,4 +181,17 @@ class DatetimeTest extends \PHPUnit\Framework\TestCase
         \SwFwLess\components\utils\Datetime::randomUsleep(1000000, 3000000);
         $this->assertGreaterThanOrEqual(1, time() - $startTime);
     }
+
+    public function testNodesTimeOffset()
+    {
+        $sendTime = microtime(true);
+        $receiveTime = $sendTime + 0.010;
+        $rtt = 0.010;
+        $nodesTimeOffset = \SwFwLess\components\utils\Datetime::nodesTimeOffset(
+            $sendTime, $receiveTime, $rtt
+        );
+        $this->assertEquals(-0.010, $nodesTimeOffset['minOffset']);
+        $this->assertEquals(0.0, $nodesTimeOffset['maxOffset']);
+        $this->assertEquals(-0.005, $nodesTimeOffset['avgOffset']);
+    }
 }

@@ -432,9 +432,13 @@ class Datetime
 
     public static function nodesTimeOffset($sendTime, $receiveTime, $rtt)
     {
-        $minOffset = $sendTime - $receiveTime;
-        $maxOffset = $sendTime + $rtt - $receiveTime;
-        $avgOffset = $sendTime + $rtt / 2 - $receiveTime;
+        $minOffset = doubleval(bcsub($sendTime, $receiveTime, 9));
+        $maxOffset = doubleval(bcsub(doubleval(bcadd($sendTime, $rtt, 9)), $receiveTime, 9));
+        $avgOffset = doubleval(bcsub(
+            doubleval(bcadd($sendTime, doubleval(bcdiv($rtt, 2, 9)), 9)),
+            $receiveTime,
+            9
+        ));
 
         return compact('minOffset', 'maxOffset', 'avgOffset');
     }
