@@ -282,4 +282,24 @@ class Math
 
         return $result;
     }
+
+    public function bcadd($num1, $num2, $scale = 0)
+    {
+        return doubleval(bcadd((string)$num1, (string)$num2, $scale));
+    }
+
+    public function bcsub($num1, $num2, $scale = 0)
+    {
+        return doubleval(bcsub((string)$num1, (string)$num2, $scale));
+    }
+
+    public function bcmul($num1, $num2, $scale = 0)
+    {
+        return doubleval(bcmul((string)$num1, (string)$num2, $scale));
+    }
+
+    public function bcdiv($num1, $num2, $scale = 0)
+    {
+        return doubleval(bcdiv((string)$num1, (string)$num2, $scale));
+    }
 }

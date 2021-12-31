@@ -364,4 +364,32 @@ class MathTest extends \PHPUnit\Framework\TestCase
             $this->assertGreaterThanOrEqual(floatval($i + 1), $value);
         }
     }
+
+    public function testBcAdd()
+    {
+        $this->assertEquals(100.0, \SwFwLess\components\utils\math\Math::create()->bcadd(
+            99.9, 0.1, 1
+        ));
+    }
+
+    public function testBcSub()
+    {
+        $this->assertEquals(99.9, \SwFwLess\components\utils\math\Math::create()->bcsub(
+            100.0, 0.1, 1
+        ));
+    }
+
+    public function testBcMul()
+    {
+        $this->assertEquals(10.0, \SwFwLess\components\utils\math\Math::create()->bcmul(
+            100.0, 0.1, 1
+        ));
+    }
+
+    public function testBcDiv()
+    {
+        $this->assertEquals(3.0, \SwFwLess\components\utils\math\Math::create()->bcdiv(
+            99.9, 33.3, 1
+        ));
+    }
 }
