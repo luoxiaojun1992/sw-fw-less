@@ -37,4 +37,32 @@ class Str
         }
         return explode($separator, $str);
     }
+
+    public static function startWith($haystack, $needles, $caseSensitive = true)
+    {
+        foreach ((array) $needles as $needle) {
+            if ($needle === '') {
+                return true;
+            }
+
+            if ($caseSensitive && (mb_strpos($haystack, $needle, 0) === 0)) {
+                return true;
+            } elseif ((!$caseSensitive) && (mb_stripos($haystack, $needle, 0) === 0)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public static function endWith($haystack, $needles, $caseSensitive = true)
+    {
+        foreach ((array) $needles as $needle) {
+            if (static::contains($haystack, $needle, -1 * mb_strlen($needle), $caseSensitive)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

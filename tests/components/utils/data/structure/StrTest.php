@@ -2,6 +2,9 @@
 
 namespace SwFwLessTest\components\utils\data\structure;
 
+use SwFwLess\components\utils\data\structure\Str;
+use SwFwLess\components\utils\data\structure\variable\MetasyntacticVars;
+
 class StrTest extends \PHPUnit\Framework\TestCase
 {
     public function testContains()
@@ -81,6 +84,40 @@ class StrTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue(
             \SwFwLess\components\utils\Str::split('a@b@c@d@e@f', '@')
             === ['a', 'b', 'c', 'd', 'e', 'f']
+        );
+    }
+
+    public function testStartWith()
+    {
+        $this->assertTrue(Str::startWith(MetasyntacticVars::FOO, ''));
+        $this->assertTrue(
+            Str::startWith(
+                MetasyntacticVars::FOO . MetasyntacticVars::BAR,
+                MetasyntacticVars::FOO
+            )
+        );
+        $this->assertFalse(
+            Str::startWith(
+                MetasyntacticVars::FOO . MetasyntacticVars::BAR,
+                MetasyntacticVars::BAR
+            )
+        );
+    }
+
+    public function testEndWith()
+    {
+        $this->assertTrue(Str::endWith(MetasyntacticVars::FOO, ''));
+        $this->assertTrue(
+            Str::endWith(
+                MetasyntacticVars::FOO . MetasyntacticVars::BAR,
+                MetasyntacticVars::BAR
+            )
+        );
+        $this->assertFalse(
+            Str::endWith(
+                MetasyntacticVars::FOO . MetasyntacticVars::BAR,
+                MetasyntacticVars::FOO
+            )
         );
     }
 }
