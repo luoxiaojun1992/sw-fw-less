@@ -80,10 +80,22 @@ class Middleware extends AbstractMiddleware
                 $httpHeaders = $faultData['http_headers'];
                 $requestBody = $faultData['request_body'];
                 $bodyType = $faultData['request_body_type'];
-                //todo zipkin trace info
+
+                //todo
+                //zipkin trace info
+                $zipkinTraceInfo = [];
+                $zipkinTraceInfo['with_trace'] = $faultData['zipkin_trace']['with_trace'] ?? false;
+                $zipkinTraceInfo['span_name'] = $faultData['zipkin_trace']['span_name'] ?? null;
+                $zipkinTraceInfo['inject_span_ctx'] = $faultData['zipkin_trace']['inject_span_ctx'] ?? true;
+                $zipkinTraceInfo['flushing_trace'] = $faultData['zipkin_trace']['flushing_trace'] ?? false;
+
                 switch ($httpMethod) {
                     case 'GET':
-                        Client::get($httpUrl, null, $httpHeaders);
+                        Client::get(
+                            $httpUrl, null, $httpHeaders, null,
+                            $zipkinTraceInfo['with_trace'], $zipkinTraceInfo['span_name'],
+                            $zipkinTraceInfo['inject_span_ctx'], $zipkinTraceInfo['flushing_trace']
+                        );
                         break;
                     case 'POST':
                         Client::post(
