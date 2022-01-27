@@ -81,7 +81,6 @@ class Middleware extends AbstractMiddleware
                 $requestBody = $faultData['request_body'];
                 $bodyType = $faultData['request_body_type'];
 
-                //todo
                 //zipkin trace info
                 $zipkinTraceInfo = [];
                 $zipkinTraceInfo['with_trace'] = $faultData['zipkin_trace']['with_trace'] ?? false;
@@ -99,17 +98,23 @@ class Middleware extends AbstractMiddleware
                         break;
                     case 'POST':
                         Client::post(
-                            $httpUrl, null, $httpHeaders, $requestBody, $bodyType
+                            $httpUrl, null, $httpHeaders, $requestBody, $bodyType, null,
+                            $zipkinTraceInfo['with_trace'], $zipkinTraceInfo['span_name'],
+                            $zipkinTraceInfo['inject_span_ctx'], $zipkinTraceInfo['flushing_trace']
                         );
                         break;
                     case 'PUT':
                         Client::put(
-                            $httpUrl, null, $httpHeaders, $requestBody, $bodyType
+                            $httpUrl, null, $httpHeaders, $requestBody, $bodyType, null,
+                            $zipkinTraceInfo['with_trace'], $zipkinTraceInfo['span_name'],
+                            $zipkinTraceInfo['inject_span_ctx'], $zipkinTraceInfo['flushing_trace']
                         );
                         break;
                     case 'DELETE':
                         Client::delete(
-                            $httpUrl, null, $httpHeaders, $requestBody, $bodyType
+                            $httpUrl, null, $httpHeaders, $requestBody, $bodyType, null,
+                            $zipkinTraceInfo['with_trace'], $zipkinTraceInfo['span_name'],
+                            $zipkinTraceInfo['inject_span_ctx'], $zipkinTraceInfo['flushing_trace']
                         );
                         break;
                 }
