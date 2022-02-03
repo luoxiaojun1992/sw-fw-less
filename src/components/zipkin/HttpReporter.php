@@ -16,6 +16,9 @@ final class HttpReporter implements Reporter
         'headers' => [
             'Content-Type' => 'application/json',
         ],
+        'json' => [
+            'depth' => 512,
+        ]
     ];
 
     /**
@@ -42,10 +45,9 @@ final class HttpReporter implements Reporter
      */
     public function report(array $spans)
     {
-        //todo json depth
         $payload = json_encode(array_map(function (Span $span) {
             return $span->toArray();
-        }, $spans));
+        }, $spans), 0, $this->options['json']['depth'] ?? 512);
 
         $this->reportMetrics->incrementSpans(count($spans));
         $this->reportMetrics->incrementMessages();

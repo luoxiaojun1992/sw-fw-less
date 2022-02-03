@@ -55,6 +55,7 @@ class Tracer
         'queue_name' => 'queue:zipkin:span',
         'connection' => 'zipkin',
     ];
+    private $httpReporterOptions = [];
     private $reportType = 'http';
 
     /** @var \Zipkin\Tracer */
@@ -110,6 +111,10 @@ class Tracer
             $this->redisOptions,
             \SwFwLess\components\functions\config('zipkin.redis_options', [])
         );
+        $this->httpReporterOptions = array_merge(
+            $this->httpReporterOptions,
+            \SwFwLess\components\functions\config('zipkin.http_reporter_options', [])
+        );
         $this->reportType = \SwFwLess\components\functions\config(
             'zipkin.report_type', 'http'
         );
@@ -145,10 +150,20 @@ class Tracer
         if ($this->reportType === 'redis') {
             return new RedisReporter($this->redisOptions);
         } elseif ($this->reportType === 'http') {
-            return new HttpReporter(['endpoint_url' => $this->endpointUrl, 'timeout' => $this->curlTimeout]);
+            return new HttpReporter(
+                array_merge(
+                    $this->httpReporterOptions,
+                    ['endpoint_url' => $this->endpointUrl, 'timeout' => $this->curlTimeout]
+                )
+            );
         }
 
-        return new HttpReporter(['endpoint_url' => $this->endpointUrl, 'timeout' => $this->curlTimeout]);
+        return new HttpReporter(
+            array_merge(
+                $this->httpReporterOptions,
+                ['endpoint_url' => $this->endpointUrl, 'timeout' => $this->curlTimeout]
+            )
+        );
     }
 
     /**
