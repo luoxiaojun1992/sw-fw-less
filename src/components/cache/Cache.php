@@ -138,6 +138,7 @@ EOF;
 
             //todo perf-optimize: get ttl flag and data using pipeline, reduce io times
             if ($redis->get($cacheTTLKeyWithPrefix) === false) {
+                //todo fix lock ttl is less than duration cost by cache setter
                 if (RedLock::lock('update:cache:' . $key, $this->config['update_lock_ttl'])) {
                     if ($redis->get($cacheTTLKeyWithPrefix) === false) {
                         return false;
