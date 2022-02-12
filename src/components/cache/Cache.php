@@ -125,10 +125,11 @@ EOF;
 
     /**
      * @param $key
+     * @param int $updateLockTTL
      * @return bool|string
      * @throws \Throwable
      */
-    public function get($key)
+    public function get($key, $updateLockTTL = 10)
     {
         /** @var \Redis $redis */
         $redis = $this->redisPool->pick($this->config['connection']);
