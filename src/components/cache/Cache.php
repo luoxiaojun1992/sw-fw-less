@@ -125,11 +125,11 @@ EOF;
 
     /**
      * @param $key
-     * @param int $updateLockTTL
+     * @param ?int $updateLockTTL
      * @return bool|string
      * @throws \Throwable
      */
-    public function get($key, $updateLockTTL = 10)
+    public function get($key, $updateLockTTL = null)
     {
         /** @var \Redis $redis */
         $redis = $this->redisPool->pick($this->config['connection']);
@@ -139,8 +139,7 @@ EOF;
 
             //todo perf-optimize: get ttl flag and data using pipeline, reduce io times
             if ($redis->get($cacheTTLKeyWithPrefix) === false) {
-                //todo fix lock ttl is less than duration cost by cache setter
-                if (RedLock::lock('update:cache:' . $key, $this->config['update_lock_ttl'])) {
+                if (RedLock::lock('update:cache:' . $key, $updateLockTTL ?? ($this->config['update_lock_ttl']))) {
                     if ($redis->get($cacheTTLKeyWithPrefix) === false) {
                         return false;
                     }

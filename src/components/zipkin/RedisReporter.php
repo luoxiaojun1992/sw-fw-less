@@ -40,10 +40,9 @@ final class RedisReporter implements Reporter
             return;
         }
 
-        //todo json depth
         $payload = json_encode(array_map(function (Span $span) {
             return $span->toArray();
-        }, $spans));
+        }, $spans), 0, $this->options['json']['depth'] ?? 512);
 
         try {
             $this->enqueue($payload);
