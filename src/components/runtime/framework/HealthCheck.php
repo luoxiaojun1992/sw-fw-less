@@ -58,6 +58,7 @@ class HealthCheck
      */
     public function status()
     {
+        //todo support registering monitors
         if (!$this->checkWorkerNum()) {
             return false;
         }
