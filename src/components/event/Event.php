@@ -11,7 +11,7 @@ class Event
 
     use Singleton;
 
-    public function __construct()
+    public function __construct($config = null)
     {
         $this->eventManager = EventManager::instance();
 

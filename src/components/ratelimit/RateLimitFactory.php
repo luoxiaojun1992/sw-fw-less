@@ -39,7 +39,7 @@ class RateLimitFactory
 
     /**
      * @param string $algorithm
-     * @return RateLimit|SlidingWindow|\SwFwLess\components\etcd\RateLimit
+     * @return RateLimit|SlidingWindow|\SwFwLess\components\etcd\RateLimit|MemLimit|SysLoadLimit
      */
     public static function resolve($algorithm = self::ALGORITHM_LEAKY_BUCKET)
     {

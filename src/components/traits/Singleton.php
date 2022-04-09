@@ -16,8 +16,8 @@ trait Singleton
      * @return static
      * @throws \Exception
      */
-    public static function create()
+    public static function create($config = null)
     {
-        return (self::$instance instanceof self) ? (self::$instance) : (self::$instance = new self());
+        return (self::$instance instanceof self) ? (self::$instance) : (self::$instance = new self($config));
     }
 }
