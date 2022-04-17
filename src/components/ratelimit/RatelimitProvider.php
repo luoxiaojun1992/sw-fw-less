@@ -26,13 +26,19 @@ class RatelimitProvider implements WorkerProviderContract
 
         MemLimit::create(
             \SwFwLess\components\functions\config(
-                'rate_limit.drivers.' . RateLimitFactory::ALGORITHM_MEMORY_USAGE
+                'rate_limit.drivers.' . RateLimitFactory::ALGORITHM_MEMORY_USAGE, []
             )
         );
 
         SysLoadLimit::create(
             \SwFwLess\components\functions\config(
-                'rate_limit.drivers.' . RateLimitFactory::ALGORITHM_SYS_LOAD
+                'rate_limit.drivers.' . RateLimitFactory::ALGORITHM_SYS_LOAD, []
+            )
+        );
+
+        MachineLimit::create(
+            \SwFwLess\components\functions\config(
+                'rate_limit.drivers.' . RateLimitFactory::ALGORITHM_MACHINE, []
             )
         );
     }

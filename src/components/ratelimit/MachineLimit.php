@@ -4,11 +4,16 @@ namespace SwFwLess\components\ratelimit;
 
 use SwFwLess\components\traits\Singleton;
 
-class MachineLimit
+class MachineLimit implements RateLimitContract
 {
-    //TODO
-
     use Singleton;
+
+    /**
+     * @var RateLimitContract[]
+     */
+    protected $subRateLimits = [];
+
+    protected $config = [];
 
     /**
      * MemLimit constructor.
@@ -17,20 +22,43 @@ class MachineLimit
     public function __construct($config = [])
     {
         $this->config = array_merge($this->config, $config);
+        $this->registerDefaultRateLimits();
+    }
+
+    protected function registerDefaultRateLimits()
+    {
+        return $this->registerRateLimits([
+            RateLimitFactory::resolve(RateLimitFactory::ALGORITHM_MEMORY_USAGE),
+            RateLimitFactory::resolve(RateLimitFactory::ALGORITHM_SYS_LOAD)
+        ]);
+    }
+
+    public function registerRateLimits($rateLimits)
+    {
+        foreach ($rateLimits as $rateLimit) {
+            $this->registerRateLimit($rateLimit);
+        }
+        return $this;
+    }
+
+    /**
+     * @param $rateLimit
+     * @return $this
+     */
+    public function registerRateLimit($rateLimit)
+    {
+        $this->subRateLimits[] = $rateLimit;
+        return $this;
     }
 
     public function pass($metric, $period, $throttle, &$remaining = null)
     {
-        if (!RateLimitFactory::resolve(RateLimitFactory::ALGORITHM_MEMORY_USAGE)->pass(
-            $metric, $period, $throttle, $remaining
-        )) {
-            return false;
-        }
-
-        if (!RateLimitFactory::resolve(RateLimitFactory::ALGORITHM_SYS_LOAD)->pass(
-            $metric, $period, $throttle, $remaining
-        )) {
-            return false;
+        foreach ($this->subRateLimits as $rateLimit) {
+            if (!$rateLimit->pass(
+                $metric, $period, $throttle
+            )) {
+                return false;
+            }
         }
 
         return true;

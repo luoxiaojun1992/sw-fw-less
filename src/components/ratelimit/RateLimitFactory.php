@@ -9,23 +9,15 @@ class RateLimitFactory
     const ALGORITHM_SLIDING_WINDOW = 'sliding_window';
     const ALGORITHM_MEMORY_USAGE = 'memory_usage';
     const ALGORITHM_SYS_LOAD = 'sys_load';
+    const ALGORITHM_MACHINE = 'machine';
 
     public static $resolvers = [
-        self::ALGORITHM_LEAKY_BUCKET => [
-            [RateLimit::class, 'create']
-        ],
-        self::ALGORITHM_ETCD_LEAKY_BUCKET => [
-            [\SwFwLess\components\etcd\RateLimit::class, 'create']
-        ],
-        self::ALGORITHM_SLIDING_WINDOW => [
-            [SlidingWindow::class, 'create']
-        ],
-        self::ALGORITHM_MEMORY_USAGE => [
-            [MemLimit::class, 'create']
-        ],
-        self::ALGORITHM_SYS_LOAD => [
-            [SysLoadLimit::class, 'create']
-        ],
+        self::ALGORITHM_LEAKY_BUCKET => [RateLimit::class, 'create'],
+        self::ALGORITHM_ETCD_LEAKY_BUCKET => [\SwFwLess\components\etcd\RateLimit::class, 'create'],
+        self::ALGORITHM_SLIDING_WINDOW => [SlidingWindow::class, 'create'],
+        self::ALGORITHM_MEMORY_USAGE => [MemLimit::class, 'create'],
+        self::ALGORITHM_SYS_LOAD => [SysLoadLimit::class, 'create'],
+        self::ALGORITHM_MACHINE => [MachineLimit::class, 'create'],
     ];
 
     /**
