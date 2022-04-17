@@ -20,10 +20,30 @@ class SysLoadLimitTest extends \PHPUnit\Framework\TestCase
         $this->assertNull($remaining);
 
         $passed = \SwFwLess\components\ratelimit\SysLoadLimit::create()->pass(
-            'test', 9999999999999999999999999999999999, 0, $remaining
+            'test', 0, 9999999999999999999999999999999999, $remaining
         );
         if ($passed) {
-            $this->assertIsInt($remaining);
+            $this->assertIsNumeric($remaining);
+            $this->assertGreaterThan(0, $remaining);
+        } else {
+            $this->assertNull($remaining);
+        }
+
+        $passed = \SwFwLess\components\ratelimit\SysLoadLimit::create()->pass(
+            'test', 100, 9999999999999999999999999999999999, $remaining
+        );
+        if ($passed) {
+            $this->assertIsNumeric($remaining);
+            $this->assertGreaterThan(0, $remaining);
+        } else {
+            $this->assertNull($remaining);
+        }
+
+        $passed = \SwFwLess\components\ratelimit\SysLoadLimit::create()->pass(
+            'test', 500, 9999999999999999999999999999999999, $remaining
+        );
+        if ($passed) {
+            $this->assertIsNumeric($remaining);
             $this->assertGreaterThan(0, $remaining);
         } else {
             $this->assertNull($remaining);

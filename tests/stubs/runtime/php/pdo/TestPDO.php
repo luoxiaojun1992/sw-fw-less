@@ -2,6 +2,9 @@
 
 use SwFwLess\components\mysql\MysqlWrapper;
 
+/**
+ * @deprecated
+ */
 class TestPDO extends MysqlWrapper
 {
     protected $mockData;
