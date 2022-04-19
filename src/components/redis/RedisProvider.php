@@ -9,7 +9,7 @@ class RedisProvider implements WorkerProviderContract, RequestProviderContract
 {
     public static function bootWorker()
     {
-        RedisPool::create(\SwFwLess\components\functions\config('redis'));
+        RedisPool::create(RedisPool::config());
     }
 
     public static function shutdownWorker()
@@ -19,7 +19,9 @@ class RedisProvider implements WorkerProviderContract, RequestProviderContract
 
     public static function bootRequest()
     {
-        RedLock::create(RedisPool::create(), \SwFwLess\components\functions\config('red_lock'));
+        if (RedisPool::enable()) {
+            RedLock::create(RedisPool::create(), \SwFwLess\components\functions\config('red_lock'));
+        }
     }
 
     public static function shutdownResponse()

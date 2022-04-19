@@ -2,6 +2,7 @@
 
 namespace SwFwLess\components\redis;
 
+use SwFwLess\components\Config;
 use SwFwLess\components\Helper;
 use Cake\Event\Event as CakeEvent;
 use SwFwLess\components\swoole\Scheduler;
@@ -20,6 +21,17 @@ class RedisPool
     public static function clearInstance()
     {
         static::$instance = null;
+    }
+
+    public static function config()
+    {
+        return Config::get('redis');
+    }
+
+    public static function enable()
+    {
+        $config = static::config();
+        return !empty($config['switch']);
     }
 
     /**

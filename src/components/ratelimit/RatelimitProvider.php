@@ -9,19 +9,21 @@ class RatelimitProvider implements WorkerProviderContract
 {
     public static function bootWorker()
     {
-        RateLimit::create(
-            \SwFwLess\components\redis\RedisPool::create(),
-            \SwFwLess\components\functions\config(
-                'rate_limit.drivers.' . RateLimitFactory::ALGORITHM_LEAKY_BUCKET
-            )
-        );
+        if (RedisPool::enable()) {
+            RateLimit::create(
+                \SwFwLess\components\redis\RedisPool::create(),
+                \SwFwLess\components\functions\config(
+                    'rate_limit.drivers.' . RateLimitFactory::ALGORITHM_LEAKY_BUCKET
+                )
+            );
 
-        SlidingWindow::create(
-            RedisPool::create(),
-            \SwFwLess\components\functions\config(
-                'rate_limit.drivers.' . RateLimitFactory::ALGORITHM_SLIDING_WINDOW
-            )
-        );
+            SlidingWindow::create(
+                RedisPool::create(),
+                \SwFwLess\components\functions\config(
+                    'rate_limit.drivers.' . RateLimitFactory::ALGORITHM_SLIDING_WINDOW
+                )
+            );
+        }
 
         MemLimit::create(
             \SwFwLess\components\functions\config(
