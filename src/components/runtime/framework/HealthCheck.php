@@ -11,6 +11,8 @@ class HealthCheck
 
     protected $serverConfig;
 
+    protected $probes = [];
+
     public static function create($swServer, $serverConfig)
     {
         return (new static())->setSwServer($swServer)
@@ -50,6 +52,28 @@ class HealthCheck
     public function setServerConfig($serverConfig)
     {
         $this->serverConfig = $serverConfig;
+        return $this;
+    }
+
+    /**
+     * @param $probe
+     * @return $this
+     */
+    public function registerProbe($probe)
+    {
+        $this->probes[] = $probe;
+        return $this;
+    }
+
+    /**
+     * @param $probes
+     * @return $this
+     */
+    public function registerProbes($probes)
+    {
+        foreach ($probes as $probe) {
+            $this->registerProbe($probe);
+        }
         return $this;
     }
 
