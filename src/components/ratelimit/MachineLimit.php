@@ -27,6 +27,7 @@ class MachineLimit implements RateLimitContract
 
     protected function registerDefaultRateLimits()
     {
+        //todo injected from construct method
         return $this->registerRateLimits([
             RateLimitFactory::resolve(RateLimitFactory::ALGORITHM_MEMORY_USAGE),
             RateLimitFactory::resolve(RateLimitFactory::ALGORITHM_SYS_LOAD)

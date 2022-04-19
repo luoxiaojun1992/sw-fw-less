@@ -2,6 +2,9 @@
 
 namespace SwFwLess\components\runtime\framework;
 
+use SwFwLess\components\runtime\framework\health\ProbeContract;
+use SwFwLess\components\runtime\framework\health\probes\WorkerNumProbe;
+
 class HealthCheck
 {
     /**
@@ -11,12 +14,28 @@ class HealthCheck
 
     protected $serverConfig;
 
+    /**
+     * @var ProbeContract[]
+     */
     protected $probes = [];
 
     public static function create($swServer, $serverConfig)
     {
         return (new static())->setSwServer($swServer)
             ->setServerConfig($serverConfig);
+    }
+
+    public function __construct()
+    {
+        $this->registerDefaultProbes();
+    }
+
+    protected function registerDefaultProbes()
+    {
+        //todo injected from construct method
+        $this->registerProbes([
+            WorkerNumProbe::create($this->swServer, $this->serverConfig)
+        ]);
     }
 
     /**
@@ -82,14 +101,19 @@ class HealthCheck
      */
     public function status()
     {
-        //todo support registering monitors
-        if (!$this->checkWorkerNum()) {
-            return false;
+        foreach ($this->probes as $probe) {
+            if (!$probe->health()) {
+                return false;
+            }
         }
 
         return true;
     }
 
+    /**
+     * @deprecated
+     * @return bool
+     */
     protected function checkWorkerNum()
     {
         return ($this->swServer->stats()['worker_num']) === ($this->serverConfig['worker_num']);
