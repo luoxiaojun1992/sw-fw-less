@@ -23,11 +23,6 @@ class HttpRequest extends AbstractOperator
 
     protected $requestTraceConfig = [];
 
-    public function open()
-    {
-        //
-    }
-
     public function next()
     {
         while (isset($this->requests[$this->cursor])) {
@@ -49,11 +44,6 @@ class HttpRequest extends AbstractOperator
                 yield $response;
             }
         }
-    }
-
-    public function close()
-    {
-        //
     }
 
     public function setSwfRequest($swfRequest)

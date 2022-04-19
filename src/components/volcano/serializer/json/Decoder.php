@@ -7,20 +7,10 @@ use SwFwLess\components\volcano\AbstractOperator;
 
 class Decoder extends AbstractOperator
 {
-    public function open()
-    {
-        //
-    }
-
     public function next()
     {
-        foreach ($this->nextOperator->next() as $str) {
+        foreach (parent::next() as $str) {
             yield Helper::jsonDecode($str);
         }
-    }
-
-    public function close()
-    {
-        //
     }
 }

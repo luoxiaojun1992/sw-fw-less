@@ -4,21 +4,6 @@ namespace SwFwLess\components\volcano;
 
 class Executor extends AbstractOperator
 {
-    public function open()
-    {
-        //
-    }
-
-    public function next()
-    {
-        return $this->nextOperator->next();
-    }
-
-    public function close()
-    {
-        //
-    }
-
     public function execute()
     {
         return $this->next();

@@ -6,20 +6,10 @@ use SwFwLess\components\volcano\AbstractOperator;
 
 class ResponseExtractor extends AbstractOperator
 {
-    public function open()
-    {
-        //
-    }
-
     public function next()
     {
-        foreach ($this->nextOperator->next() as $response) {
+        foreach (parent::next() as $response) {
             yield ((string)($response->getBody()));
         }
-    }
-
-    public function close()
-    {
-        //
     }
 }
