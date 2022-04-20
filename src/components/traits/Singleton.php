@@ -4,20 +4,16 @@ namespace SwFwLess\components\traits;
 
 trait Singleton
 {
-    /** @var static */
-    protected static $instance;
-
-    public static function clearInstance()
-    {
-        static::$instance = null;
-    }
+    use SingletonInstance;
 
     /**
      * @return static
      * @throws \Exception
      */
-    public static function create($config = null)
+    public static function create($config = [])
     {
-        return (self::$instance instanceof self) ? (self::$instance) : (self::$instance = new self($config));
+        return static::fetchOrCreateInstance(function () use ($config) {
+            return new static($config);
+        });
     }
 }

@@ -2,6 +2,7 @@
 
 namespace SwFwLess\components\swoole;
 
+use SwFwLess\components\Config;
 use SwFwLess\facades\Container;
 
 class Server
@@ -22,5 +23,10 @@ class Server
     public static function setInstance($server)
     {
         Container::set(self::DI_RESOURCE_ID, $server);
+    }
+
+    public static function config()
+    {
+        return Config::get('server');
     }
 }

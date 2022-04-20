@@ -1,15 +1,13 @@
 <?php
 
-namespace SwFwLess\components\runtime\framework;
+namespace SwFwLess\components\runtime\framework\health;
 
-use SwFwLess\components\runtime\framework\health\ProbeContract;
-use SwFwLess\components\runtime\framework\health\probes\WorkerNumProbe;
+use SwFwLess\components\traits\SingletonInstance;
 
-/**
- * @deprecated
- */
 class HealthCheck
 {
+    use SingletonInstance;
+
     /**
      * @var \Swoole\Http\Server
      */
@@ -22,10 +20,12 @@ class HealthCheck
      */
     protected $probes = [];
 
-    public static function create($swServer, $serverConfig)
+    public static function create($swServer = null, $serverConfig = [])
     {
-        return (new static())->setSwServer($swServer)
+        return static::fetchOrCreateInstance(function () use ($swServer, $serverConfig) {
+            return (new static())->setSwServer($swServer)
             ->setServerConfig($serverConfig);
+        });
     }
 
     public function __construct()
@@ -35,8 +35,9 @@ class HealthCheck
 
     protected function registerDefaultProbes()
     {
+        //todo injected from construct method
         $this->registerProbes([
-            WorkerNumProbe::create($this->swServer, $this->serverConfig)
+            ProbeFactory::resolve(ProbeFactory::PROBE_WORKER_NUM),
         ]);
     }
 
@@ -110,14 +111,5 @@ class HealthCheck
         }
 
         return true;
-    }
-
-    /**
-     * @deprecated
-     * @return bool
-     */
-    protected function checkWorkerNum()
-    {
-        return ($this->swServer->stats()['worker_num']) === ($this->serverConfig['worker_num']);
     }
 }

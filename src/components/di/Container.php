@@ -33,7 +33,7 @@ class Container
      * Container constructor.
      * @throws \Exception
      */
-    public function __construct($config = null)
+    public function __construct($config = [])
     {
         $this->diContainer = (new ContainerBuilder())->build();
     }

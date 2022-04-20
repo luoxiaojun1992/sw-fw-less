@@ -3,9 +3,12 @@
 namespace SwFwLess\components\runtime\framework\health\probes;
 
 use SwFwLess\components\runtime\framework\health\ProbeContract;
+use SwFwLess\components\traits\SingletonInstance;
 
 class WorkerNumProbe implements ProbeContract
 {
+    use SingletonInstance;
+
     /**
      * @var \Swoole\Http\Server
      */
@@ -13,9 +16,11 @@ class WorkerNumProbe implements ProbeContract
 
     protected $serverConfig;
 
-    public static function create($swServer, $serverConfig)
+    public static function create($swServer = null, $serverConfig = [])
     {
-        return new static($swServer, $serverConfig);
+        return static::fetchOrCreateInstance(function () use ($swServer, $serverConfig) {
+            return new static($swServer, $serverConfig);
+        });
     }
 
     public function __construct($swServer, $serverConfig)
