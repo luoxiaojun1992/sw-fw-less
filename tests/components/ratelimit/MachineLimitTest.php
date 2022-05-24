@@ -1,5 +1,7 @@
 <?php
 
+namespace SwFwLessTests\components\ratelimit;
+
 class MachineLimitTest extends \PHPUnit\Framework\TestCase
 {
     public function testPass()
